@@ -1,0 +1,28 @@
+
+.list-group-unbordered > .list-group-item{
+  border-bottom: 0;
+  clear: both;
+}
+.list-group-unbordered > .list-group-item:last-child{
+  border-bottom: 1px solid #ddd;
+}
+.list-group-item > span.pull-right{
+  word-wrap: break-word;
+}
+
+.info-box .btn-group{
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 15px;
+}
+.info-box:hover .btn-group{
+  display: block;
+}
+.dropdown-menu > li > a[type='button']:hover{
+  cursor: pointer;
+}
+
+.clickableEvent:hover{
+  cursor: pointer;
+}
