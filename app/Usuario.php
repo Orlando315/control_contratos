@@ -40,9 +40,20 @@ class Usuario extends User
     'password'
   ];
 
-  public static function getAll()
+  /*
+    Todos los usuarios de tipo Usuario
+  */
+  public static function usuarios()
   {
     return Usuario::where('tipo', 3)->get();
+  }
+
+  /*
+    Todos los usuarios de tipo Supervisor
+  */
+  public static function supervisores()
+  {
+    return usuario::where('tipo', 4)->get(); 
   }
 
   public function getUsuarioAttribute($usuario)

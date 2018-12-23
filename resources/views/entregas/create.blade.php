@@ -62,13 +62,6 @@
 @section('scripts')
 <script type="text/javascript">
   $(document).ready( function(){
-    $('#fecha').datepicker({
-      format: 'dd-mm-yyyy',
-      language: 'es',
-      keyboardNavigation: false,
-      autoclose: true
-    });
-
     $('#contrato').change(getEmpleados)
     $('#contrato').change()
 

@@ -19,6 +19,15 @@
 
         <h4>Editar usuario</h4>
 
+        <div class="form-group {{ $errors->has('tipo') ? 'has-error' : '' }}">
+          <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
+          <select id="tipo" class="form-control" name="tipo" required>
+            <option value="">Seleccione...</option>
+            <option value="3" {{ old('tipo') == '3' ? 'selected' : $usuario->tipo == 3 ? 'selected' : '' }}>Usuario</option>
+            <option value="4" {{ old('tipo') == '4' ? 'selected' : $usuario->tipo == 4 ? 'selected' : '' }}>Supervisor</option>
+          </select>
+        </div>
+
         <div class="form-group {{ $errors->has('usuario') ? 'has-error' : '' }}">
           <label class="control-label" for="usuario">Usuario: *</label>
           <input id="usuario" class="form-control" type="text" name="usuario" maxlength="50" value="{{ old('usuario') ? old('usuario') : $usuario->usuario }}" placeholder="Nombres" required>

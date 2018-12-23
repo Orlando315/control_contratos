@@ -15,7 +15,7 @@ class UsuariosController extends Controller
      */
     public function index()
     {
-      $usuarios = Usuario::getAll();
+      $usuarios = Usuario::usuarios();
 
       return view('usuarios.index', ['usuarios' => $usuarios]);
     }
@@ -39,6 +39,7 @@ class UsuariosController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
+        'tipo' => 'required|in:3,4',
         'usuario' => 'required|alpha_num|unique:users,usuario',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
@@ -50,7 +51,6 @@ class UsuariosController extends Controller
       ]);
 
       $usuario = new Usuario($request->all());
-      $usuario->tipo = 3; // Tipo 3 = Usuario
       $usuario->password = bcrypt($request->password);
 
       if($usuario = Auth::user()->empresa->usuario()->save($usuario)){
@@ -99,6 +99,7 @@ class UsuariosController extends Controller
     public function update(Request $request, Usuario $usuario)
     {
       $this->validate($request, [
+        'tipo' => 'required|in:3,4',
         'usuario' => 'required|alpha_num|unique:users,usuario,' . $usuario->id . ',id',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
@@ -108,7 +109,6 @@ class UsuariosController extends Controller
       ]);
 
       $usuario->fill($request->all());
-      $usuario->tipo = 3; // Tipo 3 = Usuario
 
       if($usuario->save()){
         return redirect('usuarios/' . $usuario->id)->with([

@@ -148,6 +148,18 @@
               </ul>
             </li>
 
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-car"></i>
+                <span>Transportes</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('transportes.index') }}"><i class="fa fa-circle-o"></i>Ver transportes</a></li>
+                <li><a href="{{ route('transportes.create') }}"><i class="fa fa-circle-o"></i>Agregar transporte</a></li>
+              </ul>
+            </li>
+
           </ul>
         </section>
         <!-- /.sidebar -->

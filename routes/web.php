@@ -37,6 +37,17 @@ Route::group([ 'middleware' => ['auth'] ], function () {
   /* --- Contratos --- */
   Route::resource('contratos', 'ContratosController');
 
+  /* --- Transportes --- */
+  Route::resource('transportes', 'TransportesController');
+  /* --- Transporte consumo --- */
+  Route::resource('transportes/consumos', 'TransportesConsumosController')->except([
+    'create',
+    'store'
+  ]);
+  Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
+  Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
+  Route::get('transportes/consumos/download/{consumo}', 'TransportesConsumosController@download')->name('consumos.download');
+
   /* --- Usuarios --- */
   Route::resource('usuarios', 'UsuariosController');
   /* --- Perfil --- */

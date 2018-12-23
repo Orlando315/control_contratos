@@ -35,4 +35,10 @@ class Empresa extends Model
   {
     return $this->hasMany('App\Inventario');
   }
+
+  public function transportes()
+  {
+    return $this->hasMany('App\Transporte');
+  }
+
 }
