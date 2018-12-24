@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
         'tipo' =>  1,
         'nombres' => 'Empresa',
         'apellidos' => null,
-        'rut' => '1111111',
+        'rut' => '1111111-1',
         'email' => 'empresa@test.com',
         'telefono' => '0000000000',
-        'usuario' => 'empresa',
-        'password' => bcrypt('123456')
+        'usuario' => '1111111-1',
+        'password' => bcrypt('1111111-1')
       ]);
 
       App\User::create([
@@ -41,11 +41,11 @@ class DatabaseSeeder extends Seeder
         'tipo' =>  3,
         'nombres' => 'Pedro',
         'apellidos' => 'Garcia',
-        'rut' => '1111112',
+        'rut' => '111111-2',
         'email' => 'user@test.com',
         'telefono' => '0000000001',
-        'usuario' => 'usuario',
-        'password' => bcrypt('123456')
+        'usuario' => '111111-2',
+        'password' => bcrypt('111111-2')
       ]);
 
       App\Contrato::create([
@@ -88,11 +88,11 @@ class DatabaseSeeder extends Seeder
         'tipo' =>  2,
         'nombres' => 'Nombres',
         'apellidos' => 'Apellidos',
-        'rut' => '1111113',
+        'rut' => '111111-3',
         'email' => 'empleado@test.com',
         'telefono' => '0000000003',
-        'usuario' => '1111113',
-        'password' => bcrypt('1111113')
+        'usuario' => '111111-3',
+        'password' => bcrypt('111111-3')
       ]);
     }
 }

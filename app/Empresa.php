@@ -13,7 +13,7 @@ class Empresa extends Model
 
   public function usuario()
   {
-    return $this->hasOne('App\User');
+    return $this->hasOne('App\Usuario');
   }
 
   public function configuracion()

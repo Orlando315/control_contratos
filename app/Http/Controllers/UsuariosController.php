@@ -40,18 +40,16 @@ class UsuariosController extends Controller
     {
       $this->validate($request, [
         'tipo' => 'required|in:3,4',
-        'usuario' => 'required|alpha_num|unique:users,usuario',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
-        'rut' => 'required|string|unique:users,rut',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut',
         'email' => 'required|email|unique:users,email',
-        'telefono' => 'required',
-        'password' => 'required|confirmed',
-        'password_confirmation' => 'required'
+        'telefono' => 'required'
       ]);
 
       $usuario = new Usuario($request->all());
-      $usuario->password = bcrypt($request->password);
+      $usuario->usuario = $request->rut;
+      $usuario->password = bcrypt($request->rut);
 
       if($usuario = Auth::user()->empresa->usuario()->save($usuario)){
         return redirect('usuarios/' . $usuario->id)->with([
@@ -100,15 +98,15 @@ class UsuariosController extends Controller
     {
       $this->validate($request, [
         'tipo' => 'required|in:3,4',
-        'usuario' => 'required|alpha_num|unique:users,usuario,' . $usuario->id . ',id',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
-        'rut' => 'required|string|unique:users,rut,' . $usuario->id . ',id',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut,' . $usuario->id . ',id',
         'email' => 'required|email|unique:users,email,' . $usuario->id . ',id',
         'telefono' => 'required'
       ]);
 
       $usuario->fill($request->all());
+      $usuario->usuario = $request->rut;
 
       if($usuario->save()){
         return redirect('usuarios/' . $usuario->id)->with([

@@ -30,7 +30,6 @@ class Usuario extends User
     'tipo',
     'nombres',
     'apellidos',
-    'usuario',
     'rut',
     'telefono',
     'email'

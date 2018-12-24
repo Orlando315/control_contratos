@@ -26,11 +26,6 @@
           </select>
         </div>
 
-        <div class="form-group {{ $errors->has('usuario') ? 'has-error' : '' }}">
-          <label class="control-label" for="usuario">Usuario: *</label>
-          <input id="usuario" class="form-control" type="text" name="usuario" maxlength="30" value="{{ old('usuario') ? old('usuario') : '' }}" placeholder="Usuario" required>
-        </div>
-
         <div class="form-group {{ $errors->has('nombres') ? 'has-error' : '' }}">
           <label class="control-label" for="nombres">Nombres: *</label>
           <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres') ? old('nombres') : '' }}" placeholder="Nombres" required>
@@ -43,8 +38,8 @@
 
         <div class="form-group {{ $errors->has('rut') ? 'has-error' : '' }}">
           <label class="control-label" for="rut">RUT: *</label>
-          <input id="rut" class="form-control" type="text" name="rut" maxlength="20" pattern="^\d*$" value="{{ old('rut') ? old('rut') : '' }}" placeholder="RUT" required>
-          <span class="help-block">Solo números</span>
+          <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\d])$" value="{{ old('rut') ? old('rut') : '' }}" placeholder="RUT" required>
+          <span class="help-block">Ejemplo: 00000000-0</span>
         </div>
 
         <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">
@@ -55,16 +50,6 @@
         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
           <label class="control-label" for="email">Email: *</label>
           <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : '' }}" placeholder="Email" required>
-        </div>
-
-        <div class="form-group {{ $errors->has('password') ? 'has-error' : '' }}">
-          <label class="control-label" for="password">Contraseña: *</label>
-          <input id="password" class="form-control" type="password" name="password" minlength="6" value="{{ old('password') ? old('password') : '' }}" placeholder="Contraseña" required>
-        </div>
-
-        <div class="form-group {{ $errors->has('password_confirmation') ? 'has-error' : '' }}">
-          <label class="control-label" for="password_confirmation">Verificar contraseña: *</label>
-          <input id="password_confirmation" class="form-control" type="password" name="password_confirmation" minlength="6" value="{{ old('password_confirmation') ? old('password_confirmation') : '' }}" placeholder="Verificar contraseña" required>
         </div>
 
         @if (count($errors) > 0)

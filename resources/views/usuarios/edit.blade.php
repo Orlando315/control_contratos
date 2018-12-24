@@ -28,11 +28,6 @@
           </select>
         </div>
 
-        <div class="form-group {{ $errors->has('usuario') ? 'has-error' : '' }}">
-          <label class="control-label" for="usuario">Usuario: *</label>
-          <input id="usuario" class="form-control" type="text" name="usuario" maxlength="50" value="{{ old('usuario') ? old('usuario') : $usuario->usuario }}" placeholder="Nombres" required>
-        </div>
-
         <div class="form-group {{ $errors->has('nombres') ? 'has-error' : '' }}">
           <label class="control-label" for="nombres">Nombres: *</label>
           <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres') ? old('nombres') : $usuario->nombres }}" placeholder="Nombres" required>
@@ -45,8 +40,8 @@
 
         <div class="form-group {{ $errors->has('rut') ? 'has-error' : '' }}">
           <label class="control-label" for="rut">RUT: *</label>
-          <input id="rut" class="form-control" type="text" name="rut" maxlength="20" pattern="^\d*$" value="{{ old('rut') ? old('rut') : $usuario->rut }}" placeholder="RUT" required>
-          <span class="help-block">Solo números</span>
+          <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="\d{4,9}-[\d])$" value="{{ old('rut') ? old('rut') : $usuario->rut }}" placeholder="RUT" required>
+          <span class="help-block">Ejemplo: 00000000-0</span>
         </div>
 
         <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">

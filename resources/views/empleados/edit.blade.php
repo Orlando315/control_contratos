@@ -48,8 +48,8 @@
 
           <div class="form-group {{ $errors->has('rut') ? 'has-error' : '' }}">
             <label class="control-label" for="rut">RUT: *</label>
-            <input id="rut" class="form-control" type="text" name="rut" maxlength="20" pattern="^\d*$" value="{{ old( 'rut' ) ? old( 'rut' ) : $empleado->usuario->rut }}" placeholder="RUT" required>
-            <span class="help-block">Solo números</span>
+            <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\d])$" value="{{ old( 'rut' ) ? old( 'rut' ) : $empleado->usuario->rut }}" placeholder="RUT" required>
+            <span class="help-block">Ejemplo: 00000000-0</span>
           </div>
 
           <div class="form-group {{ $errors->has('direccion') ? 'has-error' : '' }}">
@@ -139,8 +139,8 @@
         <div class="alert alert-danger alert-important">
           <ul>
             @foreach($errors->all() as $error)
-               <li>{{ $error }}</li>
-             @endforeach
+              <li>{{ $error }}</li>
+            @endforeach
           </ul>  
         </div>
         @endif

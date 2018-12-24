@@ -43,7 +43,7 @@
 	      <form action="{{ route('login.auth') }}" method="POST">
 	          {{ csrf_field() }}
 	        <div class="form-group has-feedback">
-	          <input  class="form-control" type="text" name="usuario" placeholder="Usuario">
+	          <input  class="form-control" type="text" name="usuario" placeholder="RUT">
 	          <span class="glyphicon glyphicon-user form-control-feedback"></span>
 	        </div>
 	        <div class="form-group has-feedback">

@@ -19,11 +19,6 @@
 
         <h4>Editar Perfil</h4>
 
-        <div class="form-group {{ $errors->has('usuario') ? 'has-error' : '' }}">
-          <label class="control-label" for="usuario">Usuario: *</label>
-          <input id="usuario" class="form-control" type="text" name="usuario" value="{{ old( 'usuario' ) ? old( 'usuario' ) : Auth::user()->usuario }}" placeholder="Usuario" required>
-        </div>
-
         <div class="form-group {{ $errors->has('nombres') ? 'has-error' : '' }}">
           <label class="control-label" for="nombres">Nombre: *</label>
           <input id="nombres" class="form-control" type="text" name="nombres" value="{{ old( 'nombres' ) ? old( 'nombres' ) : Auth::user()->nombres }}" placeholder="Nombre" required>
@@ -31,8 +26,8 @@
 
         <div class="form-group {{ $errors->has('rut') ? 'has-error' : '' }}">
           <label class="control-label" for="rut">RUT: *</label>
-          <input id="rut" class="form-control" type="text" name="rut"  pattern="^\d*$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
-          <span class="help-block">Solo números</span>
+          <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\d])$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
+          <span class="help-block">Ejemplo: 00000000-0</span>
         </div>
 
         <div class="form-group {{ $errors->has('representante') ? 'has-error' : '' }}">

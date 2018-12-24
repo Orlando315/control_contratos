@@ -50,7 +50,7 @@ class EmpleadosController extends Controller
         'apellidos' => 'required|string',
         'sexo' => 'required',
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
-        'rut' => 'required|string|unique:users,rut',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut',
         'direccion' => 'required|string',
         'telefono' => 'required|string',
         'email' => 'required|email|unique:users,email',
@@ -134,7 +134,7 @@ class EmpleadosController extends Controller
         'apellidos' => 'required|string',
         'sexo' => 'required',
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
-        'rut' => 'required|string|unique:users,rut,' . $empleado->usuario->id . ',id',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut,' . $empleado->usuario->id . ',id',
         'direccion' => 'required|string',
         'telefono' => 'required|string',
         'email' => 'required|email|unique:users,email,' . $empleado->usuario->id . ',id',
@@ -172,7 +172,6 @@ class EmpleadosController extends Controller
       $empleado->banco->fill($request->all());
       $empleado->usuario->fill($request->all());
       $empleado->usuario->usuario = $request->rut;
-      $empleado->usuario->rut     = $request->rut;
 
       if($empleado->push()){
         return redirect('empleados/' . $empleado->id)->with([

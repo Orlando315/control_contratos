@@ -70,6 +70,12 @@
                 <b>Teléfono</b>
                 <span class="pull-right"> {{ Auth::user()->telefono }} </span>
               </li>
+              @if(Auth::user()->tipo == 1)
+              <li class="list-group-item">
+                <b>Jornada</b>
+                <span class="pull-right">{{ Auth::user()->empresa->configuracion->jornada }}</span>
+              </li>
+              @endif
             </ul>
           </div><!-- /.box-body -->
         </div>

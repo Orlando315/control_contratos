@@ -39,9 +39,8 @@ class EmpresasController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
-        'usuario' => 'required|alpha_num|unique:users,usuario',
         'nombres' => 'required|string',
-        'rut' => 'required|string|unique:users,rut',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut',
         'representante' => 'required|string',
         'email' => 'required|email|unique:users,email',
         'telefono' => 'required',
@@ -54,8 +53,9 @@ class EmpresasController extends Controller
 
       if($empresa->save()){
 
-        $user = new User($request->all());
+        $user = new Usuario($request->all());
         $user->tipo = 1;
+        $user->usuario = $request->rut;
         $user->password = bcrypt($request->input('password'));
         $empresa->usuario()->save($user);
 
@@ -106,23 +106,21 @@ class EmpresasController extends Controller
     public function update(Request $request)
     {
       $this->validate($request, [
-        'usuario' => 'required|alpha_num|unique:users,usuario,' . Auth::user()->id . ',id',
         'nombres' => 'required|string',
-        'rut' => 'required|string|unique:users,rut,' . Auth::user()->id . ',id',
+        'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut,' . Auth::user()->id . ',id',
         'representante' => 'required|string',
         'email' => 'required|email|unique:users,email,' . Auth::user()->id . ',id',
         'telefono' => 'required',
         'jornada' => 'required'
       ]);
 
-      $empresa = Empresa::find(Auth::user()->empresa->id);
+      $empresa = Empresa::find(Auth::user()->empresa_id);
       $empresa->fill($request->all());
-      $usuario = Usuario::find(Auth()->user()->id);
-      $usuario->fill($request->all());
+      $empresa->usuario->fill($request->all());
+      $empresa->usuario->usuario = $request->rut;
+      $empresa->configuracion->jornada = $request->jornada;
 
-      if($empresa->save()){
-        $usuario->save();
-
+      if($empresa->push()){
         return redirect('perfil')->with([
           'flash_message' => 'Perfil modificado exitosamente.',
           'flash_class' => 'alert-success'
