@@ -30,7 +30,7 @@ class InventariosEntregasController extends Controller
       $inventarios = Inventario::all();
       $contratos = Contrato::all();
 
-      return view('entregas.create', ['inventario' => $inventario, 'inventarios' => $inventarios, 'contratos' => $contratos]);
+      return view('inventarios.entregas.create', ['inventario' => $inventario, 'inventarios' => $inventarios, 'contratos' => $contratos]);
     }
 
     /**
@@ -66,7 +66,7 @@ class InventariosEntregasController extends Controller
           'flash_class' => 'alert-success'
           ]);
       }else{
-        return redirect('entregas/' . $inventario->id)->with([
+        return redirect('inventarios/entregas/' . $inventario->id)->with([
           'flash_message' => 'Ha ocurrido un error.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
@@ -80,9 +80,9 @@ class InventariosEntregasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Inventario $inventario)
+    public function show(InventarioEntrega $inventario)
     {
-      return view('inventarios.show', ['inventario' => $inventario]);
+      //
     }
 
     /**
@@ -91,9 +91,9 @@ class InventariosEntregasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Inventario $inventario)
+    public function edit(InventarioEntrega $inventario)
     {
-      return view('inventarios.edit', ['inventario' => $inventario]);
+      //
     }
 
     /**
@@ -103,9 +103,22 @@ class InventariosEntregasController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, InventarioEntrega $entrega)
     {
+      if(Auth::user()->id === $entrega->entregado){
+        $entrega->recibido = true;
 
+        if($entrega->save()){
+          $response = ['response' => true];
+        }else{
+          $response = ['response' => false, 'message' => 'Ha ocurrido un error.'];
+        }
+      }else{
+        $response = ['response' => false, 'message' => 'No estas autorizado a confirmar esta entrega.'];
+      }
+
+
+        return $response;
     }
 
     /**

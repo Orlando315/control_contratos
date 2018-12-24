@@ -69,11 +69,12 @@ Route::group([ 'middleware' => ['auth'] ], function () {
   Route::resource('inventarios', 'InventariosController');
   Route::get('inventarios/download/{inventario}', 'InventariosController@download')->name('inventarios.download');
   /* --- Entregas ---*/
-  Route::get('entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
-  Route::post('entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');
-  Route::delete('entregas/{inventario}/{entrega}', 'InventariosEntregasController@destroy')->name('entregas.destroy');
-  Route::resource('entregas', 'InventariosEntregasController')->only([
-    'index'
+  Route::get('inventarios/entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
+  Route::post('inventarios/entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');
+  Route::delete('inventarios/entregas/{inventario}/{entrega}', 'InventariosEntregasController@destroy')->name('entregas.destroy');
+  Route::resource('inventarios/entregas', 'InventariosEntregasController')->only([
+    'index',
+    'update'
   ]);
 
   /* --- Empleados --- */

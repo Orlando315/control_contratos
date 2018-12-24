@@ -190,6 +190,7 @@
         </section>
         <!-- Main content -->
         <section class="content">
+          @include('partials.entregas')
           @yield( 'content' )
         </section>
       </div><!-- /.content-wrapper -->
@@ -226,6 +227,32 @@
             url:'{{ asset( "plugins/datatables/spanish.json" ) }}'
           }
         });
+
+        $('.btn-confirmar-entrega').click(function(){
+          let btn = $(this),
+              entrega = btn.data('id');
+          let action = `{{ route('entregas.index') }}/` + entrega;
+
+          $.ajax({
+            type: 'POST',
+            url: action,
+            data: {
+              _token: '{{ csrf_token() }}',
+              _method: 'PATCH',
+            },
+            dataType: 'json',
+          })
+          .done(function(data){
+            if(data.response){
+              btn.closest('.alert').alert('close')
+            }else{
+              console.log('false')
+            }
+          })
+          .fail(function(){
+            console.log('fail')
+          })
+        })
       })
     </script>
 

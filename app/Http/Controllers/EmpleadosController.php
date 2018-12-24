@@ -305,6 +305,6 @@ class EmpleadosController extends Controller
 
     public function getByContrato(Contrato $contrato)
     {
-      return $contrato->empleados()->with(['usuario:id,empleado_id,rut,nombres,apellidos'])->get()->toArray();
+      return $contrato->empleados()->select(['id'])->with(['usuario:id,empleado_id,rut,nombres,apellidos'])->get()->toArray();
     }
 }

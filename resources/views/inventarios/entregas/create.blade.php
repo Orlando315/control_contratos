@@ -89,7 +89,7 @@
       select.empty().append(new Option('Seleccione...', '', false, false)).trigger('change');
       if(data.length > 0){
         $.each(data, function(k, v){
-          select.append(new Option(v.usuario.rut + '|' + v.usuario.nombres + ' ' + v.usuario.apellidos, v.usuario.id, false, false)).trigger('change')
+          select.append(new Option(`${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`, v.usuario.id, false, false)).trigger('change')
         })
 
         select.prop('disabled', false)

@@ -37,4 +37,9 @@ class InventarioEntrega extends model
   {
     return number_format($this->cantidad, 0, ',', '.');
   }
+
+  public function recibido()
+  {
+    return $this->recibido == 1 ? '<span class="label label-primary">Recibido</span>' : '<span class="label label-default">Pendiente</span>';
+  }
 }

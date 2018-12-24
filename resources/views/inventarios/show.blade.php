@@ -76,6 +76,7 @@
                   <th class="text-center">Entregado a</th>
                   <th class="text-center">Cantidad</th>
                   <th class="text-center">Fecha</th>
+                  <th class="text-center">Recibido</th>
                   <th class="text-center">Acción</th>
                 </tr>
               </thead>
@@ -87,8 +88,11 @@
                     <td>{{ $d->entregadoA->nombres }} {{ $d->entregadoA->apellidos }}</td>
                     <td>{{ $d->cantidad() }}</td>
                     <td>{{ $d->created_at }}</td>
+                    <td>{!! $d->recibido() !!}</td>
                     <td>
+                      @if(!$d->recibido)
                       <button class="btn btn-flat btn-danger btn-sm" data-toggle="modal" data-target="#delEntregaModal" data-entrega="{{ $d->id }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                      @endif
                     </td>
                   </tr>
                 @endforeach
