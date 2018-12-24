@@ -78,6 +78,16 @@ class Empleado extends Model
     return $this->hasMany('App\EmpleadosEvento');
   }
 
+  public function anticipos()
+  {
+    return $this->hasMany('App\Anticipo');
+  }
+
+  public function latestAnticipo()
+  {
+    return $this->hasOne('App\Anticipo')->select(['empleado_id', 'anticipo'])->latest();
+  }
+
   public function proyectarJornada()
   {
     $events = ['trabajo' => [], 'descanso'=>[]];

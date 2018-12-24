@@ -165,6 +165,37 @@
 
     <div class="row">
       <div class="col-md-12">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-level-up"></i> Anticipos</h3>
+          </div>
+          <div class="box-body">
+            <table class="table data-table table-bordered table-hover" style="width: 100%">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th class="text-center">Fecha</th>
+                  <th class="text-center">Anticipo</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                @foreach($empleado->anticipos as $d)
+                  <tr>
+                    <td>{{ $loop->index + 1 }}</td>
+                    <td>{{ $d->fecha }}</td>
+                    <td>{{ $d->anticipo() }}</td>
+                    <td>
+                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route('anticipos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
         <div class="box box-solid">
           <div class="box-body">
             <div class="row">

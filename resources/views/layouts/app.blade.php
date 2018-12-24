@@ -150,6 +150,19 @@
 
             <li class="treeview">
               <a href="#">
+                <i class="fa fa-level-up"></i>
+                <span>Anticipos</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('anticipos.index') }}"><i class="fa fa-circle-o"></i>Ver anticipos</a></li>
+                <li><a href="{{ route('anticipos.individual') }}"><i class="fa fa-circle-o"></i>Anticipo Individual</a></li>
+                <li><a href="{{ route('anticipos.masivo') }}"><i class="fa fa-circle-o"></i>Anticipo Masivo</a></li>
+              </ul>
+            </li>
+
+            <li class="treeview">
+              <a href="#">
                 <i class="fa fa-car"></i>
                 <span>Transportes</span>
                 <i class="fa fa-angle-left pull-right"></i>

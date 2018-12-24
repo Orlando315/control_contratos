@@ -26,3 +26,14 @@
 .clickableEvent:hover{
   cursor: pointer;
 }
+
+.table-anticipos td{
+  border-top: 1px solid #bbb !important;
+}
+.table-anticipos td > p{
+  margin: 5px 0 0 0;
+}
+.table-anticipos td > .form-group
+.table-anticipos td > .form-control,{
+  margin-bottom: 0;
+}
