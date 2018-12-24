@@ -12,7 +12,7 @@
   <!-- Formulario -->
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <form class="" action="{{ route('inventarios.update', ['id' => $inventario->id]) }}" method="POST">
+      <form class="" action="{{ route('inventarios.update', ['id' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
 
         {{ method_field('PATCH') }}
         {{ csrf_field() }}
@@ -25,6 +25,7 @@
             <option value="">Seleccione...</option>
             <option value="1" {{ old('tipo') == '1' ? 'selected' : $inventario->tipo == 1 ? 'selected' : '' }}>Insumo</option>
             <option value="2" {{ old('tipo') == '2' ? 'selected' : $inventario->tipo == 2 ? 'selected' : '' }}>EPP</option>
+            <option value="3" {{ old('tipo') == '3' ? 'selected' : $inventario->tipo == 3 ? 'selected' : '' }}>Otro</option>
           </select>
         </div>
 
@@ -46,6 +47,11 @@
         <div class="form-group {{ $errors->has('cantidad') ? 'has-error' : '' }}">
           <label class="control-label" for="cantidad">Cantidad: *</label>
           <input id="cantidad" class="form-control" type="number" step="1" min="1" max="999999" name="cantidad" value="{{ old('cantidad') ? old('cantidad') : $inventario->cantidad }}" placeholder="Valor" required>
+        </div>
+
+        <div class="form-group {{ $errors->has('adjunto') ? 'has-error' : '' }}">
+          <label class="control-label" for="adjunto">Adjunto: </label>
+          <input id="adjunto" type="file" name="adjunto" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
         </div>
 
         @if (count($errors) > 0)

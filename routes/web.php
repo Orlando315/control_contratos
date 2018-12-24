@@ -67,6 +67,7 @@ Route::group([ 'middleware' => ['auth'] ], function () {
 
   /* --- Inventario ---*/
   Route::resource('inventarios', 'InventariosController');
+  Route::get('inventarios/download/{inventario}', 'InventariosController@download')->name('inventarios.download');
   /* --- Entregas ---*/
   Route::get('entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
   Route::post('entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');

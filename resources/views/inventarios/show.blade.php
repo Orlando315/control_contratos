@@ -50,6 +50,10 @@
                 <b>Cantidad</b>
                 <span class="pull-right"> {{ $inventario->cantidad() }} </span>
               </li>
+              <li class="list-group-item">
+                <b>Adjunto</b>
+                <span class="pull-right">{!! $inventario->adjunto() !!}</span>
+              </li>
             </ul>
           </div><!-- /.box-body -->
         </div>

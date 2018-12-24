@@ -21,7 +21,7 @@ class Inventario extends model
     'nombre',
     'valor',
     'fecha',
-    'cantidad',
+    'cantidad'
   ];
 
   public function empresa()
@@ -36,7 +36,20 @@ class Inventario extends model
 
   public function tipo()
   {
-    return $this->tipo == 1 ? 'Insumo' : 'EPP';
+    switch ($this->tipo) {
+      case 1:
+        $tipo = 'Insumo';
+        break;
+      case 2:
+        $tipo = 'EPP';
+        break;
+      case 3:
+      default:
+        $tipo = 'Otro';
+        break;
+    }
+
+    return $tipo;
   }
 
   public function cantidad()
@@ -57,5 +70,16 @@ class Inventario extends model
   public function valor()
   {
     return number_format($this->valor, 0, ',', '.');
+  }
+
+  public function adjunto()
+  {
+
+    return $this->adjunto ? '<a href="' . $this->getDownloadLink() . '">Descargar</a>' : 'N/A';
+  }
+
+  protected function getDownloadLink()
+  {
+    return route('inventarios.download', ['id' => $this->id]);
   }
 }
