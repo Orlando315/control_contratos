@@ -50,10 +50,14 @@ class InventariosController extends Controller
 
       $inventario = new Inventario($request->all());
 
+      if(Auth::user()->tipo >= 3){
+        $inventario->tipo = 3;
+      }
+
       if($inventario = Auth::user()->empresa->inventarios()->save($inventario)){
 
         if($request->hasFile('adjunto')){
-          $directory = 'Empresa' . Auth::user()->empresa_id . '/Inventarios/' . $inventario->id;
+          $directory = $inventario->directory();
 
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
@@ -118,6 +122,10 @@ class InventariosController extends Controller
 
       $inventario->fill($request->all());
 
+      if(Auth::user()->tipo >= 3){
+        $inventario->tipo = 3;
+      }
+
       if($inventario->save()){
 
         if($request->hasFile('adjunto')){
@@ -127,7 +135,7 @@ class InventariosController extends Controller
             Storage::delete($inventario->adjunto);
           }
 
-          $directory = 'Empresa' . Auth::user()->empresa_id . '/Inventarios/' . $inventario->id;
+          $directory = $inventario->directory();
 
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
@@ -161,7 +169,7 @@ class InventariosController extends Controller
       if($inventario->delete()){
 
         if($inventario->adjunto){
-          Storage::delete($inventario->adjunto);
+          Storage::deleteDirectory($inventario->directory());
         }
 
         return redirect('inventarios')->with([

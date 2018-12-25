@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Contrato;
 use App\Transporte;
 use App\Usuario;
@@ -130,6 +131,12 @@ class TransportesController extends Controller
     public function destroy(Transporte $transporte)
     {
       if($transporte->delete()){
+        $directory = 'Empresa' . Auth::user()->empresa_id . '/Transportes/' . $transporte->id;
+
+        if(Storage::exists($directory)){
+          Storage::deleteDirectory($directory);
+        }
+
         return redirect('transportes')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Transporte eliminado exitosamente.'

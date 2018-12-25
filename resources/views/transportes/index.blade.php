@@ -30,7 +30,9 @@
         <div class="box-header with-border">
           <h3 class="box-title"><i class="fa fa-car"></i> Transportes</h3>
           <span class="pull-right">
+            @if(Auth::user()->tipo <= 2)
             <a class="btn btn-success btn-flat" href="{{ route('transportes.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Transporte</a>
+            @endif
           </span>
         </div>
         <div class="box-body">
@@ -40,8 +42,7 @@
                 <th class="text-center">#</th>
                 <th class="text-center">Contrato</th>
                 <th class="text-center">Vehiculo</th>
-                <th class="text-center">Mantención</th>
-                <th class="text-center">Chofer</th>
+                <th class="text-center">Patente</th>
                 <th class="text-center">Acción</th>
               </tr>
             </thead>
@@ -51,11 +52,12 @@
                   <td>{{ $loop->index + 1 }}</td>
                   <td><a href="{{ route('contratos.show', ['contrato' => $d->contrato->id]) }}">{{ $d->contrato->nombre }} </a></td>
                   <td>{{ $d->vehiculo }}</td>
-                  <td>{{ $d->fecha_mantencion }}</td>
-                  <td>{{ $d->chofer }}</td>
+                  <td>{{ $d->patente }}</td>
                   <td>
                     <a class="btn btn-primary btn-flat btn-sm" href="{{ route('transportes.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    @if(Auth::user()->tipo <= 2)
                     <a class="btn btn-success btn-flat btn-sm" href="{{ route('transportes.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endif
                   </td>
                 </tr>
               @endforeach

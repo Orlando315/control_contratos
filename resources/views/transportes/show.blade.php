@@ -12,8 +12,10 @@
 @section( 'content' )
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('transportes.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+    @if(Auth::user()->tipo <= 2)
     <a class="btn btn-flat btn-success" href="{{ route('transportes.edit', [$transporte->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    @endif
   </section>
 
   <section style="margin-top: 20px">
@@ -97,7 +99,7 @@
       </div>
     </div>
   </section>
-
+  @if(Auth::user()->tipo <= 2)
   <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -122,5 +124,5 @@
       </div>
     </div>
   </div>
-
+  @endif
 @endsection

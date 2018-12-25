@@ -67,7 +67,7 @@
                   <!-- User image -->
                   <li class="user-header">
                     <p>{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}<br>
-                      <small>{{ Auth::user()->rut }}</small><br>
+                      <small>{{ Auth::user()->tipo() }}</small><br>
                       <small>{{ Auth::user()->email }}</small>
                     </p>
                     <p>
@@ -111,19 +111,8 @@
                 <i class="fa fa-home"></i> Inicio
               </a>
             </li>
-
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-users"></i>
-                <span>Usuarios</span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="{{ route('usuarios.index') }}"><i class="fa fa-circle-o"></i>Ver usuarios</a></li>
-                <li><a href="{{ route('usuarios.create') }}"><i class="fa fa-circle-o"></i>Agregar usuario</a></li>
-              </ul>
-            </li>
-
+            
+            @if(Auth::user()->tipo == 1)
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-clipboard"></i>
@@ -135,16 +124,18 @@
                 <li><a href="{{ route('contratos.create') }}"><i class="fa fa-circle-o"></i>Agregar contrato</a></li>
               </ul>
             </li>
-
+            @endif
+            
+            @if(Auth::user()->tipo <= 2)
             <li class="treeview">
               <a href="#">
-                <i class="fa fa-cubes"></i>
-                <span>Inventarios</span>
+                <i class="fa fa-users"></i>
+                <span>Usuarios</span>
                 <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li><a href="{{ route('inventarios.index') }}"><i class="fa fa-circle-o"></i>Ver inventarios</a></li>
-                <li><a href="{{ route('inventarios.create') }}"><i class="fa fa-circle-o"></i>Agregar inventario</a></li>
+                <li><a href="{{ route('usuarios.index') }}"><i class="fa fa-circle-o"></i>Ver usuarios</a></li>
+                <li><a href="{{ route('usuarios.create') }}"><i class="fa fa-circle-o"></i>Agregar usuario</a></li>
               </ul>
             </li>
 
@@ -160,6 +151,20 @@
                 <li><a href="{{ route('anticipos.masivo') }}"><i class="fa fa-circle-o"></i>Anticipo Masivo</a></li>
               </ul>
             </li>
+            @endif
+
+            @if(Auth::user()->tipo <= 3)
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-cubes"></i>
+                <span>Inventarios</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('inventarios.index') }}"><i class="fa fa-circle-o"></i>Ver inventarios</a></li>
+                <li><a href="{{ route('inventarios.create') }}"><i class="fa fa-circle-o"></i>Agregar inventario</a></li>
+              </ul>
+            </li>
 
             <li class="treeview">
               <a href="#">
@@ -169,9 +174,12 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="{{ route('transportes.index') }}"><i class="fa fa-circle-o"></i>Ver transportes</a></li>
+                @if(Auth::user()->tipo <= 2)
                 <li><a href="{{ route('transportes.create') }}"><i class="fa fa-circle-o"></i>Agregar transporte</a></li>
+                @endif
               </ul>
             </li>
+            @endif
 
           </ul>
         </section>

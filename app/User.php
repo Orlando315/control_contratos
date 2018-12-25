@@ -23,4 +23,29 @@ class User extends Authenticatable
                 ->where('recibido', 0)
                 ->with('inventario:id,nombre');
   }
+
+  public function checkRole($role)
+  {
+    return $this->tipo <= $role;
+  }
+
+  public function tipo()
+  {
+    switch ($this->tipo) {
+      case 1:
+        $tipo = 'Empresa';
+        break;
+      case 2:
+        $tipo = 'Administrador';
+        break;
+      case 2:
+        $tipo = 'Supervisor';
+        break;
+      default:
+        $tipo = 'Empleado';
+        break;
+    }
+
+    return $tipo;
+  }
 }

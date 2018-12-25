@@ -39,7 +39,7 @@
         <div class="box box-danger">
           <div class="box-body box-profile">
             <h3 class="profile-username text-center">{{ Auth::user()->usuario }}</h3>
-            <p class="text-muted text-center">{{ Auth::user()->created_at }}</p>
+            <p class="text-muted text-center">{{ Auth::user()->tipo() }}</p>
 
             <ul class="list-group list-group-unbordered">
               <li class="list-group-item">

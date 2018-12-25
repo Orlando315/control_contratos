@@ -10,6 +10,7 @@
 @section( 'content' )
   @include('partials.flash')
   <div class="row">
+    @if(Auth::user()->tipo <= 2)
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
         <span class="info-box-icon bg-green"><i class="fa fa-users"></i></span>
@@ -33,6 +34,7 @@
       </div>
       <!-- /.info-box -->
     </div>
+    @endif
     
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">

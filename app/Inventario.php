@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
 
 class Inventario extends model
@@ -13,6 +15,12 @@ class Inventario extends model
     parent::boot();
 
     static::addGlobalScope(new EmpresaScope);
+
+    static::addGlobalScope('userRole', function (Builder $builder) {
+      if(Auth::user()->tipo == 3){
+        $builder->where('tipo', 3);
+      }
+    });
   }
   
   protected $fillable = [
@@ -81,5 +89,10 @@ class Inventario extends model
   protected function getDownloadLink()
   {
     return route('inventarios.download', ['id' => $this->id]);
+  }
+
+  public function directory()
+  {
+    return 'Empresa' . Auth::user()->empresa_id . '/Inventarios/' . $this->id;
   }
 }

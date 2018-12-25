@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
       App\User::create([
         'empresa_id' => 1,
         'empleado_id' => null,
-        'tipo' =>  3,
+        'tipo' =>  2,
         'nombres' => 'Pedro',
         'apellidos' => 'Garcia',
         'rut' => '111111-2',
@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
       App\User::create([
         'empresa_id' => 1,
         'empleado_id' => 1,
-        'tipo' =>  2,
+        'tipo' =>  4,
         'nombres' => 'Nombres',
         'apellidos' => 'Apellidos',
         'rut' => '111111-3',

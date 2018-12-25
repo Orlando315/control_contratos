@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
             $table->unsignedInteger('empleado_id')->nullable();
             $table->foreign('empleado_id')->references('id')->on('empleados')->onDelete('cascade');
-            $table->tinyInteger('tipo')->comment('1 Empresa|2 Empleado|3 Usuario');
+            $table->tinyInteger('tipo')->comment('1 Empresa|2 Administrador|3 Supervisor|4 Empleado');
             $table->string('nombres', 50);
             $table->string('apellidos', 50)->nullable();
             $table->string('usuario', 30)->unique();
