@@ -103,6 +103,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
     Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
     Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
+
+    /* --- Facturas --- */
+    Route::resource('facturas', 'FacturasController');
+    Route::get('facturas/{factura}/download/{adjunto}', 'FacturasController@download')->name('facturas.download');
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */

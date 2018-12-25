@@ -46,4 +46,9 @@ class Empresa extends Model
     return $this->hasMany('App\Anticipo');
   }
 
+  public function facturas()
+  {
+    return $this->hasMany('App\Factura');
+  }
+
 }

@@ -151,6 +151,18 @@
                 <li><a href="{{ route('anticipos.masivo') }}"><i class="fa fa-circle-o"></i>Anticipo Masivo</a></li>
               </ul>
             </li>
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-file"></i>
+                <span>Facturas</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('facturas.index') }}"><i class="fa fa-circle-o"></i>Ver facturas</a></li>
+                <li><a href="{{ route('facturas.create') }}"><i class="fa fa-circle-o"></i>Agregar factura</a></li>
+              </ul>
+            </li>
             @endif
 
             @if(Auth::user()->tipo <= 3)
