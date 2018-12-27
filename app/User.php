@@ -38,7 +38,7 @@ class User extends Authenticatable
       case 2:
         $tipo = 'Administrador';
         break;
-      case 2:
+      case 3:
         $tipo = 'Supervisor';
         break;
       default:

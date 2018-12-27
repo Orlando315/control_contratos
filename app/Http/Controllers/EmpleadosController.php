@@ -78,7 +78,7 @@ class EmpleadosController extends Controller
         $usuario = new Usuario($request->all());
         $usuario->usuario  = $request->rut;
         $usuario->password = bcrypt($request->rut);
-        $usuario->tipo = 2; // Tipo 2 = Empleado
+        $usuario->tipo = 4; // Tipo 4 = Empleado
         $usuario->empresa_id = Auth::user()->empresa->id;
         $empleado->usuario()->save($usuario);
         
@@ -106,7 +106,12 @@ class EmpleadosController extends Controller
      */
     public function show(Empleado $empleado)
     {
-      return view('empleados.show', ['empleado' => $empleado]);
+      $empleados = Empleado::select('id')
+                            ->with('usuario:empleado_id,nombres,apellidos,rut')
+                            ->where('contrato_id', $empleado->contrato_id)
+                            ->get();
+
+      return view('empleados.show', ['empleado' => $empleado, 'empleados' => $empleados]);
     }
 
     /**
@@ -153,7 +158,7 @@ class EmpleadosController extends Controller
       ]);
 
       if($empleado->despidoORenuncia() && $request->fin){
-        $evento = $empleado->eventos()->where('tipo', 5)->orWhere('tipo', 6)->first();
+        $evento = $empleado->eventos()->where('tipo', 6)->orWhere('tipo', 7)->first();
         $eventoDate = new Carbon($evento->inicio);
         $fin = new Carbon($request->fin);
         if($eventoDate->lessThan($fin)){
@@ -226,7 +231,7 @@ class EmpleadosController extends Controller
       ]);
 
       if($empleado->despidoORenuncia()){
-        $evento = $empleado->eventos()->where('tipo', 5)->orWhere('tipo', 6)->first();
+        $evento = $empleado->eventos()->where('tipo', 6)->orWhere('tipo', 7)->first();
         $eventoDate = new Carbon($evento->inicio);
 
         $inicio = new Carbon($request->inicio);

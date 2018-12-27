@@ -88,6 +88,11 @@ class Empleado extends Model
     return $this->hasOne('App\Anticipo')->select(['empleado_id', 'anticipo'])->latest();
   }
 
+  public function reemplazos()
+  {
+    return $this->eventos()->with('userReemplazo')->where('tipo', 9)->get();
+  }
+
   public function proyectarJornada()
   {
     $events = ['trabajo' => [], 'descanso'=>[]];
@@ -95,7 +100,7 @@ class Empleado extends Model
     foreach ($this->contratos()->get() as $contrato){
       
       $contratoStart = new Carbon($contrato->inicio_jornada);
-      // Si el contrato no tiene fecha de fin, se proyectan 6 meses desde la fecha de inicio
+      // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
       $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
       
       //Diferencia en dias desde el inicio hasta el fin del contrato      
@@ -166,7 +171,7 @@ class Empleado extends Model
   public function getEventos()
   {
     $eventos = [];
-    foreach($this->eventos()->get() as $evento){
+    foreach($this->eventos()->where('tipo', '!=', 1)->get() as $evento){
       $data = $evento->eventoData();
 
       $eventos[] = [
@@ -205,7 +210,7 @@ class Empleado extends Model
     $firstContrato = $this->contratos->first();
     
     $carbonInicioLastContrato = new Carbon($lastContrato->inicio_jornada);
-    // Si el lastContrato no tiene fecha de fin, se proyectan 6 meses desde la fecha de inicio
+    // Si el lastContrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
     $finLastContrato = $lastContrato->fin ?? $carbonInicioLastContrato->addYears(3);
     // Periodo desde el inicio del 1er contrato, hasta el fin del ultimo
 
@@ -235,7 +240,7 @@ class Empleado extends Model
     foreach ($this->contratos()->get() as $contrato){
       
       $contratoStart = new Carbon($contrato->inicio_jornada);
-      // Si el contrato no tiene fecha de fin, se proyectan 6 meses desde la fecha de inicio
+      // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
       $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
 
       // Diferencia en dias desde el inicio hasta el fin del contrato      
@@ -405,7 +410,7 @@ class Empleado extends Model
 
   public function despidoORenuncia()
   {
-    return $this->eventos()->where('tipo', 5)->orWhere('tipo', 6)->count();
+    return $this->eventos()->where('tipo', 6)->orWhere('tipo', 7)->count();
   }
 
   public static function eventsToCalendar()
@@ -430,7 +435,7 @@ class Empleado extends Model
     foreach ($this->contratos()->where('inicio', '<', $fin)->get() as $contrato){
       
       $contratoStart = new Carbon($contrato->inicio_jornada);
-      // Si el contrato no tiene fecha de fin, se proyectan 6 meses desde la fecha de inicio
+      // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
       $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
 
       // Diferencia en dias desde el inicio hasta el fin del contrato      
@@ -535,6 +540,86 @@ class Empleado extends Model
     }
 
     return $jornadas;
+  }
+
+  public function isWorkDay()
+  {
+    $today = Carbon::now();
+    $contrato = $this->contratos->last();
+    $contratoStart = new Carbon($contrato->inicio_jornada);
+
+    // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
+    $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
+    
+    // Diferencia en dias desde el inicio hasta el fin del contrato      
+    $diffInDays = $contratoStart->diffInDays($contratoEnd);
+    $jornada = $contrato->jornada();
+    // Intervalos a iterar para generar los bloquees de trabajo + descanso
+    $interval = (int) ceil($diffInDays / $jornada->interval);
+    $endDifInDays = 1;
+
+    for ($i = 1; $i <= $interval; $i++){
+      $endJornada = $contratoStart->copy()->addDays($jornada->trabajo);
+
+      if($i == $interval){
+        $endDifInDays = $endJornada->diffInDays($contratoEnd, false);
+
+        // Si fecha final de la jornada es menor a la fecha final de contrato
+        // se le restan la diferencia en dias a sa jornada
+        if($endDifInDays < 0){
+          $endJornada = $endJornada->subDays(($endDifInDays * -1));
+        }
+      }
+
+      if($today->between($contratoStart, $endJornada)){
+        return true;
+      }
+      // Se aumenta la fecha de inicio con la cantidad de dias en la jornada + los descanso
+      $contratoStart->addDays($jornada->interval);
+    }// For invertal
+
+    return false;
+  }
+
+  public function eventsToday()
+  {
+    $today = date('Y-m-d');
+
+    return $this->eventos()
+                ->where(function($query) use ($today){
+                  $query->where('inicio', $today)
+                        ->orWhere(function($queryWhere) use ($today){
+                        $queryWhere->whereNotNull('fin')
+                              ->where([
+                                ['inicio', '<=', $today],
+                                ['fin', '>=', $today]
+                              ]);
+                        });
+                })
+                ->where([
+                  ['tipo', '!=', 1],
+                  ['pago', false]
+                ]);
+  }
+
+  /*
+  * Buscar todos los eventos de tipo Asistencia en los rangos de fechas dados, donde pago sea True
+  */
+  public function findEvents($inicio, $fin, $diaPago = true, $comparacion = '=', $tipo = 1){
+    return $this->eventos()
+                ->where(function($query) use ($inicio, $fin){
+                  $query->where('inicio', $inicio)
+                        ->when($fin, function($queryWhen) use ($inicio, $fin){
+                        $queryWhen->orWhere([
+                          ['inicio', '>=', $inicio],
+                          ['inicio', '<=', $fin]
+                        ]);
+                      });
+                })
+                ->where([
+                  ['tipo', $comparacion, $tipo],
+                  ['pago', $diaPago]
+                ]);
   }
 
 }

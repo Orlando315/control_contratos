@@ -38,6 +38,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
+                <th class="text-center">Tipo</th>
                 <th class="text-center">Nombres</th>
                 <th class="text-center">Apellidos</th>
                 <th class="text-center">RUT</th>
@@ -49,6 +50,7 @@
               @foreach($usuarios as $d)
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
+                  <td>{{ $d->tipo() }}</td>
                   <td>{{ $d->nombres }}</td>
                   <td>{{ $d->apellidos }}</td>
                   <td>{{ $d->rut }}</td>

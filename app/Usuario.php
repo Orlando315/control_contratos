@@ -40,11 +40,12 @@ class Usuario extends User
   ];
 
   /*
-    Todos los usuarios de tipo Usuario
+    Todos los usuarios de tipo Administrator y Supervisor
   */
   public static function usuarios()
   {
-    return Usuario::where('tipo', 3)->get();
+    return Usuario::where('tipo', 2)
+                    ->orWhere('tipo', 3)->get();
   }
 
   /*
@@ -52,7 +53,7 @@ class Usuario extends User
   */
   public static function supervisores()
   {
-    return usuario::where('tipo', 4)->get(); 
+    return usuario::where('tipo', 3)->get(); 
   }
 
   public function getUsuarioAttribute($usuario)

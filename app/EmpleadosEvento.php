@@ -9,9 +9,14 @@ class EmpleadosEvento extends Model
 {
   protected $fillable = [
     'empleado_id',
+    'reemplazo',
+    'valor',
     'inicio',
     'fin',
-    'tipo'
+    'tipo',
+    'jornada',
+    'comida',
+    'pago'
   ];
 
   public function getFinAttribute($date)
@@ -26,25 +31,31 @@ class EmpleadosEvento extends Model
   {
     switch($this->tipo){
       case '1':
-        $data = ['titulo'=>'Licencia médica', 'color'=>'#aa6708'];
+        $data = ['titulo'=>'Asistencia', 'color'=>'#00a65a', 'remunerable' => true, 'comida' => true];
         break;
       case '2':
-        $data = ['titulo'=>'Vacaciones', 'color'=> '#6f5499'];
+        $data = ['titulo'=>'Licencia médica', 'color'=>'#aa6708', 'remunerable' => false, 'comida' => false];
         break;
       case '3':
-        $data = ['titulo'=>'Permiso', 'color'=> '#3c8dbc'];
+        $data = ['titulo'=>'Vacaciones', 'color'=> '#6f5499', 'remunerable' => true, 'comida' => false];
         break;
       case '4':
-        $data = ['titulo'=>'Permiso no remunerable', 'color'=> '#222d32'];
+        $data = ['titulo'=>'Permiso', 'color'=> '#3c8dbc', 'remunerable' => false, 'comida' => false];
         break;
       case '5':
-        $data = ['titulo'=>'Despido', 'color'=> '#ce4844'];
+        $data = ['titulo'=>'Permiso no remunerable', 'color'=> '#222d32', 'remunerable' => false, 'comida' => false];
         break;
       case '6':
-        $data = ['titulo'=>'Renuncia', 'color'=> '#ce4844'];
+        $data = ['titulo'=>'Despido', 'color'=> '#ce4844', 'remunerable' => false, 'comida' => false];
         break;
       case '7':
-        $data = ['titulo'=>'Inasistencia', 'color'=> '#4f5b94'];
+        $data = ['titulo'=>'Renuncia', 'color'=> '#ce4844', 'remunerable' => false, 'comida' => false];
+        break;
+      case '8':
+        $data = ['titulo'=>'Inasistencia', 'color'=> '#4f5b94', 'remunerable' => false, 'comida' => false];
+        break;
+      case '9':
+        $data = ['titulo'=>'Reemplazo', 'color'=> '#001f3f', 'remunerable' => false, 'comida' => false];
         break;
     }
     return (object) $data;
@@ -112,11 +123,11 @@ class EmpleadosEvento extends Model
           $eventoEnd   = new Carbon($evento->fin);
           $diff = $eventoStart->diffInDays($eventoEnd, false);
 
-          $dataRow[($evento->tipo + 2)] += $diff;
+          $dataRow[($evento->tipo + 1)] += $diff;
         }else{
-          $dataRow[($evento->tipo + 2)]++;
+          $dataRow[($evento->tipo + 1)]++;
         }
-        
+
       }
 
       $asistencias = $empleado->countAsisencias($inicio, $fin);
@@ -127,5 +138,23 @@ class EmpleadosEvento extends Model
       $allData = array_merge($allData, [$dataRow]);
     }
     return $allData;
+  }
+
+  public function userReemplazo()
+  {
+    return $this->belongsTo('App\Usuario', 'reemplazo');
+  }
+
+  public function nombreReemplazo()
+  {
+    $nombre = $this->userReemplazo->nombres.' '.$this->userReemplazo->apellidos;
+    $route = route('empleados.show', ['usuario' => $this->userReemplazo->empleado_id]);
+
+    return "<a href='{$route}'>{$nombre}</a>";
+  }
+
+  public function valor()
+  {
+    return number_format($this->valor, 0, ',', '.');
   }
 }

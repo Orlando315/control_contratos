@@ -18,7 +18,7 @@
         <h4>Agregar transporte</h4>
 
         <div class="form-group {{ $errors->has('supervisor') ? 'has-error' : '' }}">
-          <label class="control-label" class="form-control" for="supervisor">Supervisor: *</label>
+          <label class="control-label" for="supervisor">Supervisor: *</label>
           <select id="supervisor" class="form-control" name="supervisor" required>
             <option value="">Seleccione...</option>
             @foreach($usuarios as $usuario)
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
-          <label class="control-label" class="form-control" for="contrato">Contrato: *</label>
+          <label class="control-label" for="contrato">Contrato: *</label>
           <select id="contrato" class="form-control" name="contrato" required>
             <option value="">Seleccione...</option>
             @foreach($contratos as $contrato)

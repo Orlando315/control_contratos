@@ -164,7 +164,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <div class="box box-success">
           <div class="box-header with-border">
             <h3 class="box-title"><i class="fa fa-level-up"></i> Anticipos</h3>
@@ -195,6 +195,38 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="box">
+          <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-retweet"></i> Reemplazos</h3>
+          </div>
+          <div class="box-body">
+            <table class="table data-table table-bordered table-hover" style="width: 100%">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th class="text-center">Fecha</th>
+                  <th class="text-center">Reemplazo</th>
+                  <th class="text-center">Valor</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                @foreach($empleado->reemplazos() as $d)
+                  <tr>
+                    <td>{{ $loop->index + 1 }}</td>
+                    <td>{{ $d->inicio }}</td>
+                    <td>{!! $d->nombreReemplazo() !!}</td>
+                    <td>{{ $d->valor() }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-12">
         <div class="box box-solid">
           <div class="box-body">
@@ -310,21 +342,37 @@
                 <label for="tipo">Evento: *</label>
                 <select id="tipo" class="form-control" name="tipo" required>
                   <option value="">Seleccione...</option>
-                  <option value="1">Licencia médica</option>
-                  <option value="2">Vacaciones</option>
-                  <option value="3">Permiso</option>
-                  <option value="4">Permiso no remunerable</option>
+                  <option value="2">Licencia médica</option>
+                  <option value="3">Vacaciones</option>
+                  <option value="4">Permiso</option>
+                  <option value="5">Permiso no remunerable</option>
                   @if(!$empleado->despidoORenuncia())
-                    <option value="5">Despido</option>
-                    <option value="6">Renuncia</option>
+                    <option value="6">Despido</option>
+                    <option value="7">Renuncia</option>
                   @endif
-                  <option value="7">Inasistencia</option>
+                  <option value="8">Inasistencia</option>
+                  <option value="9">Reemplazo</option>
                 </select>
               </div>
 
               <div class="form-group">
                 <label class="control-label" for="fin">Fin: <span class="help-block">(Opcional)</span></label>
                 <input id="fin" class="form-control" type="text" name="fin" placeholder="yyyy-mm-dd">
+              </div>
+
+              <div class="form-group {{ $errors->has('reemplazo') ? 'has-error' : '' }}" hidden>
+                <label class="control-label" for="reemplazo">Reemplazo: *</label>
+                <select id="reemplazo" class="form-control" name="reemplazo" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                  @foreach($empleados as $d)
+                    <option value="{{ $d->id }}">{{ $d->usuario->rut }} | {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div class="form-group" hidden>
+                <label class="control-label" for="valor">Valor: *</label>
+                <input id="valor" class="form-control" type="number" step="1" min="1" max="999999999" name="valor" placeholder="Valor" rqeuired>
               </div>
 
               <center>
@@ -449,7 +497,29 @@
           }
         }
       })
-   	});
+
+
+      $('#tipo').change(function(){
+        let tipo = $(this).val()
+
+        let isReemplazo = tipo == 9
+        let isDespidoRenuncia = (tipo == 6 || tipo == 7)
+
+        $('#fin')
+          .closest('.form-group')
+          .attr('hidden', (isReemplazo || isDespidoRenuncia))
+
+        $('#reemplazo, #valor')
+          .prop('required', isReemplazo)
+          .closest('.form-group')
+          .attr('hidden', !isReemplazo)
+
+      })
+
+      $('#reemplazo').select2()
+      $('#reemplazo').change()
+
+   	});//Ready
 
     function deleteFile(e){
       e.preventDefault();
@@ -496,7 +566,7 @@
       .done(function(r){
         if(r.response){
 
-          if(r.evento.tipo == 5 || r.evento.tipo == 6){
+          if(r.evento.tipo == 6 || r.evento.tipo == 7 || r.evento.tipo == 9){
             location.reload()
           }
 
@@ -513,10 +583,12 @@
           $('#eventsModal').modal('hide');
         }else{
           alert.show().delay(7000).hide('slow');
+          alert.find('strong').text(r.message || 'Ha ocurrido un error.')
         }
       })
       .fail(function(){
         alert.show().delay(7000).hide('slow');
+        alert.find('strong').text('Ha ocurrido un error')
       })
       .always(function(){
         button.button('reset');
