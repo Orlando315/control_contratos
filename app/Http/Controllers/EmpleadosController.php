@@ -284,11 +284,6 @@ class EmpleadosController extends Controller
       $this->exportExcel($empleado->getDataAsArray($request->inicio, $request->fin), 'Empleado' . $empleado->id);
     }
 
-    public function exportAll(Request $request)
-    {
-      $this->exportExcel(Empleado::exportAll($request->inicio, $request->fin), 'Jornadas');
-    }
-
     protected function exportExcel($data, $nombre)
     {
       $writer = WriterFactory::create(Type::XLSX);
@@ -296,15 +291,6 @@ class EmpleadosController extends Controller
       $writer->addRows($data);
 
       $writer->close(); 
-    }
-
-    public function calendar()
-    {
-      $empleados = Empleado::all();
-      $eventos   = Empleado::eventsToCalendar();
-      $jornadas  = Empleado::jornadasToCalendar();
-
-      return view('empleados.calendar', ['empleados' => $empleados, 'eventos' => $eventos, 'jornadas' => $jornadas]);
     }
 
     public function getByContrato(Contrato $contrato)

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Contrato;
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
 
 class ContratosController extends Controller
 {
@@ -135,5 +137,37 @@ class ContratosController extends Controller
           'flash_important' => true
         ]);
       }
+    }
+
+    public function calendar(Contrato $contrato)
+    {
+      $empleados = $contrato->empleados()->with('usuario:empleado_id,nombres,apellidos,rut')->get();
+      $eventos   = $contrato->eventsToCalendar(true, '!=', 1, false);
+      $jornadas  = $contrato->jornadasToCalendar();
+
+      return view('contratos.calendar', ['contrato' => $contrato, 'empleados' => $empleados, 'eventos' => $eventos, 'jornadas' => $jornadas]);
+    }
+
+    public function comida(Contrato $contrato)
+    {
+      $empleados    = $contrato->empleados()->with('usuario:empleado_id,nombres,apellidos,rut')->get();
+      $comidas      = $contrato->comidasToCalendar();
+      $asistencias  = $contrato->eventsToCalendar(false, '=', 1, true);
+
+      return view('contratos.comida', ['contrato' => $contrato, 'empleados' => $empleados, 'comidas' => $comidas, 'asistencias' => $asistencias]);
+    }
+
+    public function exportJornadas(Request $request, Contrato $contrato)
+    {
+      $this->exportExcel($contrato->exportJornadas($request->inicio, $request->fin), 'Jornadas');
+    }
+
+    protected function exportExcel($data, $nombre)
+    {
+      $writer = WriterFactory::create(Type::XLSX);
+      $writer->openToBrowser("{$nombre}.xlsx");
+      $writer->addRows($data);
+
+      $writer->close(); 
     }
 }

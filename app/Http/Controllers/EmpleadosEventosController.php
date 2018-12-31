@@ -175,4 +175,20 @@ class EmpleadosEventosController extends Controller
 
       return $eventos;
     }
+
+    /*
+      Agregar o eliminar si el Empleado comio ese dia
+    */
+    public function toggleComida(Request $request, EmpleadosEvento $evento)
+    {
+      $evento->comida = (bool) $request->comida;
+
+      if($evento->save()){
+        $response = ['response' => true, 'evento' => $evento];
+      }else{
+        $response = ['response' => false];
+      }
+
+      return $response;
+    }
 }

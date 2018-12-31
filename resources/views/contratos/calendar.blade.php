@@ -5,13 +5,13 @@
 @section( 'breadcrumb' )
 	<ol class="breadcrumb">
 	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('empleados.index') }}">Empleados</a></li>
+    <li><a href="{{ route('contratos.index') }}">Contratos</a></li>
 	  <li class="active"> Calendario </li>
 	</ol>
 @endsection
 @section('content')
   <section>
-    <a class="btn btn-flat btn-default" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+    <a class="btn btn-flat btn-default" href="{{ route('contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
   </section>
 
   <section style="margin-top: 20px">
@@ -21,7 +21,7 @@
           <div class="box-body">
             <div class="row">
               <div class="col-md-12">
-                <button class="btn btn-flat btn-success" data-path="{{ route('empleados.exportAll') }}" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-excel-o"></i> Exportar jornadas</button>
+                <button class="btn btn-flat btn-success" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-excel-o"></i> Exportar jornadas</button>
               </div>
               <div class="col-md-12">
                 <div id="calendar"></div>
@@ -57,13 +57,11 @@
                 <label for="tipo">Evento: *</label>
                 <select id="tipo" class="form-control" name="tipo" required>
                   <option value="">Seleccione...</option>
-                  <option value="1">Licencia médica</option>
-                  <option value="2">Vacaciones</option>
-                  <option value="3">Permiso</option>
-                  <option value="4">Permiso no remunerable</option>
-                  <option value="5">Despido</option>
-                  <option value="6">Renuncia</option>
-                  <option value="7">Inasistencia</option>
+                  <option value="2">Licencia médica</option>
+                  <option value="3">Vacaciones</option>
+                  <option value="4">Permiso</option>
+                  <option value="5">Permiso no remunerable</option>
+                  <option value="8">Inasistencia</option>
                 </select>
               </div>
 
@@ -117,7 +115,7 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <form id="exportForm" class="col-md-8 col-md-offset-2" action="#" method="POST">
+            <form id="exportForm" class="col-md-8 col-md-offset-2" action="{{ route('contratos.exportJornadas', ['contrato' => $contrato->id]) }}" method="POST">
               {{ csrf_field() }}
 
               <div class="form-group">
@@ -149,12 +147,6 @@
         jornadas = @json($jornadas);
 
     $(document).ready(function(){
-      $('#exportModal').on('show.bs.modal', function(e){
-        var btn = e.relatedTarget,
-            xpath = $(btn).data('path');
-        $('#exportForm').attr('action', xpath);
-      })
-
       $('#inicioExport, #finExport').datepicker({
         format: 'yyyy-mm-dd',
         language: 'es',
@@ -194,7 +186,7 @@
           ],
           resources: [
             @foreach($empleados as $d)
-            {id: '{{$d->id}}', title: '{{$d->nombres}} {{$d->apellidos}}', path: '{{ route("eventos.store", ["empleado"=>$d->id]) }}'},
+            {id: '{{$d->id}}', title: '{{$d->usuario->nombres}} {{$d->usuario->apellidos}}', path: '{{ route("eventos.store", ["empleado"=>$d->id]) }}'},
             @endforeach
           ],
           eventSources: [
@@ -229,6 +221,26 @@
         }
       )
 
+      $('#tipo').change(function(){
+        let tipo = $(this).val()
+
+        let isReemplazo = tipo == 9
+        let isDespidoRenuncia = (tipo == 6 || tipo == 7)
+
+        $('#fin')
+          .closest('.form-group')
+          .attr('hidden', (isReemplazo || isDespidoRenuncia))
+
+        $('#reemplazo, #valor')
+          .prop('required', isReemplazo)
+          .closest('.form-group')
+          .attr('hidden', !isReemplazo)
+
+      })
+
+      $('#reemplazo').select2()
+      $('#reemplazo').change()
+
       $('#eventForm').submit(storeEvent)
       $('#delEventForm').submit(delEvent)
       
@@ -254,7 +266,7 @@
       .done(function(r){
         if(r.response){
 
-          if(r.evento.tipo == 5 || r.evento.tipo == 6){
+          if(r.evento.tipo == 6 || r.evento.tipo == 7 || r.evento.tipo == 9){
             location.reload()
           }
 
@@ -272,10 +284,12 @@
           $('#eventsModal').modal('hide');
         }else{
           alert.show().delay(7000).hide('slow');
+          alert.find('strong').text(r.message || 'Ha ocurrido un error.')
         }
       })
       .fail(function(){
         alert.show().delay(7000).hide('slow');
+        alert.find('strong').text('Ha ocurrido un error')
       })
       .always(function(){
         button.button('reset');

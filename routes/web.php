@@ -54,6 +54,11 @@ Route::group(['middleware' => 'auth'], function () {
   /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
   Route::group(['middleware' => 'checkRole:2'], function(){
 
+    /* --- Contratos --- */
+    Route::get('contratos/comida/{contrato}', 'ContratosController@comida')->name('contratos.comidas');
+    Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
+    Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
+
     /* --- Usuarios --- */
     Route::resource('usuarios', 'UsuariosController');
 
@@ -62,8 +67,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('empleados/{empleado}/cambio', 'EmpleadosController@cambio')->name('empleados.cambio');
     Route::post('empleados/{empleado}/cambio', 'EmpleadosController@cambioStore')->name('empleados.cambioStore');
     Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
-    Route::get('empleados/calendar', 'EmpleadosController@calendar')->name('empleados.calendar');
-    Route::post('empleados/export', 'EmpleadosController@exportAll')->name('empleados.exportAll');
     Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
     Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
     Route::resource('empleados', 'EmpleadosController')->except([
@@ -78,6 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
     Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')->name('eventos.store');
     Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
+    Route::patch('empleados/eventos/comida/{evento}', 'EmpleadosEventosController@toggleComida')->name('eventos.toggleComida');
 
     /* --- Documentos --- */
     Route::resource('documentos', 'DocumentosController')->except([

@@ -76,6 +76,11 @@
           <div class="box-header with-border">
             <h3 class="box-title"><i class="fa fa-address-card"></i> Empleados</h3>
             <span class="pull-right">
+              <!--
+              <a class="btn btn-danger btn-flat" href="{{ route('eventos.events', ['contrato' => $contrato->id]) }}"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Total de eventos</a>
+              -->
+              <a class="btn btn-warning btn-flat" href="{{ route('contratos.comidas', ['contrato' => $contrato->id]) }}"><i class="fa fa-cutlery" aria-hidden="true"></i> Ver comidas</a>
+              <a class="btn bg-purple btn-flat" href="{{ route('contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
               <a class="btn btn-success btn-flat" href="{{ route('empleados.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</a>
             </span>
           </div>

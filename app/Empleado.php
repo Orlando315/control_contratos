@@ -168,16 +168,27 @@ class Empleado extends Model
     return $events;
   }
 
-  public function getEventos()
+  public function getEventos($clickable = true, $comparacion = '!=', $tipo = 1, $pago = null)
   {
     $eventos = [];
-    foreach($this->eventos()->where('tipo', '!=', 1)->get() as $evento){
+    $search = $this->eventos()
+                    ->where(function ($query) use ($comparacion, $tipo, $pago){
+                      $query->where('tipo', $comparacion, $tipo)
+                            ->when($pago, function($queryWhen) use ($pago){
+                            $queryWhen->where('pago', $pago);
+                          });
+                    })
+                    ->get();
+
+    $className = $clickable ? 'clickableEvent' : '';
+
+    foreach($search as $evento){
       $data = $evento->eventoData();
 
       $eventos[] = [
         'resourceId' => $evento->empleado_id,
         'id' => $evento->id,
-        'className' => 'clickableEvent',
+        'className' => $className,
         'title' => $data->titulo,
         'start' => $evento->inicio,
         'end' => $evento->fin,
@@ -235,7 +246,7 @@ class Empleado extends Model
     return [$dataHeaders, $jornadas, $eventos, $feriados];
   }
 
-  protected function proyectarJornadaAsArray($dataRow, $dataHeaders)
+  public function proyectarJornadaAsArray($dataRow, $dataHeaders)
   {
     foreach ($this->contratos()->get() as $contrato){
       
@@ -310,9 +321,14 @@ class Empleado extends Model
     return $dataRow;
   }
 
-  protected function getEventosAsArray($dataRow, $dataHeaders)
+  public function getEventosAsArray($dataRow, $dataHeaders)
   {
-    foreach($this->eventos()->get() as $evento){
+
+    $search = $this->eventos()
+                    ->where('tipo', '!=', 1)
+                    ->get();
+
+    foreach($search as $evento){
       $data = $evento->eventoData();
       $inicio = new Carbon($evento->inicio);
       $diffInDays = 1;
@@ -364,62 +380,9 @@ class Empleado extends Model
     return $dataRow;
   }
 
-  public static function exportAll($inicio = null, $fin = null)
-  {
-    // Tomar la fecha inicial mas baja
-    $lowerDateContrato = EmpleadosContrato::orderBy('inicio', 'asc')->first();
-    $inicio = $inicio ?? $lowerDateContrato->inicio_jornada;
-
-    $lowerStartDate = new Carbon($inicio);
-
-    // Contrato con fecha final mas alta
-    $higherDateContrato = EmpleadosContrato::orderBy('fin', 'desc')->first();
-    if($fin){
-      $higherEndDate = new Carbon($fin);
-    }else{
-      $higherEndDate = new Carbon($higherDateContrato->fin);
-      $higherEndDate->addMonths(6);  
-    }
-
-    // Periodo desde el inicio del contrato con fecha inicial mas baja, hasta la fecha final calculada
-    $periodo = new CarbonPeriod($lowerStartDate, $higherEndDate);
-
-    // Headers para el excel
-    $dataHeaders = ['Empleado'];
-    $dataRow = array_fill(0, count($periodo) + 1, null);
-
-    foreach($periodo as $date){
-      // Headers para el excel
-      $dataHeaders[] = $date->format('Y-m-d');
-    }
-
-    $allData = [$dataHeaders];
-
-    foreach (Empleado::all() as $empleado) {
-      $nombre = "{$empleado->rut} | {$empleado->nombres} {$empleado->apellidos}";
-
-      $jornadas    = $empleado->proyectarJornadaAsArray($dataRow, $dataHeaders);
-      $jornadas[0] = $nombre;
-      $eventos     = $empleado->getEventosAsArray($dataRow, $dataHeaders);
-      $eventos[0]  = $nombre;
-
-      $allData = array_merge($allData, [$jornadas, $eventos]);
-    }
-    return $allData;
-  }
-
   public function despidoORenuncia()
   {
     return $this->eventos()->where('tipo', 6)->orWhere('tipo', 7)->count();
-  }
-
-  public static function eventsToCalendar()
-  {
-    $eventos = [];
-    foreach(Empleado::all() as $empleado){
-      $eventos = array_merge($eventos, $empleado->getEventos());
-    }
-    return $eventos;
   }
 
   public function countAsisencias($inicio, $fin)
@@ -527,19 +490,6 @@ class Empleado extends Model
     }// Foreach contratos
 
     return $totales;
-  }
-
-  public static function jornadasToCalendar()
-  {
-    $jornadas = ['trabajo' => [], 'descanso' => []];
-    foreach (Empleado::all() as $empleado) {
-      $jornada = $empleado->proyectarJornada();
-
-      $jornadas['trabajo'] = array_merge($jornadas['trabajo'], $jornada['trabajo']);
-      $jornadas['descanso'] = array_merge($jornadas['descanso'], $jornada['descanso']);
-    }
-
-    return $jornadas;
   }
 
   public function isWorkDay()
