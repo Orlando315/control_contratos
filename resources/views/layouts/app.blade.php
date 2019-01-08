@@ -111,8 +111,8 @@
                 <i class="fa fa-home"></i> Inicio
               </a>
             </li>
-            
-            @if(Auth::user()->tipo == 1)
+
+            @if(Auth::user()->tipo <= 2)            
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-clipboard"></i>
@@ -121,12 +121,12 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="{{ route('contratos.index') }}"><i class="fa fa-circle-o"></i>Ver contratos</a></li>
+                @if(Auth::user()->tipo == 1)
                 <li><a href="{{ route('contratos.create') }}"><i class="fa fa-circle-o"></i>Agregar contrato</a></li>
+                @endif
               </ul>
             </li>
-            @endif
-            
-            @if(Auth::user()->tipo <= 2)
+
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-users"></i>

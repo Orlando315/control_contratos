@@ -44,7 +44,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('/perfil/empresas', 'EmpresasController@update')->name('empresas.update');
 
     /* --- Contratos --- */
-    Route::resource('contratos', 'ContratosController');
+    Route::resource('contratos', 'ContratosController')->except([
+      'index',
+      'show'
+    ]);
 
     /* --- Documentos --- */    
     Route::get('documentos/contratos/{contrato}', 'DocumentosController@createContrato')->name('documentos.createContrato');
@@ -55,6 +58,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::group(['middleware' => 'checkRole:2'], function(){
 
     /* --- Contratos --- */
+    Route::resource('contratos', 'ContratosController')->only([
+      'index',
+      'show'
+    ]);
     Route::get('contratos/comida/{contrato}', 'ContratosController@comida')->name('contratos.comidas');
     Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
     Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
