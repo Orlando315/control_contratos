@@ -11,7 +11,7 @@
 @endsection
 @section( 'content' )
   <section>
-    <a class="btn btn-flat btn-default" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+    <a class="btn btn-flat btn-default" href="{{ route('empleados.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     <a class="btn btn-flat btn-success" href="{{ route('empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <a class="btn btn-flat btn-warning" href="{{ route('empleados.cambio', [$empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -206,17 +206,51 @@
                 <tr>
                   <th class="text-center">#</th>
                   <th class="text-center">Fecha</th>
-                  <th class="text-center">Reemplazo</th>
+                  <th class="text-center">Reemplazó a</th>
                   <th class="text-center">Valor</th>
                 </tr>
               </thead>
               <tbody class="text-center">
-                @foreach($empleado->reemplazos() as $d)
+                @foreach($empleado->reemplazos()->get() as $d)
                   <tr>
                     <td>{{ $loop->index + 1 }}</td>
                     <td>{{ $d->inicio }}</td>
                     <td>{!! $d->nombreReemplazo() !!}</td>
                     <td>{{ $d->valor() }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-money"></i> Sueldos</h3>
+          </div>
+          <div class="box-body">
+            <table class="table data-table table-bordered table-hover" style="width: 100%">
+              <thead>
+                <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">Fecha</th>
+                <th class="text-center">Alcance líquido</th>
+                <th class="text-center">Sueldo líquido</th>
+                <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                @foreach($empleado->sueldos()->get() as $d)
+                  <tr>
+                    <td>{{ $loop->index + 1 }}</td>
+                    <td>{{ $d->created_at }}</td>
+                    <td>{{ $d->alcanceLiquido() }}</td>
+                    <td>{{ $d->sueldoLiquido() }}</td>
+                    <td>
+                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route('sueldos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    </td>
                   </tr>
                 @endforeach
               </tbody>

@@ -45,6 +45,11 @@ class Contrato extends Model
     return $this->hasManyThrough('App\EmpleadosContrato', 'App\Empleado');
   }
 
+  public function sueldos()
+  {
+    return $this->hasMany('App\EmpleadosSueldo');
+  }
+
   public function valor()
   {
     return number_format($this->valor, 0, ',', '.');
@@ -97,13 +102,7 @@ class Contrato extends Model
   {
     $comidas = [];
     foreach($this->empleados()->get() as $empleado){
-      $search = $empleado->eventos()
-                      ->where([
-                        ['tipo', 1],
-                        ['comida', true],
-                        ['pago', true]
-                      ])
-                      ->get();
+      $search = $empleado->getComidas();
       $data = [];
 
       foreach($search as $comida){
@@ -167,6 +166,31 @@ class Contrato extends Model
       $allData = array_merge($allData, [$jornadas, $eventos]);
     }
     return $allData;
+  }
+
+  /**
+  * Obtener el mes a pagar
+  * @param  Bool $monthAsNumber
+  * @return int | string
+  */
+  public function getPaymentMonth($monthAsNumber = false)
+  {
+    setlocale(LC_ALL, 'esp');
+    $dateLatestSueldo = $this->sueldos()->pluck('created_at')->last();
+    $today = new Carbon();
+    $dateLatestSueldo = $dateLatestSueldo ? new Carbon($dateLatestSueldo) : $today->copy()->subMonths(1);
+
+    /*
+      Si el mes del último pago es igual al mes actual, o mayor,
+      devolver false y no permitir registrar los pagos
+    */
+    if($dateLatestSueldo->isSameMonth($today) || $dateLatestSueldo->gte($today)){
+      return false;
+    }
+
+    $dateLatestSueldo->addMonths(1);
+
+    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : ucfirst($dateLatestSueldo->formatLocalized('%B'));
   }
 
 }

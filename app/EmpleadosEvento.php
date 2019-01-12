@@ -142,7 +142,7 @@ class EmpleadosEvento extends Model
 
   public function userReemplazo()
   {
-    return $this->belongsTo('App\Usuario', 'reemplazo');
+    return $this->belongsTo('App\Usuario', 'empleado_id');
   }
 
   public function nombreReemplazo()

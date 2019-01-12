@@ -211,6 +211,7 @@
         <!-- Main content -->
         <section class="content">
           @include('partials.entregas')
+          @include('partials.sueldos')
           @yield( 'content' )
         </section>
       </div><!-- /.content-wrapper -->
@@ -248,10 +249,10 @@
           }
         });
 
-        $('.btn-confirmar-entrega').click(function(){
+        $('.btn-confirmar').click(function(){
           let btn = $(this),
-              entrega = btn.data('id');
-          let action = `{{ route('entregas.index') }}/` + entrega;
+              id = btn.data('id'),
+              action = btn.data('path');
 
           $.ajax({
             type: 'POST',
