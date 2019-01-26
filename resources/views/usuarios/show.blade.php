@@ -22,14 +22,24 @@
 
     <div class="row">
       <div class="col-md-3">
-        <div class="box box-danger">
+        <div class="box box-success">
           <div class="box-body box-profile">
             <h4 class="profile-username text-center">
               Datos del usuario
             </h4>
-            <p class="text-muted text-center"></p>
+            <p class="text-muted text-center">
+              {{ $usuario->tipo() }}
+            </p>
 
             <ul class="list-group list-group-unbordered">
+              @if($usuario->empleado_id)
+              <li class="list-group-item">
+                <b>Empleado</b>
+                <span class="pull-right">
+                  <a href="{{ route('empleados.show', ['empleado'=> $usuario->empleado_id]) }}">Ver pefil</a>
+                </span>
+              </li>
+              @endif
               <li class="list-group-item">
                 <b>Nombres</b>
                 <span class="pull-right">{{ $usuario->nombres }}</span>

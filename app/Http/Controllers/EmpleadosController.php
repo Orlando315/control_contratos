@@ -297,4 +297,22 @@ class EmpleadosController extends Controller
     {
       return $contrato->empleados()->select(['id'])->with(['usuario:id,empleado_id,rut,nombres,apellidos'])->get()->toArray();
     }
+
+    public function toggleTipo(Empleado $empleado)
+    {
+      $empleado->usuario->tipo = $empleado->usuario->tipo == 3 ? 4 : 3;
+
+      if($empleado->push()){
+        return redirect('empleados/' . $empleado->id)->with([
+          'flash_message' => 'Empleado actualizado exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }else{
+        return redirect('empleados/' . $empleado->id . '/cambio')->with([
+          'flash_message' => 'Ha ocurrido un error.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+          ]);
+      }
+    }
 }

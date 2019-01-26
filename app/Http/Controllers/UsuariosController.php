@@ -39,7 +39,6 @@ class UsuariosController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
-        'tipo' => 'required|in:3,4',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut',
@@ -49,6 +48,7 @@ class UsuariosController extends Controller
 
       $usuario = new Usuario($request->all());
       $usuario->usuario = $request->rut;
+      $usuario->tipo = 2; // Administrador
       $usuario->password = bcrypt($request->rut);
 
       if($usuario = Auth::user()->empresa->usuario()->save($usuario)){
@@ -97,7 +97,6 @@ class UsuariosController extends Controller
     public function update(Request $request, Usuario $usuario)
     {
       $this->validate($request, [
-        'tipo' => 'required|in:3,4',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\d])$/|unique:users,rut,' . $usuario->id . ',id',

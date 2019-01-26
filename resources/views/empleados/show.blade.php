@@ -15,6 +15,10 @@
     <a class="btn btn-flat btn-success" href="{{ route('empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <a class="btn btn-flat btn-warning" href="{{ route('empleados.cambio', [$empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    <button class="btn btn-flat bg-purple" data-toggle="modal" data-target="#toggleModal">
+      <i class="fa fa-exchange" aria-hidden="true"></i>
+      {{ $empleado->usuario->tipo == 3 ? 'Volver Empleado' : 'Ascender a Supervisor' }}
+    </button>
   </section>
 
   <section style="margin-top: 20px">
@@ -243,6 +247,31 @@
       </div>
     </div>
   </section>
+
+  <div id="toggleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="toggleModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="toggleModalLabel">Cambiar de nivel</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <form class="col-md-8 col-md-offset-2" action="{{ route('empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
+              {{ method_field('PATCH') }}
+              {{ csrf_field() }}
+              <h4 class="text-center">¿Esta seguro de cambiar a {{ $empleado->usuario->tipo == 3 ? 'Empleado' : 'Supervisor' }}?</h4><br>
+
+              <center>
+                <button class="btn btn-flat btn-success" type="submit">Guardar</button>
+                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="delFileModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
     <div class="modal-dialog" role="document">
