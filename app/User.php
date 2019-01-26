@@ -48,4 +48,17 @@ class User extends Authenticatable
 
     return $tipo;
   }
+
+  public function empleado()
+  {
+    return $this->hasOne('App\Empleado', 'id', 'empleado_id');
+  }
+
+  public function sueldos($pendiente = false)
+  {
+    return $this->hasMany('App\EmpleadosSueldo', 'empleado_id', 'empleado_id')
+                  ->when($pendiente, function($query){
+                    $query->where('recibido', false);
+                  });
+  }
 }

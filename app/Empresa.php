@@ -51,4 +51,9 @@ class Empresa extends Model
     return $this->hasMany('App\Factura');
   }
 
+  public function sueldos()
+  {
+    return $this->hasMany('App\EmpleadosSueldo');
+  }
+
 }

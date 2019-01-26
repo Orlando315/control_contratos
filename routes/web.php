@@ -37,6 +37,11 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('/perfil', 'UsuariosController@updatePerfil')->name('usuarios.updatePerfil');
   Route::patch('/perfil/password', 'UsuariosController@password')->name('usuarios.password');
 
+  /* --- Sueldos --- */
+  Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');
+  Route::patch('sueldos/{sueldo}/confirmar', 'EmpleadosSueldosController@recibido')->name('sueldos.confirmar');
+  Route::get('sueldos/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldos.download');
+
   /* --- Solo usuarios 1 Empresa (Super admin) --- */
   Route::group(['middleware' => 'checkRole:1'], function(){
       /* --- Empresas --- */
@@ -115,6 +120,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
     Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
     Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
+
+    /* --- Sueldos --- */
+    Route::get('sueldos/{contrato}', 'EmpleadosSueldosController@index')->name('sueldos.index');
+    Route::get('sueldos/{contrato}/create', 'EmpleadosSueldosController@create')->name('sueldos.create');
+    Route::post('sueldos/{contrato}', 'EmpleadosSueldosController@store')->name('sueldos.store');
 
     /* --- Facturas --- */
     Route::resource('facturas', 'FacturasController');

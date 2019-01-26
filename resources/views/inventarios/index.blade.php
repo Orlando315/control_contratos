@@ -28,7 +28,7 @@
     <div class="col-md-12">
       <div class="box box-danger">
         <div class="box-header with-border">
-          <h3 class="box-title"><i class="fa fa-clipboard"></i> Inventarios</h3>
+          <h3 class="box-title"><i class="fa fa-cubes"></i> Inventarios</h3>
           <span class="pull-right">
             <a class="btn btn-success btn-flat" href="{{ route('inventarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</a>
           </span>

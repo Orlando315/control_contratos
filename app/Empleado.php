@@ -88,9 +88,13 @@ class Empleado extends Model
     return $this->hasOne('App\Anticipo')->select(['empleado_id', 'anticipo'])->latest();
   }
 
-  public function reemplazos()
+  public function reemplazos(){
+    return $this->hasMany('App\EmpleadosEvento', 'reemplazo')->where('tipo', 9);
+  }
+
+  public function sueldos()
   {
-    return $this->eventos()->with('userReemplazo')->where('tipo', 9)->get();
+    return $this->hasMany('App\EmpleadosSueldo');
   }
 
   public function proyectarJornada()
@@ -570,6 +574,93 @@ class Empleado extends Model
                   ['tipo', $comparacion, $tipo],
                   ['pago', $diaPago]
                 ]);
+  }
+
+  public function getAsistencias()
+  {
+    return $this->getEventos(false, '=', 1, 1);
+  }
+
+  public function getAlcanceLiquido()
+  {
+    return $this->contratos()->pluck('sueldo')->last();
+  }
+
+  public function getAsistenciasByMonth($month)
+  {
+    $inicio = Carbon::create(null, $month, 1);
+    $fin = $inicio->copy()->endOfMonth();
+
+    $asistencias = $this->findEvents($inicio->toDateString(), $fin->toDateString())->count();
+
+    return $asistencias;
+  }
+
+  public function calculateAnticiposByMonth($month)
+  {
+    $inicio = Carbon::create(null, $month, 1);
+    $fin = $inicio->copy()->endOfMonth();
+
+    $anticipos = $this->anticipos()
+                        ->where([
+                          ['fecha', '>=', $inicio->toDateString()],
+                          ['fecha', '<=', $fin->toDateString()]
+                        ])
+                        ->sum('anticipo');
+
+    return $anticipos;
+  }
+
+  public function calculateBonoReemplazoByMonth($month)
+  {
+    $inicio = Carbon::create(null, $month, 1);
+    $fin = $inicio->copy()->endOfMonth();
+
+    $reemplazos = $this->reemplazos()
+                        ->where([
+                          ['inicio', '>=', $inicio->toDateString()],
+                          ['inicio', '<=', $fin->toDateString()]
+                        ])->sum('valor');
+
+    return $reemplazos;
+  }
+
+  public function calculateSueldoLiquido($alcanceLiquido, $asistencias, $anticipo, $bonoReemplazo)
+  {
+    $sueldoDiario = $alcanceLiquido / 30;
+    $sueldoLiquido = (($sueldoDiario * $asistencias) - $anticipo) + $bonoReemplazo;
+
+    return $sueldoLiquido;
+  }
+
+  public function getComidas()
+  {
+    return $this->eventos()
+                ->where([
+                  ['tipo', 1],
+                  ['comida', true],
+                  ['pago', true]
+                ])
+                ->get();
+  }
+
+  public function getComidasToCalendar()
+  {
+    $comidas = [];
+
+    foreach($this->getComidas() as $comida){
+      $comidas[] = [
+        'resourceId' => $this->id,
+        'id' => 'C'.$comida->id,
+        'className' => '',
+        'title' => 'Comida',
+        'start' => $comida->inicio,
+        'end' => null,
+        'color' => '#001f3f'
+      ];
+    }// Foreach Comidas
+
+    return $comidas;
   }
 
 }
