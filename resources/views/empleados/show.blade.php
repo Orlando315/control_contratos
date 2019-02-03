@@ -76,6 +76,10 @@
                 <span class="pull-right">{{ $empleado->usuario->email }}</span>
               </li>
               <li class="list-group-item">
+                <b>Talla de camisa</b>
+                <span class="pull-right">{{ $empleado->talla_camisa }}</span>
+              </li>
+              <li class="list-group-item">
                 <b>Talla de zapato</b>
                 <span class="pull-right">{{ $empleado->talla_zapato }}</span>
               </li>

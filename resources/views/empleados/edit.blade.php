@@ -67,14 +67,19 @@
             <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : $empleado->usuario->email }}" placeholder="Email" required>
           </div>
 
+          <div class="form-group {{ $errors->has('talla_camisa') ? 'has-error' : '' }}">
+            <label class="control-label" for="talla_camisa">Talla de camisa:</label>
+            <input id="talla_camisa" class="form-control" type="number" step="1" max="99" min="1" name="talla_camisa" value="{{ old('talla_camisa') ? old('talla_camisa') : $empleado->talla_camisa }}" style="width: 80px">
+          </div>
+
           <div class="form-group {{ $errors->has('talla_zapato') ? 'has-error' : '' }}">
-            <label class="control-label" for="talla_zapato">Talla de zapato: *</label>
-            <input id="talla_zapato" class="form-control" type="number" step="0.5" max="99" min="1" name="talla_zapato" value="{{ old('talla_zapato') ? old('talla_zapato') : $empleado->talla_zapato }}" required style="width: 80px">
+            <label class="control-label" for="talla_zapato">Talla de zapato:</label>
+            <input id="talla_zapato" class="form-control" type="number" step="0.5" max="99" min="1" name="talla_zapato" value="{{ old('talla_zapato') ? old('talla_zapato') : $empleado->talla_zapato }}" style="width: 80px">
           </div>
 
           <div class="form-group {{ $errors->has('talla_pantalon') ? 'has-error' : '' }}">
-            <label class="control-label" for="talla_pantalon">Talla de pantalon: *</label>
-            <input id="talla_pantalon" class="form-control" type="number" step="1" max="99" min="1" name="talla_pantalon" value="{{ old('talla_pantalon') ? old('talla_pantalon') : $empleado->talla_pantalon }}" required style="width: 80px">
+            <label class="control-label" for="talla_pantalon">Talla de pantalon:</label>
+            <input id="talla_pantalon" class="form-control" type="number" step="1" max="99" min="1" name="talla_pantalon" value="{{ old('talla_pantalon') ? old('talla_pantalon') : $empleado->talla_pantalon }}" style="width: 80px">
           </div>
         </fieldset>
 

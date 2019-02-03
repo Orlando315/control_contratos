@@ -25,6 +25,7 @@ class Empleado extends Model
     'sexo',
     'fecha_nacimiento',
     'direccion',
+    'talla_camisa',
     'talla_zapato',
     'talla_pantalon'
   ];
