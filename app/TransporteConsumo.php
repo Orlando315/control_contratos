@@ -9,6 +9,7 @@ class TransporteConsumo extends Model
   protected $table = 'transportes_consumos';
   
   protected $fillable = [
+    'contrato_id',
     'tipo',
     'fecha',
     'cantidad',
@@ -25,6 +26,11 @@ class TransporteConsumo extends Model
   public function transporte()
   {
     return $this->belongsTo('App\Transporte');
+  }
+
+  public function contrato()
+  {
+    return $this->belongsTo('App\Contrato');
   }
 
   public function tipo()

@@ -27,7 +27,9 @@ class TransportesConsumosController extends Controller
      */
     public function create(Transporte $transporte)
     {
-      return view('transportes.consumos.create', ['transporte' => $transporte->id]);
+      $contratos = $transporte->contratos()->get();
+
+      return view('transportes.consumos.create', ['transporte' => $transporte->id, 'contratos' => $contratos]);
     }
 
     /**
@@ -38,7 +40,10 @@ class TransportesConsumosController extends Controller
      */
     public function store(Request $request, Transporte $transporte)
     {
+      $contrato = \App\Contrato::findOrFail($request->contrato);
+
       $this->validate($request, [
+        'contrato' => 'required',
         'tipo' => 'required|in:1,2',
         'fecha' => 'nullable|date_format:d-m-Y',
         'cantidad' => 'nullable|numeric',
@@ -49,6 +54,7 @@ class TransportesConsumosController extends Controller
       ]);
 
       $consumo = new TransporteConsumo($request->all());
+      $consumo->contrato_id = $contrato->id;
 
       if($consumo = $transporte->consumos()->save($consumo)){
 

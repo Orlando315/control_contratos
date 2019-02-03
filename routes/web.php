@@ -112,6 +112,8 @@ Route::group(['middleware' => 'auth'], function () {
       'index',
       'show'
     ]);
+    Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.storeContratos');
+    Route::delete('transportes/{transporte}/delete/{contrato}', 'TransportesController@destroyContratos')->name('transportes.destroyContratos');
 
     /* --- Anticipos --- */
     Route::resource('anticipos', 'AnticiposController')->except([

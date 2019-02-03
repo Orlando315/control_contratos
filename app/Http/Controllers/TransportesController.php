@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Contrato;
 use App\Transporte;
 use App\Usuario;
+use App\TransporteContrato;
 
 class TransportesController extends Controller
 {
@@ -53,10 +54,11 @@ class TransportesController extends Controller
       ]);
 
       $transporte = new Transporte($request->all());
-      $transporte->contrato_id = $contrato->id;
       $transporte->user_id = $supervisor->id;
 
       if($transporte = Auth::user()->empresa->transportes()->save($transporte)){
+        $transporte->contratos()->create(['contrato_id' => $contrato->id]);
+
         return redirect('transportes/' . $transporte->id)->with([
           'flash_message' => 'Transporte agregado exitosamente.',
           'flash_class' => 'alert-success'
@@ -78,7 +80,10 @@ class TransportesController extends Controller
      */
     public function show(Transporte $transporte)
     {
-      return view('transportes.show', ['transporte' => $transporte]);
+      $contratosIds = $transporte->contratos()->pluck('contrato_id')->toArray();
+      $contratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
+
+      return view('transportes.show', ['transporte' => $transporte, 'contratos' => $contratos]);
     }
 
     /**
@@ -143,6 +148,46 @@ class TransportesController extends Controller
         ]);
       }else{
         return redirect('transportes')->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => 'Ha ocurrido un error.',
+          'flash_important' => true
+        ]);
+      }
+    }
+
+    public function storeContratos(Request $request, Transporte $transporte)
+    {
+      $contrato = Contrato::findOrFail($request->contrato);
+
+      if($transporte->contratos()->create(['contrato_id' => $contrato->id])){
+        return redirect('transportes/' . $transporte->id)->with([
+          'flash_message' => 'Contrato agregado exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }else{
+        return redirect('transportes/' . $transporte->id)->with([
+          'flash_message' => 'Ha ocurrido un error.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+          ]);
+      }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Transporte  $transporte
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyContratos(Transporte $transporte, TransporteContrato $contrato)
+    {
+      if($contrato->delete()){
+        return redirect('transportes/' . $transporte->id)->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Contrato eliminado exitosamente.'
+        ]);
+      }else{
+        return redirect('transportes/' . $transporte->id)->with([
           'flash_class'     => 'alert-danger',
           'flash_message'   => 'Ha ocurrido un error.',
           'flash_important' => true

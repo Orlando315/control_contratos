@@ -50,6 +50,11 @@ class Contrato extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function transportes()
+  {
+    return $this->hasMany('App\TransporteContrato');
+  }
+
   public function entregas()
   {
     return InventarioEntrega::with(['inventario:id,nombre', 'realizadoPor:id,nombres,apellidos'])

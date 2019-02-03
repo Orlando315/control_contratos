@@ -18,6 +18,16 @@
 
         <h4>Agregar consumo</h4>
 
+        <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
+          <label class="control-label" class="form-control" for="contrato">Contrato: *</label>
+          <select id="contrato" class="form-control" name="contrato" required>
+            <option value="">Seleccione...</option>
+            @foreach($contratos as $contrato)
+              <option value="{{ $contrato->contrato_id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->contrato->nombre }}</option>
+            @endforeach
+          </select>
+        </div>
+
         <div class="form-group {{ $errors->has('tipo') ? 'has-error' : '' }}">
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
           <select id="tipo" class="form-control" name="tipo" required>

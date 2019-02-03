@@ -25,9 +25,9 @@ class Transporte extends Model
     return $this->belongsTo('App\Usuario', 'user_id');
   }
 
-  public function contrato()
+  public function contratos()
   {
-    return $this->belongsTo('App\Contrato');
+    return $this->hasMany('App\TransporteContrato');
   }
 
   public function consumos()

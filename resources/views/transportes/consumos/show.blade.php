@@ -31,6 +31,14 @@
 
             <ul class="list-group list-group-unbordered">
               <li class="list-group-item">
+                <b>Contrato</b>
+                <span class="pull-right">
+                  <a href="{{ route('contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                    {{ $consumo->contrato->nombre }}
+                  </a>
+                </span>
+              </li>
+              <li class="list-group-item">
                 <b>Fecha</b>
                 <span class="pull-right">{{ $consumo->fecha() }}</span>
               </li>

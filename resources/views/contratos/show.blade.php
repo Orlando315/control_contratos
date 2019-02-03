@@ -118,6 +118,40 @@
       </div>
 
       <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title"><i class="fa fa-car"></i> Transportes</h3>
+        </div>
+        <div class="box-body">
+          <table class="table data-table table-bordered table-hover" style="width: 100%">
+            <thead>
+              <tr>
+                <th class="text-center">#</th>
+                <th class="text-center">Vehiculo</th>
+                <th class="text-center">Patente</th>
+                <th class="text-center">Agregado</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody class="text-center">
+              @foreach($contrato->transportes()->get() as $d)
+                <tr>
+                  <td>{{ $loop->index + 1 }}</td>
+                  <td>{{ $d->transporte->vehiculo }}</td>
+                  <td>{{ $d->transporte->patente }}</td>
+                  <td>{{ $d->created_at }}</td>
+                  <td>
+                    <a class="btn btn-primary btn-flat btn-sm" href="{{ route('transportes.show', ['id' => $d->transporte_id] )}}"><i class="fa fa-search"></i></a>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+      <div class="col-md-12">
         <div class="box box-danger">
           <div class="box-header with-border">
             <h3 class="box-title">Entregas de Inventarios</h3>
