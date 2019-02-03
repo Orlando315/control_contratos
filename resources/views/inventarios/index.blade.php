@@ -52,7 +52,7 @@
                   <td>{{ $loop->index + 1 }}</td>
                   <td>{{ $d->tipo() }}</td>
                   <td>{{ $d->nombre }}</td>
-                  <td>{{ $d->valor }}</td>
+                  <td>{{ $d->valor() }}</td>
                   <td>{{ $d->fecha }}</td>
                   <td>{{ $d->cantidad() }}</td>
                   <td>

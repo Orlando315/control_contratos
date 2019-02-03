@@ -240,37 +240,73 @@
           </div>
         </div>
       </div>
-
-      <div class="col-md-12">
-        <div class="box box-success">
-          <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-money"></i> Sueldos</h3>
-          </div>
-          <div class="box-body">
-            <table class="table data-table table-bordered table-hover" style="width: 100%">
-              <thead>
-                <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Fecha</th>
-                <th class="text-center">Alcance líquido</th>
-                <th class="text-center">Sueldo líquido</th>
-                <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach($empleado->sueldos()->get() as $d)
+      
+      <div class="col-md-12" style="padding:0">
+        <div class="col-md-6">
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-money"></i> Sueldos</h3>
+            </div>
+            <div class="box-body">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
                   <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                    <td>{{ $d->created_at }}</td>
-                    <td>{{ $d->alcanceLiquido() }}</td>
-                    <td>{{ $d->sueldoLiquido() }}</td>
-                    <td>
-                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route('sueldos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    </td>
+                  <th class="text-center">#</th>
+                  <th class="text-center">Fecha</th>
+                  <th class="text-center">Alcance líquido</th>
+                  <th class="text-center">Sueldo líquido</th>
+                  <th class="text-center">Acción</th>
                   </tr>
-                @endforeach
-              </tbody>
-            </table>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleado->sueldos()->get() as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->created_at }}</td>
+                      <td>{{ $d->alcanceLiquido() }}</td>
+                      <td>{{ $d->sueldoLiquido() }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('sueldos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="box box-danger">
+            <div class="box-header with-border">
+              <h3 class="box-title">Entregas de Inventario</h3>
+            </div>
+            <div class="box-body">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Realizado por</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-center">Fecha</th>
+                    <th class="text-center">Recibido</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleado->entregas()->get() as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td><a href="{{ route('inventarios.show', ['inventario' => $d->inventario_id]) }}">{{ $d->inventario->nombre }}</a></td>
+                      <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
+                      <td>{{ $d->cantidad() }}</td>
+                      <td>{{ $d->created_at }}</td>
+                      <td>{!! $d->recibido() !!}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -50,6 +50,15 @@ class Contrato extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function entregas()
+  {
+    return InventarioEntrega::with(['inventario:id,nombre', 'realizadoPor:id,nombres,apellidos'])
+                              ->join('users', 'inventarios_entregas.entregado', '=', 'users.id')
+                              ->join('empleados', 'users.empleado_id', '=', 'empleados.id')
+                              ->select('inventario_id', 'realizado','cantidad', 'recibido','inventarios_entregas.created_at', 'empleado_id', 'nombres','apellidos')
+                              ->where('empleados.contrato_id', $this->id);
+  }
+
   public function valor()
   {
     return number_format($this->valor, 0, ',', '.');

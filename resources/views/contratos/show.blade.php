@@ -116,6 +116,42 @@
           </div>
         </div>
       </div>
+
+      <div class="col-md-12">
+        <div class="box box-danger">
+          <div class="box-header with-border">
+            <h3 class="box-title">Entregas de Inventarios</h3>
+          </div>
+          <div class="box-body">
+            <table class="table data-table table-bordered table-hover" style="width: 100%">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th class="text-center">Nombre</th>
+                  <th class="text-center">Realizado por</th>
+                  <th class="text-center">Entregado a</th>
+                  <th class="text-center">Cantidad</th>
+                  <th class="text-center">Fecha</th>
+                  <th class="text-center">Recibido</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                @foreach($contrato->entregas()->get() as $d)
+                  <tr>
+                    <td>{{ $loop->index + 1 }}</td>
+                      <td><a href="{{ route('inventarios.show', ['inventario' => $d->inventario->id]) }}">{{ $d->inventario->nombre }}</a></td>
+                    <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
+                    <td>{{ $d->nombres }} {{ $d->apellidos }}</td>
+                    <td>{{ $d->cantidad() }}</td>
+                    <td>{{ $d->created_at }}</td>
+                    <td>{!! $d->recibido() !!}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

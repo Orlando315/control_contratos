@@ -98,6 +98,11 @@ class Empleado extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function entregas()
+  {
+    return $this->usuario()->first()->hasMany('App\InventarioEntrega', 'entregado')->with('Inventario:id,nombre');
+  }
+
   public function proyectarJornada()
   {
     $events = ['trabajo' => [], 'descanso'=>[]];
