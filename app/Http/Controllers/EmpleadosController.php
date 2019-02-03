@@ -112,7 +112,9 @@ class EmpleadosController extends Controller
                             ->where('contrato_id', $empleado->contrato_id)
                             ->get();
 
-      return view('empleados.show', ['empleado' => $empleado, 'empleados' => $empleados]);
+      $contratos = Contrato::all();
+
+      return view('empleados.show', ['empleado' => $empleado, 'empleados' => $empleados, 'contratos' => $contratos]);
     }
 
     /**
@@ -316,5 +318,24 @@ class EmpleadosController extends Controller
           'flash_important' => true
           ]);
       }
+    }
+
+    public function cambioContrato(Request $request, Empleado $empleado){
+      $contrato = Contrato::findOrFail($request->contrato);
+      $empleado->contrato_id = $contrato->id;
+
+      if($empleado->save()){
+        return redirect('empleados/' . $empleado->id)->with([
+          'flash_message' => 'Empleado actualizado exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }else{
+        return redirect('empleados/' . $empleado->id)->with([
+          'flash_message' => 'Ha ocurrido un error.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+          ]);
+      }
+
     }
 }

@@ -19,6 +19,9 @@
       <i class="fa fa-exchange" aria-hidden="true"></i>
       {{ $empleado->usuario->tipo == 3 ? 'Volver Empleado' : 'Ascender a Supervisor' }}
     </button>
+    <button class="btn btn-flat bg-navy" data-toggle="modal" data-target="#contratoModal">
+      <i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato
+    </button>
   </section>
 
   <section style="margin-top: 20px">
@@ -123,6 +126,11 @@
           <div class="box-body box-profile">
             <h4 class="profile-username text-center">
               Contrato
+              <span class="pull-right">
+                <button class="btn btn-sm btn-flat btn-default" titl="Ver historial" data-toggle="modal" data-target="#historyModal">
+                  <i class="fa fa-list"></i>
+                </button>
+              </span>
             </h4>
             <p class="text-muted text-center"></p>
 
@@ -306,6 +314,83 @@
               </center>
             </form>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="contratoModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="contratoModalLabel">Cambiar de contrato</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <form class="col-md-8 col-md-offset-2" action="{{ route('empleados.cambioContrato', ['empleado' => $empleado->id]) }}" method="POST">
+              {{ method_field('PATCH') }}
+              {{ csrf_field() }}
+
+              <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
+                <label class="control-label" for="contrato">Contrato: *</label>
+                <select id="contrato" class="form-control" name="contrato" required>
+                  <option value="">Seleccione...</option>
+                  @foreach($contratos as $contrato)
+                    @if($contrato->id != $empleado->contrato->id)
+                    <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+                    @endif
+                  @endforeach
+                </select>
+              </div>
+
+              <center>
+                <button class="btn btn-flat btn-success" type="submit">Guardar</button>
+                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="historyModalLabel">Historial de contratos</h4>
+        </div>
+        <div class="modal-body">
+          @foreach($empleado->contratos()->get() as $contrato)
+            <ul class="list-group">
+              <li class="list-group-item">
+                <b>Creado</b>
+                <span class="pull-right">{{ $contrato->created_at }}</span>
+              </li>
+              <li class="list-group-item">
+                <b>Jornada</b>
+                <span class="pull-right">{{ $contrato->jornada }}</span>
+              </li>
+              <li class="list-group-item">
+                <b>Sueldo</b>
+                <span class="pull-right">{{ number_format($contrato->sueldo, 0, ',', '.') }}</span>
+              </li>
+              <li class="list-group-item">
+                <b>Inicio</b>
+                <span class="pull-right">{{ $contrato->inicio }}</span>
+              </li>
+              <li class="list-group-item">
+                <b>Inicio de Jornada</b>
+                <span class="pull-right"> {{$contrato->inicio_jornada}} </span>
+              </li>
+              <li class="list-group-item">
+                <b>Fin</b>
+                <span class="pull-right"> {{ $contrato->fin }}
+              </li>
+            </ul>
+          @endforeach
         </div>
       </div>
     </div>

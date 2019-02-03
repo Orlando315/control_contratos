@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('usuarios', 'UsuariosController');
 
     /* --- Empleados --- */
+    Route::patch('empleados/{empleado}/contrato', 'EmpleadosController@cambioContrato')->name('empleados.cambioContrato');
     Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
     Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
     Route::get('empleados/{empleado}/cambio', 'EmpleadosController@cambio')->name('empleados.cambio');
