@@ -16,8 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset( 'css/AdminLTE.min.css' ) }}">
     <link rel="stylesheet" type="text/css" href="{{ asset( 'css/glyphicons.css' ) }}">
     <!-- Datatable -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datatables/dataTables.min.css' ) }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datatables/RowGroup/css/rowGroup.bootstrap.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datatables/datatables.min.css' ) }}"/>
     <!-- Datepicker -->
     <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datepicker/css/bootstrap-datepicker3.min.css' ) }}">
     <!-- Fullcalendar -->
@@ -227,7 +226,6 @@
     <script type="text/javascript" src="{{ asset( 'js/app.min.js' ) }}"></script>
     <!-- Data table -->
     <script type="text/javascript" src="{{ asset( 'plugins/datatables/datatables.min.js' ) }}"></script>
-    <script type="text/javascript" src="{{ asset( 'plugins/datatables/RowGroup/js/rowGroup.bootstrap.min.js' ) }}"></script>
     <!-- Datepicker -->
     <script type="text/javascript" src="{{ asset( 'plugins/datepicker/js/bootstrap-datepicker.min.js' ) }}"></script>
     <script type="text/javascript" src="{{ asset( 'plugins/datepicker/locales/bootstrap-datepicker.es.min.js' ) }}"></script>
@@ -243,10 +241,18 @@
         $('div.alert').not('.alert-important').delay(7000).slideUp(300);
 
         $('.data-table').DataTable({
+          dom: 'Bfrtip',
           responsive: true,
           language: {
             url:'{{ asset( "plugins/datatables/spanish.json" ) }}'
-          }
+          },
+          buttons: [
+            {
+              extend: 'print',
+              text: 'Imprimir'
+            }
+          ],
+          pageLength: 20
         });
 
         $('.btn-confirmar').click(function(){
