@@ -15,12 +15,6 @@ class Inventario extends model
     parent::boot();
 
     static::addGlobalScope(new EmpresaScope);
-
-    static::addGlobalScope('userRole', function (Builder $builder) {
-      if(Auth::user()->tipo == 3){
-        $builder->where('tipo', 3);
-      }
-    });
   }
   
   protected $fillable = [

@@ -99,6 +99,11 @@ class InventariosController extends Controller
      */
     public function edit(Inventario $inventario)
     {
+      // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
+      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+        abort(404);
+      }
+
       return view('inventarios.edit', ['inventario' => $inventario]);
     }
 
@@ -111,6 +116,11 @@ class InventariosController extends Controller
      */
     public function update(Request $request, Inventario $inventario)
     {
+      // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
+      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+        abort(404);
+      }
+
       $this->validate($request, [
         'tipo' => 'required',
         'nombre' => 'required|string',
@@ -166,6 +176,12 @@ class InventariosController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
+
+      // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
+      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+        abort(404);
+      }
+
       if($inventario->delete()){
 
         if($inventario->adjunto){

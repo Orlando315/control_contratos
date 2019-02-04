@@ -57,7 +57,9 @@
                   <td>{{ $d->cantidad() }}</td>
                   <td>
                     <a class="btn btn-primary btn-flat btn-sm" href="{{ route('inventarios.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    @if(Auth::user()->tipo <= 2 || $d->tipo == 3)
                     <a class="btn btn-success btn-flat btn-sm" href="{{ route('inventarios.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endif
                   </td>
                 </tr>
               @endforeach

@@ -42,6 +42,9 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('sueldos/{sueldo}/confirmar', 'EmpleadosSueldosController@recibido')->name('sueldos.confirmar');
   Route::get('sueldos/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldos.download');
 
+  /* --- Entregas ---*/
+  Route::patch('inventarios/entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
+
   /* --- Solo usuarios 1 Empresa (Super admin) --- */
   Route::group(['middleware' => 'checkRole:1'], function(){
       /* --- Empresas --- */
@@ -158,9 +161,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('inventarios/entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
     Route::post('inventarios/entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');
     Route::delete('inventarios/entregas/{inventario}/{entrega}', 'InventariosEntregasController@destroy')->name('entregas.destroy');
-    Route::resource('inventarios/entregas', 'InventariosEntregasController')->only([
-      'index',
-      'update'
-    ]);
+    Route::get('inventarios/entregas', 'InventariosEntregasController@index')->name('entregas.index');
   });
 });
