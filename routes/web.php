@@ -25,6 +25,9 @@ Route::match(['get', 'post'], '/logout', 'LoginController@logout')->name('login.
 Route::get('registro', 'EmpresasController@create')->name('empresas.create');
 Route::post('registro', 'EmpresasController@store')->name('empresas.store');
 
+/* --- Cronjob --- */
+Route::get('cronjob/asistencias/create', 'EmpleadosController@cronjobAsistencias');
+
 /* --- Solo usuarios autenticados --- */
 Route::group(['middleware' => 'auth'], function () {
 

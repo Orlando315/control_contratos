@@ -338,4 +338,24 @@ class EmpleadosController extends Controller
       }
 
     }
+
+    public function cronjobAsistencias(){
+      $empleados = Empleado::withoutGlobalScope(EmpresaScope::class)->get();
+      $today = date('Y-m-d');
+
+      foreach($empleados as $empleado){
+        if($empleado->isWorkDay()){
+          $eventosExists = $empleado->eventsToday()->exists();          
+          
+          $empleado->eventos()->firstOrCreate([
+            'inicio' => $today,
+            'tipo' =>  1,
+            'jornada' => $empleado->contratos->last()->jornada
+          ],[
+            'comida' => !$eventosExists,
+            'pago' => !$eventosExists
+          ]);
+        }
+      }
+    }
 }
