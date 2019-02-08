@@ -17,6 +17,16 @@
 
         <h4>Agregar factura</h4>
 
+        <div class="form-group {{ $errors->has('contrato_id') ? 'has-error' : '' }}">
+          <label class="control-label" for="contrato_id">Contrato: *</label>
+          <select id="contrato_id" class="form-control" name="contrato_id" required>
+            <option value="">Seleccione...</option>
+            @foreach($contratos as $contrato)
+              <option value="{{ $contrato->id }}" {{ old('contrato_id') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+            @endforeach
+          </select>
+        </div>
+
         <div class="form-group {{ $errors->has('tipo') ? 'has-error' : '' }}">
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
           <select id="tipo" class="form-control" name="tipo" required>

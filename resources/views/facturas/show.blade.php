@@ -31,6 +31,12 @@
 
             <ul class="list-group list-group-unbordered">
               <li class="list-group-item">
+                <b>Contrato</b>
+                <span class="pull-right">
+                  <a href="{{ route('contratos.show', ['contrato' => $factura->contrato->id]) }}">{{ $factura->contrato->nombre }} </a>
+                </span>
+              </li>
+              <li class="list-group-item">
                 <b>Tipo</b>
                 <span class="pull-right">{{ $factura->tipo() }}</span>
               </li>

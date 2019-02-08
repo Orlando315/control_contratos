@@ -28,7 +28,8 @@ class FacturasController extends Controller
      */
     public function create()
     {
-      return view('facturas.create');
+      $contratos = \App\Contrato::all();
+      return view('facturas.create', ['contratos' => $contratos]);
     }
 
     /**

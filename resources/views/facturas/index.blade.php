@@ -38,6 +38,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
+                <th class="text-center">Contrato</th>
                 <th class="text-center">Tipo</th>
                 <th class="text-center">Nombre</th>
                 <th class="text-center">Valor</th>
@@ -50,6 +51,7 @@
               @foreach($facturas as $d)
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
+                  <td><a href="{{ route('contratos.show', ['contrato' => $d->contrato->id]) }}">{{ $d->contrato->nombre }} </a></td>
                   <td>{{ $d->tipo() }}</td>
                   <td>{{ $d->nombre }}</td>
                   <td>{{ $d->valor() }}</td>

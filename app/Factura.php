@@ -16,6 +16,7 @@ class Factura extends Model
   }
 
   protected $fillable = [
+    'contrato_id',
     'tipo',
     'nombre',
     'realizada_para',
@@ -25,6 +26,11 @@ class Factura extends Model
     'pago_fecha',
     'pago_estado',
   ];
+
+  public function contrato()
+  {
+    return $this->belongsTo('App\Contrato');
+  }
 
   public function tipo()
   {
