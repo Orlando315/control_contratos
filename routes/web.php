@@ -138,6 +138,20 @@ Route::group(['middleware' => 'auth'], function () {
     /* --- Facturas --- */
     Route::resource('facturas', 'FacturasController');
     Route::get('facturas/{factura}/download/{adjunto}', 'FacturasController@download')->name('facturas.download');
+
+    /* --- Reportes --- */
+    Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventariosIndex');
+    Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventariosGet');
+    Route::get('reportes/facturas', 'ReportesController@facturasIndex')->name('reportes.facturasIndex');
+    Route::post('reportes/facturas', 'ReportesController@facturasGet')->name('reportes.facturasGet');
+    Route::get('reportes/eventos', 'ReportesController@eventosIndex')->name('reportes.eventosIndex');
+    Route::post('reportes/eventos', 'ReportesController@eventosGet')->name('reportes.eventosGet');
+    Route::get('reportes/sueldos', 'ReportesController@sueldosIndex')->name('reportes.sueldosIndex');
+    Route::post('reportes/sueldos', 'ReportesController@sueldosGet')->name('reportes.sueldosGet');
+    Route::get('reportes/anticipos', 'ReportesController@anticiposIndex')->name('reportes.anticiposIndex');
+    Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticiposGet');
+    Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportesIndex');
+    Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportesGet');
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */
