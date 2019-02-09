@@ -40,7 +40,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
-                <th class="text-center">Contrato</th>
+                <th class="text-center">Supervisor</th>
                 <th class="text-center">Vehiculo</th>
                 <th class="text-center">Patente</th>
                 <th class="text-center">Acción</th>
@@ -50,7 +50,11 @@
               @foreach($transportes as $d)
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
-                  <td><a href="{{ route('contratos.show', ['contrato' => $d->contrato->id]) }}">{{ $d->contrato->nombre }} </a></td>
+                  <td>
+                    <a href="{{ route('usuarios.show', ['usuario' => $d->user_id]) }}">
+                      {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
+                    </a>
+                  </td>
                   <td>{{ $d->vehiculo }}</td>
                   <td>{{ $d->patente }}</td>
                   <td>

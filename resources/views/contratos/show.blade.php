@@ -127,6 +127,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
+                <th class="text-center">Supervisor</th>
                 <th class="text-center">Vehiculo</th>
                 <th class="text-center">Patente</th>
                 <th class="text-center">Agregado</th>
@@ -137,6 +138,11 @@
               @foreach($contrato->transportes()->get() as $d)
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
+                  <td>
+                    <a href="{{ route('usuarios.show', ['usuario' => $d->user_id]) }}">
+                      {{ $d->transporte->usuario->nombres }} {{ $d->transporte->usuario->apellidos }}
+                    </a>
+                  </td>
                   <td>{{ $d->transporte->vehiculo }}</td>
                   <td>{{ $d->transporte->patente }}</td>
                   <td>{{ $d->created_at }}</td>
