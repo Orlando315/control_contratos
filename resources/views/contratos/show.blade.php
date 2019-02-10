@@ -140,11 +140,11 @@
                   <td>{{ $loop->index + 1 }}</td>
                   <td>
                     <a href="{{ route('usuarios.show', ['usuario' => $d->user_id]) }}">
-                      {{ $d->transporte->usuario->nombres }} {{ $d->transporte->usuario->apellidos }}
+                      {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
                     </a>
                   </td>
-                  <td>{{ $d->transporte->vehiculo }}</td>
-                  <td>{{ $d->transporte->patente }}</td>
+                  <td>{{ $d->vehiculo }}</td>
+                  <td>{{ $d->patente }}</td>
                   <td>{{ $d->created_at }}</td>
                   <td>
                     <a class="btn btn-primary btn-flat btn-sm" href="{{ route('transportes.show', ['id' => $d->transporte_id] )}}"><i class="fa fa-search"></i></a>

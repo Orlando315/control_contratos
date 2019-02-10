@@ -152,6 +152,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticiposGet');
     Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportesIndex');
     Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportesGet');
+    Route::get('reportes/comidas', 'ReportesController@comidasIndex')->name('reportes.comidasIndex');
+    Route::post('reportes/comidas', 'ReportesController@comidasGet')->name('reportes.comidasGet');
+    Route::get('reportes/reemplazos', 'ReportesController@reemplazosIndex')->name('reportes.reemplazosIndex');
+    Route::post('reportes/reemplazos', 'ReportesController@reemplazosGet')->name('reportes.reemplazosGet');
+    Route::get('reportes/general', 'ReportesController@generalIndex')->name('reportes.generalIndex');
+    Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.generalGet');
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */

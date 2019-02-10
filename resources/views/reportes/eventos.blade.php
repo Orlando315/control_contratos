@@ -10,14 +10,13 @@
 	</ol>
 @endsection
 @section('content')
-  <section>
-    <a class="btn btn-flat btn-default" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-  </section>
-
   <section style="margin-top: 20px">
     <div class="row">
-      <div class="col-sm-12 col-md-4 col-md-offset-4">
-        <form id="exportForm" action="#" method="POST">
+      <div class="col-md-12 no-print">
+        <button class="btn btn-default btn-flat btn-print"><i class="fa fa-print"></i> Imprimir</button>
+      </div>
+      <div class="col-sm-12 col-md-4 col-md-offset-4 no-print">
+        <form id="exportForm" action="{{ route('reportes.eventosGet') }}" method="POST">
           {{ csrf_field() }}
           <div class="form-group">
             <div class="input-daterange input-group">
@@ -38,7 +37,7 @@
             </div>
           </div>
           <center style="margin-top: 10px">
-            <button id="search" class="btn btn-flat btn-primary" type="button">Buscar</button>
+            <button id="search" class="btn btn-flat btn-primary" type="submit">Buscar</button>
           </center>
 
           <div class="alert alert-danger" style="display: none">
@@ -116,7 +115,7 @@
       e.preventDefault();
 
       let form = $(this),
-          action = '{{ route("reportes.eventosGet") }}',
+          action = form.attr('action'),
           btn    = $('#search'),
           alert  = $('.alert');
 

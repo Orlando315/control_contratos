@@ -1,11 +1,11 @@
 @extends( 'layouts.app' )
 @section( 'title','Reportes - '.config( 'app.name' ) )
-@section( 'header','Reportes - Sueldos' )
+@section( 'header','Reportes - Comida' )
 @section( 'breadcrumb' )
   <ol class="breadcrumb">
     <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li>Reportes</li>
-    <li class="active">Sueldos</li>
+    <li class="active">Comida</li>
   </ol>
 @endsection
 
@@ -16,7 +16,7 @@
       <button class="btn btn-default btn-flat btn-print"><i class="fa fa-print"></i> Imprimir</button>
     </div>
     <div class="col-sm-12 col-md-4 col-md-offset-4 no-print">
-      <form id="exportForm" action="{{ route('reportes.sueldosGet') }}" method="POST">
+      <form id="exportForm" action="{{ route('reportes.comidasGet') }}" method="POST">
         {{ csrf_field() }}
         <div class="form-group">
           <div class="input-daterange input-group">
@@ -60,11 +60,13 @@
                   <tr>
                     <th class="text-center">Contrato</th>
                     <th class="text-center">Empleados</th>
+                    <th class="text-center">Comidas</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-contratos">
                   <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -95,11 +97,13 @@
                     <th class="text-center">Contrato</th>
                     <th class="text-center">RUT</th>
                     <th class="text-center">Empleado</th>
+                    <th class="text-center">Comidas</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-empleados">
                   <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -158,24 +162,26 @@
         },
         dataType: 'json',
       })
-      .done(function(sueldos){
+      .done(function(comidas){
         $('#tbody-contratos, #tbody-empleados').empty();
 
-        $.each(sueldos.contratos, function(i, contrato){
+        $.each(comidas.contratos, function(i, contrato){
           let tr = '<tr>'
           tr += `<td class="text-center">${contrato.contrato}</td>`
           tr += `<td class="text-center">${contrato.empleados}</td>`
+          tr += `<td class="text-center">${contrato.comidas}</td>`
           tr += `<td class="text-center">${contrato.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 
           $('#tbody-contratos').append(tr)
         })
 
-        $.each(sueldos.empleados, function(i, empleado){
+        $.each(comidas.empleados, function(i, empleado){
           let tr = '<tr>'
           tr += `<td class="text-center">${empleado.contrato}</td>`
           tr += `<td class="text-center">${empleado.rut}</td>`
           tr += `<td class="text-center">${empleado.empleado}</td>`
+          tr += `<td class="text-center">${empleado.comidas.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${empleado.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 

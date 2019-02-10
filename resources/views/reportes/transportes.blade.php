@@ -1,11 +1,11 @@
 @extends( 'layouts.app' )
 @section( 'title','Reportes - '.config( 'app.name' ) )
-@section( 'header','Reportes - Sueldos' )
+@section( 'header','Reportes - Transporte' )
 @section( 'breadcrumb' )
   <ol class="breadcrumb">
     <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li>Reportes</li>
-    <li class="active">Sueldos</li>
+    <li class="active">Transporte</li>
   </ol>
 @endsection
 
@@ -16,7 +16,7 @@
       <button class="btn btn-default btn-flat btn-print"><i class="fa fa-print"></i> Imprimir</button>
     </div>
     <div class="col-sm-12 col-md-4 col-md-offset-4 no-print">
-      <form id="exportForm" action="{{ route('reportes.sueldosGet') }}" method="POST">
+      <form id="exportForm" action="{{ route('reportes.transportesGet') }}" method="POST">
         {{ csrf_field() }}
         <div class="form-group">
           <div class="input-daterange input-group">
@@ -59,12 +59,16 @@
                 <thead>
                   <tr>
                     <th class="text-center">Contrato</th>
-                    <th class="text-center">Empleados</th>
+                    <th class="text-center">Transportes</th>
+                    <th class="text-center">Mantenimiento</th>
+                    <th class="text-center">Combustible</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-contratos">
                   <tr>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -84,7 +88,7 @@
     <div class="col-md-12" style="margin-top: 20px">
       <div class="box box-solid">
         <div class="box-header">
-          <h3>Empleados</h3>
+          <h3>Transportes</h3>
         </div>
         <div class="box-body">
           <div class="row">
@@ -93,13 +97,15 @@
                 <thead>
                   <tr>
                     <th class="text-center">Contrato</th>
-                    <th class="text-center">RUT</th>
-                    <th class="text-center">Empleado</th>
+                    <th class="text-center">Vehiculo</th>
+                    <th class="text-center">Mantenimiento</th>
+                    <th class="text-center">Combustible</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-empleados">
+                <tbody id="tbody-transportes">
                   <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -158,34 +164,37 @@
         },
         dataType: 'json',
       })
-      .done(function(sueldos){
-        $('#tbody-contratos, #tbody-empleados').empty();
+      .done(function(consumos){
+        $('#tbody-contratos, #tbody-transportes').empty();
 
-        $.each(sueldos.contratos, function(i, contrato){
+        $.each(consumos.contratos, function(i, contrato){
           let tr = '<tr>'
           tr += `<td class="text-center">${contrato.contrato}</td>`
-          tr += `<td class="text-center">${contrato.empleados}</td>`
+          tr += `<td class="text-center">${contrato.transportes}</td>`
+          tr += `<td class="text-center">${contrato.mantenimiento.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${contrato.combustible.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${contrato.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 
           $('#tbody-contratos').append(tr)
         })
 
-        $.each(sueldos.empleados, function(i, empleado){
+        $.each(consumos.transportes, function(i, transporte){
           let tr = '<tr>'
-          tr += `<td class="text-center">${empleado.contrato}</td>`
-          tr += `<td class="text-center">${empleado.rut}</td>`
-          tr += `<td class="text-center">${empleado.empleado}</td>`
-          tr += `<td class="text-center">${empleado.total.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${transporte.contrato}</td>`
+          tr += `<td class="text-center">${transporte.transporte}</td>`
+          tr += `<td class="text-center">${transporte.mantenimiento.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${transporte.combustible.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${transporte.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 
-          $('#tbody-empleados').append(tr)
+          $('#tbody-transportes').append(tr)
         })
 
       })
       .fail(function(){
         alert.show().delay(7000).hide('slow');
-        $('#tbody-contratos, #tbody-empleados').empty();
+        $('#tbody-contratos, #tbody-transportes').empty();
       })
       .always(function(){
         btn.button('reset');

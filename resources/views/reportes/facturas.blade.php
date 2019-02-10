@@ -12,7 +12,10 @@
 @section( 'content' )
   @include('partials.flash')
   <div class="row">
-    <div class="col-sm-12 col-md-4 col-md-offset-4">
+    <div class="col-md-12 no-print">
+      <button class="btn btn-default btn-flat btn-print"><i class="fa fa-print"></i> Imprimir</button>
+    </div>
+    <div class="col-sm-12 col-md-4 col-md-offset-4 no-print">
       <form id="exportForm" action="{{ route('reportes.facturasGet') }}" method="POST">
         {{ csrf_field() }}
         <div class="form-group">

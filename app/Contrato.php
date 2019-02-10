@@ -35,6 +35,11 @@ class Contrato extends Model
     return $this->hasMany('App\Empleado');
   }
 
+  public function empleadosEventos()
+  {
+    return $this->hasManyThrough('App\empleadosEvento', 'App\Empleado');
+  }
+
   public function documentos()
   {
     return $this->hasMany('App\Documento');
@@ -50,9 +55,19 @@ class Contrato extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function facturas()
+  {
+    return $this->hasMany('App\Factura');
+  }
+
   public function transportes()
   {
-    return $this->hasMany('App\TransporteContrato');
+    return $this->belongsToMany('App\Transporte', 'transportes_contratos');
+  }
+
+  public function transportesConsumos()
+  {
+    return $this->hasMany('App\TransporteConsumo');
   }
 
   public function anticipos()
