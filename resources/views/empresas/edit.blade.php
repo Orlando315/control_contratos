@@ -26,7 +26,7 @@
 
         <div class="form-group {{ $errors->has('rut') ? 'has-error' : '' }}">
           <label class="control-label" for="rut">RUT: *</label>
-          <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\d])$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
+          <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dk])$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
           <span class="help-block">Ejemplo: 00000000-0</span>
         </div>
 
