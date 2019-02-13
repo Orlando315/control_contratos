@@ -37,12 +37,12 @@
 
         <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">
           <label class="control-label" for="telefono">Teléfono: *</label>
-          <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : $usuario->telefono }}" placeholder="Teléfono" required>
+          <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : $usuario->telefono }}" placeholder="Teléfono">
         </div>
 
         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
           <label class="control-label" for="email">Email: *</label>
-          <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : $usuario->email }}" placeholder="Email" required>
+          <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : $usuario->email }}" placeholder="Email">
         </div>
 
         @if (count($errors) > 0)

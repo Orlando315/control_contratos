@@ -43,8 +43,8 @@ class UsuariosController extends Controller
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut',
-        'email' => 'required|email|unique:users,email',
-        'telefono' => 'required'
+        'email' => 'nullable|email|unique:users,email',
+        'telefono' => 'nullable|string'
       ]);
 
       $usuario = new Usuario($request->all());
@@ -101,8 +101,8 @@ class UsuariosController extends Controller
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut,' . $usuario->id . ',id',
-        'email' => 'required|email|unique:users,email,' . $usuario->id . ',id',
-        'telefono' => 'required'
+        'email' => 'nullable|email|unique:users,email,' . $usuario->id . ',id',
+        'telefono' => 'nullable|string'
       ]);
 
       $usuario->fill($request->all());
@@ -159,8 +159,8 @@ class UsuariosController extends Controller
       $this->validate($request, [
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
-        'email' => 'required|email|unique:users,email,' . Auth::user()->id . ',id',
-        'telefono' => 'required'
+        'email' => 'nullable|email|unique:users,email,' . Auth::user()->id . ',id',
+        'telefono' => 'nullable'
       ]);
 
       $usuario = Usuario::find(Auth::user()->id);

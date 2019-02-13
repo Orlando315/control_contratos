@@ -59,17 +59,17 @@
 
           <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">
             <label class="control-label" for="telefono">Teléfono: *</label>
-            <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : $empleado->usuario->telefono }}" placeholder="Teléfono" required>
+            <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : $empleado->usuario->telefono }}" placeholder="Teléfono">
           </div>
 
           <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
             <label class="control-label" for="email">Email: *</label>
-            <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : $empleado->usuario->email }}" placeholder="Email" required>
+            <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : $empleado->usuario->email }}" placeholder="Email">
           </div>
 
           <div class="form-group {{ $errors->has('talla_camisa') ? 'has-error' : '' }}">
             <label class="control-label" for="talla_camisa">Talla de camisa:</label>
-            <input id="talla_camisa" class="form-control" type="number" step="1" max="99" min="1" name="talla_camisa" value="{{ old('talla_camisa') ? old('talla_camisa') : $empleado->talla_camisa }}" style="width: 80px">
+            <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa') ? old('talla_camisa') : $empleado->talla_camisa }}" style="width: 80px">
           </div>
 
           <div class="form-group {{ $errors->has('talla_zapato') ? 'has-error' : '' }}">
