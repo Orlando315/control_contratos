@@ -12,41 +12,56 @@
   <div class="row">
     @if(Auth::user()->tipo <= 2)
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-green"><i class="fa fa-users"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Usuarios</span>
-          <span class="info-box-number">{{ count($usuarios) }}</span>
+      <!-- small box -->
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>{{ count($usuarios) }}</h3>
+
+          <p>Administradores /<br>Supervisores</p>
         </div>
-        <!-- /.info-box-content -->
+        <div class="icon">
+          <i class="fa fa-users"></i>
+        </div>
+        <a href="{{ route('usuarios.index') }}" class="small-box-footer">
+          Ver usuarios <i class="fa fa-arrow-circle-right"></i>
+        </a>
       </div>
-      <!-- /.info-box -->
     </div>
 
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-yellow"><i class="fa fa-clipboard"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Contratos</span>
-          <span class="info-box-number">{{ count($contratos) }}</span>
+      <!-- small box -->
+      <div class="small-box bg-yellow">
+        <div class="inner">
+          <h3>{{ count($contratos) }}</h3>
+
+          <p>Contratos</p>
         </div>
-        <!-- /.info-box-content -->
+        <div class="icon">
+          <i class="fa fa-clipboard"></i>
+        </div>
+        <a href="{{ route('contratos.index') }}" class="small-box-footer">
+          Ver contratos <i class="fa fa-arrow-circle-right"></i>
+        </a>
       </div>
-      <!-- /.info-box -->
     </div>
     @endif
     
     @if(Auth::user()->tipo <= 3)
     <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-red"><i class="fa fa-cubes"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Inventario</span>
-          <span class="info-box-number">{{ count($inventarios) }}</span>
+      <!-- small box -->
+      <div class="small-box bg-red">
+        <div class="inner">
+          <h3>{{ count($inventarios) }}</h3>
+
+          <p>Inventarios</p>
         </div>
-        <!-- /.info-box-content -->
+        <div class="icon">
+          <i class="fa fa-cubes"></i>
+        </div>
+        <a href="{{ route('inventarios.index') }}" class="small-box-footer">
+          Ver inventarios <i class="fa fa-arrow-circle-right"></i>
+        </a>
       </div>
-      <!-- /.info-box -->
     </div>
     @endif
     

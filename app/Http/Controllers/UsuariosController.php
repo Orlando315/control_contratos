@@ -15,9 +15,10 @@ class UsuariosController extends Controller
      */
     public function index()
     {
-      $usuarios = Usuario::usuarios();
+      $usuarios  = Usuario::adminsYSupervisores();
+      $empleados = Usuario::empleados();
 
-      return view('usuarios.index', ['usuarios' => $usuarios]);
+      return view('usuarios.index', ['usuarios' => $usuarios, 'empleados' => $empleados]);
     }
 
     /**

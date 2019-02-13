@@ -58,6 +58,7 @@
               <option value="">Seleccione...</option>
               <option value="5x2" {{ old('jornada') == '5x2' ? 'selected' : '' }}>5x2</option>
               <option value="4x3" {{ old('jornada') == '4x3' ? 'selected' : '' }}>4x3</option>
+              <option value="6x1" {{ old('jornada') == '6x1' ? 'selected' : '' }}>6x1</option>
               <option value="7x7" {{ old('jornada') == '7x7' ? 'selected' : '' }}>7x7</option>
               <option value="10x10" {{ old('jornada') == '10x10' ? 'selected' : '' }}>10x10</option>
               <option value="12x12" {{ old('jornada') == '12x12' ? 'selected' : '' }}>12x12</option>
