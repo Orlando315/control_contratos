@@ -173,7 +173,6 @@
 
     $('#inicio, #fin, #inicio_jornada').datepicker({
       format: 'dd-mm-yyyy',
-      startDate: 'today',
       language: 'es',
       keyboardNavigation: false,
       autoclose: true

@@ -70,7 +70,6 @@
   $(document).ready( function(){
     $('#inicio, #fin').datepicker({
       format: 'dd-mm-yyyy',
-      startDate: 'today',
       language: 'es',
       keyboardNavigation: false,
       autoclose: true
