@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Inventario;
+use App\Contrato;
 
 class InventariosController extends Controller
 {
@@ -28,7 +29,9 @@ class InventariosController extends Controller
      */
     public function create()
     {
-      return view('inventarios.create');
+      $contratos = Contrato::all();
+
+      return view('inventarios.create', ['contratos' => $contratos]);
     }
 
     /**
@@ -40,6 +43,7 @@ class InventariosController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
+        'contrato_id' => 'required',
         'tipo' => 'required',
         'nombre' => 'required|string',
         'valor' => 'required|numeric',
@@ -52,6 +56,7 @@ class InventariosController extends Controller
 
       if(Auth::user()->tipo >= 3){
         $inventario->tipo = 3;
+        $inventario->contrato_id = Auth::user()->empleado->contrato_id;
       }
 
       if($inventario = Auth::user()->empresa->inventarios()->save($inventario)){
@@ -100,7 +105,7 @@ class InventariosController extends Controller
     public function edit(Inventario $inventario)
     {
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -117,7 +122,7 @@ class InventariosController extends Controller
     public function update(Request $request, Inventario $inventario)
     {
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -131,10 +136,6 @@ class InventariosController extends Controller
       ]);
 
       $inventario->fill($request->all());
-
-      if(Auth::user()->tipo >= 3){
-        $inventario->tipo = 3;
-      }
 
       if($inventario->save()){
 
@@ -178,7 +179,7 @@ class InventariosController extends Controller
     {
 
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo == 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
         abort(404);
       }
 

@@ -16,6 +16,21 @@
         {{ csrf_field() }}
 
         <h4>Agregar inventario</h4>
+        
+        @if(Auth::user()->tipo <= 2)
+          <div class="form-group {{ $errors->has('contrato_id') ? 'has-error' : '' }}">
+            <label class="control-label" for="contrato_id">Contrato: *</label>
+            <select id="contrato_id" class="form-control" name="contrato_id" required>
+              <option value="">Seleccione...</option>
+              @foreach($contratos as $contrato)
+                <option value="{{ $contrato->id }}" {{ old('contrato_id') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+              @endforeach
+            </select>
+          </div>
+        @else
+          <input type="hidden" name="contrato_id" value="{{ Auth::user()->empleado->contrato_id }}">
+        @endif
+
 
         <div class="form-group {{ $errors->has('tipo') ? 'has-error' : '' }}">
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>

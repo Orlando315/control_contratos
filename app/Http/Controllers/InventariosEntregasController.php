@@ -27,10 +27,9 @@ class InventariosEntregasController extends Controller
      */
     public function create(Inventario $inventario)
     {
-      $inventarios = Inventario::all();
-      $contratos = Contrato::all();
+      $empleados = $inventario->contrato->empleados()->get();
 
-      return view('inventarios.entregas.create', ['inventario' => $inventario, 'inventarios' => $inventarios, 'contratos' => $contratos]);
+      return view('inventarios.entregas.create', ['inventario' => $inventario, 'empleados' => $empleados]);
     }
 
     /**
@@ -47,7 +46,7 @@ class InventariosEntregasController extends Controller
       ]);
 
       if(($inventario->cantidad - $request->cantidad) < 0){
-        return redirect('entregas/'. $inventario->id)
+        return redirect('inventarios/entregas/'. $inventario->id)
                   ->withErrors('La cantidad supera lo disponible en inventario.')
                   ->withInput();
       }
