@@ -209,7 +209,20 @@ class Contrato extends Model
 
     $dateLatestSueldo->addMonths(1);
 
-    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : ucfirst($dateLatestSueldo->formatLocalized('%B'));
+    $stringMonth = ucfirst($dateLatestSueldo->formatLocalized('%B')).' ('.$dateLatestSueldo->startOfMonth()->format('Y-d-m').' - '.$dateLatestSueldo->endOfMonth()->format('Y-d-m').')';
+
+    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : $stringMonth;
+  }
+
+  public function getTotalAPagar()
+  {
+    $total = 0;
+
+    foreach ($this->empleados()->get() as $empleado){
+      $total += $empleado->getSueldoLiquido();
+    }
+
+    return $total;
   }
 
 }

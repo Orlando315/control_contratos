@@ -118,7 +118,7 @@
   let createElement = function(id, name, anticipo){
     let field = 
     `<tr>
-      <td><p>${name}<p></td>
+      <td><p>${name}</p></td>
       <td class="form-inline">
         <div class="form-group">
           <label class="control-label" for="empleado_${id}">Anticipo: *</label>
