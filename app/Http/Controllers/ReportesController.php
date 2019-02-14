@@ -11,22 +11,48 @@ use Carbon\Carbon;
 
 class ReportesController extends Controller{
     public function inventariosIndex(){
-      return view('reportes.inventarios');
+      $contratos = Contrato::all();
+
+      return view('reportes.inventarios', ['contratos' => $contratos]);
     }
 
     public function inventariosGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
-      $inventarios = Inventario::select('tipo', 'nombre', 'valor', 'fecha', 'cantidad', 'created_at')
-                                ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])->get();
 
-      foreach ($inventarios as $i => $inventario) {
-        $inventario->tipo = $inventario->tipo();
-        $inventarios[$i] = $inventario;
+      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $dataContratos = $dataInventarios = [];
+
+      foreach ($contratos as $contrato) {
+
+        $contratoValor = $contrato->inventarios()
+                                      ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                      ->sum('valor');
+
+        $dataContratos[] = [
+          'contrato' => $contrato->nombre,
+          'inventarios' => $contrato->inventarios()->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])->count(),
+          'total' => $contratoValor
+        ];
+
+        $inventarios = $contrato->inventarios()
+                                ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                ->get();
+
+        foreach ($inventarios as $inventario) {
+
+          $dataInventarios[] = [
+            'contrato' => $contrato->nombre,
+            'tipo' => $inventario->tipo(),
+            'inventario' => $inventario->nombre,
+            'cantidad' => $inventario->cantidad,
+            'valor' => $inventario->valor,
+          ];
+        }
       }
 
-      return $inventarios;
+      return ['contratos' => $dataContratos, 'inventarios' => $dataInventarios];
     }
 
     public function facturasIndex(){
@@ -342,6 +368,10 @@ class ReportesController extends Controller{
                               ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
                               ->sum('valor');
 
+        $inventarios = $contrato->inventarios()
+                                      ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                      ->sum('valor');
+
         $anticipos = $contrato->anticipos()
                                       ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
                                       ->sum('anticipo');
@@ -375,11 +405,12 @@ class ReportesController extends Controller{
           'contrato' => $contrato->nombre,
           'ingresos' => $facturasIngresos,
           'egresos' => $facturasEgresos,
+          'inventarios' => $inventarios,
           'anticipos' => $anticipos,
           'sueldos' => $sueldoAlcanceLiquido,
           'comidas' => $comidas,
           'transporte' => $transporteMantenimiento + $transporteCombustible,
-          'total' => $facturasIngresos - ($facturasEgresos + $anticipos + $sueldoAlcanceLiquido + $comidas + $transporteMantenimiento + $transporteCombustible)
+          'total' => $facturasIngresos - ($facturasEgresos + $inventarios + $anticipos + $sueldoAlcanceLiquido + $comidas + $transporteMantenimiento + $transporteCombustible)
         ];
       }
 

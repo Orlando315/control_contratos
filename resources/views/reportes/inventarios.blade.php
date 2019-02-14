@@ -18,10 +18,23 @@
     <div class="col-sm-12 col-md-4 col-md-offset-4 no-print">
       <form id="exportForm" action="{{ route('reportes.inventariosGet') }}" method="POST">
         {{ csrf_field() }}
-        <div class="input-daterange input-group">
-          <input id="inicioExport" type="text" class="form-control" name="inicio" placeholder="yyyy-mm-dd" required>
-          <span class="input-group-addon">Hasta</span>
-          <input id="finExport" type="text" class="form-control" name="fin" placeholder="yyyy-mm-dd" required>
+        <div class="form-group">
+          <div class="input-daterange input-group">
+            <input id="inicioExport" type="text" class="form-control" name="inicio" placeholder="yyyy-mm-dd" required>
+            <span class="input-group-addon">Hasta</span>
+            <input id="finExport" type="text" class="form-control" name="fin" placeholder="yyyy-mm-dd" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-group">
+            <label class="control-label" for="contrato">Contrato:</label>
+            <select id="contrato" class="form-control" name="contrato">
+              <option value="">Seleccione...</option>
+              @foreach($contratos as $contrato)
+                <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+              @endforeach
+            </select>
+          </div>
         </div>
         <center style="margin-top: 10px">
           <button id="search" class="btn btn-flat btn-primary" type="submit">Buscar</button>
@@ -33,36 +46,11 @@
         </div>
       </form>
     </div>
+
     <div class="col-md-12" style="margin-top: 20px">
       <div class="box box-solid">
         <div class="box-header">
-          <div class="row">
-            <div class="col-sm-4 col-xs-4">
-              <div class="description-block border-right">
-                <h5 id="total-iventario" class="description-header">-</h5>
-                <span class="description-text">TOTAL INVENTARIOS</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-4 col-xs-4">
-              <div class="description-block border-right">
-                <h5 id="total-costo" class="description-header">-</h5>
-                <span class="description-text">COSTO TOTAL</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-4 col-xs-4">
-              <div class="description-block border-right">
-                <h5 id="total-items" class="description-header">-</h5>
-                <span class="description-text">TOTAL ITEMS</span>
-              </div>
-              <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
+          <h3>Contratos</h3>
         </div>
         <div class="box-body">
           <div class="row">
@@ -70,17 +58,51 @@
               <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th class="text-center">Tipo</th>
-                    <th class="text-center">Nombre</th>
-                    <th class="text-center">Valor</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Agregado</th>
+                    <th class="text-center">Contrato</th>
+                    <th class="text-center">Inventarios</th>
+                    <th class="text-center">Total</th>
                   </tr>
                 </thead>
-                <tbody id="tbody">
+                <tbody id="tbody-contratos">
                   <tr>
                     <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="overlay" style="display: none">
+          <i class="fa fa-refresh fa-spin"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12" style="margin-top: 20px">
+      <div class="box box-solid">
+        <div class="box-header">
+          <h3>Inventarios</h3>
+        </div>
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-12" style="margin-top: 10px">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th class="text-center">Contrato</th>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">Inventario</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-center">Valor</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-inventarios">
+                  <tr>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -141,44 +163,34 @@
         dataType: 'json',
       })
       .done(function(inventarios){
-        $('#tbody').empty();
-          let totalItems = 0,
-              totalCosto = 0,
-              totalInventario = 0;
+        $('#tbody-contratos, #tbody-inventarios').empty();
 
-        $.each(inventarios, function(i, inventario){
-          let clase = ''
-
-          $.each(inventarios, function(j, k){
-            if(k.nombre == inventario.nombre && k.valor != inventario.valor){
-              clase = 'danger'
-            }
-          })
-
-          let tr = `<tr class="${clase}">`
-          tr += `<td class="text-center">${inventario.tipo}</td>`
-          tr += `<td class="text-center">${inventario.nombre}</td>`
-          tr += `<td class="text-center">${inventario.valor}</td>`
-          tr += `<td class="text-center">${inventario.fecha}</td>`
-          tr += `<td class="text-center">${inventario.cantidad}</td>`
-          tr += `<td class="text-center">${inventario.created_at}</td>`
+        $.each(inventarios.contratos, function(i, contrato){
+          let tr = '<tr>'
+          tr += `<td class="text-center">${contrato.contrato}</td>`
+          tr += `<td class="text-center">${contrato.inventarios}</td>`
+          tr += `<td class="text-center">${contrato.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 
-          totalItems += inventario.cantidad
-          totalCosto += inventario.valor
-          totalInventario++
-
-          $('#tbody').append(tr)
+          $('#tbody-contratos').append(tr)
         })
 
-        $('#total-items').text(totalItems.toLocaleString('es-ES'))
-        $('#total-costo').text(totalCosto.toLocaleString('es-ES'))
-        $('#total-iventario').text(totalInventario.toLocaleString('es-ES'))
+        $.each(inventarios.inventarios, function(i, inventario){
+          let tr = '<tr>'
+          tr += `<td class="text-center">${inventario.contrato}</td>`
+          tr += `<td class="text-center">${inventario.tipo}</td>`
+          tr += `<td class="text-center">${inventario.inventario}</td>`
+          tr += `<td class="text-center">${inventario.cantidad.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${inventario.valor.toLocaleString('es-ES')}</td>`
+          tr += '</tr>'
+
+          $('#tbody-inventarios').append(tr)
+        })
+
       })
       .fail(function(){
         alert.show().delay(7000).hide('slow');
-        $('#total-items, #total-costo, #total-iventario').text('-')
-        $('#tbody').empty();
+        $('#tbody-contratos, #tbody-inventarios').empty();
       })
       .always(function(){
         btn.button('reset');
