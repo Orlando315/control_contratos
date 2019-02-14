@@ -18,20 +18,13 @@
 
         <h4>Agregar entrega - {{ $inventario->nombre }}</h4>
 
-        <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
-          <label class="control-label" class="form-control" for="contrato">Contrato: *</label>
-          <select id="contrato" class="form-control" name="contrato" required>
-            <option value="">Seleccione...</option>
-            @foreach($contratos as $contrato)
-              <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
-            @endforeach
-          </select>
-        </div>
-
         <div class="form-group {{ $errors->has('empleado_id') ? 'has-error' : '' }}">
           <label class="control-label" for="empleado_id">Empleado: *</label>
-          <select id="empleado_id" class="form-control" name="empleado_id" disabled required>
+          <select id="empleado_id" class="form-control" name="empleado_id" required>
             <option value="">Seleccione...</option>
+            @foreach($empleados as $empleado)
+              <option value="{{ $empleado->id }}" {{ old('empleado_id') == $empleado->id ? 'selected':'' }}>{{ $empleado->usuario->nombres }} {{ $empleado->usuario->apellidos }}</option>
+            @endforeach
           </select>
         </div>
 
@@ -57,52 +50,4 @@
       </form>
     </div>
   </div>
-@endsection
-
-@section('scripts')
-<script type="text/javascript">
-  $(document).ready( function(){
-    $('#contrato').change(getEmpleados)
-    $('#contrato').change()
-
-    $('#contrato').select2()
-    $('#empleado_id').select2({
-      disabled: true
-    })
-  });
-
-  function getEmpleados(){
-    let contrato = $(this).val(),
-        select = $('#empleado_id');
-
-    if(contrato == '') return;
-
-    $.ajax({
-      type: 'POST',
-      url: '{{ route("empleados.index") }}/contratos/' + contrato,
-      data: {
-        _token: '{{ csrf_token() }}'
-      },
-      dataType: 'json',
-    })
-    .done(function(data){
-      select.empty().append(new Option('Seleccione...', '', false, false)).trigger('change');
-      if(data.length > 0){
-        $.each(data, function(k, v){
-          select.append(new Option(`${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`, v.usuario.id, false, false)).trigger('change')
-        })
-
-        select.prop('disabled', false)
-      }else{
-        select.prop('disabled', true)
-      }
-    })
-    .fail(function(){
-      select.prop('disabled', false)
-    })
-    .always(function(){
-
-    })
-  }
-</script>
 @endsection

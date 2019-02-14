@@ -56,6 +56,9 @@ class EmpleadosContrato extends Model
       case '4x3':
         $dias = ['trabajo'=>4, 'descanso'=>3, 'interval'=>7];
         break;
+      case '6x1':
+        $dias = ['trabajo'=>6, 'descanso'=>1, 'interval'=>7];
+        break;
       case '7x7':
         $dias = ['trabajo'=>7, 'descanso'=>7, 'interval'=>14];
         break;

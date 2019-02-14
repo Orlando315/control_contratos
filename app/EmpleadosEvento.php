@@ -142,13 +142,13 @@ class EmpleadosEvento extends Model
 
   public function userReemplazo()
   {
-    return $this->belongsTo('App\Usuario', 'empleado_id');
+    return $this->belongsTo('App\Empleado', 'empleado_id');
   }
 
   public function nombreReemplazo()
   {
-    $nombre = $this->userReemplazo->nombres.' '.$this->userReemplazo->apellidos;
-    $route = route('empleados.show', ['usuario' => $this->userReemplazo->empleado_id]);
+    $nombre = $this->userReemplazo->usuario->nombres.' '.$this->userReemplazo->usuario->apellidos;
+    $route = route('empleados.show', ['empleado' => $this->empleado_id]);
 
     return "<a href='{$route}'>{$nombre}</a>";
   }

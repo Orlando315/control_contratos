@@ -31,12 +31,12 @@
 
         <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
           <label class="control-label" for="email">Email: *</label>
-          <input id="email" class="form-control" type="email" name="email" value="{{ old('email') ? old('email') : Auth::user()->email }}" placeholder="Email" required>
+          <input id="email" class="form-control" type="email" name="email" maxlength="50" value="{{ old('email') ? old('email') : Auth::user()->email }}" placeholder="Email">
         </div>
 
         <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">
           <label class="control-label" for="telefono">Teléfono: *</label>
-          <input id="telefono" class="form-control" type="text" name="telefono" value="{{ old('telefono') ? old('telefono') : Auth::user()->telefono }}" placeholder="Teléfono" required>
+          <input id="telefono" class="form-control" type="text" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : Auth::user()->telefono }}" placeholder="Teléfono">
         </div>
 
         @if (count($errors) > 0)

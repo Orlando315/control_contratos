@@ -669,4 +669,17 @@ class Empleado extends Model
     return $comidas;
   }
 
+  public function getSueldoLiquido()
+  {
+    $month = $this->contrato->getPaymentMonth(true);
+
+    $alcanceLiquido = $this->getAlcanceLiquido();
+    $asistencias = $this->getAsistenciasByMonth($month);
+    $anticipo = $this->calculateAnticiposByMonth($month);
+    $bonoReemplazo = $this->calculateBonoReemplazoByMonth($month);
+    $sueldoLiquido = $this->calculateSueldoLiquido($alcanceLiquido, $asistencias, $anticipo, $bonoReemplazo);
+
+    return $sueldoLiquido;
+  }
+
 }

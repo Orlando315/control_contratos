@@ -14,7 +14,7 @@ class LoginController extends Controller
     public function dashboard()
     {
       $inventarios = Inventario::all();
-      $usuarios  = Usuario::usuarios();
+      $usuarios  = Usuario::adminsYSupervisores();
       $contratos = Contrato::all();
 
       return view('dashboard', ['inventarios' => $inventarios, 'usuarios' => $usuarios, 'contratos' => $contratos]);

@@ -75,6 +75,11 @@ class Contrato extends Model
     return $this->hasMany('App\Anticipo');
   }
 
+  public function inventarios()
+  {
+    return $this->hasMany('App\Inventario');
+  }
+
   public function entregas()
   {
     return InventarioEntrega::with(['inventario:id,nombre', 'realizadoPor:id,nombres,apellidos'])
@@ -224,7 +229,20 @@ class Contrato extends Model
 
     $dateLatestSueldo->addMonths(1);
 
-    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : ucfirst($dateLatestSueldo->formatLocalized('%B'));
+    $stringMonth = ucfirst($dateLatestSueldo->formatLocalized('%B')).' ('.$dateLatestSueldo->startOfMonth()->format('Y-d-m').' - '.$dateLatestSueldo->endOfMonth()->format('Y-d-m').')';
+
+    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : $stringMonth;
+  }
+
+  public function getTotalAPagar()
+  {
+    $total = 0;
+
+    foreach ($this->empleados()->get() as $empleado){
+      $total += $empleado->getSueldoLiquido();
+    }
+
+    return $total;
   }
 
   public function getAllEventsData($inicio, $fin)

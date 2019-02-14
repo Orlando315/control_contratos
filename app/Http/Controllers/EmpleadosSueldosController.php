@@ -30,8 +30,9 @@ class EmpleadosSueldosController extends Controller
     public function create(Contrato $contrato)
     {
       $paymentMonth = $contrato->getPaymentMonth();
+      $empleados = $contrato->empleados()->get();
 
-      return view('sueldos.create', ['contrato' => $contrato, 'paymentMonth' => $paymentMonth]);
+      return view('sueldos.create', ['contrato' => $contrato, 'paymentMonth' => $paymentMonth, 'empleados' => $empleados]);
     }
 
     /**
@@ -42,22 +43,6 @@ class EmpleadosSueldosController extends Controller
      */
     public function store(Request $request, Contrato $contrato)
     {
-      $this->validate($request, [
-        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      ]);
-
-      $adjunto = null;
-
-      if($request->hasFile('adjunto')){
-        $directory = 'Empresa' . Auth::user()->empresa_id . '/Sueldos/';
-
-        if(!Storage::exists($directory)){
-          Storage::makeDirectory($directory);
-        }
-
-        $adjunto = $request->file('adjunto')->store($directory);
-      }
-
       $payments = [];
       $month = $contrato->getPaymentMonth(true);
 
@@ -67,6 +52,18 @@ class EmpleadosSueldosController extends Controller
         $anticipo = $empleado->calculateAnticiposByMonth($month);
         $bonoReemplazo = $empleado->calculateBonoReemplazoByMonth($month);
         $sueldoLiquido = $empleado->calculateSueldoLiquido($alcanceLiquido, $asistencias, $anticipo, $bonoReemplazo);
+
+        $adjunto = null;
+
+        if($request->hasFile('empleado.'.$empleado->id)){
+          $directory = 'Empresa' . Auth::user()->empresa_id . '/Sueldos/Empleado'.$empleado->id;
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          $adjunto = $request->file('empleado.'.$empleado->id)->store($directory);
+        }
 
         $payments[] = [
           'contrato_id' => $contrato->id,

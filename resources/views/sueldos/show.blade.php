@@ -29,6 +29,14 @@
 
             <ul class="list-group list-group-unbordered">
               <li class="list-group-item">
+                <b>Empleado</b>
+                <span class="pull-right">
+                  <a href="{{ route('empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                    {{ $sueldo->empleado->usuario->nombres }} {{ $sueldo->empleado->usuario->nombres }}
+                  </a>
+                </span>
+              </li>
+              <li class="list-group-item">
                 <b>Mes pagado</b>
                 <span class="pull-right">{{ $sueldo->mesPagado() }}</span>
               </li>

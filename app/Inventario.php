@@ -19,6 +19,7 @@ class Inventario extends model
   
   protected $fillable = [
     'empresa_id',
+    'contrato_id',
     'tipo',
     'nombre',
     'valor',
@@ -34,6 +35,11 @@ class Inventario extends model
   public function entregas()
   {
     return $this->hasMany('App\InventarioEntrega');
+  }
+
+  public function contrato()
+  {
+    return $this->belongsTo('App\Contrato');
   }
 
   public function tipo()

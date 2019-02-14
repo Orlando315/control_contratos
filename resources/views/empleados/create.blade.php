@@ -56,17 +56,17 @@
 
           <div class="form-group {{ $errors->has('telefono') ? 'has-error' : '' }}">
             <label class="control-label" for="telefono">Teléfono: *</label>
-            <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : '' }}" placeholder="Teléfono" required>
+            <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') ? old('telefono') : '' }}" placeholder="Teléfono">
           </div>
 
           <div class="form-group {{ $errors->has('email') ? 'has-error' : '' }}">
             <label class="control-label" for="email">Email: *</label>
-            <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : '' }}" placeholder="Email" required>
+            <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') ? old('email') : '' }}" placeholder="Email">
           </div>
 
           <div class="form-group {{ $errors->has('talla_camisa') ? 'has-error' : '' }}">
             <label class="control-label" for="talla_camisa">Talla de camisa:</label>
-            <input id="talla_camisa" class="form-control" type="number" step="1" max="99" min="1" name="talla_camisa" value="{{ old('talla_camisa') ? old('talla_camisa') : '' }}" style="width: 80px">
+            <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa') ? old('talla_camisa') : '' }}" style="width: 80px">
           </div>
 
           <div class="form-group {{ $errors->has('talla_zapato') ? 'has-error' : '' }}">
@@ -128,6 +128,7 @@
               <option value="">Seleccione...</option>
               <option value="5x2" {{ old('jornada') == '5x2' ? 'selected' : '' }}>5x2</option>
               <option value="4x3" {{ old('jornada') == '4x3' ? 'selected' : '' }}>4x3</option>
+              <option value="6x1" {{ old('jornada') == '6x1' ? 'selected' : '' }}>6x1</option>
               <option value="7x7" {{ old('jornada') == '7x7' ? 'selected' : '' }}>7x7</option>
               <option value="10x10" {{ old('jornada') == '10x10' ? 'selected' : '' }}>10x10</option>
               <option value="12x12" {{ old('jornada') == '12x12' ? 'selected' : '' }}>12x12</option>
@@ -172,7 +173,6 @@
 
     $('#inicio, #fin, #inicio_jornada').datepicker({
       format: 'dd-mm-yyyy',
-      startDate: 'today',
       language: 'es',
       keyboardNavigation: false,
       autoclose: true

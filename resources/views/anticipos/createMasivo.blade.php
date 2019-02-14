@@ -11,8 +11,8 @@
 @section('content')
   <!-- Formulario -->
   <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form action="{{ route('anticipos.storeMasivo') }}" method="POST">
+    <div class="col-md-8 col-md-offset-2">
+      <form id="form-anticipos" action="{{ route('anticipos.storeMasivo') }}" method="POST">
         <input id="empleados" type="hidden" name="empleados">
         {{ csrf_field() }}
 
@@ -36,6 +36,13 @@
         <fieldset>
           <legend style="border-bottom: none">Empleados</legend>
           <table class="table table-sm table-condensed table-anticipos">
+            <thead>
+              <tr>
+                <td>Empleado</td>
+                <td>Anticipo</td>
+                <td></td>
+              </tr>
+            </thead>
             <tbody id="tbody-empleados">
             </tbody>
           </table>
@@ -47,9 +54,13 @@
             @foreach($errors->all() as $error)
               <li>{{ $error }}</li>
             @endforeach
-          </ul>  
+          </ul>
         </div>
         @endif
+
+        <div id="errorCheck" class="alert alert-danger alert-important" style="display: none">
+          Debe marcar a todos los empleados antes de continuar.
+        </div>
 
         <div class="form-group text-right">
           <a class="btn btn-flat btn-default" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
@@ -77,16 +88,49 @@
     $('#contrato').select2()
 
     $('#tbody-empleados').on('change', '.input-anticipo', updateEmpleadosInfo)
+
+    $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
+      if($(this).is(':checked')){
+        $(this).closest('div.checkbox').removeClass('has-error');
+      }
+    })
+
+    $('#form-anticipos').submit(function(e){
+      e.preventDefault();
+      let checkboxs = $('#tbody-empleados input[type="checkbox"]');
+      let counter = 0;
+      $.each(checkboxs, function(k, v){
+        if(!$(v).is(':checked')){
+          counter++
+        }
+
+        $(v).closest('div.checkbox').toggleClass('has-error', !$(v).is(':checked'));
+      })
+
+      if(counter == 0){
+        e.currentTarget.submit();
+      }else{
+        $('#errorCheck').show().delay(7000).hide('slow');
+      }
+    })
   });
 
   let createElement = function(id, name, anticipo){
     let field = 
     `<tr>
-      <td><p>${name}<p></td>
+      <td><p>${name}</p></td>
       <td class="form-inline">
         <div class="form-group">
           <label class="control-label" for="empleado_${id}">Anticipo: *</label>
           <input id="empleado_${id}" data-id="${id}" class="form-control input-sm input-anticipo" type="number" value="${anticipo}" required>
+        </div>
+      </td>
+      <td>
+        <div class="checkbox">
+          <label class="container-checkbox">
+            <input type="checkbox">
+            <span class="checkmark-check"></span>
+          </label>
         </div>
       </td>
     </tr>`

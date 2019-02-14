@@ -5,13 +5,13 @@
 @section( 'breadcrumb' )
 	<ol class="breadcrumb">
 	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('empleados.index') }}">Empleados</a></li>
+    <li><a href="{{ route('contratos.show', ['contrato' => $empleado->contrato_id]) }}">Empleados</a></li>
 	  <li class="active"> Empleado </li>
 	</ol>
 @endsection
 @section( 'content' )
   <section>
-    <a class="btn btn-flat btn-default" href="{{ route('empleados.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+    <a class="btn btn-flat btn-default" href="{{ route('contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     <a class="btn btn-flat btn-success" href="{{ route('empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <a class="btn btn-flat btn-warning" href="{{ route('empleados.cambio', [$empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>

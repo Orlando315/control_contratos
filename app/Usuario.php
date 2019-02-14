@@ -15,11 +15,6 @@ class Usuario extends User
     parent::boot();
 
     static::addGlobalScope(new EmpresaScope);
-    /*
-    static::addGlobalScope('tipo', function (Builder $builder) {
-      $builder->where('tipo', 3);
-    });
-    */
   }
 
   protected $table = 'users';
@@ -42,7 +37,7 @@ class Usuario extends User
   /*
     Todos los usuarios de tipo Administrator y Supervisor
   */
-  public static function usuarios()
+  public static function adminsYSupervisores()
   {
     return Usuario::where('tipo', 2)
                     ->orWhere('tipo', 3)->get();
@@ -53,7 +48,15 @@ class Usuario extends User
   */
   public static function supervisores()
   {
-    return usuario::where('tipo', 3)->get(); 
+    return Usuario::where('tipo', 3)->get(); 
+  }
+
+  /*
+    Todos los usuarios de tipo Supervisor
+  */
+  public static function empleados()
+  {
+    return Usuario::where('tipo', 4)->get();
   }
 
   public function getUsuarioAttribute($usuario)
