@@ -35,6 +35,11 @@ class Contrato extends Model
     return $this->hasMany('App\Empleado');
   }
 
+  public function empleadosEventos()
+  {
+    return $this->hasManyThrough('App\empleadosEvento', 'App\Empleado');
+  }
+
   public function documentos()
   {
     return $this->hasMany('App\Documento');
@@ -50,9 +55,24 @@ class Contrato extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function facturas()
+  {
+    return $this->hasMany('App\Factura');
+  }
+
   public function transportes()
   {
-    return $this->hasMany('App\TransporteContrato');
+    return $this->belongsToMany('App\Transporte', 'transportes_contratos');
+  }
+
+  public function transportesConsumos()
+  {
+    return $this->hasMany('App\TransporteConsumo');
+  }
+
+  public function anticipos()
+  {
+    return $this->hasMany('App\Anticipo');
   }
 
   public function inventarios()
@@ -223,6 +243,85 @@ class Contrato extends Model
     }
 
     return $total;
+  }
+
+  public function getAllEventsData($inicio, $fin)
+  {
+
+    $inicioCarbon = new Carbon($inicio);
+    $finCarbon    = new Carbon($fin);
+
+    // Headers
+    $eventosHeaders = [
+      'Empleado',
+      'Asistencia',
+      'Licencia médica',
+      'Vacaciones',
+      'Permiso',
+      'Permiso no remunerable',
+      'Despido',
+      'Renuncia',
+      'Inasistencia',
+      'Descanso',
+      'Reemplazo'
+    ];
+
+    $allData = [$eventosHeaders];
+
+    foreach ($this->empleados()->with('usuario')->get() as $empleado) {
+      $dataRow = array_fill(0,  11, 0);
+
+      $nombre = "{$empleado->usuario->rut} | {$empleado->usuario->nombres} {$empleado->usuario->apellidos}";
+      $dataRow[0]  = $nombre;
+
+      $eventos = $empleado->eventos()->select('tipo', 'inicio', 'fin')
+                              ->where(function($query) use ($inicio, $fin){
+                                $query->where('tipo', '!=', 1)
+                                      ->whereBetween('inicio', [$inicio, $fin]);
+                              })
+                              ->get();
+
+      $asistencias = $empleado->eventos()
+                              ->where([
+                                ['tipo', 1],
+                                ['pago', 1]
+                              ])
+                              ->whereBetween('inicio', [$inicio, $fin])
+                              ->count();
+
+      $inasistencias = $empleado->eventos()
+                              ->where([
+                                ['tipo', 1],
+                                ['pago', 0]
+                              ])
+                              ->whereBetween('inicio', [$inicio, $fin])
+                              ->count();
+
+      foreach ($eventos as $evento) {
+        if($evento->fin){
+          $eventoStart = new Carbon($evento->inicio);
+          $eventoEnd   = new Carbon($evento->fin);
+
+          if($eventoEnd->gte($finCarbon)){
+            $eventoEnd = $finCarbon;
+          }
+
+          $diff = $eventoStart->diffInDays($eventoEnd, false);
+
+          $dataRow[($evento->tipo + 1)] += $diff;
+        }else{
+          $dataRow[($evento->tipo + 1)]++;
+        }
+        
+      }
+
+      $dataRow[1] = $asistencias;
+      $dataRow[8] = $inasistencias;
+
+      $allData = array_merge($allData, [$dataRow]);
+    }
+
+    return $allData;
   }
 
 }

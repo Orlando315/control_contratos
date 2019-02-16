@@ -192,6 +192,27 @@
             </li>
             @endif
 
+            @if(Auth::user()->tipo <= 2)
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-area-chart"></i>
+                <span>Reportes</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('reportes.generalIndex') }}"><i class="fa fa-circle-o"></i>General</a></li>
+                <li><a href="{{ route('reportes.inventariosIndex') }}"><i class="fa fa-circle-o"></i>Inventarios</a></li>
+                <li><a href="{{ route('reportes.facturasIndex') }}"><i class="fa fa-circle-o"></i>Facturas</a></li>
+                <li><a href="{{ route('reportes.eventosIndex') }}"><i class="fa fa-circle-o"></i>Eventos</a></li>
+                <li><a href="{{ route('reportes.sueldosIndex') }}"><i class="fa fa-circle-o"></i>Sueldos</a></li>
+                <li><a href="{{ route('reportes.anticiposIndex') }}"><i class="fa fa-circle-o"></i>Anticipos</a></li>
+                <li><a href="{{ route('reportes.transportesIndex') }}"><i class="fa fa-circle-o"></i>Transportes</a></li>
+                <li><a href="{{ route('reportes.comidasIndex') }}"><i class="fa fa-circle-o"></i>Comidas</a></li>
+                <li><a href="{{ route('reportes.reemplazosIndex') }}"><i class="fa fa-circle-o"></i>Reemplazos</a></li>
+              </ul>
+            </li>
+            @endif
+
           </ul>
         </section>
         <!-- /.sidebar -->
@@ -279,6 +300,10 @@
           .fail(function(){
             console.log('fail')
           })
+        })
+
+        $('.btn-print').click(function(){
+          window.print();
         })
       })
     </script>
