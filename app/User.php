@@ -4,12 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPassword;
 
 class User extends Authenticatable
 {
   /*
     Utilizado solo para autenticacion
   */
+
+  use Notifiable;
 
   public function empresa()
   {
@@ -60,5 +64,10 @@ class User extends Authenticatable
                   ->when($pendiente, function($query){
                     $query->where('recibido', false);
                   });
+  }
+
+  public function sendPasswordResetNotification($token)
+  {
+      $this->notify(new ResetPassword($token));
   }
 }

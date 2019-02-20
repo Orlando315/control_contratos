@@ -51,6 +51,7 @@
 	          <span class="glyphicon glyphicon-lock form-control-feedback"></span>
 	        </div>
           <p class="text-center">¿No posees una cuenta? <a href="{{ route('empresas.create') }}" title="Registro">Registrate</a>.</p>
+          <p class="text-center">¿Olvidaste tu contraseña? <a href="{{ route('password.request') }}" title="Recuperar contraseña">Recuperar</a>.</p>
 	        <div class="form-group">
 	            <button id="b-login" type="submit" class="btn btn-primary btn-block btn-flat">Login</button>
 	        </div>

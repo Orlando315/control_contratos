@@ -79,7 +79,7 @@
 
           <div class="form-group {{ $errors->has('talla_pantalon') ? 'has-error' : '' }}">
             <label class="control-label" for="talla_pantalon">Talla de pantalon:</label>
-            <input id="talla_pantalon" class="form-control" type="number" step="1" max="99" min="1" name="talla_pantalon" value="{{ old('talla_pantalon') ? old('talla_pantalon') : $empleado->talla_pantalon }}" style="width: 80px">
+            <input id="talla_pantalon" class="form-control" type="text" maxlength="3" name="talla_pantalon" value="{{ old('talla_pantalon') ? old('talla_pantalon') : $empleado->talla_pantalon }}" style="width: 80px">
           </div>
         </fieldset>
 

@@ -18,8 +18,16 @@ Route::get('/', function(){
 Route::get('login', function(){
   return view('login');
 });
+
+/* --- Auth ---*/
 Route::post('auth', 'LoginController@auth')->name('login.auth');
 Route::match(['get', 'post'], '/logout', 'LoginController@logout')->name('login.logout');
+
+/* --- Recuperar contraseña --- */
+Route::get('password', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showresetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 /* --- Empresas --- */
 Route::get('registro', 'EmpresasController@create')->name('empresas.create');
@@ -38,7 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('/perfil', 'UsuariosController@perfil')->name('usuarios.perfil');
   Route::get('/perfil/edit', 'UsuariosController@editPerfil' )->name('usuarios.editPerfil');
   Route::patch('/perfil', 'UsuariosController@updatePerfil')->name('usuarios.updatePerfil');
-  Route::patch('/perfil/password', 'UsuariosController@password')->name('usuarios.password');
+  Route::patch('/perfil/password', 'UsuariosController@password')->name('perfil.password');
 
   /* --- Sueldos --- */
   Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');
@@ -79,6 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* --- Usuarios --- */
     Route::resource('usuarios', 'UsuariosController');
+    Route::patch('usuarios/password/{usuario}', 'UsuariosController@password')->name('usuarios.password');
 
     /* --- Empleados --- */
     Route::patch('empleados/{empleado}/contrato', 'EmpleadosController@cambioContrato')->name('empleados.cambioContrato');

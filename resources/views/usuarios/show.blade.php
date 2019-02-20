@@ -14,6 +14,9 @@
     <a class="btn btn-flat btn-default" href="{{ route('usuarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     <a class="btn btn-flat btn-success" href="{{ route('usuarios.edit', [$usuario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    @if(Auth::user()->tipo <= 2)
+    <button class="btn btn-flat btn-warning" data-toggle="modal" data-target="#passModal"><i class="fa fa-lock" aria-hidden="true"></i> Cambiar contraseña</button>
+    @endif
   </section>
 
   <section style="margin-top: 20px">
@@ -70,6 +73,50 @@
       </div>
     </div>
   </section>
+
+  <div id="passModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="passModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="passModalLabel">Cambiar contraseña</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <form class="col-md-8 col-md-offset-2" action="{{ route('usuarios.password', ['usuario' => $usuario->id]) }}" method="POST">
+              {{ method_field('PATCH') }}
+              {{ csrf_field() }}
+              <div class="form-group">
+                <label>Contraseña nueva: *</label>
+                <input id="password" class="form-control" type="password" pattern=".{6,}" name="password" required>
+                <p class="help-block">Debe contener al menos 6 caracteres.</p>
+              </div>
+              <div class=" form-group">
+                <label>Verificar: *</label>
+                <input id="password_confirmation" class="form-control" type="password" pattern=".{6,}" name="password_confirmation" required>
+                <p class="help-block">Debe contener al menos 6 caracteres.</p>
+              </div>
+
+              @if (count($errors) > 0)
+              <div class="alert alert-danger alert-important">
+                <ul>
+                  @foreach($errors->all() as $error)
+                     <li>{{ $error }}</li>
+                   @endforeach
+                </ul>  
+              </div>
+              @endif
+
+              <center>
+                <button class="btn btn-flat btn-danger" type="submit">Guardar</button>
+                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
     <div class="modal-dialog" role="document">
