@@ -180,23 +180,25 @@ class UsuariosController extends Controller
       }
     }
 
-    public function password(Request $request)
+    public function password(Request $request, $id = null)
     {
       $this->validate($request, [
         'password' => 'required|min:6|confirmed',
         'password_confirmation' => 'required'
       ]);
 
-      $usuario = Usuario::find(Auth::user()->id);
+      $usuario = Usuario::find($id ?? Auth::user()->id);
       $usuario->password = bcrypt($request->password);
 
+      $redirect = $id ? 'usuarios/' . $usuario->id : 'perfil';
+
       if($usuario->save()){
-        return redirect('perfil')->with([
+        return redirect($redirect)->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contraseña cambiada exitosamente.'
         ]);
       }else{
-        return redirect('perfil')->with([
+        return redirect($redirect)->with([
           'flash_class'     => 'alert-danger',
           'flash_message'   => 'Ha ocurrido un error.',
           'flash_important' => true

@@ -94,7 +94,7 @@
         </div>
         <div class="modal-body">
           <div class="row">
-            <form class="col-md-8 col-md-offset-2" action="{{ route('usuarios.password') }}" method="POST">
+            <form class="col-md-8 col-md-offset-2" action="{{ route('perfil.password') }}" method="POST">
               {{ method_field('PATCH') }}
               {{ csrf_field() }}
               <div class="form-group">

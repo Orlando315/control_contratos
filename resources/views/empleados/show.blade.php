@@ -44,7 +44,11 @@
               </li>
               <li class="list-group-item">
                 <b>Usuario</b>
-                <span class="pull-right">{{ $empleado->usuario->usuario }}</span>
+                <span class="pull-right">
+                  <a href="{{ route('usuarios.show', ['usuario' => $empleado->usuario->id]) }}">
+                    {{ $empleado->usuario->usuario }}
+                  </a>
+                </span>
               </li>
               <li class="list-group-item">
                 <b>Nombres</b>
