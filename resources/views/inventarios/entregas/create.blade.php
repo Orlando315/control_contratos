@@ -18,12 +18,12 @@
 
         <h4>Agregar entrega - {{ $inventario->nombre }}</h4>
 
-        <div class="form-group {{ $errors->has('empleado_id') ? 'has-error' : '' }}">
-          <label class="control-label" for="empleado_id">Empleado: *</label>
-          <select id="empleado_id" class="form-control" name="empleado_id" required>
+        <div class="form-group {{ $errors->has('usuario') ? 'has-error' : '' }}">
+          <label class="control-label" for="usuario">Empleado: *</label>
+          <select id="usuario" class="form-control" name="usuario" required>
             <option value="">Seleccione...</option>
             @foreach($empleados as $empleado)
-              <option value="{{ $empleado->id }}" {{ old('empleado_id') == $empleado->id ? 'selected':'' }}>{{ $empleado->usuario->nombres }} {{ $empleado->usuario->apellidos }}</option>
+              <option value="{{ $empleado->usuario->id }}" {{ old('usuario') == $empleado->usuario->id ? 'selected':'' }}>{{ $empleado->usuario->nombres }} {{ $empleado->usuario->apellidos }}</option>
             @endforeach
           </select>
         </div>

@@ -27,7 +27,7 @@ class InventariosEntregasController extends Controller
      */
     public function create(Inventario $inventario)
     {
-      $empleados = $inventario->contrato->empleados()->get();
+      $empleados = $inventario->contrato->empleados()->with('usuario:id,empleado_id,nombres,apellidos')->get();
 
       return view('inventarios.entregas.create', ['inventario' => $inventario, 'empleados' => $empleados]);
     }
@@ -41,7 +41,7 @@ class InventariosEntregasController extends Controller
     public function store(Request $request, Inventario $inventario)
     {
       $this->validate($request, [
-        'empleado_id' => 'required',
+        'usuario' => 'required',
         'cantidad' => 'required|numeric'
       ]);
 
@@ -53,7 +53,7 @@ class InventariosEntregasController extends Controller
 
       $entrega = new InventarioEntrega;
       $entrega->realizado = Auth::user()->id;
-      $entrega->entregado = $request->empleado_id;
+      $entrega->entregado = $request->usuario;
       $entrega->cantidad  = $request->cantidad;
 
       if($inventario->entregas()->save($entrega)){
