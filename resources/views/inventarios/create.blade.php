@@ -17,7 +17,7 @@
 
         <h4>Agregar inventario</h4>
         
-        @if(Auth::user()->tipo <= 2)
+        @if(Auth::user()->tipo <= 3)
           <div class="form-group {{ $errors->has('contrato_id') ? 'has-error' : '' }}">
             <label class="control-label" for="contrato_id">Contrato: *</label>
             <select id="contrato_id" class="form-control" name="contrato_id" required>
@@ -36,7 +36,7 @@
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
           <select id="tipo" class="form-control" name="tipo" required>
             <option value="">Seleccione...</option>
-            @if(Auth::user()->tipo < 3)
+            @if(Auth::user()->tipo <= 3)
               <option value="1" {{ old('tipo') == '1' ? 'selected' : '' }}>Insumo</option>
               <option value="2" {{ old('tipo') == '2' ? 'selected' : '' }}>EPP</option>
             @endif

@@ -54,7 +54,7 @@ class EmpresasController extends Controller
       if($empresa->save()){
 
         $user = new Usuario($request->all());
-        $user->tipo = 1;
+        $user->tipo = 2;
         $user->usuario = $request->rut;
         $user->password = bcrypt($request->input('password'));
         $empresa->usuario()->save($user);

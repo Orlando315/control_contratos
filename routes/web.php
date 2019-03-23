@@ -56,8 +56,50 @@ Route::group(['middleware' => 'auth'], function () {
   /* --- Entregas ---*/
   Route::patch('inventarios/entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
 
-  /* --- Solo usuarios 1 Empresa (Super admin) --- */
+  /* --- Encuestas --- */
+  Route::get('encuesta/{encuesta}', 'EncuestasController@showPublic')->name('encuesta.show');
+  
+  /* --- Respuestas --- */
+  Route::post('encuesta/{encuesta}', 'EncuestasRespuestasController@store')->name('respuestas.store');
+
+  /* --- Ayudas ---*/
+  Route::get('help', 'AyudasController@list')->name('ayudas.list');
+
+  /* --- Solo usuarios 1 (Super administrador) --- */
   Route::group(['middleware' => 'checkRole:1'], function(){
+
+    /* --- Ayudas --- */
+    Route::resource('ayudas', 'AyudasController');
+
+    /* --- Encuentas --- */
+    Route::resource('encuestas', 'EncuestasController');
+
+    /* --- Preguntas --- */
+    Route::get('preguntas/create/{encuesta}', 'EncuestasPreguntasController@create')->name('preguntas.create');
+    Route::post('preguntas/create/{encuesta}', 'EncuestasPreguntasController@store')->name('preguntas.store');
+    Route::resource('preguntas', 'EncuestasPreguntasController')
+          ->only([
+            'show',
+            'edit',
+            'update',
+            'destroy',
+          ]);
+
+    /* --- Opciones --- */
+    Route::get('opciones', 'PreguntasOpcionesController@index')->name('opciones.index');
+    Route::get('opciones/create/{pregunta}', 'PreguntasOpcionesController@create')->name('opciones.create');
+    Route::post('opciones/create/{pregunta}', 'PreguntasOpcionesController@store')->name('opciones.store');
+    Route::get('opciones/{opcion}/edit', 'PreguntasOpcionesController@edit')->name('opciones.edit');
+    Route::patch('opciones/{opcion}', 'PreguntasOpcionesController@update')->name('opciones.update');
+    Route::delete('opciones/{opcion}', 'PreguntasOpcionesController@destroy')->name('opciones.destroy');
+
+    /* --- Respuestas --- */
+    Route::get('respuestas/{encuesta}/{usuario}', 'EncuestasRespuestasController@show')->name('respuestas.show');
+    Route::delete('respuestas/{encuesta}/{usuario}', 'EncuestasRespuestasController@destroy')->name('respuestas.destroy');
+  });
+
+  /* --- Solo usuarios 2 (Empresa) --- */
+  Route::group(['middleware' => 'checkRole:2'], function(){
       /* --- Empresas --- */
     Route::get('/empresa/edit', 'EmpresasController@edit')->name('empresas.edit');
     Route::patch('/perfil/empresas', 'EmpresasController@update')->name('empresas.update');
@@ -73,8 +115,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('documentos/contratos/{contrato}', 'DocumentosController@storeContrato')->name('documentos.storeContrato');
   });
 
-  /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
-  Route::group(['middleware' => 'checkRole:2'], function(){
+  /* --- Solo usuarios 2 (Empresa) y 3 (Administrador) --- */
+  Route::group(['middleware' => 'checkRole:3'], function(){
 
     /* --- Contratos --- */
     Route::resource('contratos', 'ContratosController')->only([
@@ -169,8 +211,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.generalGet');
   });
 
-  /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */
-  Route::group(['middleware' => 'checkRole:3'], function(){
+  /* --- Solo usuarios 2 (Empresa), 3 (Administrador) y 4 (Supervisor) --- */
+  Route::group(['middleware' => 'checkRole:4'], function(){
     /* --- Transportes --- */
     Route::resource('transportes', 'TransportesController')->only([
       'index',

@@ -54,7 +54,7 @@ class InventariosController extends Controller
 
       $inventario = new Inventario($request->all());
 
-      if(Auth::user()->tipo >= 3){
+      if(Auth::user()->tipo >= 4){
         $inventario->tipo = 3;
         $inventario->contrato_id = Auth::user()->empleado->contrato_id;
       }
@@ -105,7 +105,7 @@ class InventariosController extends Controller
     public function edit(Inventario $inventario)
     {
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 4 && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -122,7 +122,7 @@ class InventariosController extends Controller
     public function update(Request $request, Inventario $inventario)
     {
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 4 && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -179,7 +179,7 @@ class InventariosController extends Controller
     {
 
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->tipo >= 4 && $inventario->tipo < 3){
         abort(404);
       }
 

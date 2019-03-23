@@ -49,7 +49,7 @@ class UsuariosController extends Controller
 
       $usuario = new Usuario($request->all());
       $usuario->usuario = $request->rut;
-      $usuario->tipo = 2; // Administrador
+      $usuario->tipo = 3; // Administrador
       $usuario->password = bcrypt($request->rut);
 
       if($usuario = Auth::user()->empresa->usuario()->save($usuario)){

@@ -10,7 +10,7 @@
 @section( 'content' )
   @include('partials.flash')
   <div class="row">
-    @if(Auth::user()->tipo <= 2)
+    @if(Auth::user()->tipo <= 3)
     <div class="col-md-3 col-sm-6 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-green">
@@ -46,7 +46,7 @@
     </div>
     @endif
     
-    @if(Auth::user()->tipo <= 3)
+    @if(Auth::user()->tipo <= 4)
     <div class="col-md-3 col-sm-6 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-red">
@@ -65,7 +65,7 @@
     </div>
     @endif
     
-    @if(Auth::user()->tipo >= 3)
+    @if(Auth::user()->tipo >= 4)
       <div class="col-md-12">
         <div class="box box-success">
           <div class="box-header with-border">
@@ -123,7 +123,7 @@
 @endsection
 
 @section('scripts')
-@if(Auth::user()->tipo >= 3)
+@if(Auth::user()->tipo >= 4)
 <script type="text/javascript">
   let jornada     = @json(Auth::user()->empleado->proyectarJornada()),
       eventos     = @json(Auth::user()->empleado->getEventos()),

@@ -39,8 +39,8 @@ class Usuario extends User
   */
   public static function adminsYSupervisores()
   {
-    return Usuario::where('tipo', 2)
-                    ->orWhere('tipo', 3)->get();
+    return Usuario::where('tipo', 3)
+                    ->orWhere('tipo', 4)->get();
   }
 
   /*
@@ -48,7 +48,7 @@ class Usuario extends User
   */
   public static function supervisores()
   {
-    return Usuario::where('tipo', 3)->get(); 
+    return Usuario::where('tipo', 4)->get(); 
   }
 
   /*
@@ -56,7 +56,7 @@ class Usuario extends User
   */
   public static function empleados()
   {
-    return Usuario::where('tipo', 4)->get();
+    return Usuario::where('tipo', 5)->get();
   }
 
   public function getUsuarioAttribute($usuario)

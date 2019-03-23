@@ -70,7 +70,7 @@
                       <small>{{ Auth::user()->email }}</small>
                     </p>
                     <p>
-                      @if(Auth::user()->tipo == 1)
+                      @if(Auth::user()->tipo <= 2)
                         {{ Auth::user()->empresa->representante }}
                       @endif
                       <small>{{ Auth::user()->telefono }}</small>
@@ -111,7 +111,7 @@
               </a>
             </li>
 
-            @if(Auth::user()->tipo <= 2)            
+            @if(Auth::user()->tipo <= 3)            
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-clipboard"></i>
@@ -120,7 +120,7 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="{{ route('contratos.index') }}"><i class="fa fa-circle-o"></i>Ver contratos</a></li>
-                @if(Auth::user()->tipo == 1)
+                @if(Auth::user()->tipo <= 2)
                 <li><a href="{{ route('contratos.create') }}"><i class="fa fa-circle-o"></i>Agregar contrato</a></li>
                 @endif
               </ul>
@@ -164,7 +164,7 @@
             </li>
             @endif
 
-            @if(Auth::user()->tipo <= 3)
+            @if(Auth::user()->tipo <= 4)
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-cubes"></i>
@@ -185,14 +185,14 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="{{ route('transportes.index') }}"><i class="fa fa-circle-o"></i>Ver transportes</a></li>
-                @if(Auth::user()->tipo <= 2)
+                @if(Auth::user()->tipo <= 3)
                 <li><a href="{{ route('transportes.create') }}"><i class="fa fa-circle-o"></i>Agregar transporte</a></li>
                 @endif
               </ul>
             </li>
             @endif
 
-            @if(Auth::user()->tipo <= 2)
+            @if(Auth::user()->tipo <= 3)
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-area-chart"></i>
@@ -213,6 +213,34 @@
             </li>
             @endif
 
+            @if(Auth::user()->tipo == 1)
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-question-circle"></i>
+                <span>Encuestas</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('encuestas.index') }}"><i class="fa fa-circle-o"></i>Ver encuestas</a></li>
+                <li><a href="{{ route('encuestas.create') }}"><i class="fa fa-circle-o"></i>Agregar encuesta</a></li>
+              </ul>
+            </li>
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-life-ring"></i>
+                <span>Ayudas</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('ayudas.index') }}"><i class="fa fa-circle-o"></i>Ver ayudas</a></li>
+                <li><a href="{{ route('ayudas.create') }}"><i class="fa fa-circle-o"></i>Agregar ayuda</a></li>
+              </ul>
+            </li>
+            @endif
+
+            <li><a href="{{ route('ayudas.list') }}"><i class="fa fa-life-ring"></i> <span>Ayudas</span></a></li>
+
           </ul>
         </section>
         <!-- /.sidebar -->
@@ -230,6 +258,7 @@
         </section>
         <!-- Main content -->
         <section class="content">
+          @include('partials.encuestas')
           @include('partials.entregas')
           @include('partials.sueldos')
           @yield( 'content' )

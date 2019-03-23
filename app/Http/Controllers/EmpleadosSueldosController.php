@@ -99,8 +99,8 @@ class EmpleadosSueldosController extends Controller
      */
     public function show(EmpleadosSueldo $sueldo)
     {
-      // Los usuarios Supervisores (3) y Empleados (4), solo pueden ver sus propios sueldos
-      if(Auth::user()->tipo >= 3 && Auth::user()->empleado_id != $sueldo->empleado_id){
+      // Los usuarios Supervisores (4) y Empleados (5), solo pueden ver sus propios sueldos
+      if(Auth::user()->tipo >= 4 && Auth::user()->empleado_id != $sueldo->empleado_id){
         abort(404);
       }
 

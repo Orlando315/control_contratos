@@ -11,7 +11,7 @@
 @section( 'content' )
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-    @if(Auth::user()->tipo == 1)
+    @if(Auth::user()->tipo <= 2)
       <a class="btn btn-flat btn-success" href="{{ route('empresas.edit') }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     @else
       <a class="btn btn-flat btn-success" href="{{ route('usuarios.editPerfil') }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
@@ -46,7 +46,7 @@
                 <b>Nombres</b>
                 <span class="pull-right">{{ Auth::user()->nombres }}</span>
               </li>
-              @if(Auth::user()->tipo != 1)
+              @if(Auth::user()->tipo > 2)
               <li class="list-group-item">
                 <b>Apellidos</b>
                 <span class="pull-right">{{ Auth::user()->apellidos }}</span>
@@ -60,7 +60,7 @@
                 <b>Email</b>
                 <span class="pull-right">{{ Auth::user()->email }}</span>
               </li>
-              @if(Auth::user()->tipo == 1)
+              @if(Auth::user()->tipo <= 2)
               <li class="list-group-item">
                 <b>Representante</b>
                 <span class="pull-right"> {{ Auth::user()->empresa->representante }} </span>
@@ -70,7 +70,7 @@
                 <b>Teléfono</b>
                 <span class="pull-right"> {{ Auth::user()->telefono }} </span>
               </li>
-              @if(Auth::user()->tipo == 1)
+              @if(Auth::user()->tipo <= 2)
               <li class="list-group-item">
                 <b>Jornada</b>
                 <span class="pull-right">{{ Auth::user()->empresa->configuracion->jornada }}</span>

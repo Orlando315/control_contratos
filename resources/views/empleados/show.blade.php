@@ -17,7 +17,7 @@
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
     <button class="btn btn-flat bg-purple" data-toggle="modal" data-target="#toggleModal">
       <i class="fa fa-exchange" aria-hidden="true"></i>
-      {{ $empleado->usuario->tipo == 3 ? 'Volver Empleado' : 'Ascender a Supervisor' }}
+      {{ $empleado->usuario->tipo == 4 ? 'Volver Empleado' : 'Ascender a Supervisor' }}
     </button>
     <button class="btn btn-flat bg-navy" data-toggle="modal" data-target="#contratoModal">
       <i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato
@@ -346,7 +346,7 @@
             <form class="col-md-8 col-md-offset-2" action="{{ route('empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
               {{ method_field('PATCH') }}
               {{ csrf_field() }}
-              <h4 class="text-center">¿Esta seguro de cambiar a {{ $empleado->usuario->tipo == 3 ? 'Empleado' : 'Supervisor' }}?</h4><br>
+              <h4 class="text-center">¿Esta seguro de cambiar a {{ $empleado->usuario->tipo == 4 ? 'Empleado' : 'Supervisor' }}?</h4><br>
 
               <center>
                 <button class="btn btn-flat btn-success" type="submit">Guardar</button>

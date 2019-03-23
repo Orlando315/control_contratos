@@ -79,7 +79,7 @@ class EmpleadosController extends Controller
         $usuario = new Usuario($request->all());
         $usuario->usuario  = $request->rut;
         $usuario->password = bcrypt($request->rut);
-        $usuario->tipo = 4; // Tipo 4 = Empleado
+        $usuario->tipo = 5; // Tipo 5 = Empleado
         $usuario->empresa_id = Auth::user()->empresa->id;
         $empleado->usuario()->save($usuario);
         
@@ -304,7 +304,7 @@ class EmpleadosController extends Controller
 
     public function toggleTipo(Empleado $empleado)
     {
-      $empleado->usuario->tipo = $empleado->usuario->tipo == 3 ? 4 : 3;
+      $empleado->usuario->tipo = $empleado->usuario->tipo == 4 ? 5 : 4;
 
       if($empleado->push()){
         return redirect('empleados/' . $empleado->id)->with([

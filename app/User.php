@@ -37,12 +37,15 @@ class User extends Authenticatable
   {
     switch ($this->tipo) {
       case 1:
-        $tipo = 'Empresa';
+        $tipo = 'Super Administrador';
         break;
       case 2:
-        $tipo = 'Administrador';
+        $tipo = 'Empresa';
         break;
       case 3:
+        $tipo = 'Administrador';
+        break;
+      case 4:
         $tipo = 'Supervisor';
         break;
       default:
@@ -69,5 +72,32 @@ class User extends Authenticatable
   public function sendPasswordResetNotification($token)
   {
       $this->notify(new ResetPassword($token));
+  }
+  
+  public function encuestas()
+  {
+    return $this->hasMany('App\Encuesta');
+  }
+
+  public function preguntas()
+  {
+    return $this->hasMany('App\EncuestaPregunta');
+  }
+
+  public function respuestas()
+  {
+    return $this->hasMany('App\EncuestaRespuesta');
+  }
+
+  public function ayudas()
+  {
+    return $this->hasMany('App\Ayuda');
+  }
+
+  public function encuestasPendientes()
+  {
+    return Encuesta::whereDoesntHave('respuestas', function ($query) {
+      $query->where('user_id', $this->id);
+    });
   }
 }

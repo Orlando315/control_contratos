@@ -12,7 +12,7 @@
 @section( 'content' )
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('inventarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-    @if(Auth::user()->tipo <= 2 || $inventario->tipo == 3)
+    @if(Auth::user()->tipo <= 3 || $inventario->tipo == 3)
     <a class="btn btn-flat btn-success" href="{{ route('inventarios.edit', [$inventario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
     @endif

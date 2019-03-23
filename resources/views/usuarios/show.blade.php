@@ -14,7 +14,7 @@
     <a class="btn btn-flat btn-default" href="{{ route('usuarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     <a class="btn btn-flat btn-success" href="{{ route('usuarios.edit', [$usuario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
     <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-    @if(Auth::user()->tipo <= 2)
+    @if(Auth::user()->tipo <= 3)
     <button class="btn btn-flat btn-warning" data-toggle="modal" data-target="#passModal"><i class="fa fa-lock" aria-hidden="true"></i> Cambiar contraseña</button>
     @endif
   </section>

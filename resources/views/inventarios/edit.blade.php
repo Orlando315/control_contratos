@@ -23,7 +23,7 @@
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
           <select id="tipo" class="form-control" name="tipo" required>
             <option value="">Seleccione...</option>
-            @if(Auth::user()->tipo < 3)
+            @if(Auth::user()->tipo <= 3)
               <option value="1" {{ old('tipo') == '1' ? 'selected' : $inventario->tipo == 1 ? 'selected' : '' }}>Insumo</option>
               <option value="2" {{ old('tipo') == '2' ? 'selected' : $inventario->tipo == 2 ? 'selected' : '' }}>EPP</option>
             @endif
