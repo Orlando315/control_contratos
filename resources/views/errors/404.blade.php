@@ -19,7 +19,7 @@
 
   <body class="hold-transition login-page">
     <div class="login-logo">
-    <center><img class="img-responsive" src="{{ asset( 'images/logo.png' ) }}" alt="Logo" style="height:80px"></center>
+    <center><img class="img-responsive" src="{{ asset( 'images/logo.png' ) }}" alt="{{ config('app.name') }}" style="height:120px"></center>
     </div><!-- /.login-logo -->
       <div class="error-page">
         <h2 class="headline text-yellow">404</h2>

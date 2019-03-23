@@ -38,11 +38,11 @@
         <a href="{{ route( 'dashboard' ) }}" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini">
-            <!--<img src="#" alt="">-->
+            <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" height="45px">
           </span>
           <!-- logo for regular state and mobile devices -->
           <span class="logo-lg">
-            <!--<img src="#" alt="">-->
+            <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" height="45px">
           </span>
         </a>
 
