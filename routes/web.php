@@ -184,7 +184,12 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
     Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
     Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
-    Route::get('transportes/consumos/download/{consumo}', 'TransportesConsumosController@download')->name('consumos.download');
+
+    /* --- Transportes consumos adjuntos --- */
+    Route::get('transportes/consumos/{consumo}/adjuntos/create', 'ConsumosAdjuntosController@create')->name('consumos.adjuntos.create');
+    Route::post('transportes/consumos/{consumo}/adjuntos/store', 'ConsumosAdjuntosController@store')->name('consumos.adjuntos.store');
+    Route::get('transportes/consumos/adjuntos/{adjunto}/download', 'ConsumosAdjuntosController@download')->name('consumos.adjuntos.download');
+    Route::delete('transportes/consumos/adjuntos/{adjunto}/destroy', 'ConsumosAdjuntosController@destroy')->name('consumos.adjuntos.destroy');
 
     /* --- Inventario ---*/
     Route::resource('inventarios', 'InventariosController');

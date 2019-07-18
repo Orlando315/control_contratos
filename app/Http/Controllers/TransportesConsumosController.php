@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\TransporteConsumo;
 use App\Transporte;
+use App\ConsumoAdjunto;
 
 class TransportesConsumosController extends Controller
 {
@@ -44,7 +45,7 @@ class TransportesConsumosController extends Controller
 
       $this->validate($request, [
         'contrato' => 'required',
-        'tipo' => 'required|in:1,2',
+        'tipo' => 'required|in:1,2,3,4',
         'fecha' => 'nullable|date_format:d-m-Y',
         'cantidad' => 'nullable|numeric',
         'valor' => 'required|numeric',
@@ -64,9 +65,12 @@ class TransportesConsumosController extends Controller
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
           }
+          $adjunto = new ConsumoAdjunto;
+          $adjunto->nombre = pathinfo($request->adjunto->getClientOriginalName(), PATHINFO_FILENAME);
+          $adjunto->mime   = $request->adjunto->getMimeType();
 
-          $consumo->adjunto = $request->file('adjunto')->store($directory);
-          $consumo->save();
+          $adjunto->path = $request->file('adjunto')->store($directory);
+          $consumo->adjuntos()->save($adjunto);
         }
 
         return redirect('transportes/consumos/' . $consumo->id)->with([
@@ -114,13 +118,12 @@ class TransportesConsumosController extends Controller
     public function update(Request $request, TransporteConsumo $consumo)
     {
       $this->validate($request, [
-        'tipo' => 'required|in:1,2',
+        'tipo' => 'required|in:1,2,3,4',
         'fecha' => 'nullable|date_format:d-m-Y',
         'cantidad' => 'nullable|numeric',
         'valor' => 'required|numeric',
         'chofer' => 'required',
         'observacion' => 'nullable',
-        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
       $consumo->fill($request->all());

@@ -62,11 +62,15 @@
                     <th class="text-center">Transportes</th>
                     <th class="text-center">Mantenimiento</th>
                     <th class="text-center">Combustible</th>
+                    <th class="text-center">Peaje</th>
+                    <th class="text-center">Gastos Varios</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-contratos">
                   <tr>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -100,11 +104,15 @@
                     <th class="text-center">Vehiculo</th>
                     <th class="text-center">Mantenimiento</th>
                     <th class="text-center">Combustible</th>
+                    <th class="text-center">Peaje</th>
+                    <th class="text-center">Gastos Varios</th>
                     <th class="text-center">Total</th>
                   </tr>
                 </thead>
                 <tbody id="tbody-transportes">
                   <tr>
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -173,6 +181,8 @@
           tr += `<td class="text-center">${contrato.transportes}</td>`
           tr += `<td class="text-center">${contrato.mantenimiento.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${contrato.combustible.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${contrato.peaje.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${contrato.gastos.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${contrato.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 
@@ -185,6 +195,8 @@
           tr += `<td class="text-center">${transporte.transporte}</td>`
           tr += `<td class="text-center">${transporte.mantenimiento.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${transporte.combustible.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${transporte.peaje.toLocaleString('es-ES')}</td>`
+          tr += `<td class="text-center">${transporte.gastos.toLocaleString('es-ES')}</td>`
           tr += `<td class="text-center">${transporte.total.toLocaleString('es-ES')}</td>`
           tr += '</tr>'
 

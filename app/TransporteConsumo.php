@@ -35,7 +35,23 @@ class TransporteConsumo extends Model
 
   public function tipo()
   {
-    return $this->tipo == 1 ? 'Mantenimiento' : 'Combustible';
+    switch ($this->tipo) {
+      case 1:
+        return 'Mantenimiento';
+        break;
+      case 2:
+        return 'Combustible';
+        break;
+      case 3:
+        return 'Peaje';
+        break;
+      case 4:
+        return 'Gastos varios';
+        break;
+      default:
+        return 'Error';
+        break;
+    }
   }
 
   public function fecha()
@@ -53,14 +69,8 @@ class TransporteConsumo extends Model
     return number_format($this->valor, 2, ',', '.');
   }
 
-  public function adjunto()
+  public function adjuntos()
   {
-
-    return $this->adjunto ? '<a href="' . $this->getDownloadLink() . '">Descargar</a>' : 'N/A';
-  }
-
-  protected function getDownloadLink()
-  {
-    return route('consumos.download', ['id' => $this->id]);
+    return $this->hasMany('App\ConsumoAdjunto', 'consumo_id');
   }
 }

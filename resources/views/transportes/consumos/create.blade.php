@@ -34,6 +34,8 @@
             <option value="">Seleccione...</option>
             <option value="1" {{ old('tipo') == '1' ? 'selected' : '' }}>Mantenimiento</option>
             <option value="2" {{ old('tipo') == '2' ? 'selected' : '' }}>Combustible</option>
+            <option value="3" {{ old('tipo') == '3' ? 'selected' : '' }}>Peaje</option>
+            <option value="4" {{ old('tipo') == '4' ? 'selected' : '' }}>Gastos varios</option>
           </select>
         </div>
 

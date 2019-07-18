@@ -26,6 +26,8 @@
             <option value="">Seleccione...</option>
             <option value="1" {{ old('tipo') == '1' ? 'selected' : $consumo->tipo == 1 ? 'selected' : '' }}>Mantenimiento</option>
             <option value="2" {{ old('tipo') == '2' ? 'selected' : $consumo->tipo == 2 ? 'selected' : '' }}>Combustible</option>
+            <option value="3" {{ old('tipo') == '3' ? 'selected' : $consumo->tipo == 3 ? 'selected' : '' }}>Peaje</option>
+            <option value="4" {{ old('tipo') == '4' ? 'selected' : $consumo->tipo == 4 ? 'selected' : '' }}>Gastos varios</option>
           </select>
         </div>
 
@@ -52,11 +54,6 @@
         <div class="form-group {{ $errors->has('observacion') ? 'has-error' : '' }}">
           <label class="control-label" for="observacion">Observación: </label>
           <input id="observacion" class="form-control" type="text" name="observacion" maxlength="200" value="{{ old('observacion') ? old('observacion') : $consumo->observacion }}" placeholder="Observación">
-        </div>
-
-        <div class="form-group {{ $errors->has('adjunto') ? 'has-error' : '' }}">
-          <label class="control-label" for="adjunto">Adjunto: </label>
-          <input id="adjunto" type="file" name="adjunto" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
         </div>
 
         @if (count($errors) > 0)

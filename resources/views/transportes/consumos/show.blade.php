@@ -42,6 +42,10 @@
                 <b>Fecha</b>
                 <span class="pull-right">{{ $consumo->fecha() }}</span>
               </li>
+              <li class="list-group-item">
+                <b>Tipo</b>
+                <span class="pull-right">{{ $consumo->tipo() }}</span>
+              </li>
               @if($consumo->tipo == 2)
                 <li class="list-group-item">
                   <b>Cantidad</b>
@@ -58,16 +62,31 @@
               </li>
               <li class="list-group-item">
                 <b>Observación</b>
-                <span class="pull-right">{{ $consumo->observacion }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Adjunto</b>
-                <span class="pull-right">{!! $consumo->adjunto() !!}</span>
+                <span class="pull-right">{{ $consumo->observacion ?? 'N/A' }}</span>
               </li>
             </ul>
           </div><!-- /.box-body -->
         </div>
       </div>
+
+      <div class="col-md-9">
+        <div class="col-md-12" style="margin-bottom: 5px">
+          <h4>
+            Adjuntos
+            @if($consumo->adjuntos()->count() < 10)
+            <span class="pull-right">
+              <a class="btn btn-flat btn-success btn-sm" href="{{ route('consumos.adjuntos.create', ['consumo' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+            </span>
+            @endif
+          </h4>
+        </div>
+        @foreach($consumo->adjuntos()->get() as $adjunto)
+          <div id='adjunto-{{$adjunto->id}}' class='col-md-4 col-sm-6 col-xs-12'>
+            {!! $adjunto->generateThumb() !!}
+          </div>
+        @endforeach
+      </div>
+
     </div>
   </section>
 
@@ -96,4 +115,69 @@
     </div>
   </div>
 
+  <div id="delFileModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="delFileModalLabel">Eliminar adjunto</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <form id="delete-file-form" class="col-md-8 col-md-offset-2" action="#" method="POST">
+              {{ method_field('DELETE') }}
+              {{ csrf_field() }}
+              <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4><br>
+
+              <center>
+                <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
+                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
+              </center>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+@endsection
+
+@section('scripts')
+  <script type="text/javascript">
+    $(document).ready(function (){
+      $('#delFileModal').on('show.bs.modal', function(e){
+        let button = $(e.relatedTarget),
+            action = button.data('url');
+
+        $('#delete-file-form').attr('action', action);
+      });
+
+      $('#delete-file-form').submit(deleteFile);
+    })
+
+    function deleteFile(e){
+      e.preventDefault();
+
+      let form = $(this),
+          action = form.attr('action');
+
+      $.ajax({
+        type: 'POST',
+        url: action,
+        data: form.serialize(),
+        dataType: 'json',
+      })
+      .done(function(r){
+        if(r.response){
+          $('#adjunto-' + r.id).remove();
+          $('#delFileModal').modal('hide');
+        }else{
+          $('.alert').show().delay(7000).hide('slow');
+        }
+      })
+      .fail(function(){
+        $('.alert').show().delay(7000).hide('slow');
+      })
+    }
+  </script>
 @endsection
