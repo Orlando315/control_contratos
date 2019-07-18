@@ -81,7 +81,7 @@ class Documento extends Model
         break;
 
       case 'application/pdf':
-        $icon = 'fa-pdf-o';
+        $icon = 'fa-file-pdf-o';
         break;
 
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
