@@ -51,7 +51,7 @@ class EmpleadosEventosController extends Controller
       $request->merge([
         'jornada' => $lastContrato->jornada,
         'comida' => false,
-        'pago' => false
+        'pago' => ($request->tipo == 3) // Las vacaciones (Evento tipo 3) son pagas. Todo lo demas es false
       ]);
 
       // Si el evento es Despido o Renuncia la fecha del evento se coloca como la fecha del ultimo contrato

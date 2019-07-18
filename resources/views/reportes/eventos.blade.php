@@ -48,13 +48,14 @@
       </div>
       <div class="col-md-12" style="margin-top: 20px">
         <div class="box box-solid">
-          <div class="box-body">
+          <div class="box-body table-responsive">
             <div class="row">
               <div class="col-md-12" style="margin-top: 10px">
                 <table class="table table-bordered table-striped">
                   <thead>
                     <tr>
                       <th>Empleado</th>
+                      <th>Balance</th>
                       <th>Asistencia</th>
                       <th>Descanso</th>
                       <th>Licencia médica</th>
@@ -69,6 +70,7 @@
                   </thead>
                   <tbody id="tbody">
                     <tr>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -134,13 +136,15 @@
         },
         dataType: 'json',
       })
-      .done(function(events){
+      .done(function(resposne) {
         $('#tbody').empty();
-        $.each(events, function(i, empleado){
+        $.each(resposne.data, function(i, empleado){
           let tr = $('<tr></tr>')
           if(i > 0){
             $.each(empleado, function(k, v){
-              tr.append($('<td></td>').text(v))
+              let background = (k == 1 && v == resposne.days) ? 'success' : ''
+
+              tr.append($(`<td class="${background}"></td>`).text(v))
             })
 
           $('#tbody').append(tr)

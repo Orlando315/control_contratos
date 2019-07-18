@@ -113,3 +113,14 @@
 .has-error .container-checkbox .checkmark-check{
   background-color: #dd4b39 !important;
 }
+
+.table-responsive{
+  overflow-x: inherit !important;
+}
+
+@screen and (max-width: 767px){
+  .table-responsive{
+    overflow-x: auto !important;
+  }
+} 
+

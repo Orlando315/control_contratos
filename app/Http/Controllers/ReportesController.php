@@ -176,12 +176,24 @@ class ReportesController extends Controller{
                                             ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
                                             ->sum('valor');
 
+        $contratoPeaje = $contrato->transportesConsumos()
+                                            ->where('tipo', 3)
+                                            ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                            ->sum('valor');
+
+        $contratoGastosVarios = $contrato->transportesConsumos()
+                                            ->where('tipo', 4)
+                                            ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                            ->sum('valor');
+
         $dataContratos[] = [
           'contrato' => $contrato->nombre,
           'transportes' => $contrato->transportes()->count(),
           'mantenimiento' => $contratoMantenimiento,
           'combustible' => $contratoCombustible,
-          'total' => $contratoMantenimiento + $contratoCombustible
+          'peaje' => $contratoPeaje,
+          'gastos' => $contratoGastosVarios,
+          'total' => $contratoMantenimiento + $contratoCombustible + $contratoPeaje + $contratoGastosVarios
         ];
 
         foreach ($contrato->transportes()->get() as $transporte) {
@@ -202,12 +214,30 @@ class ReportesController extends Controller{
                                               ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
                                               ->sum('valor');
 
+          $transportePeaje = $transporte->consumos()
+                                              ->where([
+                                                ['tipo', 3],
+                                                ['contrato_id', $contrato->id]
+                                              ])
+                                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                              ->sum('valor');
+
+          $transporteGastosVarios = $transporte->consumos()
+                                              ->where([
+                                                ['tipo', 4],
+                                                ['contrato_id', $contrato->id]
+                                              ])
+                                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                              ->sum('valor');
+
           $dataTransportes[] = [
             'contrato' => $contrato->nombre,
             'transporte' => $transporte->vehiculo,
             'mantenimiento' => $transporteMantenimiento,
             'combustible' => $transporteCombustible,
-            'total' => $transporteMantenimiento + $transporteCombustible
+            'peaje' => $transportePeaje,
+            'gastos' => $transporteGastosVarios,
+            'total' => $transporteMantenimiento + $transporteCombustible + $transportePeaje + $transporteGastosVarios
           ];
         }
       }

@@ -251,10 +251,14 @@ class Contrato extends Model
     $inicioCarbon = new Carbon($inicio);
     $finCarbon    = new Carbon($fin);
 
+    $totalDays = $inicioCarbon->diffInDays($finCarbon, false) + 1;
+
     // Headers
     $eventosHeaders = [
       'Empleado',
+      'Balance',
       'Asistencia',
+      'Descanso',
       'Licencia médica',
       'Vacaciones',
       'Permiso',
@@ -262,45 +266,62 @@ class Contrato extends Model
       'Despido',
       'Renuncia',
       'Inasistencia',
-      'Descanso',
       'Reemplazo'
     ];
 
     $allData = [$eventosHeaders];
 
     foreach ($this->empleados()->with('usuario')->get() as $empleado) {
-      $dataRow = array_fill(0,  11, 0);
+      $dataRow = array_fill(0,  12, 0);
 
       $nombre = "{$empleado->usuario->rut} | {$empleado->usuario->nombres} {$empleado->usuario->apellidos}";
       $dataRow[0]  = $nombre;
 
-      $eventos = $empleado->eventos()->select('tipo', 'inicio', 'fin')
-                              ->where(function($query) use ($inicio, $fin){
-                                $query->where('tipo', '!=', 1)
-                                      ->whereBetween('inicio', [$inicio, $fin]);
-                              })
-                              ->get();
+      $eventos = $empleado->eventos()
+                          ->select('tipo', 'inicio', 'fin')
+                          ->where(function($query) use ($inicio, $fin){
+                            $query->where(function ($queryWhereNull) use ($inicio, $fin){
+                                    $queryWhereNull->whereNull('fin')
+                                                  ->Where([
+                                                    ['inicio', '>=', $inicio],
+                                                    ['inicio', '<=', $fin]
+                                                  ]);
+                                  })
+                                  ->orWhere(function($queryWhereNotNull) use ($inicio, $fin){
+                                    $queryWhereNotNull->whereNotNull('fin')
+                                                      ->where([
+                                                        ['inicio', '<=', $inicio],
+                                                        ['fin', '>=', $inicio]
+                                                      ])
+                                                      ->orWhere([
+                                                        ['inicio', '>=', $inicio],
+                                                        ['inicio', '<=', $fin]
+                                                      ]);
+                                  });
+                          })
+                          ->where('tipo', '!=', 1)
+                          ->get();
 
-      $asistencias = $empleado->eventos()
-                              ->where([
-                                ['tipo', 1],
-                                ['pago', 1]
-                              ])
-                              ->whereBetween('inicio', [$inicio, $fin])
-                              ->count();
+      $proyeccion = $empleado->countAsisencias($inicio, $fin);
 
       $inasistencias = $empleado->eventos()
-                              ->where([
-                                ['tipo', 1],
-                                ['pago', 0]
-                              ])
-                              ->whereBetween('inicio', [$inicio, $fin])
-                              ->count();
+                                ->where([
+                                  ['tipo', 1],
+                                  ['pago', 0]
+                                ])
+                                ->whereBetween('inicio', [$inicio, $fin])
+                                ->count();
+
+      $sumEventos = 0;
 
       foreach ($eventos as $evento) {
         if($evento->fin){
           $eventoStart = new Carbon($evento->inicio);
           $eventoEnd   = new Carbon($evento->fin);
+
+          if($inicioCarbon->gte($eventoStart)){
+            $eventoStart = $inicioCarbon;
+          }
 
           if($eventoEnd->gte($finCarbon)){
             $eventoEnd = $finCarbon;
@@ -308,20 +329,29 @@ class Contrato extends Model
 
           $diff = $eventoStart->diffInDays($eventoEnd, false);
 
-          $dataRow[($evento->tipo + 1)] += $diff;
+          $dataRow[($evento->tipo + 2)] += $diff;
+
+          // Las vacaciones no se toman en cuenta
+          $sumEventos += $evento->tipo != 3 ? $diff : 0;
         }else{
-          $dataRow[($evento->tipo + 1)]++;
+          $dataRow[($evento->tipo + 2)]++;
+          $sumEventos += $evento->tipo != 3 ? 1 : 0;
         }
-        
       }
 
-      $dataRow[1] = $asistencias;
-      $dataRow[8] = $inasistencias;
+      $asistencias = ($proyeccion['asistencia'] - $inasistencias) < 0 ? 0 : ($proyeccion['asistencia'] - $inasistencias);
+      $descanso    = $proyeccion['descanso'];
+
+      $dataRow[2]  = $asistencias;
+      $dataRow[3]  = $descanso;
+      $dataRow[10] = $inasistencias;
+      $balance     = ($asistencias + $descanso) - $sumEventos;
+      $dataRow[1]  = $balance < 0 ? 0 : $balance;
 
       $allData = array_merge($allData, [$dataRow]);
     }
 
-    return $allData;
+    return ['data' => $allData, 'days' => $totalDays];
   }
 
 }
