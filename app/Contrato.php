@@ -212,26 +212,37 @@ class Contrato extends Model
   * @param  Bool $monthAsNumber
   * @return int | string
   */
-  public function getPaymentMonth($monthAsNumber = false)
+  public function getPaymentMonth($monthAsDate = false)
   {
     setlocale(LC_ALL, 'esp');
-    $dateLatestSueldo = $this->sueldos()->pluck('created_at')->last();
+    $dateLatestSueldo = $this->sueldos()->pluck('mes_pago')->last();
     $today = new Carbon();
-    $dateLatestSueldo = $dateLatestSueldo ? new Carbon($dateLatestSueldo) : $today->copy()->subMonths(1);
+
+    // Si no hay pagos registrados. Se toma la fecha de Inicio del contrato
+    $dateToPay = new Carbon($dateLatestSueldo ?? $this->inicio);
+
+    if(!$dateLatestSueldo){
+      $dateToPay->subMonths(1);
+    }
 
     /*
       Si el mes del último pago es igual al mes actual, o mayor,
       devolver false y no permitir registrar los pagos
     */
-    if($dateLatestSueldo->isSameMonth($today) || $dateLatestSueldo->gte($today)){
+    if($dateToPay->isSameMonth($today) || $dateToPay->gte($today)){
       return false;
     }
 
-    $dateLatestSueldo->addMonths(1);
+    // Se pagara el me siguiente a la fecha del ultimo pago
+    $dateToPay->addMonths(1);
 
-    $stringMonth = ucfirst($dateLatestSueldo->formatLocalized('%B')).' ('.$dateLatestSueldo->startOfMonth()->format('Y-d-m').' - '.$dateLatestSueldo->endOfMonth()->format('Y-d-m').')';
+    // Si no hay pagos registrados. La fecha inicial a pagar sera la misma que la fecha de Inicio del contrato.
+    // Sino, se toma el primer dia del mes.
+    $startPaymentDate = $dateLatestSueldo ? $dateToPay->startOfMonth()->format('Y-m-d') : $dateToPay->format('Y-m-d');
 
-    return $monthAsNumber ? (int)$dateLatestSueldo->formatLocalized('%m') : $stringMonth;
+    $stringMonth = ucfirst($dateToPay->formatLocalized('%B - %Y')).' ('.$startPaymentDate.' - '.$dateToPay->endOfMonth()->format('Y-m-d').')';
+
+    return $monthAsDate ? $dateToPay->startOfMonth() : $stringMonth;
   }
 
   public function getTotalAPagar()

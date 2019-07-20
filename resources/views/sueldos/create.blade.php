@@ -98,13 +98,6 @@
 @section('scripts')
 <script type="text/javascript">
   $(document).ready( function(){
-    $('#fecha').datepicker({
-      format: 'dd-mm-yyyy',
-      language: 'es',
-      keyboardNavigation: false,
-      autoclose: true
-    });
-
     $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
       if($(this).is(':checked')){
         $(this).closest('div.checkbox').removeClass('has-error');

@@ -73,7 +73,8 @@ class EmpleadosSueldosController extends Controller
           'anticipo' => $anticipo,
           'bono_reemplazo' => $bonoReemplazo,
           'sueldo_liquido' => $sueldoLiquido,
-          'adjunto' => $adjunto
+          'adjunto' => $adjunto,
+          'mes_pago' => $month,
         ];
       }
 

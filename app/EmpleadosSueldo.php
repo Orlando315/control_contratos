@@ -24,10 +24,12 @@ class EmpleadosSueldo extends Model
     'bono_reemplazo',
     'sueldo_liquido',
     'adjunto',
+    'mes_pago',
   ];
 
   protected $dates = [
-    'created_at'
+    'created_at',
+    'mes_pago',
   ];
 
   public function empresas()
@@ -48,7 +50,7 @@ class EmpleadosSueldo extends Model
   public function mesPagado()
   {
     setlocale(LC_ALL, 'esp');
-    return ucfirst($this->created_at->formatLocalized('%B'));
+    return ucfirst($this->mes_pago->formatLocalized('%B - %Y'));
   }
 
   public function nombreEmpleado()

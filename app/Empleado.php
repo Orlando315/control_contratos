@@ -589,9 +589,8 @@ class Empleado extends Model
     return $this->contratos()->pluck('sueldo')->last();
   }
 
-  public function getAsistenciasByMonth($month)
+  public function getAsistenciasByMonth($inicio)
   {
-    $inicio = Carbon::create(null, $month, 1);
     $fin = $inicio->copy()->endOfMonth();
 
     $asistencias = $this->findEvents($inicio->toDateString(), $fin->toDateString())->count();
@@ -599,9 +598,8 @@ class Empleado extends Model
     return $asistencias;
   }
 
-  public function calculateAnticiposByMonth($month)
+  public function calculateAnticiposByMonth($inicio)
   {
-    $inicio = Carbon::create(null, $month, 1);
     $fin = $inicio->copy()->endOfMonth();
 
     $anticipos = $this->anticipos()
@@ -614,9 +612,8 @@ class Empleado extends Model
     return $anticipos;
   }
 
-  public function calculateBonoReemplazoByMonth($month)
+  public function calculateBonoReemplazoByMonth($inicio)
   {
-    $inicio = Carbon::create(null, $month, 1);
     $fin = $inicio->copy()->endOfMonth();
 
     $reemplazos = $this->reemplazos()
@@ -669,6 +666,10 @@ class Empleado extends Model
   public function getSueldoLiquido()
   {
     $month = $this->contrato->getPaymentMonth(true);
+
+    if(!$month){
+      return 0;
+    }
 
     $alcanceLiquido = $this->getAlcanceLiquido();
     $asistencias = $this->getAsistenciasByMonth($month);

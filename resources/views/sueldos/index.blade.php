@@ -36,7 +36,7 @@
               @foreach($sueldos as $d)
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
-                  <td>{{ $d->created_at }}</td>
+                  <td>{{ $d->mesPagado() }}</td>
                   <td>
                     <a href="{{ route('empleados.show', ['empleado' => $d->empleado_id]) }}">
                       {{ $d->nombreEmpleado() }}
