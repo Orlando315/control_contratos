@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Factura;
+use App\Contrato;
+use App\Etiqueta;
 
 class FacturasController extends Controller
 {
@@ -28,8 +30,10 @@ class FacturasController extends Controller
      */
     public function create()
     {
-      $contratos = \App\Contrato::all();
-      return view('facturas.create', ['contratos' => $contratos]);
+      $contratos = Contrato::all();
+      $etiquetas = Etiqueta::all();
+
+      return view('facturas.create', compact('contratos', 'etiquetas'));
     }
 
     /**
@@ -41,6 +45,7 @@ class FacturasController extends Controller
     public function store(Request $request)
     {
       $this->validate($request, [
+        'contrato_id' => 'required',
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
         'realizada_para' => 'required|string',
@@ -118,6 +123,7 @@ class FacturasController extends Controller
     public function update(Request $request, Factura $factura)
     {
       $this->validate($request, [
+        'contrato_id' => 'required',
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
         'realizada_para' => 'required|string',

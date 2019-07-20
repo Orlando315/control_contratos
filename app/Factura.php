@@ -32,6 +32,11 @@ class Factura extends Model
     return $this->belongsTo('App\Contrato');
   }
 
+  public function etiqueta()
+  {
+    return $this->belongsTo('App\Etiqueta');
+  }
+
   public function tipo()
   {
     return $this->tipo == 1 ? 'Ingreso' : 'Egreso';

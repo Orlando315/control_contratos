@@ -71,6 +71,7 @@ Route::group(['middleware' => 'auth'], function () {
     /* --- Documentos --- */    
     Route::get('documentos/contratos/{contrato}', 'DocumentosController@createContrato')->name('documentos.createContrato');
     Route::post('documentos/contratos/{contrato}', 'DocumentosController@storeContrato')->name('documentos.storeContrato');
+
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
@@ -147,6 +148,9 @@ Route::group(['middleware' => 'auth'], function () {
     /* --- Facturas --- */
     Route::resource('facturas', 'FacturasController');
     Route::get('facturas/{factura}/download/{adjunto}', 'FacturasController@download')->name('facturas.download');
+    
+    /* --- Etiquetas --- */
+    Route::resource('etiquetas', 'EtiquetasController');
 
     /* --- Reportes --- */
     Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventariosIndex');

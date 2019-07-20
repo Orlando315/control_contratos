@@ -36,6 +36,18 @@
                   <a href="{{ route('contratos.show', ['contrato' => $factura->contrato->id]) }}">{{ $factura->contrato->nombre }} </a>
                 </span>
               </li>
+              @if($factura->etiqueta)
+              <li class="list-group-item">
+                <b>Etiqueta</b>
+                <span class="pull-right">
+                  @if(Auth::user()->tipo <= 2)
+                    <a href="{{ route('etiquetas.show', ['id' => $factura->etiqueta_id]) }}">{{ $factura->etiqueta->etiqueta }}</a>
+                  @else
+                    {{ $factura->etiqueta->etiqueta }}
+                  @endif
+                </span>
+              </li>
+              @endif
               <li class="list-group-item">
                 <b>Tipo</b>
                 <span class="pull-right">{{ $factura->tipo() }}</span>

@@ -27,6 +27,16 @@
           </select>
         </div>
 
+        <div class="form-group {{ $errors->has('etiqueta_id') ? 'has-error' : '' }}">
+          <label class="control-label" for="etiqueta_id">Etiqueta: *</label>
+          <select id="etiqueta_id" class="form-control" name="etiqueta_id">
+            <option value="">Seleccione...</option>
+            @foreach($etiquetas as $etiqueta)
+              <option value="{{ $etiqueta->id }}" {{ old('etiqueta_id') == $etiqueta->id ? 'selected':'' }}>{{ $etiqueta->etiqueta }}</option>
+            @endforeach
+          </select>
+        </div>
+
         <div class="form-group {{ $errors->has('tipo') ? 'has-error' : '' }}">
           <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
           <select id="tipo" class="form-control" name="tipo" required>

@@ -56,4 +56,9 @@ class Empresa extends Model
     return $this->hasMany('App\EmpleadosSueldo');
   }
 
+  public function etiquetas()
+  {
+    return $this->hasMany('App\Etiqueta');
+  }
+
 }
