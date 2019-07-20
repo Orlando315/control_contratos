@@ -10,7 +10,6 @@ use Carbon\CarbonPeriod;
 
 class Empleado extends Model
 {
-  use SoftDeletes;
 
   protected static function boot()
   {
@@ -29,8 +28,6 @@ class Empleado extends Model
     'talla_zapato',
     'talla_pantalon'
   ];
-  
-  protected $dates = ['deleted_at'];
 
   protected $guarded = ['empresa_id'];
 
