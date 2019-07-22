@@ -152,6 +152,9 @@ Route::group(['middleware' => 'auth'], function () {
     /* --- Etiquetas --- */
     Route::resource('etiquetas', 'EtiquetasController');
 
+    /* --- Gastos --- */
+    Route::resource('gastos', 'GastosController');
+
     /* --- Reportes --- */
     Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventariosIndex');
     Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventariosGet');

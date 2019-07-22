@@ -24,4 +24,9 @@ class Etiqueta extends Model
     {
       return $this->hasMany('App\Factura');
     }
+
+    public function gastos()
+    {
+      return $this->hasMany('App\Gasto');
+    }
 }

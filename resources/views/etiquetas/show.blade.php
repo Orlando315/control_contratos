@@ -79,6 +79,41 @@
           </div>
         </div>
       </div>
+
+      <div class="col-md-12">
+        <div class="box box-success">
+          <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-credit-card"></i> Gastos</h3>
+          </div>
+          <div class="box-body">
+            <table class="table data-table table-bordered table-hover" style="width: 100%">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th class="text-center">Contrato</th>
+                  <th class="text-center">Nombre</th>
+                  <th class="text-center">Valor</th>
+                  <th class="text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                @foreach($etiqueta->gastos as $d)
+                  <tr>
+                    <td>{{ $loop->index + 1 }}</td>
+                    <td><a href="{{ route('contratos.show', ['id', $d->contrato_id]) }}">{{ $d->contrato->nombre }}</a></td>
+                    <td>{{ $d->nombre }}</td>
+                    <td>{{ $d->valor() }}</td>
+                    <td>
+                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route('gastos.show', ['id' => $d->id]) }}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-flat btn-sm" href="{{ route('gastos.edit', ['id' => $d->id]) }}"><i class="fa fa-pencil"></i></a>
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div><!-- .row -->
   </section>
 

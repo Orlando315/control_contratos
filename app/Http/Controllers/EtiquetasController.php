@@ -119,7 +119,7 @@ class EtiquetasController extends Controller
      */
     public function destroy(Etiqueta $etiqueta)
     {
-      if($etiqueta->facturas->count() == 0){
+      if($etiqueta->facturas->count() == 0 && $etiqueta->gastos->count() == 0){
         if($etiqueta->delete()){
           return redirect()->route('etiquetas.index')->with([
             'flash_message' => 'Etiqueta eliminada exitosamente.',
@@ -134,7 +134,7 @@ class EtiquetasController extends Controller
         }
       }else{
         return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
-          'flash_message' => 'No se puede eliminar. Esta etiqueta tiene Facturas agregadas.',
+          'flash_message' => 'No se puede eliminar. Esta etiqueta tiene elementos agregados.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
           ]);

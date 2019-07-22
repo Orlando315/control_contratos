@@ -174,6 +174,18 @@
                 <li><a href="{{ route('facturas.create') }}"><i class="fa fa-circle-o"></i>Agregar factura</a></li>
               </ul>
             </li>
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-credit-card"></i>
+                <span>Gastos</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('gastos.index') }}"><i class="fa fa-circle-o"></i>Ver gastos</a></li>
+                <li><a href="{{ route('gastos.create') }}"><i class="fa fa-circle-o"></i>Agregar gasto</a></li>
+              </ul>
+            </li>
             @endif
 
             @if(Auth::user()->tipo <= 3)

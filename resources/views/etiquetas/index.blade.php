@@ -40,6 +40,7 @@
                 <th class="text-center">#</th>
                 <th class="text-center">Etiqueta</th>
                 <th class="text-center">Facturas</th>
+                <th class="text-center">Gastos</th>
                 <th class="text-center">Acción</th>
               </tr>
             </thead>
@@ -49,6 +50,7 @@
                   <td>{{ $loop->index + 1 }}</td>
                   <td>{{ $d->etiqueta }}</td>
                   <td>{{ $d->facturas->count() }}</td>
+                  <td>{{ $d->gastos->count() }}</td>
                   <td>
                     <a class="btn btn-primary btn-flat btn-sm" href="{{ route('etiquetas.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
                     <a class="btn btn-success btn-flat btn-sm" href="{{ route('etiquetas.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>

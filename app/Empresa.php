@@ -61,4 +61,9 @@ class Empresa extends Model
     return $this->hasMany('App\Etiqueta');
   }
 
+  public function gastos()
+  {
+    return $this->hasMany('App\Gasto');
+  }
+
 }
