@@ -9,7 +9,8 @@ class ConfiguracionEmpresa extends Model
   protected $table = 'configuracion_empresas';
 
   protected $fillable = [
-    'jornada'
+    'jornada',
+    'dias_vencimiento'
   ];
 
   public $timestamps = false;

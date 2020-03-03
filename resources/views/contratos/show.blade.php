@@ -12,8 +12,10 @@
 @section( 'content' )
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-    <a class="btn btn-flat btn-success" href="{{ route('contratos.edit', [$contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-    <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    @if(Auth::user()->tipo < 2)
+      <a class="btn btn-flat btn-success" href="{{ route('contratos.edit', [$contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    @endif
   </section>
 
   <section style="margin-top: 20px">
@@ -220,31 +222,33 @@
     </div>
   </div>
 
-  <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="delModalLabel">Eliminar Contrato</h4>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <form class="col-md-8 col-md-offset-2" action="{{ route('contratos.destroy', [$contrato->id]) }}" method="POST">
-              {{ method_field('DELETE') }}
-              {{ csrf_field() }}
-              <h4 class="text-center">¿Esta seguro de eliminar este Contrato?</h4><br>
-              <p class="text-center">Se eliminaran todos los empleados en este contrato</p>
+  @if(Auth::user()->tipo < 2)
+    <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="delModalLabel">Eliminar Contrato</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <form class="col-md-8 col-md-offset-2" action="{{ route('contratos.destroy', [$contrato->id]) }}" method="POST">
+                {{ method_field('DELETE') }}
+                {{ csrf_field() }}
+                <h4 class="text-center">¿Esta seguro de eliminar este Contrato?</h4><br>
+                <p class="text-center">Se eliminaran todos los empleados en este contrato</p>
 
-              <center>
-                <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
-                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
-              </center>
-            </form>
+                <center>
+                  <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
+                  <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
+                </center>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  @endif
 @endsection
 
 @section('scripts')

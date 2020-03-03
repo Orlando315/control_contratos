@@ -64,6 +64,148 @@
       </div>
     </div>
     @endif
+
+    @if(Auth::user()->tipo <= 2)
+      <div class="col-md-12">
+        <h4 class="text-center" style="margin-bottom: 20px">Contratos / Documentos por vencer (Menos de {{ Auth::user()->empresa->configuracion->dias_vencimiento }} días)</h4>
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true"><i class="fa fa-clipboard"></i> Contractos</a></li>
+            <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="fa fa-clone"></i> Documentos</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Inicio</th>
+                    <th class="text-center">Fin</th>
+                    <th class="text-center">Valor</th>
+                    <th class="text-center">Empleados</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($contratosPorVencer as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->nombre }}</td>
+                      <td>{{ $d->inicio }}</td>
+                      <td>{{ $d->fin }}</td>
+                      <td>{{ $d->valor() }}</td>
+                      <td>{{ $d->empleados->count() }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('contratos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="tab_2">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Contrato</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Vencimiento</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($documentosDeContratosPorVencer as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->contrato->nombre }}</td>
+                      <td>{{ $d->nombre }}</td>
+                      <td>{{ $d->vencimiento }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('contratos.show', ['id' => $d->contrato_id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <!-- /.tab-pane -->
+          </div>
+          <!-- /.tab-content -->
+        </div>
+      </div>
+
+      <div class="col-md-12">      
+        <h4 class="text-center" style="margin-bottom: 20px">Contratos / Documentos de Empleados por vencer (Menos de {{ Auth::user()->empresa->configuracion->dias_vencimiento }} días)</h4>
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="fa fa-clipboard"></i> Contractos</a></li>
+            <li class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false"><i class="fa fa-clone"></i> Documentos</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_3">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Empleado</th>
+                    <th class="text-center">Inicio</th>
+                    <th class="text-center">Fin</th>
+                    <th class="text-center">Jornada</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleadosContratosPorVencer as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->empleado->usuario->nombres }}</td>
+                      <td>{{ $d->inicio }}</td>
+                      <td>{{ $d->fin }}</td>
+                      <td>{{ $d->jornada }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('empleados.show', ['id' => $d->empleado_id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <!-- /.tab-pane -->
+            <div class="tab-pane" id="tab_4">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Empleado</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Vencimiento</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($documentosDeEmpleadosPorVencer as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->empleado->usuario->nombres }}</td>
+                      <td>{{ $d->nombre }}</td>
+                      <td>{{ $d->vencimiento }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('empleados.show', ['id' => $d->contrato_id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <!-- /.tab-pane -->
+          </div>
+          <!-- /.tab-content -->
+        </div>
+      </div>
+    @endif
     
     @if(Auth::user()->tipo >= 3)
       <div class="col-md-12">

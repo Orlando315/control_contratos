@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class EmpleadosContrato extends Model
 {
@@ -16,6 +17,11 @@ class EmpleadosContrato extends Model
     'dias_laborables',
     'dias_descanso'
   ];
+
+  public function empleado()
+  {
+    return $this->belongsTo('App\Empleado', 'empleado_id');
+  }
 
   public function setInicioAttribute($date)
   {
@@ -74,5 +80,14 @@ class EmpleadosContrato extends Model
     }
 
     return (object)$dias;
+  }
+
+  public static function porVencer()
+  {
+    $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
+    $today = date('Y-m-d H:i:s');
+    $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
+
+    return self::has('empleado')->whereNotNull('fin')->whereBetween('fin', [$today, $less30Days])->orderBy('fin', 'desc')->get();
   }
 }

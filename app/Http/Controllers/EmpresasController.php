@@ -111,7 +111,8 @@ class EmpresasController extends Controller
         'representante' => 'required|string',
         'email' => 'required|email|unique:users,email,' . Auth::user()->id . ',id',
         'telefono' => 'required',
-        'jornada' => 'required'
+        'jornada' => 'required',
+        'dias_vencimiento' => 'nullable|integer|min:1|max:255',
       ]);
 
       $empresa = Empresa::find(Auth::user()->empresa_id);
@@ -119,6 +120,7 @@ class EmpresasController extends Controller
       $empresa->usuario->fill($request->all());
       $empresa->usuario->usuario = $request->rut;
       $empresa->configuracion->jornada = $request->jornada;
+      $empresa->configuracion->dias_vencimiento = $request->dias_vencimiento;
 
       if($empresa->push()){
         return redirect('perfil')->with([

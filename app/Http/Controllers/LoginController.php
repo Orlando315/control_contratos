@@ -8,6 +8,8 @@ use App\Empleado;
 use App\Usuario;
 use App\Contrato;
 use App\Inventario;
+use App\EmpleadosContrato;
+use App\Documento;
 
 class LoginController extends Controller
 {
@@ -16,8 +18,20 @@ class LoginController extends Controller
       $inventarios = Inventario::all();
       $usuarios  = Usuario::adminsYSupervisores();
       $contratos = Contrato::all();
+      $contratosPorVencer = Contrato::porVencer();
+      $documentosDeContratosPorVencer = Documento::deContratosPorVencer();
+      $empleadosContratosPorVencer = EmpleadosContrato::porVencer();
+      $documentosDeEmpleadosPorVencer = Documento::deEmpleadosPorVencer();
 
-      return view('dashboard', ['inventarios' => $inventarios, 'usuarios' => $usuarios, 'contratos' => $contratos]);
+      return view('dashboard', [
+        'inventarios' => $inventarios,
+        'usuarios' => $usuarios,
+        'contratos' => $contratos,
+        'contratosPorVencer' => $contratosPorVencer,
+        'documentosDeContratosPorVencer' => $documentosDeContratosPorVencer,
+        'empleadosContratosPorVencer' => $empleadosContratosPorVencer,
+        'documentosDeEmpleadosPorVencer' => $documentosDeEmpleadosPorVencer,
+      ]);
     }
 
 	 public function auth(Request $request)

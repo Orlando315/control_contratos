@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
 
 class Contrato extends Model
 {
@@ -363,6 +364,15 @@ class Contrato extends Model
     }
 
     return ['data' => $allData, 'days' => $totalDays];
+  }
+
+  public static function porVencer()
+  {
+    $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
+    $today = date('Y-m-d H:i:s');
+    $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
+
+    return self::whereNotNull('fin')->whereBetween('fin', [$today, $less30Days])->orderBy('fin', 'desc')->get();
   }
 
 }

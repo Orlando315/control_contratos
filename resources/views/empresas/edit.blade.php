@@ -59,6 +59,12 @@
           </select>
         </div>
 
+        <div class="form-group {{ $errors->has('dias_vencimiento') ? 'has-error' : '' }}">
+          <label class="control-label" for="dias_vencimiento">Días antes del vencimiento: *</label>
+          <input id="dias_vencimiento" class="form-control" type="number" name="dias_vencimiento" min="1" max="255" value="{{ old('dias_vencimiento', Auth::user()->empresa->configuracion->dias_vencimiento) }}" placeholder="Días vencimiento" required>
+          <span class="help-block">Cantidad de días restantes al vencimiento de un Contrato / Documento que se tomarán en cuenta para la lista de "Contratos / Documentos por vencer"</span>
+        </div>
+
         @if (count($errors) > 0)
         <div class="alert alert-danger alert-important">
           <ul>

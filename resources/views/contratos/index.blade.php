@@ -29,9 +29,11 @@
       <div class="box box-warning">
         <div class="box-header with-border">
           <h3 class="box-title"><i class="fa fa-clipboard"></i> Contratos</h3>
+          @if(Auth::user()->tipo < 2)
           <span class="pull-right">
             <a class="btn btn-success btn-flat" href="{{ route('contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
           </span>
+          @endif
         </div>
         <div class="box-body">
           <table class="table data-table table-bordered table-hover" style="width: 100%">
@@ -57,7 +59,9 @@
                   <td>{{ $d->empleados->count() }}</td>
                   <td>
                     <a class="btn btn-primary btn-flat btn-sm" href="{{ route('contratos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-success btn-flat btn-sm" href="{{ route('contratos.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @if(Auth::user()->tipo < 2)
+                      <a class="btn btn-success btn-flat btn-sm" href="{{ route('contratos.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endif
                   </td>
                 </tr>
               @endforeach

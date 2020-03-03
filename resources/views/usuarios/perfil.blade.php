@@ -76,6 +76,12 @@
                 <span class="pull-right">{{ Auth::user()->empresa->configuracion->jornada }}</span>
               </li>
               @endif
+              @if(Auth::user()->tipo == 1)
+              <li class="list-group-item">
+                <b>Días antes del vencimiento</b>
+                <span class="pull-right">{{ Auth::user()->empresa->configuracion->dias_vencimiento }}</span>
+              </li>
+              @endif
             </ul>
           </div><!-- /.box-body -->
         </div>

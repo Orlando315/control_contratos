@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use Illuminate\Support\Facades\Auth;
 
 class Documento extends Model
 {
@@ -21,6 +22,16 @@ class Documento extends Model
     'mime',
     'vencimiento'
   ];
+
+  public function contrato()
+  {
+    return $this->belongsTo('App\Contrato');
+  }
+
+  public function empleado()
+  {
+    return $this->belongsTo('App\Empleado');
+  }
 
   public function generateThumb()
   {
@@ -112,5 +123,24 @@ class Documento extends Model
   public function getVencimientoAttribute($date)
   {
     return $date ? date('d-m-Y', strtotime($date)) : null;
+  }
+
+  protected static function porVencer($model = 'contrato')
+  {
+    $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
+    $today = date('Y-m-d H:i:s');
+    $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
+
+    return self::whereNotNull('vencimiento')->whereNotNull($model.'_id')->whereBetween('vencimiento', [$today, $less30Days])->get();
+  }
+
+  public static function deContratosPorVencer()
+  {
+    return self::porVencer();
+  }
+
+  public static function deEmpleadosPorVencer()
+  {
+    return self::porVencer('empleado');
   }
 }
