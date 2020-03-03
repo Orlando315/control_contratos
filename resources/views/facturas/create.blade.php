@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group {{ $errors->has('etiqueta_id') ? 'has-error' : '' }}">
-          <label class="control-label" for="etiqueta_id">Etiqueta: *</label>
+          <label class="control-label" for="etiqueta_id">Etiqueta:</label>
           <select id="etiqueta_id" class="form-control" name="etiqueta_id">
             <option value="">Seleccione...</option>
             @foreach($etiquetas as $etiqueta)

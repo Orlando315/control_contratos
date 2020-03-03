@@ -17,6 +17,7 @@ class Factura extends Model
 
   protected $fillable = [
     'contrato_id',
+    'etiqueta_id',
     'tipo',
     'nombre',
     'realizada_para',
