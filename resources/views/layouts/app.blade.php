@@ -128,6 +128,30 @@
 
             <li class="treeview">
               <a href="#">
+                <i class="fa fa-file-text-o"></i>
+                <span>Documentos</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('plantilla.documento.index') }}"><i class="fa fa-circle-o"></i>Ver documentos</a></li>
+                <li><a href="{{ route('plantilla.documento.create') }}"><i class="fa fa-circle-o"></i>Agregar documento</a></li>
+              </ul>
+            </li>
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-object-group"></i>
+                <span>Plantillas</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="{{ route('plantilla.index') }}"><i class="fa fa-circle-o"></i>Ver plantillas</a></li>
+                <li><a href="{{ route('plantilla.create') }}"><i class="fa fa-circle-o"></i>Agregar plantilla</a></li>
+              </ul>
+            </li>
+
+            <li class="treeview">
+              <a href="#">
                 <i class="fa fa-users"></i>
                 <span>Usuarios</span>
                 <i class="fa fa-angle-left pull-right"></i>

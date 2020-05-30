@@ -680,4 +680,12 @@ class Empleado extends Model
     return $sueldoLiquido;
   }
 
+  /**
+   * Obtener el nombre completo del Empleado
+   */
+  public function nombre()
+  {
+    return $this->usuario->nombres.' '.$this->usuario->apellidos;
+  }
+
 }

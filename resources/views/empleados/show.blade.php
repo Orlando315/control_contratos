@@ -283,7 +283,7 @@
         <div class="col-md-6">
           <div class="box box-danger">
             <div class="box-header with-border">
-              <h3 class="box-title">Entregas de Inventario</h3>
+              <h3 class="box-title"><i class="fa fa-arrow-right"></i> Entregas de Inventario</h3>
             </div>
             <div class="box-body">
               <table class="table data-table table-bordered table-hover" style="width: 100%">

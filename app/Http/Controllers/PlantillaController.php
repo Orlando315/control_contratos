@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\{Plantilla, PlantillaVariable, PlantillaSeccion};
+
+class PlantillaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+      $plantillas = Plantilla::withCount(['secciones', 'documentos'])->get();
+      $variables = PlantillaVariable::all();
+
+      return view('plantilla.index', compact('plantillas', 'variables'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+      $variables = PlantillaVariable::toFormEditor();
+
+      return view('plantilla.create', compact('variables'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+      $this->validate($request, [
+        'nombre' => 'required',
+        'secciones' => 'required|min:1',
+        'secciones.*.nombre' => 'nullable|string|max:50',
+      ]);
+
+      $plantilla = new Plantilla($request->only('nombre'));
+
+      $newSecciones = [];
+      foreach($request->secciones as $seccion){
+        $newSecciones[] = new PlantillaSeccion($seccion);
+      }
+
+      if(Auth::user()->empresa->plantillas()->save($plantilla)){
+        $plantilla->secciones()->saveMany($newSecciones);
+
+        return redirect()->route('plantilla.show', ['plantilla' => $plantilla->id])->with([
+          'flash_message' => 'Plantilla registrada exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Plantilla  $plantilla
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Plantilla $plantilla)
+    {
+      $plantilla->load('secciones');
+
+      return view('plantilla.show', compact('plantilla'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Plantilla  $plantilla
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Plantilla $plantilla)
+    {
+      $plantilla->load('secciones');
+      $variables = PlantillaVariable::toFormEditor();
+
+      return view('plantilla.edit', compact('plantilla', 'variables'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Plantilla  $plantilla
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Plantilla $plantilla)
+    {
+      $this->validate($request, [
+        'nombre' => 'required',
+        'secciones' => 'required|min:1',
+        'secciones.*.nombre' => 'nullable|string|max:50',
+      ]);
+
+      $plantilla->nombre = $request->nombre;
+
+      $newSecciones = [];
+      $plantillaSecciones = $plantilla->secciones;
+
+      foreach($request->secciones as $seccion){
+        // 
+        if(isset($seccion['id'])){
+          $plantillaSecciones->find($seccion['id'])
+                              ->update([
+                                'nombre' => $seccion['nombre'],
+                                'contenido' => $seccion['contenido'],
+                              ]);
+        }else{
+          $newSecciones[] = new PlantillaSeccion($seccion);
+        }
+      }
+
+      if($plantilla->save()){
+        if(count($newSecciones) > 0){
+          $plantilla->secciones()->saveMany($newSecciones); 
+        }
+
+        return redirect()->route('plantilla.show', ['plantilla' => $plantilla->id])->with([
+          'flash_message' => 'Plantilla modificada exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Plantilla  $plantilla
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Plantilla $plantilla)
+    {
+      if($plantilla->delete()){
+        return redirect()->route('plantilla.index')->with([
+          'flash_message' => 'Plantilla eliminada exitosamente.',
+          'flash_class' => 'alert-success'
+          ]); 
+      }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Plantilla  $plantilla
+     * @return \Illuminate\Http\Response
+     */
+    public function variables(Plantilla $plantilla)
+    {
+      $secciones = $plantilla->secciones()->select('id', 'nombre', 'variables')->whereJsonLength('variables', '>', '1')->get();
+
+      return response()->json(['response' => $secciones->count() > 0, 'secciones' => $secciones]);
+    }
+}

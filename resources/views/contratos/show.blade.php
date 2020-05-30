@@ -54,143 +54,187 @@
       </div>
 
       <div class="col-md-9">
-        <div class="col-md-12" style="margin-bottom: 5px">
-          <h4>
-            Documentos
-            @if($contrato->documentos()->count() < 10)
-            <span class="pull-right">
-              <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createContrato', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
-            </span>
-            @endif
-          </h4>
-        </div>
-        @foreach($contrato->documentos()->get() as $documento)
-          <div id='file-{{$documento->id}}' class='col-md-4 col-sm-6 col-xs-12'>
-            {!! $documento->generateThumb() !!}
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="tab-success active"><a href="#tab_11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+            <li class="tab-warning"><a href="#tab_12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_11">
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 5px">
+                  <h4>
+                    Documentos
+                    @if($contrato->documentos->count() < 10)
+                    <span class="pull-right">
+                      <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createContrato', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+                    </span>
+                    @endif
+                  </h4>
+                </div>
+                @forelse($contrato->documentos as $documento)
+                  <div id='file-{{$documento->id}}' class='col-md-4 col-sm-6 col-xs-12'>
+                    {!! $documento->generateThumb() !!}
+                  </div>
+                @empty
+                <div class="col-12">
+                  <h4 class="text-center text-muted">No hay documetos adjuntos</h4>
+                </div>
+                @endforelse
+              </div>
+            </div>
+            <div class="tab-pane" id="tab_12">
+              <div class="box-hedaer">
+                <span class="pull-right">
+                  <a class="btn btn-success btn-flat" href="{{ route('plantilla.documento.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
+                </span>
+              </div>
+              <div class="box-body">
+                <table class="table data-table table-bordered table-hover" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Documento</th>
+                      <th class="text-center">Empleado</th>
+                      <th class="text-center">Padre</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->plantillaDocumentos as $d)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $d->nombre }}</td>
+                        <td>{{ $d->empleado->nombre() }}</td>
+                        <td>{{ $d->padre ? $d->padre->nombre : 'N/A' }}</td>
+                        <td>
+                          <a class="btn btn-primary btn-flat btn-sm" href="{{ route('plantilla.documento.show', ['documento' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-flat btn-sm" href="{{ route('plantilla.documento.edit', ['documento' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        @endforeach
+        </div>
       </div>    
     </div>
     
     <div class="row">
       <div class="col-md-12">
-        <div class="box box-danger">
-          <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-address-card"></i> Empleados</h3>
-            <span class="pull-right">
-              <!--
-              <a class="btn btn-danger btn-flat" href="{{ route('eventos.events', ['contrato' => $contrato->id]) }}"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Total de eventos</a>
-              -->
-              <a class="btn btn-success btn-flat" href="{{ route('sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
-              <a class="btn btn-warning btn-flat" href="{{ route('contratos.comidas', ['contrato' => $contrato->id]) }}"><i class="fa fa-cutlery" aria-hidden="true"></i> Ver comidas</a>
-              <a class="btn bg-purple btn-flat" href="{{ route('contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
-              <a class="btn btn-success btn-flat" href="{{ route('empleados.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</a>
-            </span>
-          </div>
-          <div class="box-body">
-            <table class="table data-table table-bordered table-hover" style="width: 100%">
-              <thead>
-                <tr>
-                  <th class="text-center">#</th>
-                  <th class="text-center">Nombres</th>
-                  <th class="text-center">Apellidos</th>
-                  <th class="text-center">RUT</th>
-                  <th class="text-center">Teléfono</th>
-                  <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach($contrato->empleados()->get() as $d)
-                  <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                    <td>{{ $d->usuario->nombres }}</td>
-                    <td>{{ $d->usuario->apellidos }}</td>
-                    <td>{{ $d->usuario->rut }}</td>
-                    <td>{{ $d->usuario->telefono }}</td>
-                    <td>
-                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route( 'empleados.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                      <a class="btn btn-success btn-flat btn-sm" href="{{ route( 'empleados.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-12">
-      <div class="box box-primary">
-        <div class="box-header with-border">
-          <h3 class="box-title"><i class="fa fa-car"></i> Transportes</h3>
-        </div>
-        <div class="box-body">
-          <table class="table data-table table-bordered table-hover" style="width: 100%">
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Supervisor</th>
-                <th class="text-center">Vehiculo</th>
-                <th class="text-center">Patente</th>
-                <th class="text-center">Agregado</th>
-                <th class="text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody class="text-center">
-              @foreach($contrato->transportes()->get() as $d)
-                <tr>
-                  <td>{{ $loop->index + 1 }}</td>
-                  <td>
-                    <a href="{{ route('usuarios.show', ['usuario' => $d->user_id]) }}">
-                      {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
-                    </a>
-                  </td>
-                  <td>{{ $d->vehiculo }}</td>
-                  <td>{{ $d->patente }}</td>
-                  <td>{{ $d->created_at }}</td>
-                  <td>
-                    <a class="btn btn-primary btn-flat btn-sm" href="{{ route('transportes.show', ['id' => $d->transporte_id] )}}"><i class="fa fa-search"></i></a>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-      <div class="col-md-12">
-        <div class="box box-danger">
-          <div class="box-header with-border">
-            <h3 class="box-title">Entregas de Inventarios</h3>
-          </div>
-          <div class="box-body">
-            <table class="table data-table table-bordered table-hover" style="width: 100%">
-              <thead>
-                <tr>
-                  <th class="text-center">#</th>
-                  <th class="text-center">Nombre</th>
-                  <th class="text-center">Realizado por</th>
-                  <th class="text-center">Entregado a</th>
-                  <th class="text-center">Cantidad</th>
-                  <th class="text-center">Fecha</th>
-                  <th class="text-center">Recibido</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach($contrato->entregas()->get() as $d)
-                  <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                      <td><a href="{{ route('inventarios.show', ['inventario' => $d->inventario->id]) }}">{{ $d->inventario->nombre }}</a></td>
-                    <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
-                    <td>{{ $d->nombres }} {{ $d->apellidos }}</td>
-                    <td>{{ $d->cantidad() }}</td>
-                    <td>{{ $d->created_at }}</td>
-                    <td>{!! $d->recibido() !!}</td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="tab-danger active"><a href="#tab_21" data-toggle="tab"><i class="fa fa-address-card"></i> Empleados</a></li>
+            <li class="tab-primary"><a href="#tab_22" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
+            <li class="tab-danger"><a href="#tab_23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_21">
+              <div class="box-header with-border">
+                <!--
+                <a class="btn btn-danger btn-flat" href="{{ route('eventos.events', ['contrato' => $contrato->id]) }}"><i class="fa fa-file-excel-o" aria-hidden="true"></i>  Total de eventos</a>
+                -->
+                <a class="btn btn-success btn-flat" href="{{ route('sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
+                <a class="btn btn-warning btn-flat" href="{{ route('contratos.comidas', ['contrato' => $contrato->id]) }}"><i class="fa fa-cutlery" aria-hidden="true"></i> Ver comidas</a>
+                <a class="btn bg-purple btn-flat" href="{{ route('contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
+                <a class="btn btn-success btn-flat" href="{{ route('empleados.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</a>
+              </div>
+              <div class="box-body">
+                <table class="table data-table table-bordered table-hover" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Nombres</th>
+                      <th class="text-center">Apellidos</th>
+                      <th class="text-center">RUT</th>
+                      <th class="text-center">Teléfono</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->empleados as $d)
+                      <tr>
+                        <td>{{ $loop->index + 1 }}</td>
+                        <td>{{ $d->usuario->nombres }}</td>
+                        <td>{{ $d->usuario->apellidos }}</td>
+                        <td>{{ $d->usuario->rut }}</td>
+                        <td>{{ $d->usuario->telefono }}</td>
+                        <td>
+                          <a class="btn btn-primary btn-flat btn-sm" href="{{ route( 'empleados.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-flat btn-sm" href="{{ route( 'empleados.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div><!-- #tab_1 -->
+            <div class="tab-pane" id="tab_22">
+              <div class="box-body">
+                <table class="table data-table table-bordered table-hover" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Supervisor</th>
+                      <th class="text-center">Vehiculo</th>
+                      <th class="text-center">Patente</th>
+                      <th class="text-center">Agregado</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->transportes as $d)
+                      <tr>
+                        <td>{{ $loop->index + 1 }}</td>
+                        <td>
+                          <a href="{{ route('usuarios.show', ['usuario' => $d->user_id]) }}">
+                            {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
+                          </a>
+                        </td>
+                        <td>{{ $d->vehiculo }}</td>
+                        <td>{{ $d->patente }}</td>
+                        <td>{{ $d->created_at }}</td>
+                        <td>
+                          <a class="btn btn-primary btn-flat btn-sm" href="{{ route('transportes.show', ['id' => $d->transporte_id] )}}"><i class="fa fa-search"></i></a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div><!-- #tab_2 -->
+            <div class="tab-pane" id="tab_23">
+              <div class="box-body">
+                <table class="table data-table table-bordered table-hover" style="width: 100%">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Nombre</th>
+                      <th class="text-center">Realizado por</th>
+                      <th class="text-center">Entregado a</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-center">Fecha</th>
+                      <th class="text-center">Recibido</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->entregas()->get() as $d)
+                      <tr>
+                        <td>{{ $loop->index + 1 }}</td>
+                          <td><a href="{{ route('inventarios.show', ['inventario' => $d->inventario->id]) }}">{{ $d->inventario->nombre }}</a></td>
+                        <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
+                        <td>{{ $d->nombres }} {{ $d->apellidos }}</td>
+                        <td>{{ $d->cantidad() }}</td>
+                        <td>{{ $d->created_at }}</td>
+                        <td>{!! $d->recibido() !!}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div><!-- #tab_3 -->
           </div>
         </div>
       </div>

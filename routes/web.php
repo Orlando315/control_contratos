@@ -86,6 +86,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
     Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
 
+    /* --- Plantillas --- */
+    Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->name('plantilla.variables');
+    Route::resource('plantilla', 'PlantillaController');
+
+    /* --- Variables --- */
+    Route::resource('variable', 'PlantillaVariableController')
+          ->except(['show']);
+
+    /* --- Documento plantillas --- */
+    Route::get('documento/plantilla/create/{contrato?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
+    Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' => 'plantilla.documento'])
+          ->parameters([
+            'plantilla' => 'documento',
+          ])
+          ->except(['create']);
+
     /* --- Usuarios --- */
     Route::resource('usuarios', 'UsuariosController');
     Route::patch('usuarios/password/{usuario}', 'UsuariosController@password')->name('usuarios.password');

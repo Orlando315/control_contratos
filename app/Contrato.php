@@ -90,6 +90,14 @@ class Contrato extends Model
                               ->where('empleados.contrato_id', $this->id);
   }
 
+  /**
+   * Obtener las PlantillaDocumento (Documetos) en el Contrato
+   */
+  public function plantillaDocumentos()
+  {
+    return $this->hasMany('App\PlantillaDocumento');
+  }
+
   public function valor()
   {
     return number_format($this->valor, 0, ',', '.');

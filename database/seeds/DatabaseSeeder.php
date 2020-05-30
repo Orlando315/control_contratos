@@ -94,5 +94,9 @@ class DatabaseSeeder extends Seeder
         'usuario' => '111111-3',
         'password' => bcrypt('111111-3')
       ]);
+
+      $this->call([
+        PlantillaVariableTableSeeder::class,
+      ]);
     }
 }

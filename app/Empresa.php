@@ -66,4 +66,27 @@ class Empresa extends Model
     return $this->hasMany('App\Gasto');
   }
 
+  /**
+   * Obtener las Variables de las Plantillas.
+   */
+  public function variables()
+  {
+    return $this->hasMany('App\PlantillaVariable');
+  }
+
+  /**
+   * Obtener las Plantillas
+   */
+  public function plantillas()
+  {
+    return $this->hasMany('App\Plantilla');
+  }
+
+  /**
+   * Obtener las PlantillaDocumento
+   */
+  public function documentos()
+  {
+    return $this->hasMany('App\PlantillaDocumento');
+  }
 }

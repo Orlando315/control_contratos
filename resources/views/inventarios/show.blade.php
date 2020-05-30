@@ -70,7 +70,7 @@
       <div class="col-md-9">
         <div class="box box-danger">
           <div class="box-header with-border">
-            <h3 class="box-title">Entregas</h3>
+            <h3 class="box-title"><i class="fa fa-arrow-right"></i> Entregas</h3>
             <span class="pull-right">
               <a class="btn btn-success btn-flat" href="{{ route('entregas.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Entrega</a>
             </span>
