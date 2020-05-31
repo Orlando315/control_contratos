@@ -6,40 +6,91 @@ use Illuminate\Database\Eloquent\Model;
 
 class InventarioEntrega extends model
 {
-  protected $table = 'inventarios_entregas';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'inventarios_entregas';
 
-  protected $fillable = [
-    'cantidad',
-  ];
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'cantidad',
+      'adjunto',
+    ];
 
-  public function inventario()
-  {
-    return $this->belongsTo('App\Inventario');
-  }
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'status' => 'boolean',
+    ];
 
-  /*
-    Entregado a
-  */
-  public function entregadoA()
-  {
-    return $this->belongsTo('App\Usuario', 'entregado', 'id');
-  }
+    /**
+     * Obtener el Inventario al que pertenece
+     */
+    public function inventario()
+    {
+      return $this->belongsTo('App\Inventario');
+    }
 
-  /*
-    Realizado por
-  */
-  public function realizadoPor()
-  {
-    return $this->belongsTo('App\Usuario', 'realizado', 'id');
-  }
+    /**
+     * Obtener el Usuario al que le fue entregado el Inventario
+     **/
+    public function entregadoA()
+    {
+      return $this->belongsTo('App\Usuario', 'entregado', 'id');
+    }
 
-  public function cantidad()
-  {
-    return number_format($this->cantidad, 0, ',', '.');
-  }
+    /**
+     * Obtener el Usuario que registro la Entrega
+     */
+    public function realizadoPor()
+    {
+      return $this->belongsTo('App\Usuario', 'realizado', 'id');
+    }
 
-  public function recibido()
-  {
-    return $this->recibido == 1 ? '<span class="label label-primary">Recibido</span>' : '<span class="label label-default">Pendiente</span>';
-  }
+    /**
+     * Obtener la fecha del Inventario.
+     *
+     * @param  string  $value
+     * @return datetime
+     */
+    public function getDirectoryAttribute()
+    {
+      return $this->inventario->directory().'/entregas/'.$this->id;
+    }
+
+    /**
+     * Obtener la fecha del Inventario.
+     *
+     * @param  string  $value
+     * @return datetime
+     */
+    public function getDownloadAttribute()
+    {
+      return $this->adjunto ? route('entregas.download', ['entrega' => $this->id]) : '#';
+    }
+
+    /**
+     * Obtener el atributo formateado
+     */
+    public function cantidad()
+    {
+      return number_format($this->cantidad, 0, ',', '.');
+    }
+
+    /**
+     * Obtener el atributo formateado
+     */
+    public function recibido()
+    {
+      return $this->recibido ? '<span class="label label-primary">Recibido</span>' : '<span class="label label-default">Pendiente</span>';
+    }
 }

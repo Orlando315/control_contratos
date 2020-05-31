@@ -1,14 +1,14 @@
-@extends( 'layouts.app' )
-@section( 'title','Inventarios - '.config( 'app.name' ) )
-@section( 'header','Inventarios' )
-@section( 'breadcrumb' )
+@extends('layouts.app')
+@section('title','Inventarios -'.config('app.name'))
+@section('header','Inventarios')
+@section('breadcrumb')
   <ol class="breadcrumb">
     <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li class="active">Inventarios</li>
   </ol>
 @endsection
 
-@section( 'content' )
+@section('content')
   @include('partials.flash')
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">

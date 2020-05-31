@@ -1,7 +1,7 @@
-@extends( 'layouts.app' )
-@section( 'title', 'Entregas - '.config( 'app.name' ) )
-@section( 'header','Entregas' )
-@section( 'breadcrumb' )
+@extends('layouts.app')
+@section('title', 'Entregas - '.config('app.name'))
+@section('header','Entregas')
+@section('breadcrumb')
   <ol class="breadcrumb">
     <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li><a href="{{ route('inventarios.index') }}">Inventarios</a></li>
@@ -13,7 +13,7 @@
   <!-- Formulario -->
   <div class="row">
     <div class="col-md-6 col-md-offset-3">
-      <form action="{{ route('entregas.store', ['inventario' => $inventario]) }}" method="POST">
+      <form action="{{ route('entregas.store', ['inventario' => $inventario]) }}" method="POST" enctype="multipart/form-data">
         {{ csrf_field() }}
 
         <h4>Agregar entrega - {{ $inventario->nombre }}</h4>
@@ -28,9 +28,19 @@
           </select>
         </div>
 
-        <div class="form-group {{ $errors->has('cantidad') ? 'has-error' : '' }}">
-          <label class="control-label" for="cantidad">Cantidad: *</label>
-          <input id="cantidad" class="form-control" type="number" step="1" min="1" maxlength="999999" name="cantidad" value="{{ old('cantidad') ? old('cantidad') : '' }}" placeholder="Cantidad" required>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group {{ $errors->has('cantidad') ? 'has-error' : '' }}">
+              <label class="control-label" for="cantidad">Cantidad: *</label>
+              <input id="cantidad" class="form-control" type="number" step="1" min="1" maxlength="999999" name="cantidad" value="{{ old('cantidad') ? old('cantidad') : '' }}" placeholder="Cantidad" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group{{ $errors->has('adjunto') ? ' has-error' : '' }}">
+              <label class="control-label" for="adjunto">Adjunto: </label>
+              <input id="adjunto" type="file" name="adjunto" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            </div>
+          </div>
         </div>
 
         @if (count($errors) > 0)

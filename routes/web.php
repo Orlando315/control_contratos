@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
 
   /* --- Entregas ---*/
   Route::patch('inventarios/entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
+  Route::get('inventarios/entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
 
   /* --- Solo usuarios 1 Empresa (Super admin) --- */
   Route::group(['middleware' => 'checkRole:1'], function(){

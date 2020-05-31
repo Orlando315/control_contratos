@@ -48,11 +48,15 @@ class InventariosController extends Controller
         'nombre' => 'required|string',
         'valor' => 'required|numeric',
         'fecha' => 'required|date_format:d-m-Y',
-        'cantidad' => 'required|numeric',        
+        'cantidad' => 'required|integer|min:1|max:999999',
+        'stock_critico' => 'nullable|integer|min:0|max:999',
+        'descripcion' => 'nullable|string|max:200',
+        'observacion' => 'nullable|string|max:200',
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
       $inventario = new Inventario($request->all());
+      $inventario->low_stock = $request->stock_critico;
 
       if(Auth::user()->tipo >= 3){
         $inventario->tipo = 3;
@@ -131,11 +135,15 @@ class InventariosController extends Controller
         'nombre' => 'required|string',
         'valor' => 'required|numeric',
         'fecha' => 'required|date_format:d-m-Y',
-        'cantidad' => 'required|numeric',
+        'cantidad' => 'required|integer|min:1|max:999999',
+        'stock_critico' => 'nullable|integer|min:0|max:999',
+        'descripcion' => 'nullable|string|max:200',
+        'observacion' => 'nullable|string|max:200',
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
       $inventario->fill($request->all());
+      $inventario->low_stock = $request->stock_critico;
 
       if($inventario->save()){
 

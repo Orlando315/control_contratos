@@ -1,15 +1,14 @@
-@extends( 'layouts.app' )
-
-@section( 'title', 'Inventario - '.config( 'app.name' ) )
-@section( 'header', 'Inventario' )
-@section( 'breadcrumb' )
+@extends('layouts.app')
+@section('title','Inventario -'.config('app.name'))
+@section('header','Inventario')
+@section('breadcrumb')
 	<ol class="breadcrumb">
 	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li><a href="{{ route('inventarios.index') }}">Inventarios</a></li>
 	  <li class="active"> Inventario </li>
 	</ol>
 @endsection
-@section( 'content' )
+@section('content')
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('inventarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     @if(Auth::user()->tipo <= 2 || $inventario->tipo == 3)
@@ -59,6 +58,18 @@
                 <span class="pull-right"> {{ $inventario->cantidad() }} </span>
               </li>
               <li class="list-group-item">
+                <b>Stock crítico</b>
+                <span class="pull-right"> {{ $inventario->lowStock() }} </span>
+              </li>
+              <li class="list-group-item">
+                <b>Descripción</b>
+                <span class="pull-right"> {{ $inventario->descripcion ?? 'N/A' }} </span>
+              </li>
+              <li class="list-group-item">
+                <b>Observación</b>
+                <span class="pull-right"> {{ $inventario->observacion ?? 'N/A' }} </span>
+              </li>
+              <li class="list-group-item">
                 <b>Adjunto</b>
                 <span class="pull-right">{!! $inventario->adjunto() !!}</span>
               </li>
@@ -89,7 +100,7 @@
                 </tr>
               </thead>
               <tbody class="text-center">
-                @foreach($inventario->entregas()->get() as $d)
+                @foreach($inventario->entregas as $d)
                   <tr>
                     <td>{{ $loop->index + 1 }}</td>
                     <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
@@ -98,8 +109,11 @@
                     <td>{{ $d->created_at }}</td>
                     <td>{!! $d->recibido() !!}</td>
                     <td>
+                      @if($d->adjunto)
+                        <a class="btn btn-flat btn-default btn-sm" href="{{ $d->download }}"><i class="fa fa-download" aria-hidden="true"></i></a>
+                      @endif
                       @if(!$d->recibido)
-                      <button class="btn btn-flat btn-danger btn-sm" data-toggle="modal" data-target="#delEntregaModal" data-entrega="{{ $d->id }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-flat btn-danger btn-sm" data-toggle="modal" data-target="#delEntregaModal" data-entrega="{{ $d->id }}"><i class="fa fa-times" aria-hidden="true"></i></button>
                       @endif
                     </td>
                   </tr>

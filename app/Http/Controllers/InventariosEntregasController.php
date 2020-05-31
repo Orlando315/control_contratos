@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth, Storage};
 use App\InventarioEntrega;
 use App\Inventario;
 use App\Contrato;
@@ -42,7 +42,8 @@ class InventariosEntregasController extends Controller
     {
       $this->validate($request, [
         'usuario' => 'required',
-        'cantidad' => 'required|numeric'
+        'cantidad' => 'required|numeric',        
+        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
       if(($inventario->cantidad - $request->cantidad) < 0){
@@ -58,19 +59,31 @@ class InventariosEntregasController extends Controller
 
       if($inventario->entregas()->save($entrega)){
         $inventario->cantidad -= $request->cantidad;
+
+        if($request->hasFile('adjunto')){
+          $directory = $entrega->directory;
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          $entrega->adjunto = $request->file('adjunto')->store($directory);
+          $entrega->save();
+        }
+
         $inventario->save();
 
         return redirect('inventarios/' . $inventario->id)->with([
           'flash_message' => 'Entrega agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('inventarios/entregas/' . $inventario->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect('inventarios/entregas/' . $inventario->id)->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -144,5 +157,16 @@ class InventariosEntregasController extends Controller
           'flash_important' => true
         ]);
       }
+    }
+
+    /**
+     * Descargar el ajunto de la Entrega.
+     *
+     * @param  \App\InventarioEntrega  $entrega
+     * @return \Illuminate\Http\Response
+     */
+    public function download(InventarioEntrega $entrega)
+    {
+      return Storage::exists($entrega->adjunto) ? Storage::download($entrega->adjunto) : abort(404);
     }
 }
