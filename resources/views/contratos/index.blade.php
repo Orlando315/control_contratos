@@ -41,6 +41,7 @@
               <tr>
                 <th class="text-center">#</th>
                 <th class="text-center">Nombre</th>
+                <th class="text-center">Descripción</th>
                 <th class="text-center">Inicio</th>
                 <th class="text-center">Fin</th>
                 <th class="text-center">Valor</th>
@@ -53,6 +54,7 @@
                 <tr>
                   <td>{{ $loop->index + 1 }}</td>
                   <td>{{ $d->nombre }}</td>
+                  <td>{{ $d->descripcion }}</td>
                   <td>{{ $d->inicio }}</td>
                   <td>{{ $d->fin }}</td>
                   <td>{{ $d->valor() }}</td>

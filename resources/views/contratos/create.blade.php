@@ -37,6 +37,11 @@
           <input id="valor" class="form-control" type="number" step="1" min="1" max="9999999999999" name="valor" value="{{ old('valor') ? old('valor') : '' }}" placeholder="Valor" required>
         </div>
 
+        <div class="form-group{{ $errors->has('valor') ? ' has-error' : '' }}">
+          <label class="control-label" for="descripcion">Descripción:</label>
+          <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="150" value="{{ old('descripcion') }}" placeholder="Descripción">
+        </div>
+
         @if (count($errors) > 0)
         <div class="alert alert-danger alert-important">
           <ul>

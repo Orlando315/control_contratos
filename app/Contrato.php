@@ -18,12 +18,18 @@ class Contrato extends Model
     static::addGlobalScope(new EmpresaScope);
   }
   
+  /**
+   * The table associated with the model.
+   *
+   * @var string
+   */
   protected $fillable = [
     'empresa_id',
     'nombre',
     'inicio',
     'fin',
-    'valor'
+    'valor',
+    'descripcion',
   ];
 
   public function empresa()

@@ -44,7 +44,8 @@ class ContratosController extends Controller
         'nombre' => 'required|string',
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'required|date_format:d-m-Y',
-        'valor' => 'required|numeric'
+        'valor' => 'required|numeric',
+        'descripcion' => 'nullable|string|max:150'
       ]);
 
       $contrato = new Contrato($request->all());
@@ -98,7 +99,8 @@ class ContratosController extends Controller
         'nombre' => 'required|string',
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'required|date_format:d-m-Y',
-        'valor' => 'required|numeric'
+        'valor' => 'required|numeric',
+        'descripcion' => 'nullable|string|max:150'
       ]);
 
       $contrato->fill($request->all());

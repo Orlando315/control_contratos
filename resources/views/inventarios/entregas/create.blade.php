@@ -51,3 +51,13 @@
     </div>
   </div>
 @endsection
+
+@section('scripts')
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#usuario').select2({
+        placeholder: 'Seleccione...'
+      })
+    })
+  </script>
+@endsection

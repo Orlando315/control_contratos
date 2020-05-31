@@ -48,6 +48,10 @@
                 <b>Valor</b>
                 <span class="pull-right"> {{ $contrato->valor() }} </span>
               </li>
+              <li class="list-group-item">
+                <b>Descripción</b>
+                <span class="pull-right"> {{ $contrato->descripcion }} </span>
+              </li>
             </ul>
           </div><!-- /.box-body -->
         </div>

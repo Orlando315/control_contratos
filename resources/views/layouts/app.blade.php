@@ -107,7 +107,7 @@
 
             <li>
               <a href="{{ route('dashboard') }}">
-                <i class="fa fa-home"></i> Inicio
+                <i class="fa fa-home"></i> <span>Inicio</span>
               </a>
             </li>
 
