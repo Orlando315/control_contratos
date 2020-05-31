@@ -1,15 +1,14 @@
-@extends( 'layouts.app' )
-
-@section( 'title', 'Empleado - '.config( 'app.name' ) )
-@section( 'header', 'Empleado' )
-@section( 'breadcrumb' )
+@extends('layouts.app')
+@section('title','Empleado -'.config('app.name'))
+@section('header','Empleado')
+@section('breadcrumb')
 	<ol class="breadcrumb">
 	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li><a href="{{ route('contratos.show', ['contrato' => $empleado->contrato_id]) }}">Empleados</a></li>
 	  <li class="active"> Empleado </li>
 	</ol>
 @endsection
-@section( 'content' )
+@section('content')
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     <a class="btn btn-flat btn-success" href="{{ route('empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
@@ -83,6 +82,10 @@
                 <span class="pull-right">{{ $empleado->usuario->email }}</span>
               </li>
               <li class="list-group-item">
+                <b>Profesión</b>
+                <span class="pull-right">{{ $empleado->profesion ?? 'N/A' }}</span>
+              </li>
+              <li class="list-group-item">
                 <b>Talla de camisa</b>
                 <span class="pull-right">{{ $empleado->talla_camisa }}</span>
               </li>
@@ -102,156 +105,130 @@
           </div><!-- /.box-body -->
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="box box-primary">
-          <div class="box-body box-profile">
-            <h4 class="profile-username text-center">
-              Datos Bancarios
-            </h4>
-            <p class="text-muted text-center"></p>
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="box box-primary">
+              <div class="box-body box-profile">
+                <h4 class="profile-username text-center">
+                  Contrato
+                  <span class="pull-right">
+                    <button class="btn btn-sm btn-flat btn-default" titl="Ver historial" data-toggle="modal" data-target="#historyModal">
+                      <i class="fa fa-list"></i>
+                    </button>
+                  </span>
+                </h4>
+                <p class="text-muted text-center"></p>
 
-            <ul class="list-group list-group-unbordered">
-              <li class="list-group-item">
-                <b>Banco</b>
-                <span class="pull-right">{{ $empleado->banco->nombre }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Tipo de cuenta</b>
-                <span class="pull-right">{{ $empleado->banco->tipo_cuenta }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Cuenta</b>
-                <span class="pull-right"> {{ $empleado->banco->cuenta }} </span>
-              </li>
-            </ul>
-          </div><!-- /.box-body -->
+                <ul class="list-group list-group-unbordered">
+                  <li class="list-group-item">
+                    <b>Jornada</b>
+                    <span class="pull-right">{{ $empleado->contratos->last()->jornada }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Sueldo</b>
+                    <span class="pull-right">{{ number_format($empleado->contratos->last()->sueldo, 0, ',', '.') }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Inicio</b>
+                    <span class="pull-right">{{ $empleado->contratos->last()->inicio }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Inicio de Jornada</b>
+                    <span class="pull-right"> {{$empleado->contratos->last()->inicio_jornada}} </span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Fin</b>
+                    <span class="pull-right"> {!! $empleado->contratos->last()->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Descripción</b>
+                    <span class="pull-right"> {!! $empleado->contratos->last()->descripcion ?? 'N/A' !!} </span>
+                  </li>
+                </ul>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="box box-primary">
+              <div class="box-body box-profile">
+                <h4 class="profile-username text-center">
+                  Datos Bancarios
+                </h4>
+                <p class="text-muted text-center"></p>
+
+                <ul class="list-group list-group-unbordered">
+                  <li class="list-group-item">
+                    <b>Banco</b>
+                    <span class="pull-right">{{ $empleado->banco->nombre }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Tipo de cuenta</b>
+                    <span class="pull-right">{{ $empleado->banco->tipo_cuenta }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Cuenta</b>
+                    <span class="pull-right"> {{ $empleado->banco->cuenta }} </span>
+                  </li>
+                </ul>
+              </div><!-- /.box-body -->
+            </div>    
+          </div>
+          <div class="col-md-4">
+            <div class="box box-primary">
+              <div class="box-body box-profile">
+                <h4 class="profile-username text-center">
+                  Contacto de emergencia
+                </h4>
+                <p class="text-muted text-center"></p>
+
+                <ul class="list-group list-group-unbordered">
+                  <li class="list-group-item">
+                    <b>Nombre</b>
+                    <span class="pull-right">{{ $empleado->nombre_emergencia ?? 'N/A' }}</span>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Teléfono</b>
+                    <span class="pull-right">{{ $empleado->telefono_emergencia ?? 'N/A' }}</span>
+                  </li>
+                </ul>
+              </div><!-- /.box-body -->
+            </div>
+          </div>
         </div>
-        <div class="box box-primary">
-          <div class="box-body box-profile">
-            <h4 class="profile-username text-center">
-              Contrato
-              <span class="pull-right">
-                <button class="btn btn-sm btn-flat btn-default" titl="Ver historial" data-toggle="modal" data-target="#historyModal">
-                  <i class="fa fa-list"></i>
-                </button>
-              </span>
-            </h4>
-            <p class="text-muted text-center"></p>
-
-            <ul class="list-group list-group-unbordered">
-              <li class="list-group-item">
-                <b>Jornada</b>
-                <span class="pull-right">{{ $empleado->contratos->last()->jornada }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Sueldo</b>
-                <span class="pull-right">{{ number_format($empleado->contratos->last()->sueldo, 0, ',', '.') }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Inicio</b>
-                <span class="pull-right">{{ $empleado->contratos->last()->inicio }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Inicio de Jornada</b>
-                <span class="pull-right"> {{$empleado->contratos->last()->inicio_jornada}} </span>
-              </li>
-              <li class="list-group-item">
-                <b>Fin</b>
-                <span class="pull-right"> {!! $empleado->contratos->last()->fin ? $empleado->contratos->last()->fin : '<span class="text-muted">Indefinido</span>' !!} </span>
-              </li>
-            </ul>
-          </div><!-- /.box-body -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="col-md-12" style="margin-bottom: 5px">
+              <h4>
+                Documentos
+                @if($empleado->documentos()->count() < 10)
+                <span class="pull-right">
+                  <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createEmpleado', ['empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+                </span>
+                @endif
+              </h4>
+            </div>
+            @foreach($empleado->documentos()->get() as $documento)
+              <div id='file-{{$documento->id}}' class='col-md-6 col-sm-6 col-xs-12'>
+                {!! $documento->generateThumb() !!}
+              </div>
+            @endforeach
+          </div>    
         </div>
       </div>
-
-      <div class="col-md-6">
-        <div class="col-md-12" style="margin-bottom: 5px">
-          <h4>
-            Documentos
-            @if($empleado->documentos()->count() < 10)
-            <span class="pull-right">
-              <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createEmpleado', ['empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
-            </span>
-            @endif
-          </h4>
-        </div>
-        @foreach($empleado->documentos()->get() as $documento)
-          <div id='file-{{$documento->id}}' class='col-md-6 col-sm-6 col-xs-12'>
-            {!! $documento->generateThumb() !!}
-          </div>
-        @endforeach
-      </div>    
     </div>
 
     <div class="row">
-      <div class="col-md-6">
-        <div class="box box-success">
-          <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-level-up"></i> Anticipos</h3>
-          </div>
-          <div class="box-body">
-            <table class="table data-table table-bordered table-hover" style="width: 100%">
-              <thead>
-                <tr>
-                  <th class="text-center">#</th>
-                  <th class="text-center">Fecha</th>
-                  <th class="text-center">Anticipo</th>
-                  <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach($empleado->anticipos as $d)
-                  <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                    <td>{{ $d->fecha }}</td>
-                    <td>{{ $d->anticipo() }}</td>
-                    <td>
-                      <a class="btn btn-primary btn-flat btn-sm" href="{{ route('anticipos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="box">
-          <div class="box-header with-border">
-            <h3 class="box-title"><i class="fa fa-retweet"></i> Reemplazos</h3>
-          </div>
-          <div class="box-body">
-            <table class="table data-table table-bordered table-hover" style="width: 100%">
-              <thead>
-                <tr>
-                  <th class="text-center">#</th>
-                  <th class="text-center">Fecha</th>
-                  <th class="text-center">Reemplazó a</th>
-                  <th class="text-center">Valor</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach($empleado->reemplazos()->get() as $d)
-                  <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                    <td>{{ $d->inicio }}</td>
-                    <td>{!! $d->nombreReemplazo() !!}</td>
-                    <td>{{ $d->valor() }}</td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-md-12" style="padding:0">
-        <div class="col-md-6">
-          <div class="box box-success">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-money"></i> Sueldos</h3>
-            </div>
-            <div class="box-body">
+      <div class="col-md-12">
+        <div class="nav-tabs-custom">
+          <ul class="nav nav-tabs">
+            <li class="tab-success active"><a href="#tab_1" data-toggle="tab"><i class="fa fa-money"></i> Sueldos</a></li>
+            <li class="tab-success"><a href="#tab_2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
+            <li class="tab-default"><a href="#tab_3" data-toggle="tab"><i class="fa fa-retweet"></i> Reemplazos</a></li>
+            <li class="tab-danger"><a href="#tab_4" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventario</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
               <table class="table data-table table-bordered table-hover" style="width: 100%">
                 <thead>
                   <tr>
@@ -277,15 +254,53 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="box box-danger">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-arrow-right"></i> Entregas de Inventario</h3>
+            <div class="tab-pane" id="tab_2">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Fecha</th>
+                    <th class="text-center">Anticipo</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleado->anticipos as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->fecha }}</td>
+                      <td>{{ $d->anticipo() }}</td>
+                      <td>
+                        <a class="btn btn-primary btn-flat btn-sm" href="{{ route('anticipos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
             </div>
-            <div class="box-body">
+            <div class="tab-pane" id="tab_3">
+              <table class="table data-table table-bordered table-hover" style="width: 100%">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Fecha</th>
+                    <th class="text-center">Reemplazó a</th>
+                    <th class="text-center">Valor</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleado->reemplazos()->get() as $d)
+                    <tr>
+                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $d->inicio }}</td>
+                      <td>{!! $d->nombreReemplazo() !!}</td>
+                      <td>{{ $d->valor() }}</td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <div class="tab-pane" id="tab_4">
               <table class="table data-table table-bordered table-hover" style="width: 100%">
                 <thead>
                   <tr>
@@ -428,6 +443,10 @@
               <li class="list-group-item">
                 <b>Fin</b>
                 <span class="pull-right"> {{ $contrato->fin }}
+              </li>
+              <li class="list-group-item">
+                <b>Descripción</b>
+                <span class="pull-right"> {{ $contrato->descripcion }}
               </li>
             </ul>
           @endforeach

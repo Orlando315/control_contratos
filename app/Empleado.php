@@ -24,9 +24,12 @@ class Empleado extends Model
     'sexo',
     'fecha_nacimiento',
     'direccion',
+    'profesion',
+    'nombre_emergencia',
+    'telefono_emergencia',
     'talla_camisa',
     'talla_zapato',
-    'talla_pantalon'
+    'talla_pantalon',
   ];
 
   protected $guarded = ['empresa_id'];

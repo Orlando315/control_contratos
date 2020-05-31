@@ -14,8 +14,7 @@ class EmpleadosContrato extends Model
     'fin',
     'jornada',
     'inicio_jornada',
-    'dias_laborables',
-    'dias_descanso'
+    'descripcion',
   ];
 
   public function empleado()

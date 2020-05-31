@@ -52,8 +52,11 @@ class EmpleadosController extends Controller
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut',
         'direccion' => 'required|string',
+        'profesion' => 'nullable|string|max:100',
         'telefono' => 'nullable|string',
         'email' => 'nullable|email|unique:users,email',
+        'nombre_emergencia' => 'nullable|string|max:50',
+        'telefono_emergencica' => 'nullable|string|max:20',
         'talla_camisa' => 'nullable|string',
         'talla_zapato' => 'nullable|numeric',
         'talla_pantalon' => 'nullable|string',
@@ -65,6 +68,7 @@ class EmpleadosController extends Controller
         'inicio_jornada' => 'required|date_format:d-m-Y',
         'fin' => 'nullable|date_format:d-m-Y',
         'jornada' => 'nullable',
+        'descripcion' => 'nullable|string|max:200',
       ]);
 
       if(!$request->jornada){
@@ -144,8 +148,11 @@ class EmpleadosController extends Controller
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut,' . $empleado->usuario->id . ',id',
         'direccion' => 'required|string',
+        'profesion' => 'nullable|string|max:100',
         'telefono' => 'nullable|string',
         'email' => 'nullable|email|unique:users,email,' . $empleado->usuario->id . ',id',
+        'nombre_emergencia' => 'nullable|string|max:50',
+        'telefono_emergencica' => 'nullable|string|max:20',
         'talla_camisa' => 'nullable|string',
         'talla_zapato' => 'nullable|numeric',
         'talla_pantalon' => 'nullable|string',
@@ -157,8 +164,7 @@ class EmpleadosController extends Controller
         'fin' => 'nullable|date_format:d-m-Y',
         'inicio_jornada' => 'required|date_format:d-m-Y',
         'jornada' => 'nullable',
-        'dias_laborables' => 'nullable',
-        'dias_descanso' => 'nullable'
+        'descripcion' => 'nullable|string|max:200',
       ]);
 
       if($empleado->despidoORenuncia() && $request->fin){
@@ -232,6 +238,7 @@ class EmpleadosController extends Controller
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'nullable|date_format:d-m-Y',
         'jornada' => 'nullable',
+        'descripcion' => 'nullable|string|max:200',
       ]);
 
       if($empleado->despidoORenuncia()){
