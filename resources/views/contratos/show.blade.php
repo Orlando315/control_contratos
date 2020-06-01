@@ -1,15 +1,14 @@
-@extends( 'layouts.app' )
-
-@section( 'title', 'Contrato - '.config( 'app.name' ) )
-@section( 'header', 'Contrato' )
-@section( 'breadcrumb' )
+@extends('layouts.app')
+@section('title', 'Contrato - '.config('app.name'))
+@section('header', 'Contrato')
+@section('breadcrumb')
 	<ol class="breadcrumb">
-	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
+	  <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
     <li><a href="{{ route('contratos.index') }}">Contratos</a></li>
 	  <li class="active"> Contrato </li>
 	</ol>
 @endsection
-@section( 'content' )
+@section('content')
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     @if(Auth::user()->tipo < 2)
@@ -65,19 +64,22 @@
           </ul>
           <div class="tab-content">
             <div class="tab-pane active" id="tab_11">
+              <h4 class="text-right">
+                <a class="btn btn-flat btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'contrato', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                @if($contrato->documentos->count() < 10)
+                  <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createContrato', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                @endif
+              </h4>
               <div class="row">
-                <div class="col-md-12" style="margin-bottom: 5px">
-                  <h4>
-                    Documentos
-                    @if($contrato->documentos->count() < 10)
-                    <span class="pull-right">
-                      <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createContrato', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
-                    </span>
-                    @endif
-                  </h4>
-                </div>
-                @forelse($contrato->documentos as $documento)
-                  <div id='file-{{$documento->id}}' class='col-md-4 col-sm-6 col-xs-12'>
+                @foreach($contrato->carpetas()->main()->get() as $carpeta)
+                  <div class="col-md-4 col-sm-6 col-xs-12">
+                    {!! $carpeta->template() !!}
+                  </div>
+                @endforeach
+              </div>
+              <div class="row">
+                @forelse($contrato->documentos()->main()->get() as $documento)
+                  <div id="file-{{$documento->id}}" class="col-md-4 col-sm-6 col-xs-12">
                     {!! $documento->generateThumb() !!}
                   </div>
                 @empty

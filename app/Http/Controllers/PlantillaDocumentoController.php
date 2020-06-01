@@ -24,16 +24,17 @@ class PlantillaDocumentoController extends Controller
      * Show the form for creating a new resource.
      *
      * @param  \App\Contrato  $contrato
+     * @param  \App\Empleado  $empleado
      * @return \Illuminate\Http\Response
      */
-    public function create(Contrato $contrato = null)
+    public function create(Contrato $contrato = null, Empleado $empleado = null)
     {
       $selected = $contrato;
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
       $padres = Documento::all();
 
-      return view('plantilla-documento.create', compact('contratos', 'selected', 'plantillas', 'padres'));
+      return view('plantilla-documento.create', compact('contratos', 'selected', 'plantillas', 'padres', 'empleado'));
     }
 
     /**

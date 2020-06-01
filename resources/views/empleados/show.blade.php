@@ -198,21 +198,74 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <div class="col-md-12" style="margin-bottom: 5px">
-              <h4>
-                Documentos
-                @if($empleado->documentos()->count() < 10)
-                <span class="pull-right">
-                  <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createEmpleado', ['empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
-                </span>
-                @endif
-              </h4>
-            </div>
-            @foreach($empleado->documentos()->get() as $documento)
-              <div id='file-{{$documento->id}}' class='col-md-6 col-sm-6 col-xs-12'>
-                {!! $documento->generateThumb() !!}
+            <div class="nav-tabs-custom">
+              <ul class="nav nav-tabs">
+                <li class="tab-success active"><a href="#tab_11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+                <li class="tab-warning"><a href="#tab_12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane active" id="tab_11">
+                  <h4 class="text-right">
+                    <a class="btn btn-flat btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'empleado', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                    @if($empleado->documentos->count() < 10)
+                      <a class="btn btn-flat btn-success btn-sm" href="{{ route('documentos.createEmpleado', ['empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                    @endif
+                  </h4>
+                  <div class="row">
+                    @foreach($empleado->carpetas()->main()->get() as $carpeta)
+                      <div class="col-md-4 col-sm-6 col-xs-12">
+                        {!! $carpeta->template() !!}
+                      </div>
+                    @endforeach
+                  </div>
+                  <div class="row">
+                    @forelse($empleado->documentos()->main()->get() as $documento)
+                      <div id="file-{{$documento->id}}" class="col-md-4 col-sm-6 col-xs-12">
+                        {!! $documento->generateThumb() !!}
+                      </div>
+                    @empty
+                    <div class="col-12">
+                      <h4 class="text-center text-muted">No hay documetos adjuntos</h4>
+                    </div>
+                    @endforelse
+                  </div>
+                </div>
+                <div class="tab-pane" id="tab_12">
+                  <div class="box-hedaer">
+                    <h4 class="text-right">
+                      <a class="btn btn-success btn-flat" href="{{ route('plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
+                    </h4>
+                  </div>
+                  <div class="box-body">
+                    <table class="table data-table table-bordered table-hover" style="width: 100%">
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th class="text-center">Documento</th>
+                          <th class="text-center">Empleado</th>
+                          <th class="text-center">Padre</th>
+                          <th class="text-center">Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        @foreach($empleado->plantillaDocumentos as $d)
+                          <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $d->nombre }}</td>
+                            <td>{{ $d->empleado->nombre() }}</td>
+                            <td>{{ optional($d->padre)->nombre ?? 'N/A' }}</td>
+                            <td>
+                              <a class="btn btn-primary btn-flat btn-sm" href="{{ route('plantilla.documento.show', ['documento' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-flat btn-sm" href="{{ route('plantilla.documento.edit', ['documento' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                            </td>
+                          </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            @endforeach
+            </div>
           </div>    
         </div>
       </div>

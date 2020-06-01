@@ -70,8 +70,15 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     /* --- Documentos --- */    
-    Route::get('documentos/contratos/{contrato}', 'DocumentosController@createContrato')->name('documentos.createContrato');
-    Route::post('documentos/contratos/{contrato}', 'DocumentosController@storeContrato')->name('documentos.storeContrato');
+    Route::get('documentos/contratos/{contrato}/{carpeta?}', 'DocumentosController@createContrato')->name('documentos.createContrato');
+    Route::post('documentos/contratos/{contrato}/{carpeta?}', 'DocumentosController@storeContrato')->name('documentos.storeContrato');
+
+    /* --- Caarpetas --- */    
+    Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
+    Route::post('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@store')->name('carpeta.store');
+    Route::resource('carpeta', 'CarpetaController')
+          ->parameters(['carpeta' => 'carpeta'])
+          ->except(['create', 'store']);
 
   });
 
@@ -96,7 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
           ->except(['show']);
 
     /* --- Documento plantillas --- */
-    Route::get('documento/plantilla/create/{contrato?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
+    Route::get('documento/plantilla/create/{contrato?}/{empleado?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
     Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' => 'plantilla.documento'])
           ->parameters([
             'plantilla' => 'documento',
@@ -136,8 +143,8 @@ Route::group(['middleware' => 'auth'], function () {
       'create',
       'store'
     ]);
-    Route::get('documentos/empleados/{empleado}', 'DocumentosController@createEmpleado')->name('documentos.createEmpleado');
-    Route::post('documentos/empleados/{empleado}', 'DocumentosController@storeEmpleado')->name('documentos.storeEmpleado');
+    Route::get('documentos/empleados/{empleado}/{carpeta?}', 'DocumentosController@createEmpleado')->name('documentos.createEmpleado');
+    Route::post('documentos/empleados/{empleado}/{carpeta?}', 'DocumentosController@storeEmpleado')->name('documentos.storeEmpleado');
     Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
 
     /* --- Transportes --- */

@@ -27,7 +27,7 @@
 
         <div class="row">
           <div class="col-md-6">
-            <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
               <label class="control-label" class="form-control" for="contrato">Conrato: *</label>
               <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
                 <option value="">Seleccione...</option>
@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="form-group {{ $errors->has('empleado') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('empleado') ? ' has-error' : '' }}">
               <label class="control-label" class="form-control" for="empleado">Empleado: *</label>
               <select id="empleado" class="form-control" name="empleado" required style="width: 100%" disabled>
                 <option value="">Seleccione...</option>
@@ -50,7 +50,7 @@
 
         <div class="row">
           <div class="col-md-6">
-            <div class="form-group {{ $errors->has('plantilla') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('plantilla') ? ' has-error' : '' }}">
               <label class="control-label" class="form-control" for="plantilla">Plantilla: *</label>
               <select id="plantilla" class="form-control" name="plantilla" required style="width: 100%">
                 <option value="">Seleccione...</option>
@@ -61,7 +61,7 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="form-group {{ $errors->has('padre') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('padre') ? ' has-error' : '' }}">
               <label class="control-label" class="form-control">Documento padre:</label>
               <select id="padre" class="form-control" name="padre" style="width: 100%">
                 <option value="">Seleccione...</option>
@@ -75,7 +75,7 @@
 
         <div class="row">
           <div class="col-md-6">
-            <div class="form-group {{ $errors->has('caducidad') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('caducidad') ? ' has-error' : '' }}">
               <label class="control-label" for="caducidad">Fecha de caducidad:</label>
               <input id="caducidad" class="form-control" type="text" name="caducidad" value="{{ old('caducidad') ? old('caducidad') : '' }}" placeholder="dd-mm-yyyy">
             </div>
@@ -138,7 +138,7 @@
   <script type="text/javascript">
     const sectionVariables = $('.section-variables')
     const buildGroup = function (index, seccion){
-      let vargGroups = '';
+    let vargGroups = '';
 
       $.each(seccion.variables, function (k, v){
         let tipo = converType(v.tipo)
@@ -215,7 +215,7 @@
           select.empty().append(new Option('Seleccione...', '', false, false));
           if(data.length > 0){
             $.each(data, function(k, v){
-              let isSelected = v.id == `{{ old('empleado', 0) }}`
+              let isSelected = v.id == `{{ old('empleado', (optional($empleado)->id ?? 0)) }}`
               select.append(new Option(v.usuario.rut + ' | ' + v.usuario.nombres + ' ' + v.usuario.apellidos, v.id, isSelected, isSelected))
             })
 

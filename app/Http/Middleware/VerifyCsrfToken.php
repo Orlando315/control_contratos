@@ -21,5 +21,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
       'variable/*',
       'inventarios/entregas/*',
+      'documentos/*',
     ];
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Empleado;
 use App\Contrato;
 use App\Documento;
+use App\Carpeta;
 
 class DocumentosController extends Controller
 {
@@ -24,25 +25,37 @@ class DocumentosController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\Empleado  $empleado
+     * @param  \App\Carpeta  $carpeta
      * @return \Illuminate\Http\Response
      */
-    public function createEmpleado(Empleado $empleado)
+    public function createEmpleado(Empleado $empleado, Carpeta $carpeta = null)
     {
-      return view('documentos.create', ['route'=> route('documentos.storeEmpleado', ['empleado' => $empleado->id])]);
+      return view('documentos.create', ['route'=> route('documentos.storeEmpleado', ['empleado' => $empleado->id, 'carpeta' => $carpeta])]);
     }
 
-    public function createContrato(Contrato $contrato)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param  \App\Contrato  $contrato
+     * @param  \App\Carpeta  $carpeta
+     * @return \Illuminate\Http\Response
+     */
+    public function createContrato(Contrato $contrato, Carpeta $carpeta = null)
     {
-      return view('documentos.create', ['route'=> route('documentos.storeContrato', ['contrato' => $contrato->id])]);
+      return view('documentos.create', ['route'=> route('documentos.storeContrato', ['contrato' => $contrato->id, 'carpeta' => $carpeta])]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  object  $model
+     * @param  string  $directory
+     * @param  \App\Carpeta  $carpeta
+     * @return bool
      */
-    protected function store(Request $request, $model, $directory)
+    protected function store(Request $request, $model, $directory, Carpeta $carpeta = null)
     {
       $this->validate($request, [
         'nombre' => 'required|string',
@@ -51,11 +64,11 @@ class DocumentosController extends Controller
       ]);
 
       $documento = new Documento;
-
       $documento->nombre = $request->nombre;
       $documento->mime   = $request->documento->getMimeType();
       $documento->vencimiento = $request->vencimiento;
       $documento->empresa_id = Auth::user()->empresa->id;
+      $documento->carpeta_id = optional($carpeta)->id;
 
       if($documento = $model->documentos()->save($documento)){
         $directory = 'Empresa' . Auth::user()->empresa->id . $directory . $model->id;
@@ -69,13 +82,20 @@ class DocumentosController extends Controller
         $documento->save();
         
         return true;
-      }else{
-        return false;       
       }
-
+      
+      return false;
     }
 
-    public function storeEmpleado(Request $request, Empleado $empleado)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Empleado  $empleado
+     * @param  \App\Carpeta  $carpeta
+     * @return \Illuminate\Http\Response
+     */
+    public function storeEmpleado(Request $request, Empleado $empleado, Carpeta $carpeta = null)
     {
       if($empleado->documentos()->count() >= 10){
         return redirect('empleados/' . $empleado->id)->with([
@@ -85,24 +105,33 @@ class DocumentosController extends Controller
           ]);
       }
 
-      $result = $this->store($request, $empleado,'/Empleado');
+      $result = $this->store($request, $empleado, '/Empleado', $carpeta);
 
       if($result){
-        return redirect('empleados/' . $empleado->id)->with([
+        $redirect = $carpeta ? route('carpeta.show', ['carpeta' => $carpeta]) : route('empleados.show', ['empleado' => $empleado->id]);
+
+        return redirect($redirect)->with([
           'flash_message' => 'Documento agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/' . $empleado->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
-      
+
+      return redirect('empleados/' . $empleado->id)->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);      
     }
 
-    public function storeContrato(Request $request, Contrato $contrato)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Contrato  $contrato
+     * @param  \App\Carpeta  $carpeta
+     * @return \Illuminate\Http\Response
+     */
+    public function storeContrato(Request $request, Contrato $contrato, Carpeta $carpeta = null)
     {
       if($contrato->documentos()->count() >= 10){
         return redirect('contratos/' . $contrato->id)->with([
@@ -112,21 +141,22 @@ class DocumentosController extends Controller
           ]);
       }
 
-      $result = $this->store($request, $contrato,'/Contrato');
+      $result = $this->store($request, $contrato, '/Contrato', $carpeta);
 
       if($result){
-        return redirect('contratos/' . $contrato->id)->with([
+        $redirect = $carpeta ? route('carpeta.show', ['carpeta' => $carpeta]) : route('contratos.show', ['contrato' => $contrato->id]);
+
+        return redirect($redirect)->with([
           'flash_message' => 'Documento agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('contratos/' . $contrato->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
-      
+
+      return redirect('contratos/' . $contrato->id)->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -143,7 +173,7 @@ class DocumentosController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Documento  $documento
      * @return \Illuminate\Http\Response
      */
     public function edit(Documento $documento)
@@ -155,7 +185,7 @@ class DocumentosController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Documento  $documento
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Documento $documento)
@@ -175,19 +205,19 @@ class DocumentosController extends Controller
           'flash_message' => 'Documento editado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('documentos/' . $documento->id . '/edit')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect('documentos/' . $documento->id . '/edit')->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Documento  $documento
      * @return \Illuminate\Http\Response
      */
     public function destroy(Documento $documento)
@@ -200,9 +230,17 @@ class DocumentosController extends Controller
         $response = ['response' => false];
       }
 
+      $response = ['response' => false];
+
       return $response;
     }
 
+    /**
+     * Descargar el Documento especificado
+     *
+     * @param  \App\Documento  $documento
+     * @return \Illuminate\Http\Response
+     */
     public function download(Documento $documento)
     {
       return Storage::download($documento->path);
