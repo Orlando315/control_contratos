@@ -35,7 +35,7 @@
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                 <label class="control-label" for="rut">RUT: *</label>
-                <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dk])$" value="{{ old('rut') }}" placeholder="RUT" required>
+                <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old('rut') }}" placeholder="RUT" required>
                 <span class="help-block">Ejemplo: 00000000-0</span>
               </div>
             </div>
@@ -45,18 +45,18 @@
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('fecha_nacimiento') ? ' has-error' : '' }}">
                 <label class="control-label" for="fecha_nacimiento">Fecha de nacimiento: *</label>
-                <input id="fecha_nacimiento" class="form-control" type="text" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}" placeholder="dd-mm-yyyy">
+                <input id="fecha_nacimiento" class="form-control" type="text" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}" placeholder="dd-mm-yyyy" required>
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
-                <label class="control-label" for="telefono">Teléfono: *</label>
+                <label class="control-label" for="telefono">Teléfono:</label>
                 <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') }}" placeholder="Teléfono">
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                <label class="control-label" for="email">Email: *</label>
+                <label class="control-label" for="email">Email:</label>
                 <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') }}" placeholder="Email">
               </div>
             </div>
@@ -72,7 +72,7 @@
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('profesion') ? ' has-error' : '' }}">
                 <label class="control-label" for="profesion">Profesión:</label>
-                <input id="profesion" class="form-control" type="text" name="profesion" maxlength="100" value="{{ old('profesion') }}" placeholder="Prefesión" required>
+                <input id="profesion" class="form-control" type="text" name="profesion" maxlength="100" value="{{ old('profesion') }}" placeholder="Prefesión">
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@
             <div class="col-md-3">
               <div class="form-group{{ $errors->has('sexo') ? ' has-error' : '' }}">
                 <label class="control-label" for="sexo">Sexo: *</label>
-                <select id="sexo" class="form-control" name="sexo">
+                <select id="sexo" class="form-control" name="sexo" required>
                   <option value="">Seleccione...</option>
                   <option value="M" {{ old('sexo') == 'M' ? 'selected' : '' }}>Masculino</option>
                   <option value="F" {{ old('sexo') == 'F' ? 'selected' : '' }}>Femenino</option>
@@ -116,7 +116,7 @@
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('nombre_emergencia') ? ' has-error' : '' }}">
                 <label class="control-label" for="nombre_emergencia">Nombre:</label>
-                <input id="nombre_emergencia" class="form-control" type="text" name="nombre_emergencia" maxlength="50" value="{{ old('nombre_emergencia') }}" placeholder="Nombre" required>
+                <input id="nombre_emergencia" class="form-control" type="text" name="nombre_emergencia" maxlength="50" value="{{ old('nombre_emergencia') }}" placeholder="Nombre">
               </div>
             </div>
             <div class="col-md-4">
@@ -165,8 +165,8 @@
             </div>
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('inicio_jornada') ? ' has-error' : '' }}">
-                <label class="control-label" for="inicio_jornada">Inicio de Jornada:</label>
-                <input id="inicio_jornada" class="form-control" type="text" name="inicio_jornada" value="{{ old('inicio_jornada') }}" placeholder="dd-mm-yyyy">
+                <label class="control-label" for="inicio_jornada">Inicio de Jornada: *</label>
+                <input id="inicio_jornada" class="form-control" type="text" name="inicio_jornada" value="{{ old('inicio_jornada') }}" placeholder="dd-mm-yyyy" required>
               </div>
             </div>
             <div class="col-md-4">
@@ -186,7 +186,7 @@
             </div>
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-                <label class="control-label" class="form-control" for="jornada">Jornada: *</label>
+                <label class="control-label" class="form-control" for="jornada">Jornada:</label>
                 <select id="jornada" class="form-control" name="jornada">
                   <option value="">Seleccione...</option>
                   <option value="5x2" {{ old('jornada') == '5x2' ? 'selected' : '' }}>5x2</option>

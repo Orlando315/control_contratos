@@ -117,7 +117,7 @@ class InventariosEntregasController extends Controller
      */
     public function update(Request $request, InventarioEntrega $entrega)
     {
-      if(Auth::user()->id === $entrega->entregado){
+      if(Auth::user()->id == $entrega->entregado){
         $entrega->recibido = true;
 
         if($entrega->save()){

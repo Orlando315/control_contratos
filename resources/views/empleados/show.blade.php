@@ -75,11 +75,11 @@
               </li>
               <li class="list-group-item">
                 <b>Teléfono</b>
-                <span class="pull-right"> {{ $empleado->usuario->telefono }} </span>
+                <span class="pull-right"> {{ $empleado->usuario->telefono ?? 'N/A' }} </span>
               </li>
               <li class="list-group-item">
                 <b>Email</b>
-                <span class="pull-right">{{ $empleado->usuario->email }}</span>
+                <span class="pull-right">{{ $empleado->usuario->email ?? 'N/A' }}</span>
               </li>
               <li class="list-group-item">
                 <b>Profesión</b>
@@ -87,19 +87,19 @@
               </li>
               <li class="list-group-item">
                 <b>Talla de camisa</b>
-                <span class="pull-right">{{ $empleado->talla_camisa }}</span>
+                <span class="pull-right">{{ $empleado->talla_camisa ?? 'N/A' }}</span>
               </li>
               <li class="list-group-item">
                 <b>Talla de zapato</b>
-                <span class="pull-right">{{ $empleado->talla_zapato }}</span>
+                <span class="pull-right">{{ $empleado->talla_zapato ?? 'N/A' }}</span>
               </li>
               <li class="list-group-item">
                 <b>Talla de pantalon</b>
-                <span class="pull-right">{{ $empleado->talla_pantalon }}</span>
+                <span class="pull-right">{{ $empleado->talla_pantalon ?? 'N/A' }}</span>
               </li>
               <li class="list-group-item">
                 <b>Registrado</b>
-                <span class="pull-right">{{ $empleado->created_at }}</span>
+                <span class="pull-right">{{ optional($empleado->created_at)->format('d-m-Y H:i:s') }}</span>
               </li>
             </ul>
           </div><!-- /.box-body -->
@@ -475,7 +475,7 @@
             <ul class="list-group">
               <li class="list-group-item">
                 <b>Creado</b>
-                <span class="pull-right">{{ $contrato->created_at }}</span>
+                <span class="pull-right">{{ optional($contrato->created_at)->format('d-m-Y H:i:s') }}</span>
               </li>
               <li class="list-group-item">
                 <b>Jornada</b>
@@ -495,11 +495,11 @@
               </li>
               <li class="list-group-item">
                 <b>Fin</b>
-                <span class="pull-right"> {{ $contrato->fin }}
+                <span class="pull-right"> {!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
               </li>
               <li class="list-group-item">
                 <b>Descripción</b>
-                <span class="pull-right"> {{ $contrato->descripcion }}
+                <span class="pull-right"> {{ $contrato->descripcion ?? 'N/A' }}
               </li>
             </ul>
           @endforeach

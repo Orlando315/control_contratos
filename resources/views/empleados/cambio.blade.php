@@ -34,17 +34,8 @@
               </div>
             </div>
             <div class="col-md-4">
-              <div class="form-group{{ $errors->has('sueldo') ? ' has-error' : '' }}">
-                <label class="control-label" for="sueldo">Sueldo: *</label>
-                <input id="sueldo" class="form-control" type="number" step="1" min="1" max="9999999999999" name="sueldo" value="{{ old('sueldo') }}" placeholder="Sueldo" required>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4">
               <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-                <label class="control-label" class="form-control" for="jornada">Jornada: *</label>
+                <label class="control-label" class="form-control" for="jornada">Jornada:</label>
                 <select id="jornada" class="form-control" name="jornada">
                   <option value="">Seleccione...</option>
                   <option value="5x2" {{ old('jornada') == '5x2' ? 'selected' : '' }}>5x2</option>
@@ -58,6 +49,9 @@
                 <span class="help-block">Si no se selecciona, se colocara la jornada de la empresa</span>
               </div>
             </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-4">
               <div class="form-group{{ $errors->has('descripcion') ? ' has-error' : '' }}">
                 <label class="control-label" for="descripcion">Descripción:</label>
