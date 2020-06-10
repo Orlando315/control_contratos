@@ -45,6 +45,8 @@
                   <option value="10x10" {{ old('jornada') == '10x10' ? 'selected' : '' }}>10x10</option>
                   <option value="12x12" {{ old('jornada') == '12x12' ? 'selected' : '' }}>12x12</option>
                   <option value="20x10" {{ old('jornada') == '20x10' ? 'selected' : '' }}>20x10</option>
+                  <option value="7x14" {{ old('jornada') == '7x14' ? 'selected' : '' }}>7x14</option>
+                  <option value="14x14" {{ old('jornada') == '14x14' ? 'selected' : '' }}>14x14</option>
                 </select>
                 <span class="help-block">Si no se selecciona, se colocara la jornada de la empresa</span>
               </div>

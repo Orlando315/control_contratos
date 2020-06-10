@@ -40,7 +40,7 @@ class EmpresasController extends Controller
     {
       $this->validate($request, [
         'nombres' => 'required|string',
-        'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut',
+        'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut',
         'representante' => 'required|string',
         'email' => 'required|email|unique:users,email',
         'telefono' => 'required',
@@ -107,7 +107,7 @@ class EmpresasController extends Controller
     {
       $this->validate($request, [
         'nombres' => 'required|string',
-        'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut,' . Auth::user()->id . ',id',
+        'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut,' . Auth::user()->id . ',id',
         'representante' => 'required|string',
         'email' => 'required|email|unique:users,email,' . Auth::user()->id . ',id',
         'telefono' => 'required',

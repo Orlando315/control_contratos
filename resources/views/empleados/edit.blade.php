@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title','Empleado -'.config('app.name'))
-@section('header','Empleado')
+@section('title', 'Empleado - '.config('app.name'))
+@section('header', 'Empleado')
 @section('breadcrumb')
   <ol class="breadcrumb">
     <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
@@ -188,13 +188,15 @@
                 <label class="control-label" class="form-control" for="jornada">Jornada:</label>
                 <select id="jornada" class="form-control" name="jornada">
                   <option value="">Seleccione...</option>
-                  <option value="5x2" {{ old('jornada', $empleado->contratos->last()->jornada) == '5x2' ? 'selected' : '' }}>5x2</option>
-                  <option value="4x3" {{ old('jornada', $empleado->contratos->last()->jornada) == '4x3' ? 'selected' : '' }}>4x3</option>
-                  <option value="6x1" {{ old('jornada', $empleado->contratos->last()->jornada) == '6x1' ? 'selected' : '' }}>6x1</option>
-                  <option value="7x7" {{ old('jornada', $empleado->contratos->last()->jornada) == '7x7' ? 'selected' : '' }}>7x7</option>
-                  <option value="10x10" {{ old('jornada', $empleado->contratos->last()->jornada) == '10x10' ? 'selected' : '' }}>10x10</option>
-                  <option value="12x12" {{ old('jornada', $empleado->contratos->last()->jornada) == '12x12' ? 'selected' : '' }}>12x12</option>
-                  <option value="20x10" {{ old('jornada', $empleado->contratos->last()->jornada) == '20x10' ? 'selected' : '' }}>20x10</option>
+                  <option value="5x2"{{ old('jornada', $empleado->contratos->last()->jornada) == '5x2' ? ' selected' : '' }}>5x2</option>
+                  <option value="4x3"{{ old('jornada', $empleado->contratos->last()->jornada) == '4x3' ? ' selected' : '' }}>4x3</option>
+                  <option value="6x1"{{ old('jornada', $empleado->contratos->last()->jornada) == '6x1' ? ' selected' : '' }}>6x1</option>
+                  <option value="7x7"{{ old('jornada', $empleado->contratos->last()->jornada) == '7x7' ? ' selected' : '' }}>7x7</option>
+                  <option value="10x10"{{ old('jornada', $empleado->contratos->last()->jornada) == '10x10' ? ' selected' : '' }}>10x10</option>
+                  <option value="12x12"{{ old('jornada', $empleado->contratos->last()->jornada) == '12x12' ? ' selected' : '' }}>12x12</option>
+                  <option value="20x10"{{ old('jornada', $empleado->contratos->last()->jornada) == '20x10' ? ' selected' : '' }}>20x10</option>
+                  <option value="7x14"{{ old('jornada', $empleado->contratos->last()->jornada) == '7x14' ? ' selected' : '' }}>7x14</option>
+                  <option value="14x14"{{ old('jornada', $empleado->contratos->last()->jornada) == '14x14' ? ' selected' : '' }}>14x14</option>
                 </select>
                 <span class="help-block">Si no se selecciona, se colocara la jornada de la empresa</span>
               </div>
@@ -227,7 +229,7 @@
   </div>
 @endsection
 
-@section( 'scripts' )
+@section('scripts')
 <script type="text/javascript">
   $(document).ready( function(){
     var endDate = new Date();
