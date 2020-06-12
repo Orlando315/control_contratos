@@ -1,14 +1,15 @@
-@extends( 'layouts.app' )
+@extends('layouts.app')
 
-@section( 'title', 'Perfil - '.config( 'app.name' ) )
-@section( 'header', 'Perfil' )
-@section( 'breadcrumb' )
+@section('title', 'Perfil - '.config('app.name'))
+@section('header', 'Perfil')
+@section('breadcrumb')
 	<ol class="breadcrumb">
-	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
+	  <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
 	  <li class="active"> Perfil </li>
 	</ol>
 @endsection
-@section( 'content' )
+
+@section('content')
   <section>
     <a class="btn btn-flat btn-default" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     @if(Auth::user()->tipo == 1)
@@ -86,7 +87,17 @@
           </div><!-- /.box-body -->
         </div>
       </div>
-    
+
+      <div class="col-md-3">
+        <div class="box box-danger">
+          <div class="box-header text-center">
+            <h3 class="box-title">Logo</h3>
+          </div>
+          <div class="box-body">
+            <img class="img-responsive" src="{{ Auth::user()->empresa->logo_url }}" alt="Logo" style="max-height: 180px;margin: 0 auto;">
+          </div>
+        </div>
+      </div>    
     </div>
   </section>
 
@@ -136,20 +147,19 @@
   </div>
 @endsection
 
-
 @section('script')
   <script type="text/javascript">
-  $(document).ready(function(){
-      $("#pp").click(function(event) {
-      var bool = this.checked;
-      if(bool === true){
-        $("#password_fields").show();
-        $("#password,#password_confirmation").prop('required',true);
-      }else{
-        $("#password_fields").hide();
-        $("#password,#password_confirmation").prop('required',false).val('');
-      }
+    $(document).ready(function(){
+        $("#pp").click(function(event) {
+        var bool = this.checked;
+        if(bool === true){
+          $("#password_fields").show();
+          $("#password,#password_confirmation").prop('required',true);
+        }else{
+          $("#password_fields").hide();
+          $("#password,#password_confirmation").prop('required',false).val('');
+        }
+      });
     });
-  });
   </script>
 @endsection

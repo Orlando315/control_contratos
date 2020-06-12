@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth, Storage};
 use App\Usuario;
 use App\Empresa;
 use App\ConfiguracionEmpresa;
@@ -113,16 +113,32 @@ class EmpresasController extends Controller
         'telefono' => 'required',
         'jornada' => 'required',
         'dias_vencimiento' => 'nullable|integer|min:1|max:255',
+        'logo' => 'nullable|file|mimes:jpeg,png|max:3000'
       ]);
 
       $empresa = Empresa::find(Auth::user()->empresa_id);
-      $empresa->fill($request->all());
+      $empresa->fill($request->only('nombres', 'representante'));
       $empresa->usuario->fill($request->all());
       $empresa->usuario->usuario = $request->rut;
       $empresa->configuracion->jornada = $request->jornada;
       $empresa->configuracion->dias_vencimiento = $request->dias_vencimiento;
 
       if($empresa->push()){
+        if($request->hasFile('logo')){
+          $directory = $empresa->directory;
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          if($empresa->logo){
+            Storage::delete($empresa->logo);
+          }
+
+          $empresa->logo = $request->file('logo')->store($directory);
+          $empresa->save();
+
+        }
+
         return redirect('perfil')->with([
           'flash_message' => 'Perfil modificado exitosamente.',
           'flash_class' => 'alert-success'

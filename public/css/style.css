@@ -194,3 +194,11 @@
 .nav-tabs-custom > .nav-tabs > li.active.tab-info{
   border-top-color: #00c0ef;
 }
+
+.navbar-nav > .user-menu .user-image{
+  height: auto !important;
+  width: auto !important;
+  max-width: 100px;
+  max-height: 25px;
+  border-radius: 0;
+}

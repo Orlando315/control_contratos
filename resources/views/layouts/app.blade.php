@@ -3,46 +3,47 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@yield( 'title' , config( 'app.name' ) )</title>
+    <title>@yield('title', config('app.name'))</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Icon 16x16 -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset( 'images/icon.png' ) }}">
+    <!-- Icon -->
+    <link href="{{ asset('favicon-small.jpg') }}" rel="shortcut icon" type="image/x-icon">
     <!-- Bootstrap 3.3.5 -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'css/bootstrap.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
     <!-- Font Awesome -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'css/font-awesome.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/font-awesome.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'css/AdminLTE.min.css' ) }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'css/glyphicons.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/AdminLTE.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/glyphicons.css') }}">
     <!-- Datatable -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datatables/datatables.min.css' ) }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datatables/datatables.min.css') }}"/>
     <!-- Datepicker -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/datepicker/css/bootstrap-datepicker3.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/datepicker/css/bootstrap-datepicker3.min.css') }}">
     <!-- Fullcalendar -->
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/fullcalendar/fullcalendar.min.css' ) }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset( 'plugins/fullcalendar/scheduler.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/fullcalendar/fullcalendar.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/fullcalendar/scheduler.min.css') }}">
     <!-- Select2 -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/select2/select2.min.css' ) }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/select2/select2-bootstrap.min.css' ) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/select2/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('plugins/select2/select2-bootstrap.min.css') }}">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="{{ asset( 'css/_all-skins.min.css' ) }}">
+    <link rel="stylesheet" href="{{ asset('css/_all-skins.min.css') }}">
     <!-- Custom -->
-    <link rel="stylesheet" href="{{ asset( 'css/style.css' ) }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    @yield('head')
   </head>
   <body class="hold-transition skin-red sidebar-mini">
     <div class="wrapper">
       <header class="main-header">
         <!-- Logo -->
-        <a href="{{ route( 'dashboard' ) }}" class="logo">
+        <a href="{{ route('dashboard') }}" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
           <span class="logo-mini">
-            <!--<img src="#" alt="">-->
+            <img src="{{ asset('favicon-small.jpg') }}" alt="Logo">
           </span>
           <!-- logo for regular state and mobile devices -->
           <span class="logo-lg">
-            <!--<img src="#" alt="">-->
+            <img src="{{ asset('images/logo-small-white.jpg') }}" alt="Logo" style="max-width: 150px; margin-bottom: 3px">
           </span>
         </a>
 
@@ -60,6 +61,9 @@
 
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  @if(Auth::user()->empresa->logo)
+                    <img src="{{ Auth::user()->empresa->logo_url }}" class="user-image" alt="Logo empresa">
+                  @endif
                   <span class="hidden-xs">{{ Auth::user()->usuario }}</span>
                 </a>
                 <ul class="dropdown-menu">
@@ -272,15 +276,15 @@
         <!-- Main content -->
         <section class="content-header">
           <h1>
-            @yield( 'header' )
+            @yield('header')
           </h1>
-          @yield( 'breadcrumb' )
+          @yield('breadcrumb')
         </section>
         <!-- Main content -->
         <section class="content">
           @include('partials.entregas')
           @include('partials.sueldos')
-          @yield( 'content' )
+          @yield('content')
         </section>
       </div><!-- /.content-wrapper -->
       <!--Fin-Contenido-->
@@ -288,23 +292,23 @@
       </footer>
     </div><!-- .wrapper -->
     <!-- jQuery 2.1.4 -->
-    <script type="text/javascript" src="{{ asset( 'js/jQuery-2.1.4.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jQuery-2.1.4.min.js') }}"></script>
     <!-- Bootstrap 3.3.5 -->
-    <script type="text/javascript" src="{{ asset( 'js/bootstrap.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
     <!-- AdminLTE App -->
-    <script type="text/javascript" src="{{ asset( 'js/app.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/app.min.js') }}"></script>
     <!-- Data table -->
-    <script type="text/javascript" src="{{ asset( 'plugins/datatables/datatables.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/datatables/datatables.min.js') }}"></script>
     <!-- Datepicker -->
-    <script type="text/javascript" src="{{ asset( 'plugins/datepicker/js/bootstrap-datepicker.min.js' ) }}"></script>
-    <script type="text/javascript" src="{{ asset( 'plugins/datepicker/locales/bootstrap-datepicker.es.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <!-- Fullcalendar -->
-    <script type="text/javascript" src="{{ asset( 'plugins/fullcalendar/lib/moment.min.js' ) }}"></script>
-    <script type="text/javascript" src="{{ asset( 'plugins/fullcalendar/fullcalendar.min.js' ) }}"></script>
-    <script type="text/javascript" src="{{ asset( 'plugins/fullcalendar/locale/es.js' ) }}"></script>
-    <script type="text/javascript" src="{{ asset( 'plugins/fullcalendar/scheduler.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/fullcalendar/lib/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/fullcalendar/fullcalendar.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/fullcalendar/locale/es.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/fullcalendar/scheduler.min.js') }}"></script>
     <!-- Select2 -->
-    <script type="text/javascript" src="{{ asset( 'plugins/select2/select2.min.js' ) }}"></script>
+    <script type="text/javascript" src="{{ asset('plugins/select2/select2.min.js') }}"></script>
     <script type="text/javascript">
       $(document).ready(function(){
         $('div.alert').not('.alert-important').delay(7000).slideUp(300);
@@ -356,6 +360,6 @@
       })
     </script>
 
-    @yield( 'scripts' )
+    @yield('scripts')
   </body>
 </html>
