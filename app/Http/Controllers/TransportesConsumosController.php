@@ -30,7 +30,7 @@ class TransportesConsumosController extends Controller
     {
       $contratos = $transporte->contratos()->get();
 
-      return view('transportes.consumos.create', ['transporte' => $transporte->id, 'contratos' => $contratos]);
+      return view('transportes.consumos.create', ['transporte' => $transporte, 'contratos' => $contratos]);
     }
 
     /**
@@ -189,6 +189,10 @@ class TransportesConsumosController extends Controller
 
     public function download(TransporteConsumo $consumo)
     {
+      if(!Storage::exists($consumo->adjunto)){
+        abort(404);
+      }
+
       return Storage::download($consumo->adjunto);
     }
 }

@@ -15,7 +15,7 @@ class Carpeta extends Model
     protected $table = 'carpetas';
 
     /**
-     * The model's default values for attributes.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -110,25 +110,5 @@ class Carpeta extends Model
     public function type()
     {
       return $this->carpetable_type == 'App\Contrato' ? 'contrato' : 'empleado';
-    }
-
-    /**
-     * Obtener el thumb html de la carpeta
-     *
-     * @return string
-     */
-    public function template()
-    {
-      $show = route('carpeta.show', ['carpeta' => $this->id]);
-      $edit = route('carpeta.edit', ['carpeta' => $this->id]);
-
-      return "<a href=\"{$show}\">
-                <div class=\"info-box\">
-                  <span class=\"info-box-icon bg-yellow\"><i class=\"fa fa-folder\"></i></span>
-                  <div class=\"info-box-content\">
-                    <span class=\"info-box-text\" style=\"color: #333\">{$this->nombre}</span>
-                  </div>
-                </div>
-              </a>";
     }
 }

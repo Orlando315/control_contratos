@@ -18,9 +18,9 @@ class Contrato extends Model
     protected $table = 'contratos';
 
     /**
-     * The table associated with the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
     protected $fillable = [
       'empresa_id',
@@ -41,6 +41,60 @@ class Contrato extends Model
       parent::boot();
 
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Establecer al fecha de inicio
+     * 
+     * @param  string  $value
+     * @return void
+     */
+    public function setInicioAttribute($value)
+    {
+      $this->attributes['inicio'] = date('Y-m-d', strtotime($value));
+    }
+
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getInicioAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
+
+    /**
+     * Establecer la fecha de Fin
+     * 
+     * @param  string  $value
+     * @return void
+     */
+    public function setFinAttribute($value)
+    {
+      $this->attributes['fin'] = date('Y-m-d',strtotime($value));
+    }
+
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getFinAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
+
+    /**
+     * Obtener el directorio donde se guardaran Documentos y Carpetas
+     * 
+     * @return string
+     */
+    public function getDirectoryAttribute()
+    {
+      return 'Empresa'.$this->empresa_id.'/Contrato'.$this->id;
     }
 
     /**
@@ -165,46 +219,6 @@ class Contrato extends Model
     public function valor()
     {
       return number_format($this->valor, 0, ',', '.');
-    }
-
-    /**
-     * Obtener el directorio donde se guardaran Documentos y Carpetas
-     */
-    public function getDirectoryAttribute()
-    {
-      return 'Empresa'.$this->empresa_id.'/Contrato'.$this->id;
-    }
-
-    /**
-     * Establecer al fecha de inicio
-     */
-    public function setInicioAttribute($date)
-    {
-      $this->attributes['inicio'] = date('Y-m-d', strtotime($date));
-    }
-
-    /**
-     * Obtener el atributo formateado
-     */
-    public function getInicioAttribute($date)
-    {
-      return date('d-m-Y', strtotime($date));
-    }
-
-    /**
-     * Establecer la fecha de Fin
-     */
-    public function setFinAttribute($date)
-    {
-      $this->attributes['fin'] = date('Y-m-d',strtotime($date));
-    }
-
-    /**
-     * Obtener el atributo formateado
-     */
-    public function getFinAttribute($date)
-    {
-      return date('d-m-Y', strtotime($date));
     }
 
     /**
@@ -356,6 +370,8 @@ class Contrato extends Model
 
     /**
      * Obtener el total a pagar
+     *
+     * @return float
      */
     public function getTotalAPagar()
     {

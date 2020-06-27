@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\Usuario;
-use App\Empresa;
-use App\ConfiguracionEmpresa;
+use App\{Usuario, Empresa, ConfiguracionEmpresa};
 
 class EmpresasController extends Controller
 {
@@ -52,7 +50,6 @@ class EmpresasController extends Controller
       $empresa = new Empresa($request->all());
 
       if($empresa->save()){
-
         $user = new Usuario($request->all());
         $user->tipo = 1;
         $user->usuario = $request->rut;
@@ -65,13 +62,13 @@ class EmpresasController extends Controller
           'flash_message' => 'Registro completado con exito.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('login')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -136,20 +133,19 @@ class EmpresasController extends Controller
 
           $empresa->logo = $request->file('logo')->store($directory);
           $empresa->save();
-
         }
 
         return redirect('perfil')->with([
           'flash_message' => 'Perfil modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('perfil')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**

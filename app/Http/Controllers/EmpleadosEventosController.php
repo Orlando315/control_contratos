@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\EmpleadosEvento;
-use App\Empleado;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
 use Carbon\Carbon;
+use App\{EmpleadosEvento, Empleado};
 
 class EmpleadosEventosController extends Controller
 {
@@ -35,6 +34,7 @@ class EmpleadosEventosController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Empleado  $empleado
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Empleado $empleado)
@@ -132,7 +132,6 @@ class EmpleadosEventosController extends Controller
      */
     public function destroy(EmpleadosEvento $evento)
     {
-
       if($evento->delete()){
         // Buscar si hay un evento de Asistencia registrado en la fecha, o el rango de fecha del evento eliminado
         // Si existe, cambiar la comida y el Pago a True.
@@ -142,48 +141,6 @@ class EmpleadosEventosController extends Controller
           EmpleadosEvento::whereIn('id', $asistenciasIds)->update(['comida' => true, 'pago' => true]);
         }
 
-        $response = ['response' => true, 'evento' => $evento];
-      }else{
-        $response = ['response' => false];
-      }
-
-      return $response;
-    }
-    
-    public function exportEventsTotal(Request $request)
-    {
-      $this->exportExcel(EmpleadosEvento::exportAll($request->inicio, $request->fin), 'TotalEventos');
-    }
-
-    protected function exportExcel($data, $nombre)
-    {
-      $writer = WriterFactory::create(Type::XLSX);
-      $writer->openToBrowser("{$nombre}.xlsx");
-      $writer->addRows($data);
-
-      $writer->close(); 
-    }
-
-    public function events()
-    {
-      return view('eventos.events');
-    }
-
-    public function getEvents(Request $request)
-    {
-      $eventos = EmpleadosEvento::exportAll($request->inicio, $request->fin);
-
-      return $eventos;
-    }
-
-    /*
-      Agregar o eliminar si el Empleado comio ese dia
-    */
-    public function toggleComida(Request $request, EmpleadosEvento $evento)
-    {
-      $evento->comida = (bool) $request->comida;
-
-      if($evento->save()){
         $response = ['response' => true, 'evento' => $evento];
       }else{
         $response = ['response' => false];

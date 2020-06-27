@@ -15,7 +15,7 @@ class CarpetaController extends Controller
      */
     public function index()
     {
-        //
+      abort(404);
     }
 
     /**
@@ -61,7 +61,7 @@ class CarpetaController extends Controller
           ]);
       }
 
-      return redirect('transportes/consumos/'. $consumo->id.'/adjuntos/create')->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -112,7 +112,7 @@ class CarpetaController extends Controller
         ]);
       }
 
-      return redirect()->route('carpeta.edit', ['carpeta' => $carpeta->id])->withInput()->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -131,6 +131,7 @@ class CarpetaController extends Controller
 
       if($carpeta->delete()){
         Carpeta::where('carpeta_id', $carpeta->id)->delete();
+
         return redirect($redirect)->with([
           'flash_message' => 'Carpeta Eliminada exitosamente.',
           'flash_class' => 'alert-success'

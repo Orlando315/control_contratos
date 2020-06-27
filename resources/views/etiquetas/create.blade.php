@@ -1,42 +1,53 @@
 @extends('layouts.app')
-@section('title', 'Etiquetas - '.config('app.name'))
-@section('header','Etiquetas')
-@section('breadcrumb')
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('etiquetas.index') }}">Etiquetas</a></li>
-    <li class="active">Agregar</li>
-  </ol>
+
+@section('title', 'Etiquetas')
+
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Etiquetas</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('etiquetas.index') }}">Etiquetas</a></li>
+        <li class="breadcrumb-item active"><strong>Agregar</strong></li>
+      </ol>
+    </div>
+  </div>
 @endsection
+
 @section('content')
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form class="" action="{{ route('etiquetas.store') }}" method="POST">
-        {{ csrf_field() }}
-
-        <h4>Agregar etiqueta</h4>
-
-        <div class="form-group {{ $errors->has('etiqueta') ? 'has-error' : '' }}">
-          <label class="control-label" for="etiqueta">Nombre: *</label>
-          <input id="etiqueta" class="form-control" type="text" name="etiqueta" maxlength="50" value="{{ old('etiqueta') ?? '' }}" placeholder="Etiqueta" required>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Agregar etiqueta</h5>
         </div>
+        <div class="ibox-content">
+          <form action="{{ route('etiquetas.store') }}" method="POST">
+            {{ csrf_field() }}
 
-        @if(count($errors) > 0)
-          <div class="alert alert-danger alert-important">
-            <ul>
-              @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif
+            <div class="form-group {{ $errors->has('etiqueta') ? 'has-error' : '' }}">
+              <label class="control-label" for="etiqueta">Nombre: *</label>
+              <input id="etiqueta" class="form-control" type="text" name="etiqueta" maxlength="50" value="{{ old('etiqueta') ?? '' }}" placeholder="Etiqueta" required>
+            </div>
 
-        <div class="form-group text-right">
-          <a class="btn btn-flat btn-default" href="{{ route('etiquetas.index') }}"><i class="fa fa-reply"></i> Atras</a>
-          <button class="btn btn-flat btn-primary" type="submit"><i class="fa fa-send"></i> Guardar</button>
+            @if(count($errors) > 0)
+              <div class="alert alert-danger alert-important">
+                <ul class="m-0">
+                  @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            @endif
+
+            <div class="text-right">
+              <a class="btn btn-default btn-sm" href="{{ route('etiquetas.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 @endsection

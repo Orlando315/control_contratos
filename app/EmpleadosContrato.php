@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EmpleadosContrato extends Model
 {
-
     /**
      * The table associated with the model.
      *
@@ -16,7 +15,7 @@ class EmpleadosContrato extends Model
     protected $table = 'empleados_contratos';
 
     /**
-     * The model's default values for attributes.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -29,14 +28,6 @@ class EmpleadosContrato extends Model
       'inicio_jornada',
       'descripcion',
     ];
-
-    /**
-     * Obtener el Empleado al que pertenece
-     */
-    public function empleado()
-    {
-      return $this->belongsTo('App\Empleado', 'empleado_id');
-    }
 
     /**
      * Establecer la fecna de inicio del Contrato.
@@ -102,6 +93,14 @@ class EmpleadosContrato extends Model
     public function getInicioJornadaAttribute($value)
     {
       return $value ? date('d-m-Y', strtotime($value)) : null;
+    }
+
+    /**
+     * Obtener el Empleado al que pertenece
+     */
+    public function empleado()
+    {
+      return $this->belongsTo('App\Empleado', 'empleado_id');
     }
 
     /**

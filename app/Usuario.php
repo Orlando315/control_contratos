@@ -9,68 +9,99 @@ use App\Scopes\EmpresaScope;
 
 class Usuario extends User
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
+    
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'empresa_id',
+      'empleado_id',
+      'tipo',
+      'nombres',
+      'apellidos',
+      'rut',
+      'telefono',
+      'email'
+    ];
 
-  protected static function boot()
-  {
-    parent::boot();
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+      'password'
+    ];
 
-    static::addGlobalScope(new EmpresaScope);
-  }
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
 
-  protected $table = 'users';
-  
-  protected $fillable = [
-    'empresa_id',
-    'empleado_id',
-    'tipo',
-    'nombres',
-    'apellidos',
-    'rut',
-    'telefono',
-    'email'
-  ];
+      static::addGlobalScope(new EmpresaScope);
+    }
 
-  protected $hidden = [
-    'password'
-  ];
+    /**
+     * Obtener el atributo formateado
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getUsuarioAttribute($value)
+    {
+      return ucfirst($value);
+    }
 
-  /*
-    Todos los usuarios de tipo Administrator y Supervisor
-  */
-  public static function adminsYSupervisores()
-  {
-    return Usuario::where('tipo', 2)
-                    ->orWhere('tipo', 3)->get();
-  }
+    /**
+     * Obtener la Empresa a la que pertenece
+     */
+    public function empresa()
+    {
+      return $this->belongsTo('App\Empresa');
+    }
 
-  /*
-    Todos los usuarios de tipo Supervisor
-  */
-  public static function supervisores()
-  {
-    return Usuario::where('tipo', 3)->get(); 
-  }
+    /**
+     * Obtener el Empleado del Usuario
+     */
+    public function empleado()
+    {
+      return $this->hasOne('App\Empleado', 'id', 'empleado_id');
+    }
 
-  /*
-    Todos los usuarios de tipo Supervisor
-  */
-  public static function empleados()
-  {
-    return Usuario::where('tipo', 4)->get();
-  }
+    /**
+     * Obtener los Usuarios tipo Admin y Supervisor
+     */
+    public static function adminsYSupervisores()
+    {
+      return Usuario::where('tipo', 2)
+                      ->orWhere('tipo', 3)->get();
+    }
 
-  public function getUsuarioAttribute($usuario)
-  {
-    return ucfirst($usuario);
-  }
+    /**
+     * Obtener los Usuarios tipo Supervisor
+     */
+    public static function supervisores()
+    {
+      return Usuario::where('tipo', 3)->get(); 
+    }
 
-  public function empleado()
-  {
-    return $this->belongsTo('App\Empleado');
-  }
-
-  public function empresa()
-  {
-    return $this->belongsTo('App\Empresa');
-  }
+    /**
+     * Obtener los Usuarios tipo Empleados
+     */
+    public static function empleados()
+    {
+      return Usuario::where('tipo', 4)->get();
+    }
 }

@@ -47,17 +47,17 @@ class EtiquetasController extends Controller
                   ]);
 
       if(Auth::user()->empresa->etiquetas()->save($etiqueta)){
-        return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
+        return redirect()->route('etiquetas.show', ['etiqueta' => $etiqueta->id])->with([
           'flash_message' => 'Etiqueta agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect()->route('etiquetas.create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->route('etiquetas.create')->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -98,17 +98,17 @@ class EtiquetasController extends Controller
       $etiqueta->etiqueta = $request->etiqueta;
 
       if($etiqueta->save()){
-        return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
+        return redirect()->route('etiquetas.show', ['etiqueta' => $etiqueta->id])->with([
           'flash_message' => 'Etiqueta modificada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect()->route('etiquetas.edit', ['id' => $etiqueta->id])->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -119,25 +119,25 @@ class EtiquetasController extends Controller
      */
     public function destroy(Etiqueta $etiqueta)
     {
-      if($etiqueta->facturas->count() == 0 && $etiqueta->gastos->count() == 0){
-        if($etiqueta->delete()){
-          return redirect()->route('etiquetas.index')->with([
-            'flash_message' => 'Etiqueta eliminada exitosamente.',
-            'flash_class' => 'alert-success'
-            ]);
-        }else{
-          return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
-            'flash_message' => 'Ha ocurrido un error.',
-            'flash_class' => 'alert-danger',
-            'flash_important' => true
-            ]);
-        }
-      }else{
-        return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
+      if($etiqueta->facturas()->count() > 0 || $etiqueta->gastos()->count() > 0){
+        return redirect()->back()->with([
           'flash_message' => 'No se puede eliminar. Esta etiqueta tiene elementos agregados.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
           ]);
       }
+
+      if($etiqueta->delete()){
+        return redirect()->route('etiquetas.index')->with([
+          'flash_message' => 'Etiqueta eliminada exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }
+
+      return redirect()->route('etiquetas.show', ['id' => $etiqueta->id])->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 }

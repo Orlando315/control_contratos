@@ -16,9 +16,8 @@ class UsuariosController extends Controller
     public function index()
     {
       $usuarios  = Usuario::adminsYSupervisores();
-      $empleados = Usuario::empleados();
 
-      return view('usuarios.index', ['usuarios' => $usuarios, 'empleados' => $empleados]);
+      return view('usuarios.index', ['usuarios' => $usuarios]);
     }
 
     /**
@@ -57,14 +56,14 @@ class UsuariosController extends Controller
           'flash_message' => 'Usuario agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('usuarios/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
-    }
+      
+      return redirect('usuarios/create')->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
+  }
 
     /**
      * Display the specified resource.
@@ -180,29 +179,29 @@ class UsuariosController extends Controller
       }
     }
 
-    public function password(Request $request, $id = null)
+    public function password(Request $request, Usuario $usuario = null)
     {
       $this->validate($request, [
         'password' => 'required|min:6|confirmed',
         'password_confirmation' => 'required'
       ]);
 
-      $usuario = Usuario::find($id ?? Auth::user()->id);
-      $usuario->password = bcrypt($request->password);
+      $user = $usuario ?? Auth::user();
+      $user->password = bcrypt($request->password);
 
-      $redirect = $id ? 'usuarios/' . $usuario->id : 'perfil';
+      $redirect = $usuario ? 'usuarios/' . $user->id : 'perfil';
 
-      if($usuario->save()){
+      if($user->save()){
         return redirect($redirect)->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contraseña cambiada exitosamente.'
         ]);
-      }else{
-        return redirect($redirect)->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect($redirect)->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 }

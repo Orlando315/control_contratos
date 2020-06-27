@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\InventarioEntrega;
-use App\Inventario;
-use App\Contrato;
+use App\{InventarioEntrega, Inventario, Contrato};
 
 class InventariosEntregasController extends Controller
 {
@@ -23,19 +21,21 @@ class InventariosEntregasController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function create(Inventario $inventario)
     {
       $empleados = $inventario->contrato->empleados()->with('usuario:id,empleado_id,nombres,apellidos')->get();
 
-      return view('inventarios.entregas.create', ['inventario' => $inventario, 'empleados' => $empleados]);
+      return view('inventarios.entregas.create', compact('inventario', 'empleados'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Inventario $inventario)
@@ -73,13 +73,13 @@ class InventariosEntregasController extends Controller
 
         $inventario->save();
 
-        return redirect('inventarios/' . $inventario->id)->with([
+        return redirect()->route('inventarios.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Entrega agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }
 
-      return redirect('inventarios/entregas/' . $inventario->id)->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -89,10 +89,10 @@ class InventariosEntregasController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\InventarioEntrega  $entrega
      * @return \Illuminate\Http\Response
      */
-    public function show(InventarioEntrega $inventario)
+    public function show(InventarioEntrega $entrega)
     {
       //
     }
@@ -100,10 +100,10 @@ class InventariosEntregasController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\InventarioEntrega  $entrega
      * @return \Illuminate\Http\Response
      */
-    public function edit(InventarioEntrega $inventario)
+    public function edit(InventarioEntrega $entrega)
     {
       //
     }
@@ -112,7 +112,7 @@ class InventariosEntregasController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\InventarioEntrega  $entrega
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, InventarioEntrega $entrega)
@@ -130,13 +130,13 @@ class InventariosEntregasController extends Controller
       }
 
 
-        return $response;
+      return $response;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\InventarioEntrega  $entrega
      * @return \Illuminate\Http\Response
      */
     public function destroy(Inventario $inventario, InventarioEntrega $entrega)
@@ -146,17 +146,17 @@ class InventariosEntregasController extends Controller
       if($entrega->delete()){
         $inventario->save();
 
-        return redirect('inventarios/' . $inventario->id)->with([
+        return redirect()->route('inventarios.show', ['inventario' => $inventario->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Entrega eliminada exitosamente.'
         ]);
-      }else{
-        return redirect('inventarios/' . $inventario->id)->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
     /**

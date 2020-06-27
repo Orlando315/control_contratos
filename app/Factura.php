@@ -7,86 +7,152 @@ use App\Scopes\EmpresaScope;
 
 class Factura extends Model
 {
-  
-  protected static function boot()
-  {
-    parent::boot();
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'facturas';
 
-    static::addGlobalScope(new EmpresaScope);
-  }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'contrato_id',
+      'etiqueta_id',
+      'tipo',
+      'nombre',
+      'realizada_para',
+      'realizada_por',
+      'fecha',
+      'valor',
+      'pago_fecha',
+      'pago_estado',
+    ];
 
-  protected $fillable = [
-    'contrato_id',
-    'etiqueta_id',
-    'tipo',
-    'nombre',
-    'realizada_para',
-    'realizada_por',
-    'fecha',
-    'valor',
-    'pago_fecha',
-    'pago_estado',
-  ];
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
 
-  public function contrato()
-  {
-    return $this->belongsTo('App\Contrato');
-  }
+      static::addGlobalScope(new EmpresaScope);
+    }
 
-  public function etiqueta()
-  {
-    return $this->belongsTo('App\Etiqueta');
-  }
+    /**
+     * Establecer el atributo formateado
+     * 
+     * @param  string  $value
+     * @return void
+     */
+    public function setFechaAttribute($value)
+    {
+      $this->attributes['fecha'] = date('Y-m-d',strtotime($value));
+    }
 
-  public function tipo()
-  {
-    return $this->tipo == 1 ? 'Ingreso' : 'Egreso';
-  }
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getFechaAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
 
-  public function setFechaAttribute($date)
-  {
-    $this->attributes['fecha'] = date('Y-m-d',strtotime($date));
-  }
+    /**
+     * Establecer el atributo formateado
+     * 
+     * @param  string  $value
+     * @return void
+     */
+    public function setPagoFechaAttribute($value)
+    {
+      $this->attributes['pago_fecha'] = date('Y-m-d',strtotime($value));
+    }
 
-  public function getFechaAttribute($date)
-  {
-    return date('d-m-Y', strtotime($date));
-  }
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getPagoFechaAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
 
-  public function valor()
-  {
-    return number_format($this->valor, 0, ',', '.');
-  }
+    /**
+     * Obtener el Contrato a la que pertenece
+     */
+    public function contrato()
+    {
+      return $this->belongsTo('App\Contrato');
+    }
 
-  public function setPagoFechaAttribute($date)
-  {
-    $this->attributes['pago_fecha'] = date('Y-m-d',strtotime($date));
-  }
+    /**
+     * Obtener La Etiqueta a la que pertenece
+     */
+    public function etiqueta()
+    {
+      return $this->belongsTo('App\Etiqueta');
+    }
 
-  public function getPagoFechaAttribute($date)
-  {
-    return date('d-m-Y', strtotime($date));
-  }
+    /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function tipo()
+    {
+      return $this->tipo == 1 ? 'Ingreso' : 'Egreso';
+    }
 
-  public function pago()
-  {
-    return $this->pago_estado == 1 ? '<span class="label label-success">Pagada</span>' : '<span class="label label-default">Pendiente</span>';
-  }
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function valor()
+    {
+      return number_format($this->valor, 0, ',', '.');
+    }
 
-  public function directory()
-  {
-    return 'Empresa' . $this->empresa_id . '/Facturas/' . $this->id;
-  }
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function pago()
+    {
+      return $this->pago_estado == 1 ? '<span class="label label-primary">Pagada</span>' : '<span class="label label-default">Pendiente</span>';
+    }
 
-  public function adjunto($adjunto)
-  {
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function directory()
+    {
+      return 'Empresa' . $this->empresa_id . '/Facturas/' . $this->id;
+    }
 
-    return $this->{"adjunto{$adjunto}"} ? '<a href="' . $this->getDownloadLink($adjunto) . '">Descargar</a>' : 'N/A';
-  }
-
-  protected function getDownloadLink($adjunto)
-  {
-    return route('facturas.download', ['factura' => $this->id, 'adjunto' => $adjunto]);
-  }
-
+    /**
+     * Obtener el enlace de descarga del Adjunto
+     *
+     * @param  string  $adjunto
+     * @return string
+     */
+    public function adjunto($adjunto)
+    {
+      $link = route('facturas.download', ['factura' => $this->id, 'adjunto' => $adjunto]);
+      return $this->{"adjunto{$adjunto}"} ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
+    }
 }

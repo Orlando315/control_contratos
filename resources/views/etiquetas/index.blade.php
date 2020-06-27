@@ -1,40 +1,44 @@
 @extends('layouts.app')
-@section('title','Etiquetas - '.config('app.name'))
-@section('header','Etiquetas')
-@section('breadcrumb')
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li class="active">Etiquetas</li>
-  </ol>
+
+@section('title','Etiquetas')
+
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Etiquetas</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item active"><strong>Etiquetas</strong></li>
+      </ol>
+    </div>
+  </div>
 @endsection
 
 @section('content')
-  @include('partials.flash')
-  <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-yellow"><i class="fa fa-tags"></i></span>
-        <div class="info-box-content">
-          <span class="info-box-text">Etiquetas</span>
-          <span class="info-box-number">{{ count($etiquetas) }}</span>
+  <div class="row mb-3"> 
+    <div class="col-6 col-md-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Etiquetas</h5>
         </div>
-        <!-- /.info-box-content -->
+        <div class="ibox-content">
+          <h2><i class="fa fa-tags text-warning"></i> {{ count($etiquetas) }}</h2>
+        </div>
       </div>
-      <!-- /.info-box -->
     </div>
   </div>
 
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-md-12">
-      <div class="box box-warning">
-        <div class="box-header with-border">
-          <h3 class="box-title"><i class="fa fa-tags"></i> Etiquetas</h3>
-          <span class="pull-right">
-            <a class="btn btn-success btn-flat" href="{{ route('etiquetas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
-          </span>
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5><i class="fa fa-tags"></i> Etiquetas</h5>
+          <div class="ibox-tools">
+            <a class="btn btn-primary btn-xs" href="{{ route('etiquetas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
+          </div>
         </div>
-        <div class="box-body">
-          <table class="table data-table table-bordered table-hover" style="width: 100%">
+        <div class="ibox-content">
+          <table class="table data-table table-bordered table-hover table-sm w-100">
             <thead>
               <tr>
                 <th class="text-center">#</th>
@@ -47,13 +51,13 @@
             <tbody class="text-center">
               @foreach($etiquetas as $d)
                 <tr>
-                  <td>{{ $loop->index + 1 }}</td>
+                  <td>{{ $loop->iteration }}</td>
                   <td>{{ $d->etiqueta }}</td>
                   <td>{{ $d->facturas->count() }}</td>
                   <td>{{ $d->gastos->count() }}</td>
                   <td>
-                    <a class="btn btn-primary btn-flat btn-sm" href="{{ route('etiquetas.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-success btn-flat btn-sm" href="{{ route('etiquetas.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('etiquetas.show', ['etiqueta' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('etiquetas.edit', ['etiqueta' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

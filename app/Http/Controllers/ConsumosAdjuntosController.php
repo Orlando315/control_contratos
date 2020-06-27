@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use App\ConsumoAdjunto;
-use App\TransporteConsumo;
+use App\{ConsumoAdjunto, TransporteConsumo};
 
 class ConsumosAdjuntosController extends Controller
 {
@@ -23,12 +22,13 @@ class ConsumosAdjuntosController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\TransporteConsumo  $consumo
      * @return \Illuminate\Http\Response
      */
     public function create(TransporteConsumo $consumo)
     {
       if($consumo->adjuntos()->count() >= 10){
-        return redirect('transportes/consumos/' . $consumo->id)->with([
+        return redirect()->back()->withInput()->with([
           'flash_message' => 'No se pueden agregar mas adjuntos a este consumo.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
@@ -42,12 +42,13 @@ class ConsumosAdjuntosController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\TransporteConsumo  $consumo
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, TransporteConsumo $consumo)
     {
       if($consumo->adjuntos()->count() >= 10){
-        return redirect('transportes/consumos/' . $consumo->id)->with([
+        return redirect()->back()->withInput()->with([
           'flash_message' => 'No se pueden agregar mas adjuntos a este consumo.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
@@ -72,17 +73,17 @@ class ConsumosAdjuntosController extends Controller
         $adjunto->path = $request->file('adjunto')->store($directory);
         $adjunto->save();
 
-        return redirect('transportes/consumos/' . $consumo->id)->with([
+        return redirect()->route('consumos.show', ['consumo' => $consumo->id])->with([
           'flash_message' => 'Adjunto agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('transportes/consumos/'. $consumo->id.'/adjuntos/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -146,6 +147,10 @@ class ConsumosAdjuntosController extends Controller
      */
     public function download(ConsumoAdjunto $adjunto)
     {
+      if(!Storage::exists($adjunto->path)){
+        abort(404);
+      }
+
       return Storage::download($adjunto->path);
     }
 }

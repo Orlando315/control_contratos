@@ -14,7 +14,7 @@ class InventarioEntrega extends model
     protected $table = 'inventarios_entregas';
 
     /**
-     * The model's default values for attributes.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -31,30 +31,6 @@ class InventarioEntrega extends model
     protected $casts = [
       'status' => 'boolean',
     ];
-
-    /**
-     * Obtener el Inventario al que pertenece
-     */
-    public function inventario()
-    {
-      return $this->belongsTo('App\Inventario');
-    }
-
-    /**
-     * Obtener el Usuario al que le fue entregado el Inventario
-     **/
-    public function entregadoA()
-    {
-      return $this->belongsTo('App\Usuario', 'entregado', 'id');
-    }
-
-    /**
-     * Obtener el Usuario que registro la Entrega
-     */
-    public function realizadoPor()
-    {
-      return $this->belongsTo('App\Usuario', 'realizado', 'id');
-    }
 
     /**
      * Obtener la fecha del Inventario.
@@ -76,6 +52,30 @@ class InventarioEntrega extends model
     public function getDownloadAttribute()
     {
       return $this->adjunto ? route('entregas.download', ['entrega' => $this->id]) : '#';
+    }
+
+    /**
+     * Obtener el Inventario al que pertenece
+     */
+    public function inventario()
+    {
+      return $this->belongsTo('App\Inventario');
+    }
+
+    /**
+     * Obtener el Usuario al que le fue entregado el Inventario
+     */
+    public function entregadoA()
+    {
+      return $this->belongsTo('App\Usuario', 'entregado', 'id');
+    }
+
+    /**
+     * Obtener el Usuario que registro la Entrega
+     */
+    public function realizadoPor()
+    {
+      return $this->belongsTo('App\Usuario', 'realizado', 'id');
     }
 
     /**

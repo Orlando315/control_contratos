@@ -3,17 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Usuario;
-use App\Empleado;
-use App\Contrato;
-use App\EmpleadosBanco;
-use App\EmpleadosEvento;
-use App\EmpleadosContrato;
+use Illuminate\Support\Facades\{Auth, Storage};
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
 use Carbon\Carbon;
+use App\{Usuario, Empleado, Contrato};
 
 class EmpleadosController extends Controller
 {
@@ -24,7 +18,9 @@ class EmpleadosController extends Controller
      */
     public function index()
     {
-        //
+      $empleados = Empleado::all();
+
+      return view('empleados.index', compact('empleados'));
     }
 
     /**
@@ -34,7 +30,7 @@ class EmpleadosController extends Controller
      */
     public function create(Contrato $contrato)
     {
-      return view('empleados.create', ['contrato' => $contrato->id]);
+      return view('empleados.create', compact('contrato'));
     }
 
     /**
@@ -90,17 +86,17 @@ class EmpleadosController extends Controller
         $empleado->contratos()->create($request->all());
         $empleado->banco()->create($request->all());
 
-        return redirect('empleados/' . $emplado->id)->with([
+        return redirect()->route('empleados.show', ['empleado' => $emplado->id])->with([
           'flash_message' => 'Empleado registrado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -118,7 +114,7 @@ class EmpleadosController extends Controller
 
       $contratos = Contrato::all();
 
-      return view('empleados.show', ['empleado' => $empleado, 'empleados' => $empleados, 'contratos' => $contratos]);
+      return view('empleados.show', compact('empleado', 'empleados', 'contratos'));
     }
 
     /**
@@ -129,7 +125,7 @@ class EmpleadosController extends Controller
      */
     public function edit(Empleado $empleado)
     {
-      return view('empleados.edit', ['empleado' => $empleado]);
+      return view('empleados.edit', compact('empleado'));
     }
 
     /**
@@ -189,17 +185,17 @@ class EmpleadosController extends Controller
       $empleado->usuario->usuario = $request->rut;
 
       if($empleado->push()){
-        return redirect('empleados/' . $empleado->id)->with([
+        return redirect()->route('empleados.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/'. $empleado->id .'/edit')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -211,27 +207,39 @@ class EmpleadosController extends Controller
     public function destroy(Empleado $empleado)
     {
       if($empleado->delete()){
-
         Storage::deleteDirectory('Empleado' . $empleado->id);
 
-        return redirect('dashboard')->with([
+        return redirect()->route('contratos.show', ['contrato' => $empleado->contrato_id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Empleado eliminado exitosamente.'
         ]);
-      }else{
-        return redirect('dashboard')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
+    /**
+     * Mostrar el formulario para cambiar de Jornada
+     *
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
     public function cambio($empleado)
     {
-      return view('empleados.cambio', ['empleado'=>$empleado]);
+      return view('empleados.cambio', compact('empleado'));
     }
 
+    /**
+     * Cambiar la Jornada del Empleado
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
     public function cambioStore(Request $request, Empleado $empleado)
     {
       $this->validate($request, [
@@ -247,7 +255,7 @@ class EmpleadosController extends Controller
 
         $inicio = new Carbon($request->inicio);
         if($eventoDate->lessThanOrEqualTo($inicio)){
-          return redirect('empleados/'. $empleado->id .'/cambio')
+          return redirect()->back()
                     ->withErrors('La fecha de inicio del contrato no puede ser mayor o igual a la fecha de Renuncia/Despido: '. $evento->inicio)
                     ->withInput();  
         }
@@ -255,7 +263,7 @@ class EmpleadosController extends Controller
         if($request->fin){
           $fin = new Carbon($request->fin);  
           if($eventoDate->lessThan($fin)){
-            return redirect('empleados/'. $empleado->id .'/cambio')
+            return redirect()->back()
                       ->withErrors('La fecha de fin del contrato no puede ser mayor a la fecha de Renuncia/Despido: '. $evento->inicio)
                       ->withInput();  
           }
@@ -271,6 +279,7 @@ class EmpleadosController extends Controller
       if(!$request->jornada){
         $request->merge(['jornada' => Auth::user()->configuracion->jornada]);
       }
+
       $request->merge(['sueldo' => $lastContrato->sueldo]);
 
       if($empleado->contratos()->create($request->all())){
@@ -281,20 +290,34 @@ class EmpleadosController extends Controller
           'flash_message' => 'Cambio de jornada exitoso.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/' . $empleado->id . '/cambio')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
-    
+
+    /**
+     * Exportar toda la informacion de Jornadas y Eventos del Empleado especificado
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
     public function export(Request $request, Empleado $empleado)
     {
       $this->exportExcel($empleado->getDataAsArray($request->inicio, $request->fin), 'Empleado' . $empleado->id);
     }
 
+    /**
+     * Generar el Excel con la informacion proporcionada
+     *
+     * @param  array  $data
+     * @param  string  $empleado
+     * @return \Illuminate\Http\Response
+     */
     protected function exportExcel($data, $nombre)
     {
       $writer = WriterFactory::create(Type::XLSX);
@@ -304,11 +327,24 @@ class EmpleadosController extends Controller
       $writer->close(); 
     }
 
+    /**
+     * Obtener los Empleados del Contratos especificado
+     *
+     * @param  \App\Contrato  $contrato
+     * @return array
+     */
     public function getByContrato(Contrato $contrato)
     {
       return $contrato->empleados()->select(['id'])->with(['usuario:id,empleado_id,rut,nombres,apellidos'])->get()->toArray();
     }
 
+    /**
+     * Cambiar el tipo del Empleado, si es Supervisor se cambia a Empleado
+     * Y viceversa
+     *
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
     public function toggleTipo(Empleado $empleado)
     {
       $empleado->usuario->tipo = $empleado->usuario->tipo == 3 ? 4 : 3;
@@ -318,34 +354,45 @@ class EmpleadosController extends Controller
           'flash_message' => 'Empleado actualizado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/' . $empleado->id . '/cambio')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->bacl()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
+    /**
+     * Cambiar el Empleado de Contrato
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
     public function cambioContrato(Request $request, Empleado $empleado){
       $contrato = Contrato::findOrFail($request->contrato);
       $empleado->contrato_id = $contrato->id;
 
       if($empleado->save()){
-        return redirect('empleados/' . $empleado->id)->with([
+        return redirect()->route('empleados.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado actualizado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('empleados/' . $empleado->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
 
+      return redirect()->back()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
+    /**
+     * Cronjob para generar las asistencias de los Empleados
+     *
+     * @param  \App\Empleado  $empleado
+     */
     public function cronjobAsistencias(){
       $empleados = Empleado::withoutGlobalScope(EmpresaScope::class)->get();
       $today = date('Y-m-d');

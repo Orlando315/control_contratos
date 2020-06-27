@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Gasto;
-use App\Contrato;
-use App\Etiqueta;
+use App\{Gasto, Contrato, Etiqueta};
 
 class GastosController extends Controller
 {
@@ -49,20 +47,20 @@ class GastosController extends Controller
         'valor' => 'required|numeric|min:0',
       ]);
 
-      $gasto = new Gasto($request->all());
+      $gasto = new Gasto($request->only('contrato_id', 'etiqueta_id', 'nombre', 'valor'));
 
       if(Auth::user()->empresa->gastos()->save($gasto)){
-        return redirect()->route('gastos.show', ['id' => $gasto->id])->with([
+        return redirect()->route('gastos.show', ['gasto' => $gasto->id])->with([
           'flash_message' => 'Gasto agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect()->route('gastos.create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->route('gastos.create')->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -109,17 +107,17 @@ class GastosController extends Controller
       $gasto->fill($request->all());
 
       if($gasto->save()){
-        return redirect()->route('gastos.show', ['id' => $gasto->id])->with([
+        return redirect()->route('gastos.show', ['gasto' => $gasto->id])->with([
           'flash_message' => 'Gasto modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect()->route('gastos.edit', ['id' => $gasto->id])->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -135,12 +133,12 @@ class GastosController extends Controller
           'flash_message' => 'Gasto eliminado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect()->route('gastos.show', ['id' => $gasto->id])->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 }

@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Empleado;
-use App\Contrato;
-use App\Documento;
-use App\Carpeta;
+use App\{Empleado, Contrato, Documento, Carpeta};
 
 class DocumentosController extends Controller
 {
@@ -59,7 +56,7 @@ class DocumentosController extends Controller
     {
       $this->validate($request, [
         'nombre' => 'required|string',
-        'documento' => 'required|file|mimetypes:image/jpeg,image/png,application/postscript,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'documento' => 'required|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'vencimiento' => 'nullable|date_format:d-m-Y'
       ]);
 
@@ -162,10 +159,10 @@ class DocumentosController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Documento  $documeento
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Documento $documento)
     {
         //
     }
@@ -178,7 +175,7 @@ class DocumentosController extends Controller
      */
     public function edit(Documento $documento)
     {
-      return view('documentos.edit', ['documento'=>$documento]);
+      return view('documentos.edit', compact('documento'));
     }
 
     /**
@@ -207,7 +204,7 @@ class DocumentosController extends Controller
           ]);
       }
 
-      return redirect('documentos/' . $documento->id . '/edit')->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -243,6 +240,10 @@ class DocumentosController extends Controller
      */
     public function download(Documento $documento)
     {
+      if(!Storage::exists($documento->path)){
+        abort(404);
+      }
+
       return Storage::download($documento->path);
     }
 }

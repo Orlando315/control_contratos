@@ -10,7 +10,6 @@ use Carbon\CarbonPeriod;
 
 class Empleado extends Model
 {
-
     /**
      * The table associated with the model.
      *
@@ -19,7 +18,7 @@ class Empleado extends Model
     protected $table = 'empleados';
 
     /**
-     * The model's default values for attributes.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -34,6 +33,13 @@ class Empleado extends Model
       'talla_zapato',
       'talla_pantalon',
     ];
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['usuario'];
 
     /**
      * The attributes that aren't mass assignable.

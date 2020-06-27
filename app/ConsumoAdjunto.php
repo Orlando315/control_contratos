@@ -6,8 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class ConsumoAdjunto extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     public $table = 'consumos_adjuntos';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
       'nombre',
       'path',
@@ -15,50 +25,10 @@ class ConsumoAdjunto extends Model
       'vencimiento'
     ];
 
-    public function generateThumb()
-    {
-      $icon     = $this->getIconByMime();
-      $download = $this->getDownloadLink();
-      $destroy  = $this->getDestroyLink();
-
-      return "<div class='info-box' title='{$this->nombre}'>
-                <span class='info-box-icon bg-red'><i class='fa {$icon}'></i></span>
-                <div class='info-box-content'>
-                  <span class='info-box-text'>{$this->nombre}</span>
-                  <div class='btn-group'>
-                    <button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                      <i class='fa fa-cog'></i> <span class='caret'></span>
-                    </button>
-                    <ul class='dropdown-menu dropdown-menu-right'>
-                      <li>
-                        <a title='Descargar documento' href='{$download}'>
-                          <i class='fa fa-download' aria-hidden='true'></i> Descargar
-                        </a>
-                      </li>
-                      <li>
-                        <a type='button' title='Eliminar archivo' data-url='{$destroy}' class='btn-delete-file' data-toggle='modal' data-target='#delFileModal'>
-                          <i class='fa fa-times' aria-hidden='true'></i> Eliminar
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <p class='text-muted'>{$this->created_at}</p>
-                </div>
-                <!-- /.info-box-content -->
-              </div>";
-    }
-
-    public function getDownloadLink()
-    {
-      return route('consumos.adjuntos.download', ['adjunto' => $this->id]);
-    }
-
-    public function getDestroyLink()
-    {
-      return route('consumos.adjuntos.destroy', ['adjunto' => $this->id]);
-    }
-
-    protected function getIconByMime()
+    /**
+     * Obtener el icono según el mime.
+     */
+    public function getIconByMime()
     {
       switch ($this->mime) {
         case 'image/jpeg':

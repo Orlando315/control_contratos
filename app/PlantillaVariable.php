@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class PlantillaVariable extends Model
 {
-     /**
+    /**
      * The table associated with the model.
      *
      * @var string

@@ -4,16 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Inventario;
-use App\Factura;
-use App\Contrato;
+use App\{Inventario, Factura, Contrato};
 use Carbon\Carbon;
 
-class ReportesController extends Controller{
+class ReportesController extends Controller
+{
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function inventariosIndex(){
       return view('reportes.inventarios');
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function inventariosGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
@@ -29,11 +39,23 @@ class ReportesController extends Controller{
       return $inventarios;
     }
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function facturasIndex(){
       $contratos = Contrato::all();
-      return view('reportes.facturas', ['contratos' => $contratos]);
+
+      return view('reportes.facturas', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function facturasGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
@@ -51,11 +73,22 @@ class ReportesController extends Controller{
       return $facturas;
     }
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function eventosIndex(){
       $contratos = Contrato::all();
-      return view('reportes.eventos', ['contratos' => $contratos]);
+      return view('reportes.eventos', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function eventosGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
@@ -67,17 +100,28 @@ class ReportesController extends Controller{
       return $data;
     }
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function sueldosIndex(){
       $contratos = Contrato::all();
-      return view('reportes.sueldos', ['contratos' => $contratos]);
+      return view('reportes.sueldos', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function sueldosGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
 
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $contratos = isset($request->contrato) ? [Contrato::findOrFail($request->contrato)] : Contrato::all();
       $dataContratos = $dataEmpleados = [];
 
       foreach ($contratos as $contrato) {
@@ -109,17 +153,28 @@ class ReportesController extends Controller{
       return ['contratos' => $dataContratos, 'empleados' => $dataEmpleados];
     }
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function anticiposIndex(){
       $contratos = Contrato::all();
       return view('reportes.anticipos', ['contratos' => $contratos]);
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function anticiposGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
 
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $contratos = isset($request->contrato) ? [Contrato::findOrFail($request->contrato)] : Contrato::all();
       $dataContratos = $dataEmpleados = [];
 
       foreach ($contratos as $contrato) {
@@ -151,17 +206,29 @@ class ReportesController extends Controller{
       return ['contratos' => $dataContratos, 'empleados' => $dataEmpleados];
     }
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function transportesIndex(){
       $contratos = Contrato::all();
-      return view('reportes.transportes', ['contratos' => $contratos]);
+
+      return view('reportes.transportes', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function transportesGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
 
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $contratos = isset($request->contrato) ? [Contrato::findOrFail($request->contrato)] : Contrato::all();
       $dataContratos = $dataTransportes = [];
 
       foreach ($contratos as $contrato) {
@@ -245,67 +312,29 @@ class ReportesController extends Controller{
       return ['contratos' => $dataContratos, 'transportes' => $dataTransportes];
     }
 
-    public function comidasIndex(){
-      $contratos = Contrato::all();
-      return view('reportes.comidas', ['contratos' => $contratos]);
-    }
-
-    public function comidasGet(Request $request)
-    {
-      $inicio = new Carbon($request->inicio);
-      $fin    = new Carbon($request->fin);
-
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
-      $dataContratos = $dataEmpleados = [];
-
-      foreach ($contratos as $contrato) {
-
-        $contratoComidas = 0;
-
-        foreach ($contrato->empleados()->with('usuario')->get() as $empleado) {
-          $comidas = $empleado->eventos()
-                                        ->where([
-                                          ['tipo', 1],
-                                          ['comida', true],
-                                          ['pago', true]
-                                        ])
-                                        ->whereBetween('inicio', [$inicio->toDateString(), $fin->toDateString()])
-                                        ->count();
-
-          $dataEmpleados[] = [
-            'contrato' => $contrato->nombre,
-            'rut' => $empleado->usuario->rut,
-            'empleado' => $empleado->usuario->nombres . " " . $empleado->usuario->apellidos,
-            'comidas' => $comidas,
-            'total' => $comidas * 500
-          ];
-
-          $contratoComidas += $comidas;
-        }
-
-
-        $dataContratos[] = [
-          'contrato' => $contrato->nombre,
-          'empleados' => $contrato->empleados()->count(),
-          'comidas' => $contratoComidas,
-          'total' => $contratoComidas * 500
-        ];
-      }
-
-      return ['contratos' => $dataContratos, 'empleados' => $dataEmpleados];
-    }
-
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function reemplazosIndex(){
       $contratos = Contrato::all();
-      return view('reportes.reemplazos', ['contratos' => $contratos]);
+
+      return view('reportes.reemplazos', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function reemplazosGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
 
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $contratos = isset($request->contrato) ? [Contrato::findOrFail($request->contrato)] : Contrato::all();
       $dataContratos = $dataEmpleados = [];
 
       foreach ($contratos as $contrato) {
@@ -347,17 +376,29 @@ class ReportesController extends Controller{
 
 
 
+    /**
+     * Formulario de consulta.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function generalIndex(){
       $contratos = Contrato::all();
-      return view('reportes.general', ['contratos' => $contratos]);
+
+      return view('reportes.general', compact('contratos'));
     }
 
+    /**
+     * Obtener la informacion con los parametros especificados.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     public function generalGet(Request $request)
     {
       $inicio = new Carbon($request->inicio);
       $fin    = new Carbon($request->fin);
 
-      $contratos = isset($request->contrato) ? Contrato::findOrFail($request->contrato) : Contrato::all();
+      $contratos = isset($request->contrato) ? [Contrato::findOrFail($request->contrato)] : Contrato::all();
       $dataContratos = [];
 
       foreach ($contratos as $contrato) {
@@ -415,8 +456,4 @@ class ReportesController extends Controller{
 
       return $dataContratos;
     }
-
 }
-
-
-?>

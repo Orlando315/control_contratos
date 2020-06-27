@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Inventario;
-use App\Contrato;
+use Illuminate\Support\Facades\{Auth, Storage};
+use App\{Inventario, Contrato};
 
 class InventariosController extends Controller
 {
@@ -19,7 +17,7 @@ class InventariosController extends Controller
     {
       $inventarios = Inventario::all();
 
-      return view('inventarios.index', ['inventarios' => $inventarios]);
+      return view('inventarios.index', compact('inventarios'));
     }
 
     /**
@@ -31,7 +29,7 @@ class InventariosController extends Controller
     {
       $contratos = Contrato::all();
 
-      return view('inventarios.create', ['contratos' => $contratos]);
+      return view('inventarios.create', compact('contratos'));
     }
 
     /**
@@ -67,7 +65,6 @@ class InventariosController extends Controller
 
         if($request->hasFile('adjunto')){
           $directory = $inventario->directory();
-
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
           }
@@ -76,34 +73,34 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect('inventarios/' . $inventario->id)->with([
+        return redirect()->route('inventarios.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('inventarios/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function show(Inventario $inventario)
     {
-      return view('inventarios.show', ['inventario' => $inventario]);
+      return view('inventarios.show', compact('inventario'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function edit(Inventario $inventario)
@@ -120,7 +117,7 @@ class InventariosController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Inventario $inventario)
@@ -146,7 +143,6 @@ class InventariosController extends Controller
       $inventario->low_stock = $request->stock_critico;
 
       if($inventario->save()){
-
         if($request->hasFile('adjunto')){
 
           // Si ya tine un archivo adjunto, eliminarlo
@@ -164,54 +160,62 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect('inventarios/' . $inventario->id)->with([
+        return redirect('inventarios.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('inventarios/' . $inventario->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function destroy(Inventario $inventario)
     {
-
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
         abort(404);
       }
 
       if($inventario->delete()){
-
         if($inventario->adjunto){
           Storage::deleteDirectory($inventario->directory());
         }
 
-        return redirect('inventarios')->with([
+        return redirect()->route('inventarios.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Inventario eliminado exitosamente.'
         ]);
-      }else{
-        return redirect('inventarios')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
+    /**
+     * Descargar el adjunto del Recurso especficado
+     *
+     * @param  \App\Factura  $factura
+     * @return \Illuminate\Http\Response
+     */
     public function download(Inventario $inventario)
     {
+      if(!Storage::exists($inventario->adjunto)){
+        abort(404);
+      }
+
       return Storage::download($inventario->adjunto);
     }
 }

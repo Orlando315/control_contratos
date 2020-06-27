@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Contrato;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
+use App\Contrato;
 
 class ContratosController extends Controller
 {
@@ -19,7 +19,7 @@ class ContratosController extends Controller
     {
       $contratos = Contrato::all();
 
-      return view('contratos.index', ['contratos' => $contratos]);
+      return view('contratos.index', compact('contratos'));
     }
 
     /**
@@ -51,46 +51,46 @@ class ContratosController extends Controller
       $contrato = new Contrato($request->all());
 
       if($contrato = Auth::user()->empresa->contratos()->save($contrato)){
-        return redirect('contratos/' . $contrato->id)->with([
+        return redirect()->route('contratos.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Contrato agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('contratos/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function show(Contrato $contrato)
     {
-      return view('contratos.show', ['contrato' => $contrato]);
+      return view('contratos.show', compact('contrato'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function edit(Contrato $contrato)
     {
-      return view('contratos.edit', ['contrato' => $contrato]);
+      return view('contratos.edit', compact('contrato'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Contrato $contrato)
@@ -106,64 +106,75 @@ class ContratosController extends Controller
       $contrato->fill($request->all());
 
       if($contrato->save()){
-        return redirect('contratos/' . $contrato->id)->with([
+        return redirect()->route('contratos.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Contrato modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('contratos/' . $contrato->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function destroy(Contrato $contrato)
     {
       if($contrato->delete()){
-        return redirect('contratos')->with([
+        return redirect()->route('contratos.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contrato eliminado exitosamente.'
         ]);
-      }else{
-        return redirect('contratos')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
+    /**
+     * Mostrar la vista del calendario del Contrato especificado
+     * con todos los Enventos y Jornadas de los Empleados.
+     *
+     * @param  \App\Contrato  $contrato
+     * @return \Illuminate\Http\Response
+     */
     public function calendar(Contrato $contrato)
     {
       $empleados = $contrato->empleados()->with('usuario:empleado_id,nombres,apellidos,rut')->get();
       $eventos   = $contrato->eventsToCalendar(true, '!=', 1, false);
       $jornadas  = $contrato->jornadasToCalendar();
 
-      return view('contratos.calendar', ['contrato' => $contrato, 'empleados' => $empleados, 'eventos' => $eventos, 'jornadas' => $jornadas]);
+      return view('contratos.calendar', compact('contrato', 'empleados', 'eventos', 'jornadas'));
     }
 
-    public function comida(Contrato $contrato)
-    {
-      $empleados    = $contrato->empleados()->with('usuario:empleado_id,nombres,apellidos,rut')->get();
-      $comidas      = $contrato->comidasToCalendar();
-      $asistencias  = $contrato->eventsToCalendar(false, '=', 1, true);
-
-      return view('contratos.comida', ['contrato' => $contrato, 'empleados' => $empleados, 'comidas' => $comidas, 'asistencias' => $asistencias]);
-    }
-
+    /**
+     * Exportar toda la informacion de las Jornadas del Contrato especificado
+     *
+     * @param  \App\Contrato  $contrato
+     * @return \Illuminate\Http\Response
+     */
     public function exportJornadas(Request $request, Contrato $contrato)
     {
       $this->exportExcel($contrato->exportJornadas($request->inicio, $request->fin), 'Jornadas');
     }
 
+    /**
+     * Crear el excel con la informacion a exportar
+     *
+     * @param  array  $data
+     * @param  string  $nombre
+     * @return \Illuminate\Http\Response
+     */
     protected function exportExcel($data, $nombre)
     {
       $writer = WriterFactory::create(Type::XLSX);

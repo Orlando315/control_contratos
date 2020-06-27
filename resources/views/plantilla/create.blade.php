@@ -1,78 +1,91 @@
 @extends('layouts.app')
-@section('title', 'Plantillas - '.config('app.name'))
-@section('header','Plantillas')
-@section('breadcrumb')
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('plantilla.index') }}">Plantillas</a></li>
-    <li class="active">Agregar</li>
-  </ol>
-@endsection
-@section('content')
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <form  action="{{ route('plantilla.store') }}" method="POST">
-        {{ csrf_field() }}
 
-        <h4>Agregar plantilla</h4>
+@section('title', 'Plantillas')
 
-        <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
-          <label class="control-label" for="nombre">Nombre de la plantilla: *</label>
-          <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
-        </div>
-        
-        <div class="box-secciones">
-          <label class="control-label" for="nombre">Secciones: *</label>
-          <section id="seccion-1" class="plantilla-seccion mb-1" data-seccion="1">
-            <input id="seccion-1-nombre" class="form-control" type="text" name="secciones[1][nombre]" maxlength="50" value="{{ old('secciones.1.nombre') }}" placeholder="Sección 1">
-            <textarea id="seccion-1-contenido" class="form-control" name="secciones[1][contenido]" required>{{ old('secciones.1.contenido') }}</textarea>
-          </section>
-
-          @if(old('secciones'))
-            @foreach(old('secciones') as $seccion)
-              @continue($loop->first)
-              <section id="seccion-{{ $loop->iteration }}" class="plantilla-seccion mb-1" data-seccion="{{ $loop->iteration }}">
-                <div class="input-group">
-                  <input id="seccion-{{ $loop->iteration }}-nombre" class="form-control" type="text" name="secciones[{{ $loop->iteration }}][nombre]" maxlength="50" value="{{ old('secciones.'.$loop->iteration.'.nombre') }}" placeholder="Sección {{ $loop->iteration }}">
-                  <span class="input-group-btn">
-                    <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}"><i class="fa fa-times"></i></button>
-                  </span>
-                </div>
-                <textarea id="seccion-{{ $loop->iteration }}-contenido" class="form-control" name="secciones[{{ $loop->iteration }}][contenido]" required>{{ old('secciones.'.$loop->iteration.'.contenido') }}</textarea>
-              </section>
-            @endforeach
-          @endif
-        </div>
-        <button id="btn-seccion" class="btn btn-block btn-default" type="button" role="button">Agregar sección</button>
-
-        @if(count($errors) > 0)
-        <div class="alert alert-danger alert-important mt-2">
-          <ul>
-            @foreach($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>  
-        </div>
-        @endif
-
-        <div class="form-group text-right mt-2">
-          <a class="btn btn-flat btn-default" href="{{ route('plantilla.index') }}"><i class="fa fa-reply"></i> Atras</a>
-          <button class="btn btn-flat btn-primary" type="submit"><i class="fa fa-send"></i> Guardar</button>
-        </div>
-      </form>
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Plantillas</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('plantilla.index') }}">Plantillas</a></li>
+        <li class="breadcrumb-item active"><strong>Agregar</strong></li>
+      </ol>
     </div>
   </div>
 @endsection
 
-@section('scripts')
-  <script type="text/javascript" src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
+@section('content')
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Agregar plantilla</h5>          
+        </div>
+        <div class="ibox-content">
+          <form action="{{ route('plantilla.store') }}" method="POST">
+            {{ csrf_field() }}
+
+            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
+              <label for="nombre">Nombre de la plantilla: *</label>
+              <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
+            </div>
+            
+            <div class="box-secciones">
+              <label for="nombre">Secciones: *</label>
+              <section id="seccion-1" class="plantilla-seccion mb-3" data-seccion="1">
+                <input id="seccion-1-nombre" class="form-control" type="text" name="secciones[1][nombre]" maxlength="50" value="{{ old('secciones.1.nombre') }}" placeholder="Sección 1">
+                <textarea id="seccion-1-contenido" class="form-control" name="secciones[1][contenido]" required>{{ old('secciones.1.contenido') }}</textarea>
+              </section>
+
+              @if(old('secciones'))
+                @foreach(old('secciones') as $seccion)
+                  @continue($loop->first)
+                  <section id="seccion-{{ $loop->iteration }}" class="plantilla-seccion mb31" data-seccion="{{ $loop->iteration }}">
+                    <div class="input-group">
+                      <input id="seccion-{{ $loop->iteration }}-nombre" class="form-control" type="text" name="secciones[{{ $loop->iteration }}][nombre]" maxlength="50" value="{{ old('secciones.'.$loop->iteration.'.nombre') }}" placeholder="Sección {{ $loop->iteration }}">
+                      <span class="input-group-append">
+                        <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}"><i class="fa fa-times"></i></button>
+                      </span>
+                    </div>
+                    <textarea id="seccion-{{ $loop->iteration }}-contenido" class="form-control" name="secciones[{{ $loop->iteration }}][contenido]" required>{{ old('secciones.'.$loop->iteration.'.contenido') }}</textarea>
+                  </section>
+                @endforeach
+              @endif
+            </div>
+
+            <button id="btn-seccion" class="btn btn-block btn-default btn-sm mb-3" type="button" role="button">Agregar sección</button>
+
+            @if(count($errors) > 0)
+              <div class="alert alert-danger alert-important mt-2">
+                <ul class="m-0">
+                  @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>  
+              </div>
+            @endif
+
+            <div class="text-right mt-2">
+              <a class="btn btn-default btn-sm" href="{{ route('plantilla.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+@endsection
+
+@section('script')
+  <!-- CKEditor -->
+  <script type="text/javascript" src="{{ asset('js/plugins/ckeditor/ckeditor.js') }}"></script>
   <script type="text/javascript">
     const templateSeccion = function (index) {
-      return `<section id="seccion-${index}" class="plantilla-seccion mb-1" data-seccion="${index}">
+      return `<section id="seccion-${index}" class="plantilla-seccion mb-3" data-seccion="${index}">
                 <div class="input-group">
                   <input id="seccion-${index}-nombre" class="form-control" type="text" name="secciones[${index}][nombre]" maxlength="50" placeholder="Sección ${index}">
-                  <span class="input-group-btn">
+                  <span class="input-group-append">
                     <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="${index}"><i class="fa fa-times"></i></button>
                   </span>
                 </div>

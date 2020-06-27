@@ -17,7 +17,7 @@ class Inventario extends model
     protected $table = 'inventarios';
 
     /**
-     * The model's default values for attributes.
+     * The attributes that are mass assignable.
      *
      * @var array
      */
@@ -46,6 +46,28 @@ class Inventario extends model
     }
 
     /**
+     * Establecer la fecha del Inventario.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setFechaAttribute($value)
+    {
+      $this->attributes['fecha'] = date('Y-m-d',strtotime($value));
+    }
+
+    /**
+     * Obtener la fecha del Inventario.
+     *
+     * @param  string  $value
+     * @return datetime
+     */
+    public function getFechaAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -67,28 +89,6 @@ class Inventario extends model
     public function contrato()
     {
       return $this->belongsTo('App\Contrato');
-    }
-
-    /**
-     * Establecer la fecha del Inventario.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setFechaAttribute($date)
-    {
-      $this->attributes['fecha'] = date('Y-m-d',strtotime($date));
-    }
-
-    /**
-     * Obtener la fecha del Inventario.
-     *
-     * @param  string  $value
-     * @return datetime
-     */
-    public function getFechaAttribute($date)
-    {
-      return date('d-m-Y', strtotime($date));
     }
 
     /**
@@ -157,17 +157,8 @@ class Inventario extends model
      */
     public function adjunto()
     {
-      return $this->adjunto ? '<a href="' . $this->getDownloadLink() . '">Descargar</a>' : 'N/A';
-    }
-
-    /**
-     * Obtener la reuta de descarga del Inventario
-     *
-     * @return string
-     */
-    protected function getDownloadLink()
-    {
-      return route('inventarios.download', ['id' => $this->id]);
+      $link = route('inventarios.download', ['id' => $this->id]);
+      return $this->adjunto ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
     }
 
     /**

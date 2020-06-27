@@ -7,48 +7,88 @@ use App\Scopes\EmpresaScope;
 
 class Anticipo extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'anticipos';
 
-  protected static function boot()
-  {
-    parent::boot();
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'contrato_id',
+      'empleado_id',
+      'fecha',
+      'anticipo'
+    ];
 
-    static::addGlobalScope(new EmpresaScope);
-  }
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
 
-  protected $fillable = [
-    'contrato_id',
-    'empleado_id',
-    'fecha',
-    'anticipo'
-  ];
+      static::addGlobalScope(new EmpresaScope);
+    }
 
-  public function setFechaAttribute($date)
-  {
-    $this->attributes['fecha'] = date('Y-m-d', strtotime($date));
-  }
+    /**
+     * Establecer el atributo formateado
+     * 
+     * @param  string  $value
+     * @return void
+     */
+    public function setFechaAttribute($value)
+    {
+      $this->attributes['fecha'] = date('Y-m-d', strtotime($value));
+    }
 
-  public function getFechaAttribute($date)
-  {
-    return date('d-m-Y', strtotime($date));
-  }
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getFechaAttribute($value)
+    {
+      return date('d-m-Y', strtotime($value));
+    }
 
-  public function empresa()
-  {
-    return $this->belongsTo('App\Empresa');
-  }
+    /**
+     * Obtener la Empresa
+     */
+    public function empresa()
+    {
+      return $this->belongsTo('App\Empresa');
+    }
 
-  public function contrato()
-  {
-    return $this->belongsTo('App\Contrato');
-  }
+    /**
+     * Obtener el Contrato
+     */
+    public function contrato()
+    {
+      return $this->belongsTo('App\Contrato');
+    }
 
-  public function empleado()
-  {
-    return $this->belongsTo('App\Empleado');
-  }
+    /**
+     * Obtener el Empleado
+     */
+    public function empleado()
+    {
+      return $this->belongsTo('App\Empleado');
+    }
 
-  public function anticipo()
-  {
-    return number_format($this->anticipo, 0, ',', '.');
-  }
+    /**
+     * Obtener el Anticipo
+     */
+    public function anticipo()
+    {
+      return number_format($this->anticipo, 0, ',', '.');
+    }
 }

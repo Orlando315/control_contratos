@@ -1,18 +1,16 @@
 @extends('layouts.app')
-@section('title', 'Perfil - '.config('app.name'))
-@section('header', 'Perfil')
-@section('breadcrumb')
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('usuarios.perfil') }}" title="Perfil"> Perfil </a></li>
-    <li class="active">Editar</li>
-  </ol>
+
+@section('title', 'Editar perfil')
+
+@section('head')
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
 @endsection
 
 @section('content')
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
       <form action="{{ route('empresas.update') }}" method="POST" enctype="multipart/form-data">
         {{ method_field('PATCH') }}
         {{ csrf_field() }}
@@ -22,15 +20,15 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
-              <label class="control-label" for="nombres">Nombre: *</label>
+              <label for="nombres">Nombre: *</label>
               <input id="nombres" class="form-control" type="text" name="nombres" value="{{ old( 'nombres' ) ? old( 'nombres' ) : Auth::user()->nombres }}" placeholder="Nombre" required>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
-              <label class="control-label" for="rut">RUT: *</label>
+              <label for="rut">RUT: *</label>
               <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
-              <span class="help-block">Ejemplo: 00000000-0</span>
+              <span class="form-text text-muted">Ejemplo: 00000000-0</span>
             </div>
           </div>
         </div>
@@ -38,13 +36,13 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('representante') ? ' has-error' : '' }}">
-              <label class="control-label" for="representante">Representante: *</label>
+              <label for="representante">Representante: *</label>
               <input id="representante" class="form-control" type="text" name="representante" value="{{ old('representante') ? old('representante') : Auth::user()->empresa->representante }}" placeholder="Representante" required>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-              <label class="control-label" for="email">Email: *</label>
+              <label for="email">Email: *</label>
               <input id="email" class="form-control" type="email" name="email" value="{{ old('email') ? old('email') : Auth::user()->email }}" placeholder="Email" required>
             </div>
           </div>
@@ -53,13 +51,13 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
-              <label class="control-label" for="telefono">Teléfono: *</label>
+              <label for="telefono">Teléfono: *</label>
               <input id="telefono" class="form-control" type="text" name="telefono" value="{{ old('telefono') ? old('telefono') : Auth::user()->telefono }}" placeholder="Teléfono" required>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-              <label class="control-label" class="form-control" for="jornada">Jornada: *</label>
+              <label class="form-control" for="jornada">Jornada: *</label>
               <select id="jornada" class="form-control" name="jornada" required>
                 <option value="">Seleccione...</option>
                 <option value="5x2"{{ old('jornada', Auth::user()->empresa->configuracion->jornada) == '5x2' ? ' selected' : '' }}>5x2</option>
@@ -79,28 +77,29 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('dias_vencimiento') ? ' has-error' : '' }}">
-              <label class="control-label" for="dias_vencimiento">Días antes del vencimiento: *</label>
+              <label for="dias_vencimiento">Días antes del vencimiento: *</label>
               <input id="dias_vencimiento" class="form-control" type="number" name="dias_vencimiento" min="1" max="255" value="{{ old('dias_vencimiento', Auth::user()->empresa->configuracion->dias_vencimiento) }}" placeholder="Días vencimiento" required>
-              <span class="help-block">Cantidad de días restantes al vencimiento de un Contrato / Documento</span>
+              <span class="form-text text-muted">Cantidad de días restantes al vencimiento de un Contrato / Documento</span>
             </div>
           </div>
         </div>
 
-        <div id="foto-group" class="form-group">
-          <section>
+        <div class="form-group">
+          <section class="text-center">
             <a id="logo-link" href="#" type="button">
               <img id="logo-placeholder" class="img-responsive" src="{{ Auth::user()->empresa->logo_url }}" alt="logo" style="max-height:120px;margin: 0 auto;max-width:250px;">
             </a>
           </section>
           <label for="logo">Logo:</label>
-          <div class="file-loading">
-            <input id="logo" type="file" name="logo" data-msg-placeholder="Seleccionar logo" multiple accept="image/jpeg,image/png">
+          <div class="custom-file">
+            <input id="logo" class="custom-file-input" type="file" name="logo" data-msg-placeholder="Seleccionar" accept="image/jpeg,image/png">
+            <label class="custom-file-label" for="logo">Seleccionar</label>
           </div>
-          <small class="help-block">Tamaño máximo permitido: 3MB</small>
+          <small class="form-text text-muted">Tamaño máximo permitido: 3MB</small>
         </div>
 
         <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
-          <ul>
+          <ul class="m-0">
             @foreach($errors->all() as $error)
               <li>{{ $error }}</li>
             @endforeach
@@ -108,15 +107,17 @@
         </div>
 
         <div class="form-group text-right">
-          <a class="btn btn-flat btn-default" href="{{ route('usuarios.perfil') }}"><i class="fa fa-reply"></i> Atras</a>
-          <button class="btn btn-flat btn-primary" type="submit"><i class="fa fa-send"></i> Guardar</button>
+          <a class="btn btn-default btn-sm" href="{{ route('usuarios.perfil') }}"><i class="fa fa-reply"></i> Atras</a>
+          <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
         </div>
       </form>
     </div>
   </div>
 @endsection
 
-@section('scripts')
+@section('script')
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     let defaultImge = @json(asset('images/default.jpg'));
 
@@ -133,18 +134,31 @@
 
           if(['image/png', 'image/jpeg'].includes(file.type)){
             if(file.size < 3000000){
+              changeLabel(file.name)
               preview(this.files[0])
             }else{
+              changeLabel('Seleccionar')
               showAlert('La imagen debe ser menor a 3MB.')
               return false;
             }
           }else{
+            changeLabel('Seleccionar')
             showAlert('El archivo no es un tipo de imagen valida.')
             return false;
           }
         }
       })
+
+      $('#jornada').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccionar...',
+      })
     })
+
+    // Cambiar el nombre del label del input file, y colocar el nombre del archivo
+    function changeLabel(name){
+      $('#logo').siblings(`label[for="logo"]`).text(name);
+    }
 
     function preview(input) {
       let reader = new FileReader();

@@ -1,200 +1,223 @@
-@extends( 'layouts.app' )
-@section( 'title', 'Anticipos - '.config( 'app.name' ) )
-@section( 'header','Anticipos' )
-@section( 'breadcrumb' )
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('anticipos.index') }}">Anticipos</a></li>
-    <li class="active">Agregar</li>
-  </ol>
+@extends('layouts.app')
+
+@section('title', 'Anticipos')
+
+@section('head')
+  <!-- Datepicker -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
 @endsection
-@section('content')
-  <!-- Formulario -->
-  <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <form id="form-anticipos" action="{{ route('anticipos.storeMasivo') }}" method="POST">
-        <input id="empleados" type="hidden" name="empleados">
-        {{ csrf_field() }}
 
-        <h4>Agregar anticipo masivo</h4>
-
-        <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
-          <label class="control-label" class="form-control" for="contrato">Contrato: *</label>
-          <select id="contrato" class="form-control" name="contrato" required>
-            <option value="">Seleccione...</option>
-            @foreach($contratos as $contrato)
-              <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
-            @endforeach
-          </select>
-        </div>
-
-        <div class="form-group {{ $errors->has('fecha') ? 'has-error' : '' }}">
-          <label class="control-label" for="fecha">Fecha: *</label>
-          <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha') ? old('fecha') : '' }}" placeholder="dd-mm-yyyy" required>
-        </div>
-
-        <fieldset>
-          <legend style="border-bottom: none">Empleados</legend>
-          <table class="table table-sm table-condensed table-anticipos">
-            <thead>
-              <tr>
-                <td>Empleado</td>
-                <td>Anticipo</td>
-                <td></td>
-              </tr>
-            </thead>
-            <tbody id="tbody-empleados">
-            </tbody>
-          </table>
-        </fieldset>
-
-        @if (count($errors) > 0)
-        <div class="alert alert-danger alert-important">
-          <ul>
-            @foreach($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-        @endif
-
-        <div id="errorCheck" class="alert alert-danger alert-important" style="display: none">
-          Debe marcar a todos los empleados antes de continuar.
-        </div>
-
-        <div class="form-group text-right">
-          <a class="btn btn-flat btn-default" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
-          <button id="btn-submit" class="btn btn-flat btn-primary" type="submit" disabled><i class="fa fa-send"></i> Guardar</button>
-        </div>
-      </form>
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Anticipos</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item active"><strong>Agregar</strong></li>
+      </ol>
     </div>
   </div>
 @endsection
 
-@section('scripts')
-<script type="text/javascript">
-  $(document).ready( function(){
-    $('#fecha').datepicker({
-      format: 'dd-mm-yyyy',
-      language: 'es',
-      endDate: 'today',
-      keyboardNavigation: false,
-      autoclose: true
-    });
+@section('content')
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Agregar anticipo masivo</h5>
+        </div>
+        <div class="ibox-content">
+          <form id="form-anticipos" action="{{ route('anticipos.storeMasivo') }}" method="POST">
+            <input id="empleados" type="hidden" name="empleados">
+            {{ csrf_field() }}
 
-    $('#contrato').change(getEmpleados)
-    $('#contrato').change()
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                  <label for="contrato">Contrato: *</label>
+                  <select id="contrato" class="form-control" name="contrato" required>
+                    <option value="">Seleccione...</option>
+                    @foreach($contratos as $contrato)
+                      <option value="{{ $contrato->id }}"{{ old('contrato') == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>                
+              </div>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
+                  <label for="fecha">Fecha: *</label>
+                  <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha') }}" placeholder="dd-mm-yyyy" required>
+                </div>                
+              </div>
+            </div>
 
-    $('#contrato').select2()
+            <fieldset>
+              <legend style="border-bottom: none">Empleados</legend>
 
-    $('#tbody-empleados').on('change', '.input-anticipo', updateEmpleadosInfo)
+              <table class="table table-sm table-bordered table-condensed table-anticipos">
+                <thead>
+                  <tr>
+                    <th>Empleado</th>
+                    <th>Anticipo</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-empleados">
+                </tbody>
+              </table>
+            </fieldset>
 
-    $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
-      if($(this).is(':checked')){
-        $(this).closest('div.checkbox').removeClass('has-error');
-      }
-    })
+            <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
+              <ul class="m-0">
+                @foreach($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
 
-    $('#form-anticipos').submit(function(e){
-      e.preventDefault();
-      let checkboxs = $('#tbody-empleados input[type="checkbox"]');
-      let counter = 0;
-      $.each(checkboxs, function(k, v){
-        if(!$(v).is(':checked')){
-          counter++
-        }
+            <div class="text-right">
+              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <button id="btn-submit" class="btn btn-primary btn-sm" type="submit" disabled><i class="fa fa-send"></i> Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+@endsection
 
-        $(v).closest('div.checkbox').toggleClass('has-error', !$(v).is(':checked'));
+@section('script')
+  <!-- Datepicker -->
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
+  <script type="text/javascript">
+    let tbody = $('#tbody-empleados')
+    let submit = $('#btn-submit')
+    let empleados = {}
+    let empleadosField = $('#empleados')
+    let createElement = function(id, name, anticipo){
+      return `<tr>
+                <td>${name}</td>
+                <td>
+                  <div class="form-group m-0">
+                    <input id="empleado_${id}" data-id="${id}" class="form-control input-sm input-anticipo" type="number" value="${anticipo}" required>
+                  </div>
+                </td>
+                <td>
+                  <div class="checkbox">
+                    <label class="container-checkbox m-0">
+                      <input type="checkbox">
+                      <span class="checkmark-check"></span>
+                    </label>
+                  </div>
+                </td>
+              </tr>`
+    }
+
+    $(document).ready( function(){
+      $('#fecha').datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        endDate: 'today',
+        keyboardNavigation: false,
+        autoclose: true
+      });
+
+      $('#contrato').change(getEmpleados)
+      $('#contrato').change()
+
+      $('#contrato').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
       })
 
-      if(counter == 0){
-        e.currentTarget.submit();
-      }else{
-        $('#errorCheck').show().delay(7000).hide('slow');
-      }
-    })
-  });
+      $('#tbody-empleados').on('change', '.input-anticipo', updateEmpleadosInfo)
 
-  let createElement = function(id, name, anticipo){
-    let field = 
-    `<tr>
-      <td><p>${name}</p></td>
-      <td class="form-inline">
-        <div class="form-group">
-          <label class="control-label" for="empleado_${id}">Anticipo: *</label>
-          <input id="empleado_${id}" data-id="${id}" class="form-control input-sm input-anticipo" type="number" value="${anticipo}" required>
-        </div>
-      </td>
-      <td>
-        <div class="checkbox">
-          <label class="container-checkbox">
-            <input type="checkbox">
-            <span class="checkmark-check"></span>
-          </label>
-        </div>
-      </td>
-    </tr>`
+      $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
+        if($(this).is(':checked')){
+          $(this).closest('div.checkbox').removeClass('has-error');
+        }
+      })
 
-    return field
-  }
+      $('#form-anticipos').submit(function(e){
+        e.preventDefault();
+        let checkboxs = $('#tbody-empleados input[type="checkbox"]');
+        let counter = 0;
+        $.each(checkboxs, function(k, v){
+          if(!$(v).is(':checked')){
+            counter++
+          }
 
-  let tbody = $('#tbody-empleados')
-  let submit = $('#btn-submit')
-  let empleados = {}
-  let empleadosField = $('#empleados')
-
-  function updateEmpleadosInfo(){
-    let input = $(this),
-        id = input.data('id'),
-        anticipo = input.val();
-
-    empleados[id] = anticipo * 1;
-    empleadosField.val(JSON.stringify(empleados))
-  }
-
-  function getEmpleados(){
-    let contrato = $(this).val();
-
-    if(contrato == '') return;
-
-    $.ajax({
-      type: 'POST',
-      url: '{{ route("anticipos.index") }}/empleados/' + contrato,
-      data: {
-        _token: '{{ csrf_token() }}'
-      },
-      dataType: 'json',
-    })
-    .done(function(data){
-      tbody.empty()
-      empleados = {}
-
-      if(data.length > 0){
-        $.each(data, function(k, v){
-          let anticipo = v.latest_anticipo ? v.latest_anticipo.anticipo : 0;
-
-          empleados[v.id] = anticipo
-
-          let name = `${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`
-          let element = createElement(v.id, name, anticipo)
-          tbody.append(element)
+          $(v).closest('div.checkbox').toggleClass('has-error', !$(v).is(':checked'));
         })
 
-        submit.prop('disabled', false)
-      }else{
-        tbody.insertRow(0)
-            .insertCell(0).innerHTML = 'No hay empleados registrados'
-        submit.prop('disabled', true)
-      }
-    })
-    .fail(function(){
-      tbody.empty()
-      empleados = {}
-      submit.prop('disabled', false)
-    })
-    .always(function(){
+        if(counter == 0){
+          e.currentTarget.submit();
+        }else{
+          $('.alert ul').empty().append(`<li>Debe marcar a todos los empleados antes de continuar.</li>`)
+          $('.alert').show().delay(5000).hide('slow')
+        }
+      })
+    });
+
+    function updateEmpleadosInfo(){
+      let input = $(this),
+          id = input.data('id'),
+          anticipo = input.val();
+
+      empleados[id] = anticipo * 1;
       empleadosField.val(JSON.stringify(empleados))
-    })
-  }
-</script>
+    }
+
+    function getEmpleados(){
+      let contrato = $(this).val();
+
+      if(contrato == '') return;
+
+      $.ajax({
+        type: 'POST',
+        url: '{{ route("anticipos.index") }}/empleados/' + contrato,
+        data: {
+          _token: '{{ csrf_token() }}'
+        },
+        dataType: 'json',
+      })
+      .done(function(data){
+        tbody.empty()
+        empleados = {}
+
+        if(data.length > 0){
+          $.each(data, function(k, v){
+            let anticipo = v.latest_anticipo ? v.latest_anticipo.anticipo : 0;
+
+            empleados[v.id] = anticipo
+
+            let name = `${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`
+            let element = createElement(v.id, name, anticipo)
+            tbody.append(element)
+          })
+
+          submit.prop('disabled', false)
+        }else{
+          tbody.insertRow(0)
+              .insertCell(0).innerHTML = 'No hay empleados registrados'
+          submit.prop('disabled', true)
+        }
+      })
+      .fail(function(){
+        tbody.empty()
+        empleados = {}
+        submit.prop('disabled', false)
+      })
+      .always(function(){
+        empleadosField.val(JSON.stringify(empleados))
+      })
+    }
+  </script>
 @endsection

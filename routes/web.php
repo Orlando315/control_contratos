@@ -13,10 +13,10 @@
 
 /*--- RUTAS DE LOGIN ---*/
 Route::get('/', function(){
-  return view('login');
+  return view('auth.login');
 })->name('login.view');
 Route::get('login', function(){
-  return view('login');
+  return view('auth.login');
 });
 
 /* --- Auth ---*/
@@ -40,7 +40,7 @@ Route::get('cronjob/asistencias/create', 'EmpleadosController@cronjobAsistencias
 Route::group(['middleware' => 'auth'], function () {
 
   /* --- Dashboard --- */
-  Route::get('dashboard', 'LoginController@dashboard')->name('dashboard');
+  Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 
   /* --- Perfil --- */
   Route::get('/perfil', 'UsuariosController@perfil')->name('usuarios.perfil');
@@ -129,13 +129,9 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     /* --- Eventos --- */
-    Route::get('empleados/eventos/export', 'EmpleadosEventosController@events')->name('eventos.events');
-    Route::post('empleados/eventos/export', 'EmpleadosEventosController@exportEventsTotal')->name('eventos.export');
-    Route::post('empleados/eventos/events', 'EmpleadosEventosController@getEvents')->name('eventos.getEvents');
     Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
     Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')->name('eventos.store');
     Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
-    Route::patch('empleados/eventos/comida/{evento}', 'EmpleadosEventosController@toggleComida')->name('eventos.toggleComida');
 
     /* --- Documentos --- */
     Route::resource('documentos', 'DocumentosController')->except([
@@ -180,24 +176,24 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('gastos', 'GastosController');
 
     /* --- Reportes --- */
-    Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventariosIndex');
-    Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventariosGet');
-    Route::get('reportes/facturas', 'ReportesController@facturasIndex')->name('reportes.facturasIndex');
-    Route::post('reportes/facturas', 'ReportesController@facturasGet')->name('reportes.facturasGet');
-    Route::get('reportes/eventos', 'ReportesController@eventosIndex')->name('reportes.eventosIndex');
-    Route::post('reportes/eventos', 'ReportesController@eventosGet')->name('reportes.eventosGet');
-    Route::get('reportes/sueldos', 'ReportesController@sueldosIndex')->name('reportes.sueldosIndex');
-    Route::post('reportes/sueldos', 'ReportesController@sueldosGet')->name('reportes.sueldosGet');
-    Route::get('reportes/anticipos', 'ReportesController@anticiposIndex')->name('reportes.anticiposIndex');
-    Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticiposGet');
-    Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportesIndex');
-    Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportesGet');
-    Route::get('reportes/comidas', 'ReportesController@comidasIndex')->name('reportes.comidasIndex');
-    Route::post('reportes/comidas', 'ReportesController@comidasGet')->name('reportes.comidasGet');
-    Route::get('reportes/reemplazos', 'ReportesController@reemplazosIndex')->name('reportes.reemplazosIndex');
-    Route::post('reportes/reemplazos', 'ReportesController@reemplazosGet')->name('reportes.reemplazosGet');
-    Route::get('reportes/general', 'ReportesController@generalIndex')->name('reportes.generalIndex');
-    Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.generalGet');
+    Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
+    Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');
+    Route::get('reportes/facturas', 'ReportesController@facturasIndex')->name('reportes.facturas.index');
+    Route::post('reportes/facturas', 'ReportesController@facturasGet')->name('reportes.facturas.get');
+    Route::get('reportes/eventos', 'ReportesController@eventosIndex')->name('reportes.eventos.index');
+    Route::post('reportes/eventos', 'ReportesController@eventosGet')->name('reportes.eventos.get');
+    Route::get('reportes/sueldos', 'ReportesController@sueldosIndex')->name('reportes.sueldos.index');
+    Route::post('reportes/sueldos', 'ReportesController@sueldosGet')->name('reportes.sueldos.get');
+    Route::get('reportes/anticipos', 'ReportesController@anticiposIndex')->name('reportes.anticipos.index');
+    Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticipos.get');
+    Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportes.index');
+    Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportes.get');
+    Route::get('reportes/comidas', 'ReportesController@comidasIndex')->name('reportes.comidas.index');
+    Route::post('reportes/comidas', 'ReportesController@comidasGet')->name('reportes.comidas.get');
+    Route::get('reportes/reemplazos', 'ReportesController@reemplazosIndex')->name('reportes.reemplazos.index');
+    Route::post('reportes/reemplazos', 'ReportesController@reemplazosGet')->name('reportes.reemplazos.get');
+    Route::get('reportes/general', 'ReportesController@generalIndex')->name('reportes.general.index');
+    Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.general.get');
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */

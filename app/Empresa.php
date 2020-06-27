@@ -7,7 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Empresa extends Model
 {
     /**
-     * The model's default values for attributes.
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'empresas';
+
+    /**
+     * The attributes that are mass assignable.
      *
      * @var array
      */

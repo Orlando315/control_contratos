@@ -1,148 +1,177 @@
-@extends( 'layouts.app' )
+@extends('layouts.app')
 
-@section( 'title', 'Consumo - '.config( 'app.name' ) )
-@section( 'header', 'Consumo' )
-@section( 'breadcrumb' )
-	<ol class="breadcrumb">
-	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('transportes.show', ['transporte' => $consumo->transporte_id]) }}">Transportes</a></li>
-	  <li class="active"> Consumo </li>
-	</ol>
+@section('title', 'Consumo')
+
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Consumo</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('transportes.index') }}">Transportes</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('transportes.show', ['transporte' => $consumo->transporte_id]) }}">Consumos</a></li>
+        <li class="breadcrumb-item active"><strong>Consumo</strong></li>
+      </ol>
+    </div>
+  </div>
 @endsection
-@section( 'content' )
-  <section>
-    <a class="btn btn-flat btn-default" href="{{ route('transportes.show', ['transporte' => $consumo->transporte_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-    <a class="btn btn-flat btn-success" href="{{ route('consumos.edit', [$consumo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-    <button class="btn btn-flat btn-danger" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-  </section>
 
-  <section style="margin-top: 20px">
-
-    @include('partials.flash')
-
-    <div class="row">
-      <div class="col-md-3">
-        <div class="box box-primary">
-          <div class="box-body box-profile">
-            <h4 class="profile-username text-center">
-              Datos del consumo
-            </h4>
-            <p class="text-muted text-center">{{ $consumo->created_at }}</p>
-
-            <ul class="list-group list-group-unbordered">
+@section('content')
+  <div class="row mb-3">
+    <div class="col-12">      
+      <a class="btn btn-default btn-sm" href="{{ route('transportes.show', ['transporte' => $consumo->transporte_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      <a class="btn btn-default btns-sm" href="{{ route('consumos.edit', ['consumo' => $consumo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+    </div>
+  </div>
+  
+  <div class="row mb-3">
+    <div class="col-md-3">
+      <div class="ibox">
+        <div class="ibox-content no-padding">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <b>Contrato</b>
+              <span class="pull-right">
+                <a href="{{ route('contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                  {{ $consumo->contrato->nombre }}
+                </a>
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Fecha</b>
+              <span class="pull-right">{{ $consumo->fecha() }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Tipo</b>
+              <span class="pull-right">{{ $consumo->tipo() }}</span>
+            </li>
+            @if($consumo->tipo == 2)
               <li class="list-group-item">
-                <b>Contrato</b>
-                <span class="pull-right">
-                  <a href="{{ route('contratos.show', ['contrato' => $consumo->contrato_id]) }}">
-                    {{ $consumo->contrato->nombre }}
-                  </a>
-                </span>
+                <b>Cantidad</b>
+                <span class="pull-right">{{ $consumo->cantidad() }}</span>
               </li>
-              <li class="list-group-item">
-                <b>Fecha</b>
-                <span class="pull-right">{{ $consumo->fecha() }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Tipo</b>
-                <span class="pull-right">{{ $consumo->tipo() }}</span>
-              </li>
-              @if($consumo->tipo == 2)
-                <li class="list-group-item">
-                  <b>Cantidad</b>
-                  <span class="pull-right">{{ $consumo->cantidad() }}</span>
-                </li>
-              @endif
-              <li class="list-group-item">
-                <b>Valor</b>
-                <span class="pull-right">{{ $consumo->valor }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Chofer</b>
-                <span class="pull-right">{{ $consumo->chofer }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Observación</b>
-                <span class="pull-right">{{ $consumo->observacion ?? 'N/A' }}</span>
-              </li>
-            </ul>
-          </div><!-- /.box-body -->
-        </div>
-      </div>
-
-      <div class="col-md-9">
-        <div class="col-md-12" style="margin-bottom: 5px">
-          <h4>
-            Adjuntos
-            @if($consumo->adjuntos()->count() < 10)
-            <span class="pull-right">
-              <a class="btn btn-flat btn-success btn-sm" href="{{ route('consumos.adjuntos.create', ['consumo' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
-            </span>
             @endif
-          </h4>
+            <li class="list-group-item">
+              <b>Valor</b>
+              <span class="pull-right">{{ $consumo->valor }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Chofer</b>
+              <span class="pull-right">{{ $consumo->chofer }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Observación</b>
+              <span class="pull-right">{{ $consumo->observacion ?? 'N/A' }}</span>
+            </li>
+            <li class="list-group-item text-center">
+              <small class="text-muted">{{ $consumo->created_at }}</small>
+            </li>
+          </ul>
         </div>
-        @foreach($consumo->adjuntos()->get() as $adjunto)
-          <div id='adjunto-{{$adjunto->id}}' class='col-md-4 col-sm-6 col-xs-12'>
-            {!! $adjunto->generateThumb() !!}
-          </div>
-        @endforeach
       </div>
-
     </div>
-  </section>
 
-  <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="delModalLabel">Eliminar Consumo</h4>
+    <div class="col-md-9">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Adjuntos</h5>
+
+          @if($consumo->adjuntos()->count() < 10)
+            <div class="ibox-tools">
+              <a class="btn btn-primary btn-xs" href="{{ route('consumos.adjuntos.create', ['consumo' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+            </div>
+          @endif
         </div>
-        <div class="modal-body">
+        <div class="ibox-content">
           <div class="row">
-            <form class="col-md-8 col-md-offset-2" action="{{ route('consumos.destroy', [$consumo->id]) }}" method="POST">
-              {{ method_field('DELETE') }}
-              {{ csrf_field() }}
-              <h4 class="text-center">¿Esta seguro de eliminar este Consumo?</h4><br>
+            @foreach($consumo->adjuntos()->get() as $adjunto)
+              <div id="adjunto-{{ $adjunto->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
+                <div class="file m-0 file-options">
+                  <div class="float-right dropdown">
+                    <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
+                    <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
+                      <li>
+                        <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('consumos.adjuntos.destroy', ['adjunto' => $adjunto->id]) }}" data-toggle="modal" data-target="#delFileModal">
+                          <i class="fa fa-times" aria-hidden="true"></i> Eliminar
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <a href="{{ route('consumos.adjuntos.download', ['adjunto' => $adjunto->id]) }}">
+                    <span class="corner"></span>
 
-              <center>
-                <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
-                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
-              </center>
-            </form>
+                    <div class="icon">
+                      <i class="fa {{ $adjunto->getIconByMime() }}"></i>
+                    </div>
+                    <div class="file-name">
+                      {{ $adjunto->nombre }}
+                      @if($adjunto->vencimiento)
+                        <br>
+                        <small><strong>Vencimiento:</strong> {{ $adjunto->vencimiento }}</small>
+                      @endif
+                    </div>
+                  </a>
+                </div>
+              </div>
+            @endforeach
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="delFileModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="delFileModalLabel">Eliminar adjunto</h4>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <form id="delete-file-form" class="col-md-8 col-md-offset-2" action="#" method="POST">
-              {{ method_field('DELETE') }}
-              {{ csrf_field() }}
-              <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4><br>
-
-              <center>
-                <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
-                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
-              </center>
-            </form>
+        <form action="{{ route('consumos.destroy', ['consumo' => $consumo->id]) }}" method="POST">
+          {{ method_field('DELETE') }}
+          {{ csrf_field() }}
+          
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="delModalLabel">Eliminar Consumo</h4>
           </div>
-        </div>
+          <div class="modal-body">
+            <h4 class="text-center">¿Esta seguro de eliminar este Consumo?</h4>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
+  <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="delete-file-form" action="#" method="POST">
+          {{ method_field('DELETE') }}
+          {{ csrf_field() }}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="delFileModalLabel">Eliminar adjunto</h4>
+          </div>
+          <div class="modal-body">
+            <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 @endsection
 
-@section('scripts')
+@section('script')
   <script type="text/javascript">
     $(document).ready(function (){
       $('#delFileModal').on('show.bs.modal', function(e){

@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
-use App\EmpleadosSueldo;
-use App\Contrato;
+use App\{EmpleadosSueldo, Contrato};
 
 class EmpleadosSueldosController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function index(Contrato $contrato)
     {
       $sueldos = $contrato->sueldos()->latest()->get();
 
-      return view('sueldos.index', ['contrato' => $contrato,'sueldos' => $sueldos]);
+      return view('sueldos.index', compact('contrato', 'sueldos'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function create(Contrato $contrato)
@@ -32,13 +32,14 @@ class EmpleadosSueldosController extends Controller
       $paymentMonth = $contrato->getPaymentMonth();
       $empleados = $contrato->empleados()->get();
 
-      return view('sueldos.create', ['contrato' => $contrato, 'paymentMonth' => $paymentMonth, 'empleados' => $empleados]);
+      return view('sueldos.create', compact('contrato', 'paymentMonth', 'empleados'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Contrato $contrato)
@@ -79,17 +80,17 @@ class EmpleadosSueldosController extends Controller
       }
 
       if(Auth::user()->empresa->sueldos()->createMany($payments)){
-        return redirect('sueldos/' . $contrato->id)->with([
+        return redirect()->route('sueldos.index', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Sueldos agregados exitosamente.',
           'flash_class' => 'alert-success',
           ]);
-      }else{
-        return redirect('sueldos/' . $contrato->id . '/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -105,7 +106,7 @@ class EmpleadosSueldosController extends Controller
         abort(404);
       }
 
-      return view('sueldos.show', ['sueldo' => $sueldo]);
+      return view('sueldos.show', compact('sueldo'));
     }
 
     /**
@@ -142,6 +143,12 @@ class EmpleadosSueldosController extends Controller
         //
     }
 
+    /**
+     * Marcar el Sueldo como recibido
+     *
+     * @param  \App\EmpleadosSueldo  $sueldo
+     * @return array
+     */
     public function recibido(EmpleadosSueldo $sueldo)
     {
       if(Auth::user()->empleado_id === $sueldo->empleado_id){
@@ -153,12 +160,18 @@ class EmpleadosSueldosController extends Controller
           $response = ['response' => false, 'message' => 'Ha ocurrido un error.'];
         }
       }else{
-        $response = ['response' => false, 'message' => 'No estas autorizado a confirmar esta sueldo.'];
+        $response = ['response' => false, 'message' => 'No estas autorizado a confirmar este sueldo.'];
       }
 
       return $response;
     }
 
+    /**
+     * Descargar el adjunto del Sueldo especificado
+     *
+     * @param  \App\EmpleadosSueldo  $sueldo
+     * @return \Illuminate\Http\Response
+     */
     public function download(EmpleadosSueldo $sueldo)
     {
       return Storage::download($sueldo->adjunto);

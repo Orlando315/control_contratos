@@ -7,31 +7,56 @@ use App\Scopes\EmpresaScope;
 
 class Transporte extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'transportes';
 
-  protected static function boot()
-  {
-    parent::boot();
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'vehiculo',
+      'patente',
+    ];
 
-    static::addGlobalScope(new EmpresaScope);
-  }
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
 
-  protected $fillable = [
-    'vehiculo',
-    'patente',
-  ];
+      static::addGlobalScope(new EmpresaScope);
+    }
 
-  public function usuario()
-  {
-    return $this->belongsTo('App\Usuario', 'user_id');
-  }
+    /**
+     * Obtener el Usuario
+     */
+    public function usuario()
+    {
+      return $this->belongsTo('App\Usuario', 'user_id');
+    }
 
-  public function contratos()
-  {
-    return $this->hasMany('App\TransporteContrato');
-  }
+    /**
+     * Obtener el Contrato al que pertenece
+     */
+    public function contratos()
+    {
+      return $this->hasMany('App\TransporteContrato');
+    }
 
-  public function consumos()
-  {
-    return $this->hasMany('App\TransporteConsumo');
-  }
+    /**
+     * Obtener lso Consumos
+     */
+    public function consumos()
+    {
+      return $this->hasMany('App\TransporteConsumo');
+    }
 }

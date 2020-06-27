@@ -6,12 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class ConfiguracionEmpresa extends Model
 {
-  protected $table = 'configuracion_empresas';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'configuracion_empresas';
 
-  protected $fillable = [
-    'jornada',
-    'dias_vencimiento'
-  ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'jornada',
+      'dias_vencimiento'
+    ];
 
-  public $timestamps = false;
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

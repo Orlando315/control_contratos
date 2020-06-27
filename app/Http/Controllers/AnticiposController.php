@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Anticipo;
-use App\Contrato;
+use App\{Anticipo, Contrato};
 
 class AnticiposController extends Controller
 {
@@ -18,7 +17,7 @@ class AnticiposController extends Controller
     {
       $anticipos = Anticipo::all();
 
-      return view('anticipos.index', ['anticipos' => $anticipos]);
+      return view('anticipos.index', compact('anticipos'));
     }
 
     /**
@@ -30,7 +29,7 @@ class AnticiposController extends Controller
     {
       $contratos = Contrato::all();
 
-      return view('anticipos.create', ['contratos' => $contratos]);
+      return view('anticipos.create', compact('contratos'));
     }
 
     /**
@@ -53,17 +52,17 @@ class AnticiposController extends Controller
       $anticipo->contrato_id = $contrato->id;
 
       if($anticipo = Auth::user()->empresa->anticipos()->save($anticipo)){
-        return redirect('anticipos/' . $anticipo->id)->with([
+        return redirect()->route('anticipos.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('anticipos/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -74,7 +73,7 @@ class AnticiposController extends Controller
      */
     public function show(Anticipo $anticipo)
     {
-      return view('anticipos.show', ['anticipo' => $anticipo]);
+      return view('anticipos.show', compact('anticipo'));
     }
 
     /**
@@ -85,7 +84,7 @@ class AnticiposController extends Controller
      */
     public function edit(Anticipo $anticipo)
     {
-      return view('anticipos.edit', ['anticipo' => $anticipo]);
+      return view('anticipos.edit', compact('anticipo'));
     }
 
     /**
@@ -107,17 +106,17 @@ class AnticiposController extends Controller
       $anticipo->contrato_id = $contrato;
 
       if($anticipo->save()){
-        return redirect('anticipos/' . $anticipo->id)->with([
+        return redirect()->route('anticipos.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('anticipos/edit')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -129,20 +128,21 @@ class AnticiposController extends Controller
     public function destroy(Anticipo $anticipo)
     {
       if($anticipo->delete()){
-        return redirect('anticipos')->with([
+        return redirect()->route('anticipos.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Anticipo eliminado exitosamente.'
         ]);
-      }else{
-        return redirect('anticipos')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
     /**
+     *  Formulario para generar un Anticipo masivo
      *
      * @return \Illuminate\Http\Response
      */
@@ -153,6 +153,13 @@ class AnticiposController extends Controller
       return view('anticipos.createMasivo', ['contratos' => $contratos]);
     }
 
+    /**
+     *  Obtener los Empleados del Contrato especificado, con
+     *  el ultimo Anticipo recibido
+     *
+     * @param  \App\Contrato  $contrat
+     * @return \Illuminate\Http\Response
+     */
     public function getEmpleados(Contrato $contrato)
     {
       $empleados = $contrato->empleados()
@@ -184,7 +191,7 @@ class AnticiposController extends Controller
       $data = json_decode($request->empleados, true);
 
       if(count($data) == 0){
-        return redirect('anticipos/create/masivo')
+        return redirect()->back()
                   ->withErrors('No se encontro información de los empleados.')
                   ->withInput();
       }
@@ -201,17 +208,17 @@ class AnticiposController extends Controller
       }
 
       if(Auth::user()->empresa->anticipos()->createMany($anticipos)){
-        return redirect('anticipos/')->with([
+        return redirect()->route('anticipos.index')->with([
           'flash_message' => 'Anticipos agregados exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('anticipos/create/masivo')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
 }

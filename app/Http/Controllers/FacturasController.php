@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\Factura;
-use App\Contrato;
-use App\Etiqueta;
+use Illuminate\Support\Facades\{Auth, Storage};
+use App\{Factura, Contrato, Etiqueta};
 
 class FacturasController extends Controller
 {
@@ -20,7 +17,7 @@ class FacturasController extends Controller
     {
       $facturas = Factura::all();
 
-      return view('facturas.index', ['facturas' => $facturas]);
+      return view('facturas.index', compact('facturas'));
     }
 
     /**
@@ -63,7 +60,6 @@ class FacturasController extends Controller
 
       if($factura = Auth::user()->empresa->facturas()->save($factura)){
         $directory = $factura->directory();
-
         if(!Storage::exists($directory)){
           Storage::makeDirectory($directory);
         }
@@ -78,17 +74,17 @@ class FacturasController extends Controller
 
         $factura->save();
 
-        return redirect('facturas/' . $factura->id)->with([
+        return redirect()->route('facturas.show', ['factura' => $factura->id])->with([
           'flash_message' => 'Factura agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('facturas/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -99,7 +95,7 @@ class FacturasController extends Controller
      */
     public function show(Factura $factura)
     {
-      return view('facturas.show', ['factura' => $factura]);
+      return view('facturas.show', compact('factura'));
     }
 
     /**
@@ -110,7 +106,7 @@ class FacturasController extends Controller
      */
     public function edit(Factura $factura)
     {
-      return view('facturas.edit', ['factura' => $factura]);
+      return view('facturas.edit', compact('factura'));
     }
 
     /**
@@ -123,7 +119,6 @@ class FacturasController extends Controller
     public function update(Request $request, Factura $factura)
     {
       $this->validate($request, [
-        'contrato_id' => 'required',
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
         'realizada_para' => 'required|string',
@@ -139,8 +134,10 @@ class FacturasController extends Controller
       $factura->fill($request->all());
 
       if($factura->save()){
-
         $directory = $factura->directory();
+        if(!Storage::exists($directory)){
+          Storage::makeDirectory($directory);
+        }
 
         if($request->hasFile('adjunto1')){
           // Si ya tine un archivo adjunto1, eliminarlo
@@ -162,17 +159,17 @@ class FacturasController extends Controller
 
         $factura->save();
 
-        return redirect('facturas/' . $factura->id)->with([
+        return redirect()->route('facturas.show', ['factura' => $factura->id])->with([
           'flash_message' => 'Factura modificada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('facturas/' . $factura->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -184,25 +181,36 @@ class FacturasController extends Controller
     public function destroy(Factura $factura)
     {
       if($factura->delete()){
-
         Storage::deleteDirectory($factura->directory());
 
-        return redirect('facturas')->with([
+        return redirect()->route('facturas.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Factura eliminada exitosamente.'
         ]);
-      }else{
-        return redirect('facturas')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
       }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
+    /**
+     * Descargar el numero de adjunto de la Factura especificada
+     *
+     * @param  \App\Factura  $factura
+     * @param  int  $adjunto
+     * @return \Illuminate\Http\Response
+     */
     public function download(Factura $factura, $adjunto)
     {
-      if(($adjunto < 1 || $adjunto > 2) || $factura->{"adjunto{$adjunto}"} == null){
+      $path = $factura->{"adjunto{$adjunto}"};
+      if(($adjunto < 1 || $adjunto > 2) || $path == null){
+        abort(404);
+      }
+
+      if(!Storage::exists($path)){
         abort(404);
       }
 

@@ -1,140 +1,137 @@
 @extends('layouts.app')
-@section('title', 'Plantillas - '.config('app.name'))
-@section('header', 'Plantillas')
-@section('breadcrumb')
-  <ol class="breadcrumb">
-    <li><a href="{{ route('dashboard') }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('plantilla.documento.index') }}">Plantillas</a></li>
-    <li class="active">Agregar</li>
-  </ol>
+
+@section('title', 'Documentos')
+
+@section('head')
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
+  <!-- Datepicker -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
 @endsection
-@section('content')
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form action="{{ route('plantilla.documento.store') }}" method="POST">
-        {{ csrf_field() }}
 
-        <h4>Agregar documento</h4>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
-              <label class="control-label" for="nombre">Nombre del documento:</label>
-              <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre">
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
-              <label class="control-label" class="form-control" for="contrato">Conrato: *</label>
-              <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
-                <option value="">Seleccione...</option>
-                @foreach($contratos as $contrato)
-                  <option value="{{ $contrato->id }}"{{ old('contrato', optional($selected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('empleado') ? ' has-error' : '' }}">
-              <label class="control-label" class="form-control" for="empleado">Empleado: *</label>
-              <select id="empleado" class="form-control" name="empleado" required style="width: 100%" disabled>
-                <option value="">Seleccione...</option>
-              </select>
-              <p class="help-block"><a href="#"></a></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('plantilla') ? ' has-error' : '' }}">
-              <label class="control-label" class="form-control" for="plantilla">Plantilla: *</label>
-              <select id="plantilla" class="form-control" name="plantilla" required style="width: 100%">
-                <option value="">Seleccione...</option>
-                @foreach($plantillas as $plantilla)
-                  <option value="{{ $plantilla->id }}"{{ old('plantilla') == $plantilla->id ? ' selected' : '' }}>{{ $plantilla->nombre }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('padre') ? ' has-error' : '' }}">
-              <label class="control-label" class="form-control">Documento padre:</label>
-              <select id="padre" class="form-control" name="padre" style="width: 100%">
-                <option value="">Seleccione...</option>
-                @foreach($padres as $padre)
-                  <option value="{{ $padre->id }}"{{ old('padre') == $padre->id ? ' selected' : '' }}>{{ $padre->nombre }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group{{ $errors->has('caducidad') ? ' has-error' : '' }}">
-              <label class="control-label" for="caducidad">Fecha de caducidad:</label>
-              <input id="caducidad" class="form-control" type="text" name="caducidad" value="{{ old('caducidad') ? old('caducidad') : '' }}" placeholder="dd-mm-yyyy">
-            </div>
-          </div>
-        </div>
-
-        <h4>Completar variables</h4>
-
-        <div class="section-variables form-horizontal mb-1">
-          <p class="text-center text-muted m-0">No hay variables a completar</p>
-        </div>
-
-        @if(count($errors) > 0)
-        <div class="alert alert-danger alert-important">
-          <ul>
-            @foreach($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-        @endif
-
-        <div class="form-group text-right mt-2">
-          <a class="btn btn-flat btn-default" href="{{ route('plantilla.documento.index') }}"><i class="fa fa-reply"></i> Atras</a>
-          <button class="btn btn-flat btn-primary" type="submit"><i class="fa fa-send"></i> Guardar</button>
-        </div>
-      </form>
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Documentos</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('plantilla.documento.index') }}">Documentos</a></li>
+        <li class="breadcrumb-item active"><strong>Agregar</strong></li>
+      </ol>
     </div>
   </div>
+@endsection
 
-  <div id="delModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="delModalLabel">Eliminar Plantilla</h4>
+@section('content')
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Agregar documento</h5>
         </div>
-        <div class="modal-body">
-          <div class="row">
-            <form class="col-md-10 col-md-offset-1" action="{{ route('plantilla.destroy', ['plantilla' => $plantilla->id]) }}" method="POST">
-              {{ method_field('DELETE') }}
-              {{ csrf_field() }}
-              <h4 class="text-center">¿Esta seguro de eliminar este Plantilla?</h4>
-              <p class="text-center">Se eliminaran todos los documentos generados por esta plantilla</p>
-              <p class="text-center">Esta acción no se puede deshacer</p>
+        <div class="ibox-content">
+          <form action="{{ route('plantilla.documento.store') }}" method="POST">
+            {{ csrf_field() }}
 
-              <div class="text-center mt-2">
-                <button class="btn btn-flat btn-danger" type="submit">Eliminar</button>
-                <button type="button" class="btn btn-flat btn-default" data-dismiss="modal">Cerrar</button>
-              </div class="text-center mt-2">
-            </form>
-          </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
+                  <label for="nombre">Nombre del documento:</label>
+                  <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                  <label for="contrato">Contrato: *</label>
+                  <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
+                    <option value="">Seleccione...</option>
+                    @foreach($contratos as $contrato)
+                      <option value="{{ $contrato->id }}"{{ old('contrato', optional($selected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('empleado') ? ' has-error' : '' }}">
+                  <label for="empleado">Empleado: *</label>
+                  <select id="empleado" class="form-control" name="empleado" required style="width: 100%" disabled>
+                    <option value="">Seleccione...</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('plantilla') ? ' has-error' : '' }}">
+                  <label for="plantilla">Plantilla: *</label>
+                  <select id="plantilla" class="form-control" name="plantilla" required style="width: 100%">
+                    <option value="">Seleccione...</option>
+                    @foreach($plantillas as $plantilla)
+                      <option value="{{ $plantilla->id }}"{{ old('plantilla') == $plantilla->id ? ' selected' : '' }}>{{ $plantilla->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('padre') ? ' has-error' : '' }}">
+                  <label for="padre">Documento padre:</label>
+                  <select id="padre" class="form-control" name="padre" style="width: 100%">
+                    <option value="">Seleccione...</option>
+                    @foreach($padres as $padre)
+                      <option value="{{ $padre->id }}"{{ old('padre') == $padre->id ? ' selected' : '' }}>{{ $padre->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('caducidad') ? ' has-error' : '' }}">
+                  <label for="caducidad">Fecha de caducidad:</label>
+                  <input id="caducidad" class="form-control" type="text" name="caducidad" value="{{ old('caducidad') }}" placeholder="dd-mm-yyyy">
+                </div>
+              </div>
+            </div>
+
+            <h4>Completar variables</h4>
+
+            <div class="section-variables mb-3">
+              <p class="text-center text-muted m-0">No hay variables a completar</p>
+            </div>
+
+            @if(count($errors) > 0)
+              <div class="alert alert-danger alert-important">
+                <ul class="m-0">
+                  @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            @endif
+
+            <div class="text-right mt-2">
+              <a class="btn btn-default btn-sm" href="{{ route('plantilla.documento.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 @endsection
 
-@section('scripts')
+@section('script')
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
+  <!-- Datepicker -->
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
   <script type="text/javascript">
     const sectionVariables = $('.section-variables')
     const buildGroup = function (index, seccion){
@@ -143,7 +140,7 @@
       $.each(seccion.variables, function (k, v){
         let tipo = converType(v.tipo)
         let value = getOldValue(seccion.id, v.variable)
-        vargGroups += `<div class="form-group">
+        vargGroups += `<div class="form-group row">
                           <label class="col-md-3" for="${v.variable}">${v.nombre}:</label>
                           <div class="col-md-9">
                             <input id="${v.variable}" class="form-control" type="${tipo}" name="secciones[${seccion.id}][${v.variable}]" maxlength="50" value="${value}" placeholder="${v.nombre}" required>
@@ -159,35 +156,10 @@
 
     const oldSectionsValues = @json(old('secciones'));
 
-    function converType(tipo){
-      switch (tipo){
-        case 'number':
-          return 'number';
-          break;
-        case 'email':
-          return 'email';
-          break;
-        case 'date':
-          return 'date';
-          break;
-        case 'tel':
-          return 'tel';
-          break;
-        case 'text':
-        case 'rut':
-        default:
-          return 'text'
-          break;
-      }
-    }
-
-    function getOldValue(seccion, variable){
-      return (oldSectionsValues && oldSectionsValues.hasOwnProperty(seccion)) ? oldSectionsValues[seccion][variable] : '';
-    }
-
     $(document).ready( function(){
       $('#contrato, #empleado, #plantilla, #padre').select2({
-        placeholder: 'Seleccione...',
+        theme: 'bootstrap4',
+        placeholder: 'Seleccionar...',
       });
 
       $('#caducidad').datepicker({
@@ -226,10 +198,7 @@
         })
         .fail(function(){
           select.prop('disabled', false)
-        })
-        .always(function(){
-
-        })
+        });
       })
 
       $('#plantilla').change(function () {
@@ -254,16 +223,36 @@
           }else{
             sectionVariables.empty().append('<p class="text-center text-muted m-0">No hay variable a completar</p>')
           }
-        })
-        .fail(function () {
-
-        })
-        .always(function () {
-
-        })
+        });
       })
 
       $('#contrato, #plantilla').trigger('change')
     });
+
+    function converType(tipo){
+      switch (tipo){
+        case 'number':
+          return 'number';
+          break;
+        case 'email':
+          return 'email';
+          break;
+        case 'date':
+          return 'date';
+          break;
+        case 'tel':
+          return 'tel';
+          break;
+        case 'text':
+        case 'rut':
+        default:
+          return 'text'
+          break;
+      }
+    }
+
+    function getOldValue(seccion, variable){
+      return (oldSectionsValues && oldSectionsValues.hasOwnProperty(seccion)) ? oldSectionsValues[seccion][variable] : '';
+    }
   </script>
 @endsection
