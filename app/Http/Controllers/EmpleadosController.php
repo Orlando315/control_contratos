@@ -30,7 +30,9 @@ class EmpleadosController extends Controller
      */
     public function create(Contrato $contrato)
     {
-      return view('empleados.create', compact('contrato'));
+      $usuarios = Usuario::doesntHave('empleado')->get();
+
+      return view('empleados.create', compact('contrato', 'usuarios'));
     }
 
     /**
@@ -41,16 +43,24 @@ class EmpleadosController extends Controller
      */
     public function store(Request $request, Contrato $contrato)
     {
+      if($request->has('usuario')){
+        $usuario = Usuario::doesntHave('empleado')->where('id', $request->usuario)->firstOrFail();
+      }else{
+        // Aplica cuando no se esta creando el Empleado a partir de un Usuario ya existente
+        $this->validate($request, [
+          'nombres' => 'required|string',
+          'apellidos' => 'required|string',
+          'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut',
+          'telefono' => 'nullable|string',
+          'email' => 'nullable|email|unique:users,email',
+        ]);
+      }
+
       $this->validate($request, [
-        'nombres' => 'required|string',
-        'apellidos' => 'required|string',
         'sexo' => 'required',
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
-        'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut',
         'direccion' => 'required|string|max:100',
         'profesion' => 'nullable|string|max:100',
-        'telefono' => 'nullable|string',
-        'email' => 'nullable|email|unique:users,email',
         'nombre_emergencia' => 'nullable|string|max:50',
         'telefono_emergencica' => 'nullable|string|max:20',
         'talla_camisa' => 'nullable|string',
@@ -71,17 +81,24 @@ class EmpleadosController extends Controller
         $request->merge(['jornada' => Auth::user()->empresa->configuracion->jornada]);
       }
 
+
       $empleado = new Empleado($request->all());
       $empleado->empresa_id = Auth::user()->empresa->id;
 
       if($emplado = $contrato->empleados()->save($empleado)){
-
-        $usuario = new Usuario($request->all());
-        $usuario->usuario  = $request->rut;
-        $usuario->password = bcrypt($request->rut);
-        $usuario->tipo = 4; // Tipo 4 = Empleado
-        $usuario->empresa_id = Auth::user()->empresa->id;
-        $empleado->usuario()->save($usuario);
+        // Si se esta creando un Emplado a partir de un Usuario ya existente
+        // solo se agrega el id del Empleado al Usuario
+        if(isset($usuario)){
+          $usuario->empleado_id = $emplado->id;
+          $usuario->save();
+        }else{
+          $usuario = new Usuario($request->all());
+          $usuario->usuario  = $request->rut;
+          $usuario->password = bcrypt($request->rut);
+          $usuario->tipo = 4; // Tipo 4 = Empleado
+          $usuario->empresa_id = Auth::user()->empresa->id;
+          $empleado->usuario()->save($usuario);
+        }
         
         $empleado->contratos()->create($request->all());
         $empleado->banco()->create($request->all());
@@ -201,11 +218,20 @@ class EmpleadosController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Empleado  $empleado
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Empleado $empleado)
+    public function destroy(Request $request, Empleado $empleado)
     {
+      // No eliminar el Usuario del Empleado si es Admin,
+      // a menos que se indique que se debe eliminar.
+      // Menos el Usuario Empresa (Tipo 1) que nunca se elimina
+      if($empleado->usuario->tipo == 1 || ($empleado->usuario->tipo == 2 && !$request->filled('eliminar_admin'))){
+        $empleado->usuario->empleado_id = null;
+        $empleado->push();
+      }
+
       if($empleado->delete()){
         Storage::deleteDirectory('Empleado' . $empleado->id);
 

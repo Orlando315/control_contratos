@@ -34,6 +34,23 @@
           <form action="{{ route('empleados.store', ['contrato' => $contrato->id]) }}" method="POST">
             {{ csrf_field() }}
 
+            <fieldset class="mb-3">
+              <p>¿Agregar un empleado a partir de un Usuario del Sistema?</p>
+              
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group{{ $errors->has('usuario') ? ' has-error' : '' }}">
+                    <label for="usuario">Usuario:</label>
+                    <select id="usuario" class="form-control" name="usuario" required>
+                      <option value="">Seleccione...</option>
+                      @foreach($usuarios as $usuario)
+                        <option value="{{ $usuario->id }}"{{ old('usuario') == $usuario->id ? ' selected' : '' }}>{{ $usuario->nombres }} {{ $usuario->apellidos }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
 
             <fieldset class="mb-3">
               <legend>Datos del empleado</legend>
@@ -230,15 +247,13 @@
               </div>
             </fieldset>
 
-            @if(count($errors) > 0)
-              <div class="alert alert-danger alert-important">
-                <ul class="m-0">
-                  @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                  @endforeach
-                </ul>
-              </div>
-            @endif
+            <div class="alert alert-danger alert-important"{!! count($errors) > 0 ? '' : ' style="display:none"' !!}>
+              <ul class="m-0">
+                @foreach($errors->all() as $error)
+                  <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
 
             <div class="text-right">
               <a class="btn btn-default btn-sm" href="{{ route('contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
@@ -277,11 +292,56 @@
         autoclose: true
       });
 
-      $('#sexo, #jornada').select2({
+      $('#usuario, #sexo, #jornada').select2({
         allowClear: true,
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       })
+
+      $('#usuario').change(function () {
+        let user = $(this).val()
+
+        if(!user){
+          fillValues([], false)
+          return false;
+        }
+
+        $.ajax({
+          type: 'POST',
+          url: `{{ route("usuarios.index") }}/${user}/get`,
+          data: {
+            usuario: user,
+          },
+          dataType: 'json',
+        })
+        .done(function (response) {
+          if(response){
+            fillValues(response)
+          }else{
+
+            $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
+            $('.alert').slideDown(300).delay(3000).slideUp()
+          }
+        })
+        .fail(function () {
+          $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
+          $('.alert').slideDown(300).delay(3000).slideUp()
+
+          fillValues([], false)
+        })
+      })
+
+      $('#usuario').change()
     });
+
+    // Completar o limpiar los campos de Usuarios registrados
+    // Con su informacion
+    function fillValues(values, fill = true){
+      $('#nombres').prop('readonly', fill).val(fill ? values.nombres : '')
+      $('#apellidos').prop('readonly', fill).val(fill ? values.apellidos : '')
+      $('#rut').prop('readonly', fill).val(fill ? values.rut : '')
+      $('#telefono').prop('readonly', fill).val(fill ? values.telefono : '')
+      $('#email').prop('readonly', fill).val(fill ? values.email : '')
+    }
   </script>
 @endsection

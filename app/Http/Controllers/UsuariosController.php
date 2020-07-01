@@ -68,7 +68,7 @@ class UsuariosController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Ususario  $usuario
      * @return \Illuminate\Http\Response
      */
     public function show(Usuario $usuario)
@@ -79,7 +79,7 @@ class UsuariosController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Ususario  $usuario
      * @return \Illuminate\Http\Response
      */
     public function edit(Usuario $usuario)
@@ -91,7 +91,7 @@ class UsuariosController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Usuario  $usuario
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Usuario $usuario)
@@ -124,7 +124,7 @@ class UsuariosController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Usuario  $usuario
      * @return \Illuminate\Http\Response
      */
     public function destroy(Usuario $usuario)
@@ -143,16 +143,33 @@ class UsuariosController extends Controller
       }
     }
 
+    /**
+     * Vista del perfil del Usuario
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function perfil()
     {
       return view('usuarios.perfil');
     }
 
+    /**
+     * Formulario para editar el perfil del Usuario
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function editPerfil()
     {
       return view('usuarios.editPerfil');
     }
-
+    /**
+     * Actualizar informacion del Usuario en sesion
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function updatePerfil(Request $request)
     {
       $this->validate($request, [
@@ -179,6 +196,13 @@ class UsuariosController extends Controller
       }
     }
 
+    /**
+     * Cambiar la contraseña del Usuario en sesion u otro Usuario especificado
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Usuario|null $usuario
+     * @return \Illuminate\Http\Response
+     */
     public function password(Request $request, Usuario $usuario = null)
     {
       $this->validate($request, [
@@ -203,5 +227,16 @@ class UsuariosController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Obtener la informacion del Usuario especificado
+     * 
+     * @param  \App\Usuario $usuario
+     * @return \Illuminate\Http\Response 
+     */
+    public function get(Usuario $usuario)
+    {
+      return response()->json($usuario->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
     }
 }

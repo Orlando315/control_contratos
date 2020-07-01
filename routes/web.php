@@ -111,6 +111,7 @@ Route::group(['middleware' => 'auth'], function () {
           ->except(['create']);
 
     /* --- Usuarios --- */
+    Route::post('usuarios/{usuario}/get', 'UsuariosController@get')->name('usuarios.get');
     Route::resource('usuarios', 'UsuariosController');
     Route::patch('usuarios/password/{usuario}', 'UsuariosController@password')->name('usuarios.password');
 

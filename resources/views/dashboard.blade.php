@@ -194,7 +194,12 @@
       </div>
     @endif
     
-    @if(Auth::user()->tipo >= 3)
+    @if(Auth::user()->empleado)
+      @if(Auth::user()->tipo <= 2)
+        <div class="col-md-12">
+          <h3 class="text-center"> Información como Empleado</h3>
+        </div>
+      @endif
       <div class="col-md-12">
         <div class="ibox">
           <div class="ibox-title">
@@ -230,29 +235,18 @@
       </div>
 
       <div class="col-md-12">
-        <div class="box box-solid">
-          <div class="box-body">
-            <div class="row">
-              <div class="col-md-12">
-              </div>
-              <div class="col-md-12">
-                <div id="calendar"></div>
-              </div>
-            </div>
+        <div class="ibox">
+          <div class="ibox-content">
+            <div id="calendar"></div>
           </div>
         </div>
       </div>
     @endif
   </div>
-
-  <div class="row">
-    <div class="col-md-12">
-    </div>
-  </div>
 @endsection
 
 @section('script')
-  @if(Auth::user()->tipo >= 3)
+  @if(Auth::user()->empleado)
     <!-- Fullcalendar -->
     <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/lib/moment.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/fullcalendar.min.js') }}"></script>

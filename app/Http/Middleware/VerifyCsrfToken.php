@@ -22,5 +22,6 @@ class VerifyCsrfToken extends Middleware
       'variable/*',
       'inventarios/entregas/*',
       'documentos/*',
+      'usuarios/*/get',
     ];
 }
