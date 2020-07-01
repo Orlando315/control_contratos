@@ -51,3 +51,7 @@
 .select2-container--bootstrap4 .select2-selection{
   border-radius: 0;
 }
+
+.form-control::placeholder{
+  opacity: .7;
+}

@@ -47,9 +47,14 @@
                       <option value="2"{{ old('tipo', $inventario->tipo) == '2' ? ' selected' : '' }}>EPP</option>
                       <option value="4"{{ old('tipo', $inventario->tipo) == '4' ? ' selected' : '' }}>Equipo</option>
                       <option value="5"{{ old('tipo', $inventario->tipo) == '5' ? ' selected' : '' }}>Maquinaria</option>
+                      <option value="6"{{ old('tipo', $inventario->tipo) == '6' ? ' selected' : '' }}>Herramienta</option>
                     @endif
                     <option value="3"{{ old('tipo', $inventario->tipo) == '3' ? ' selected' : '' }}>Otro</option>
                   </select>
+                </div>
+                <div class="form-group{{ $errors->has('otro') ? ' has-error' : '' }}" style="display: none">
+                  <input id="otro" class="form-control" type="text" name="otro" maxlength="50" value="{{ old('otro', $inventario->tipo()) }}" placeholder="Otro tipo" disabled required>
+                  <small class="form-text-text-muted">Especifique el tipo</small>
                 </div>
               </div>
               <div class="col-md-6">
@@ -169,6 +174,13 @@
           }
         }
       })
+
+      $('#tipo').change(function () {
+        let isOtro = $(this).val() == 3;
+        $('#otro').prop('disabled', !isOtro).closest('.form-group').toggle(isOtro)
+      })
+
+      $('#tipo').change()
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo

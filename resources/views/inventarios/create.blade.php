@@ -55,13 +55,18 @@
                   <select id="tipo" class="form-control" name="tipo" required>
                     <option value="">Seleccione...</option>
                     @if(Auth::user()->tipo < 3)
-                      <option value="1" {{ old('tipo') == '1' ? 'selected' : '' }}>Insumo</option>
-                      <option value="2" {{ old('tipo') == '2' ? 'selected' : '' }}>EPP</option>
-                      <option value="4" {{ old('tipo') == '4' ? 'selected' : '' }}>Equipo</option>
-                      <option value="5" {{ old('tipo') == '5' ? 'selected' : '' }}>Maquinaria</option>
+                      <option value="1"{{ old('tipo') == '1' ? ' selected' : '' }}>Insumo</option>
+                      <option value="2"{{ old('tipo') == '2' ? ' selected' : '' }}>EPP</option>
+                      <option value="4"{{ old('tipo') == '4' ? ' selected' : '' }}>Equipo</option>
+                      <option value="5"{{ old('tipo') == '5' ? ' selected' : '' }}>Maquinaria</option>
+                      <option value="6"{{ old('tipo') == '6' ? ' selected' : '' }}>Herramienta</option>
                     @endif
-                    <option value="3" {{ old('tipo') == '3' ? 'selected' : '' }}>Otro</option>
+                    <option value="3"{{ old('tipo') == '3' ? ' selected' : '' }}>Otro</option>
                   </select>
+                </div>
+                <div class="form-group{{ $errors->has('otro') ? ' has-error' : '' }}" style="display: none">
+                  <input id="otro" class="form-control" type="text" name="otro" maxlength="50" value="{{ old('otro') }}" placeholder="Otro tipo" disabled required>
+                  <small class="form-text-text-muted">Especifique el tipo</small>
                 </div>
               </div>
               <div class="col-md-6">
@@ -181,6 +186,13 @@
           }
         }
       })
+
+      $('#tipo').change(function () {
+        let isOtro = $(this).val() == 3;
+        $('#otro').prop('disabled', !isOtro).closest('.form-group').toggle(isOtro)
+      })
+
+      $('#tipo').change()
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo

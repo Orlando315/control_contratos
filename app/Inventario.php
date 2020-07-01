@@ -25,6 +25,7 @@ class Inventario extends model
       'empresa_id',
       'contrato_id',
       'tipo',
+      'otro',
       'nombre',
       'valor',
       'fecha',
@@ -111,7 +112,12 @@ class Inventario extends model
         case 5:
           $tipo = 'Maquinaria';
           break;
+        case 6:
+          $tipo = 'Herramienta';
+          break;
         case 3:
+          $tipo = $this->otro;
+          break;
         default:
           $tipo = 'Otro';
           break;

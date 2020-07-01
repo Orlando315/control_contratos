@@ -43,6 +43,7 @@ class InventariosController extends Controller
       $this->validate($request, [
         'contrato_id' => 'required',
         'tipo' => 'required',
+        'otro' => 'required_if:tipo,otro|string|max:50',
         'nombre' => 'required|string',
         'valor' => 'required|numeric',
         'fecha' => 'required|date_format:d-m-Y',
@@ -79,7 +80,7 @@ class InventariosController extends Controller
           ]);
       }
 
-      return redirect()->back()->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -129,6 +130,7 @@ class InventariosController extends Controller
 
       $this->validate($request, [
         'tipo' => 'required',
+        'otro' => 'required_if:tipo,otro|string|max:50',
         'nombre' => 'required|string',
         'valor' => 'required|numeric',
         'fecha' => 'required|date_format:d-m-Y',
@@ -160,7 +162,7 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect('inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('inventarios.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
