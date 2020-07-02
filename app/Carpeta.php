@@ -56,7 +56,7 @@ class Carpeta extends Model
     }
 
     /**
-     * Get all of the owning commentable models.
+     * Get all of the owning carpetable models.
      */
     public function carpetable()
     {
@@ -80,7 +80,7 @@ class Carpeta extends Model
     }
 
     /**
-     * Obtener la Empresa a la que pertenece
+     * Obtener los Documentos (Contrato/Empleado)
      */
     public function documentos()
     {
@@ -92,23 +92,38 @@ class Carpeta extends Model
      */
     public function getBackUrlAttribute()
     {
-      $backModel = $this->isContrato() ? route('contratos.show', ['contrato' => $this->carpetable_id]) : route('empleados.show', ['empleado' => $this->carpetable_id]);
+      $backModel = route($this->type().'.show', ['id' => $this->carpetable_id]);
       return $this->carpeta_id ? route('carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 
     /**
-     * Evaluar si la Carpeta es de un Contrato
+     * Evaluar si la Carpeta pertenece a la clase especificada
+     *
+     * @param  string  $type
+     * @return bool
      */
-    public function isContrato()
+    public function isType($type)
     {
-      return $this->carpetable_type == 'App\Contrato';
+      return $this->carpetable_type == $type;
     }
 
     /**
-     * Obtener el tipo de modelo al que pertenece la Carpeta
+     * Obtener el modelo al que pertenece la Carpeta
+     *
+     * @return string
      */
     public function type()
     {
-      return $this->carpetable_type == 'App\Contrato' ? 'contrato' : 'empleado';
+      switch ($this->carpetable_type) {
+        case 'App\Contrato':
+          return 'contratos';
+          break;
+        case 'App\Empleado':
+          return 'empleados';
+          break;
+        case 'App\TransporteConsumo':
+          return 'consumos';
+          break;
+      }
     }
 }

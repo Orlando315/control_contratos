@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use App\TransporteConsumo;
-use App\Transporte;
-use App\ConsumoAdjunto;
+use Illuminate\Support\Facades\{Auth, Storage};
+use App\{TransporteConsumo, Transporte, Documento};
 
 class TransportesConsumosController extends Controller
 {
@@ -58,32 +55,34 @@ class TransportesConsumosController extends Controller
       $consumo->contrato_id = $contrato->id;
 
       if($consumo = $transporte->consumos()->save($consumo)){
-
         if($request->hasFile('adjunto')){
           $directory = 'Empresa' . Auth::user()->empresa_id . '/Transportes/' . $transporte->id;
 
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
           }
-          $adjunto = new ConsumoAdjunto;
-          $adjunto->nombre = pathinfo($request->adjunto->getClientOriginalName(), PATHINFO_FILENAME);
-          $adjunto->mime   = $request->adjunto->getMimeType();
 
-          $adjunto->path = $request->file('adjunto')->store($directory);
-          $consumo->adjuntos()->save($adjunto);
+          $documento = new Documento([
+                        'empresa_id' => $transporte->empresa_id,
+                        'nombre' => pathinfo($request->adjunto->getClientOriginalName(), PATHINFO_FILENAME),
+                        'mime' => $request->adjunto->getMimeType(),
+                        'path' => $request->file('adjunto')->store($directory),
+                      ]);
+
+          $consumo->documentos()->save($documento);
         }
 
-        return redirect('transportes/consumos/' . $consumo->id)->with([
+        return redirect()->route('consumos.show', ['consumo' => $consumo->id])->with([
           'flash_message' => 'Consumo agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('transportes/consumos/create/' . $transporte->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -129,35 +128,17 @@ class TransportesConsumosController extends Controller
       $consumo->fill($request->all());
 
       if($consumo->save()){
-
-        if($request->hasFile('adjunto')){
-
-          // Si ya tine un archivo adjunto, eliminarlo
-          if($consumo->adjunto){
-            Storage::delete($consumo->adjunto);
-          }
-
-          $directory = 'Empresa' . Auth::user()->empresa_id . '/Transportes/' . $consumo->transporte_id;
-
-          if(!Storage::exists($directory)){
-            Storage::makeDirectory($directory);
-          }
-
-          $consumo->adjunto = $request->file('adjunto')->store($directory);
-          $consumo->save();
-        }
-
-        return redirect('transportes/consumos/' . $consumo->id)->with([
+        return redirect()->route('consumos.show',['consumo' => $consumo->id])->with([
           'flash_message' => 'Consumo modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('transportes/consumos/edit/' . $consumo->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -169,30 +150,19 @@ class TransportesConsumosController extends Controller
     public function destroy(TransporteConsumo $consumo)
     {
       if($consumo->delete()){
+        $consumo->carpetas()->delete();
+        $consumo->documentos()->delete();
 
-        if($consumo->adjunto){
-          Storage::delete($consumo->adjunto);
-        }
-
-        return redirect('transportes/' . $consumo->transporte_id)->with([
+        return redirect()->route('transportes.show', ['consumo' => $consumo->transporte_id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Consumo eliminado exitosamente.'
         ]);
-      }else{
-        return redirect('transportes/consumos/' . $consumo->id)->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
-      }
-    }
-
-    public function download(TransporteConsumo $consumo)
-    {
-      if(!Storage::exists($consumo->adjunto)){
-        abort(404);
       }
 
-      return Storage::download($consumo->adjunto);
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 }

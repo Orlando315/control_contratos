@@ -212,9 +212,9 @@
               <div class="tab-pane active" id="tab-11">
                 <div class="panel-body">
                   <div class="mb-3">
-                    <a class="btn btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'empleado', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                    <a class="btn btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                     @if($empleado->documentos->count() < 10)
-                      <a class="btn btn-primary btn-sm" href="{{ route('documentos.createEmpleado', ['empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                      <a class="btn btn-primary btn-sm" href="{{ route('documentos.create.empleados', ['id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                     @endif
                   </div>
                   <div class="row icons-box icons-folder">
@@ -267,7 +267,7 @@
                       </div>
                     @empty
                       <div class="col-12">
-                        <h4 class="text-center text-muted">No hay documetos adjuntos</h4>
+                        <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
                       </div>
                     @endforelse
                   </div>

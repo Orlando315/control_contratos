@@ -53,9 +53,9 @@
           <h5>Adjuntos</h5>
 
           <div class="ibox-tools">
-            <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable->id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+            <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
               @if($carpeta->carpetable->documentos()->count() < 10)
-                <a class="btn btn-success btn-xs" href="{{ route(($carpeta->isContrato() ? 'documentos.createContrato' : 'documentos.createEmpleado'), ['id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                <a class="btn btn-primary btn-xs" href="{{ route('documentos.create.'.$carpeta->type(), ['id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
               @endif
           </div>
         </div>
@@ -63,9 +63,9 @@
           <div class="row icons-box icons-folder">
             @foreach($carpeta->subcarpetas as $subcarpeta)
               <div class="col-md-3 col-xs-4 infont mb-3">
-                <a href="{{ route('carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                <a href="{{ route('carpeta.show', ['carpeta' => $subcarpeta->id]) }}">
                   <i class="fa fa-folder" aria-hidden="true"></i>
-                  <p class="m-0">{{ $carpeta->nombre }}</p>
+                  <p class="m-0">{{ $subcarpeta->nombre }}</p>
                 </a>
               </div>
             @endforeach
@@ -108,7 +108,7 @@
               </div>
             @empty
             <div class="col-12">
-              <h4 class="text-center text-muted">No hay documetos adjuntos</h4>
+              <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
             </div>
             @endforelse
           </div>

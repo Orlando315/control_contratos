@@ -108,19 +108,19 @@
                 <div class="col-md-3">
                   <div class="form-group{{ $errors->has('talla_camisa') ? ' has-error' : '' }}">
                     <label class="control-label" for="talla_camisa">Talla de camisa:</label>
-                    <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa', $empleado->talla_camisa) }}">
+                    <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa', $empleado->talla_camisa) }}" placeholder="Talla de camisa">
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group{{ $errors->has('talla_zapato') ? ' has-error' : '' }}">
                     <label class="control-label" for="talla_zapato">Talla de zapato:</label>
-                    <input id="talla_zapato" class="form-control" type="number" step="0.5" max="99" min="1" name="talla_zapato" value="{{ old('talla_zapato', $empleado->talla_zapato) }}">
+                    <input id="talla_zapato" class="form-control" type="number" step="0.5" max="99" min="1" name="talla_zapato" value="{{ old('talla_zapato', $empleado->talla_zapato) }}" placeholder="Talla de zapato">
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group{{ $errors->has('talla_pantalon') ? ' has-error' : '' }}">
                     <label class="control-label" for="talla_pantalon">Talla de pantalon:</label>
-                    <input id="talla_pantalon" class="form-control" type="text" maxlength="3" name="talla_pantalon" value="{{ old('talla_pantalon', $empleado->talla_pantalon) }}">
+                    <input id="talla_pantalon" class="form-control" type="text" maxlength="3" name="talla_pantalon" value="{{ old('talla_pantalon', $empleado->talla_pantalon) }}" placeholder="Talla de pantalón">
                   </div>
                 </div>
               </div>

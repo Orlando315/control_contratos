@@ -21,11 +21,14 @@ class Documento extends Model
      * @var array
      */
     protected $fillable = [
+      'empresa_id',
       'carpeta_id',
       'nombre',
       'path',
       'mime',
-      'vencimiento'
+      'vencimiento',
+      'created_at',
+      'updated_at',
     ];
 
     /**
@@ -63,6 +66,35 @@ class Documento extends Model
     }
 
     /**
+     * Obtener la url de retorno dependiendo del modelo al que pertenezca
+     *
+     * @return string
+     */
+    public function getBackUrlAttribute()
+    {
+      if($this->carpeta_id){
+        $route = 'carpeta.show';
+        $id = $this->carpeta_id;
+      }else{
+        if($this->documentable_type == 'App\Contrato'){
+          $route = 'contratos.show';
+        }
+
+        if($this->documentable_type == 'App\Empleado'){
+          $route = 'empleados.show';
+        }
+
+        if($this->documentable_type == 'App\TransporteConsumo'){
+          $route = 'consumos.show';
+        }
+
+        $id = $this->documentable_id;
+      }
+
+      return route($route, ['id' => $id]);
+    }
+
+    /**
      * Scope a query to only include active coupons.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -74,19 +106,11 @@ class Documento extends Model
     }
 
     /**
-     * Obtener el Contrato al que pertenece
+     * Get all of the owning documentable models.
      */
-    public function contrato()
+    public function documentable()
     {
-      return $this->belongsTo('App\Contrato');
-    }
-
-    /**
-     * Obtener el Empleado al que pertenece
-     */
-    public function empleado()
-    {
-      return $this->belongsTo('App\Empleado');
+      return $this->morphTo();
     }
 
     /**
@@ -94,13 +118,13 @@ class Documento extends Model
      *
      * @param  string  $model
      */
-    protected static function porVencer($model = 'contrato')
+    protected static function porVencer($model = 'App\Contrato')
     {
       $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
       $today = date('Y-m-d H:i:s');
       $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
 
-      return self::whereNotNull('vencimiento')->whereNotNull($model.'_id')->whereBetween('vencimiento', [$today, $less30Days])->get();
+      return self::whereNotNull('vencimiento')->where('documentable_type', $model)->whereBetween('vencimiento', [$today, $less30Days])->get();
     }
 
     /**
@@ -153,6 +177,6 @@ class Documento extends Model
      */
     public static function deEmpleadosPorVencer()
     {
-      return self::porVencer('empleado');
+      return self::porVencer('App\Empleado');
     }
 }

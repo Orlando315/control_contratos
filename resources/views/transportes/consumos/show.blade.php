@@ -77,44 +77,62 @@
         <div class="ibox-title">
           <h5>Adjuntos</h5>
 
-          @if($consumo->adjuntos()->count() < 10)
+          @if($consumo->documentos->count() < 10)
             <div class="ibox-tools">
-              <a class="btn btn-primary btn-xs" href="{{ route('consumos.adjuntos.create', ['consumo' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+              <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => 'consumos', 'id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('documentos.create.consumos', ['id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
             </div>
           @endif
         </div>
         <div class="ibox-content">
+          <div class="row icons-box icons-folder">
+            @foreach($consumo->carpetas()->main()->get() as $carpeta)
+              <div class="col-md-3 col-xs-4 infont mb-3">
+                <a href="{{ route('carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                  <i class="fa fa-folder" aria-hidden="true"></i>
+                  <p class="m-0">{{ $carpeta->nombre }}</p>
+                </a>
+              </div>
+            @endforeach
+          </div>
+
+          <hr class="hr-line-dashed">
+
           <div class="row">
-            @foreach($consumo->adjuntos()->get() as $adjunto)
-              <div id="adjunto-{{ $adjunto->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
+            @forelse($consumo->documentos as $documento)
+              <div id="adjunto-{{ $documento->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
                 <div class="file m-0 file-options">
                   <div class="float-right dropdown">
                     <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
                     <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
                       <li>
-                        <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('consumos.adjuntos.destroy', ['adjunto' => $adjunto->id]) }}" data-toggle="modal" data-target="#delFileModal">
+                        <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('documentos.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
                           <i class="fa fa-times" aria-hidden="true"></i> Eliminar
                         </a>
                       </li>
                     </ul>
                   </div>
-                  <a href="{{ route('consumos.adjuntos.download', ['adjunto' => $adjunto->id]) }}">
+                  <a href="{{ route('documentos.download', ['adjunto' => $documento->id]) }}">
                     <span class="corner"></span>
 
                     <div class="icon">
-                      <i class="fa {{ $adjunto->getIconByMime() }}"></i>
+                      <i class="fa {{ $documento->getIconByMime() }}"></i>
                     </div>
                     <div class="file-name">
-                      {{ $adjunto->nombre }}
-                      @if($adjunto->vencimiento)
+                      {{ $documento->nombre }}
+                      @if($documento->vencimiento)
                         <br>
-                        <small><strong>Vencimiento:</strong> {{ $adjunto->vencimiento }}</small>
+                        <small><strong>Vencimiento:</strong> {{ $documento->vencimiento }}</small>
                       @endif
                     </div>
                   </a>
                 </div>
               </div>
-            @endforeach
+            @empty
+              <div class="col-12">
+                <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
+              </div>
+            @endforelse
           </div>
         </div>
       </div>
@@ -156,7 +174,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
             </button>
-            <h4 class="modal-title" id="delFileModalLabel">Eliminar adjunto</h4>
+            <h4 class="modal-title" id="delFileModalLabel">Eliminar Adjunto</h4>
           </div>
           <div class="modal-body">
             <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4>

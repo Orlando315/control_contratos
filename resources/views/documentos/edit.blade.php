@@ -58,7 +58,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ $documento->backUrl }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

@@ -70,16 +70,13 @@ Route::group(['middleware' => 'auth'], function () {
     ]);
 
     /* --- Documentos --- */    
-    Route::get('documentos/contratos/{contrato}/{carpeta?}', 'DocumentosController@createContrato')->name('documentos.createContrato');
-    Route::post('documentos/contratos/{contrato}/{carpeta?}', 'DocumentosController@storeContrato')->name('documentos.storeContrato');
+    Route::get('documentos/contratos/{id}/{carpeta?}', 'DocumentosController@create')->name('documentos.create.contratos');
+    Route::post('documentos/contratos/{id}/{carpeta?}', 'DocumentosController@store')->name('documentos.store.contratos');
 
-    /* --- Caarpetas --- */    
-    Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
-    Route::post('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@store')->name('carpeta.store');
-    Route::resource('carpeta', 'CarpetaController')
-          ->parameters(['carpeta' => 'carpeta'])
-          ->except(['create', 'store']);
-
+    /* --- Migrar relaciones de Documentos (Contrato / Empleado) a morph --- */
+    Route::get('documentos/update/morph', 'DocumentosController@migrateToMorph');
+    /* --- Migrar informacion de TransporteConsumo a Documentos --- */
+    Route::get('documentos/migrate/adjuntos/morph', 'DocumentosController@migrateTransporteAdjuntosToDocumentos');
   });
 
   /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
@@ -140,9 +137,8 @@ Route::group(['middleware' => 'auth'], function () {
       'create',
       'store'
     ]);
-    Route::get('documentos/empleados/{empleado}/{carpeta?}', 'DocumentosController@createEmpleado')->name('documentos.createEmpleado');
-    Route::post('documentos/empleados/{empleado}/{carpeta?}', 'DocumentosController@storeEmpleado')->name('documentos.storeEmpleado');
-    Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
+    Route::get('documentos/empleados/{id}/{carpeta?}', 'DocumentosController@create')->name('documentos.create.empleados');
+    Route::post('documentos/empleados/{id}/{carpeta?}', 'DocumentosController@store')->name('documentos.store.empleados');
 
     /* --- Transportes --- */
     Route::resource('transportes', 'TransportesController')->except([
@@ -213,11 +209,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
     Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
-    /* --- Transportes consumos adjuntos --- */
-    Route::get('transportes/consumos/{consumo}/adjuntos/create', 'ConsumosAdjuntosController@create')->name('consumos.adjuntos.create');
-    Route::post('transportes/consumos/{consumo}/adjuntos/store', 'ConsumosAdjuntosController@store')->name('consumos.adjuntos.store');
-    Route::get('transportes/consumos/adjuntos/{adjunto}/download', 'ConsumosAdjuntosController@download')->name('consumos.adjuntos.download');
-    Route::delete('transportes/consumos/adjuntos/{adjunto}/destroy', 'ConsumosAdjuntosController@destroy')->name('consumos.adjuntos.destroy');
+    /* --- Transportes consumos documentos (Reemplazo de adjuntos)*/    
+    Route::get('documentos/consumos/{id}/{carpeta?}', 'DocumentosController@create')->name('documentos.create.consumos');
+    Route::post('documentos/consumos/{id}/{carpeta?}', 'DocumentosController@store')->name('documentos.store.consumos');
+
+    /* Documentos - Descarga */
+    Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
+    
+    /* --- Caarpetas --- */
+    Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
+    Route::post('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@store')->name('carpeta.store');
+    Route::resource('carpeta', 'CarpetaController')
+          ->parameters(['carpeta' => 'carpeta'])
+          ->except(['create', 'store']);
 
     /* --- Inventario ---*/
     Route::resource('inventarios', 'InventariosController');

@@ -127,7 +127,7 @@
                 <div class="col-md-3">
                   <div class="form-group{{ $errors->has('talla_camisa') ? ' has-error' : '' }}">
                     <label for="talla_camisa">Talla de camisa:</label>
-                    <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa') }}" placeholder="Taalla de camisa">
+                    <input id="talla_camisa" class="form-control" type="text" maxlength="3" name="talla_camisa" value="{{ old('talla_camisa') }}" placeholder="Talla de camisa">
                   </div>
                 </div>
                 <div class="col-md-3">

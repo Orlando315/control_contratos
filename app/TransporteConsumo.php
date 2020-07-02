@@ -56,11 +56,19 @@ class TransporteConsumo extends Model
     }
 
     /**
-     * Obtener los Adjuntos
+     * Obtener las Carpetas
      */
-    public function adjuntos()
+    public function carpetas()
     {
-      return $this->hasMany('App\ConsumoAdjunto', 'consumo_id');
+      return $this->morphMany('App\Carpeta', 'carpetable');
+    }
+
+    /**
+     * Obtener los Documentos
+     */
+    public function documentos()
+    {
+      return $this->morphMany('App\Documento', 'documentable');
     }
 
     /**

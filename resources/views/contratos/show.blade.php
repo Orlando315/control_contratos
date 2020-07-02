@@ -20,7 +20,7 @@
     <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @if(Auth::user()->tipo < 2)
-        <a class="btn btn-default btn-sm" href="{{ route('contratos.edit', [$contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('contratos.edit', ['contrato' => $contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif
     </div>
@@ -66,9 +66,9 @@
           <div class="tab-pane active" id="tab-11">
             <div class="panel-body">
               <div class="mb-3">
-                <a class="btn btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'contrato', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                <a class="btn btn-warning btn-sm" href="{{ route('carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                 @if($contrato->documentos->count() < 10)
-                  <a class="btn btn-primary btn-sm" href="{{ route('documentos.createContrato', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                  <a class="btn btn-primary btn-sm" href="{{ route('documentos.create.contratos', ['id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                 @endif
               </div>
               <div class="row icons-box icons-folder">
@@ -119,7 +119,7 @@
                   </div>
                 @empty
                   <div class="col-12">
-                    <h4 class="text-center text-muted">No hay documetos adjuntos</h4>
+                    <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
                   </div>
                 @endforelse
               </div>
@@ -233,7 +233,7 @@
                       <td>{{ $d->patente }}</td>
                       <td>{{ $d->created_at }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('transportes.show', ['id' => $d->transporte_id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('transportes.show', ['transporte' => $d->id] )}}"><i class="fa fa-search"></i></a>
                       </td>
                     </tr>
                   @endforeach

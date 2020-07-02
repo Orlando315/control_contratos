@@ -25,10 +25,10 @@
     <div class="col-md-6">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Agregar documento</h5>          
+          <h5>Agregar documento</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ $route }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('documentos.store.'.$type, ['id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
             <div class="row">
@@ -36,14 +36,16 @@
                 <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
                   <label for="nombre">Nombre: *</label>
                   <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
-                </div>                
+                </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('vencimiento') ? ' has-error' : '' }}">
-                  <label for="vencimiento">Vencimiento:</label>
-                  <input id="vencimiento" class="form-control" type="text" name="vencimiento" value="{{ old('vencimiento') }}" placeholder="dd-mm-yyyy">
-                </div>                
-              </div>
+              @if($type != 'consumos')
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('vencimiento') ? ' has-error' : '' }}">
+                    <label for="vencimiento">Vencimiento:</label>
+                    <input id="vencimiento" class="form-control" type="text" name="vencimiento" value="{{ old('vencimiento') }}" placeholder="dd-mm-yyyy">
+                  </div>
+                </div>
+              @endif
             </div>
 
             <div class="form-group{{ $errors->has('documento') ? ' has-error' : '' }}">
@@ -64,7 +66,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route(($carpeta ? 'carpeta.show' : $type.'.show'), ['id' => ($carpeta ? $carpeta->id : $model->id)]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -80,13 +82,15 @@
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){
-      $('#vencimiento').datepicker({
-        format: 'dd-mm-yyyy',
-        startDate: 'today',
-        language: 'es',
-        keyboardNavigation: false,
-        autoclose: true
-      });
+      @if($type != 'consumos')
+        $('#vencimiento').datepicker({
+          format: 'dd-mm-yyyy',
+          startDate: 'today',
+          language: 'es',
+          keyboardNavigation: false,
+          autoclose: true
+        });
+      @endif
 
       $('#documento').change(function () {
         if(this.files && this.files[0]){

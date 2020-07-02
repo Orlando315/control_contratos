@@ -126,7 +126,7 @@ class Contrato extends Model
      */
     public function documentos()
     {
-      return $this->hasMany('App\Documento');
+      return $this->morphMany('App\Documento', 'documentable');
     }
 
     /**

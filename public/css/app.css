@@ -53,5 +53,5 @@
 }
 
 .form-control::placeholder{
-  opacity: .7;
+  opacity: .7 !important;
 }

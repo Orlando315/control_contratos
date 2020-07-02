@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
-use App\{Carpeta, Contrato, Empleado};
+use App\{Carpeta, Contrato, Empleado, TransporteConsumo};
 
 class CarpetaController extends Controller
 {
@@ -23,13 +23,12 @@ class CarpetaController extends Controller
      *
      * @param  string  $type
      * @param  int  $id
-     * @param  int  $carpeta
+     * @param  \App\Carpeta  $carpeta
      * @return \Illuminate\Http\Response
      */
-    public function create($type, $id, $carpeta = null)
+    public function create($type, $id, Carpeta $carpeta = null)
     {
-      $model = ($type == 'contrato') ? Contrato::findOrFail($id) : Empleado::findOrFail($id);
-      $carpeta = $carpeta ? Carpeta::findOrFail($carpeta) : null;
+      $model = ($type == 'contratos') ? Contrato::findOrFail($id) : ($type == 'empleados' ? Empleado::findOrFail($id) : TransporteConsumo::findOrFail($id));
 
       return view('carpeta.create', compact('type', 'model', 'carpeta'));
     }
@@ -40,19 +39,19 @@ class CarpetaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $type
      * @param  int  $id
-     * @param  int  $carpeta
+     * @param  \App\Carpeta  $carpeta
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $type, $id, $carpeta = null)
+    public function store(Request $request, $type, $id, Carpeta $carpeta = null)
     {
-      $model = ($type == 'contrato') ? Contrato::findOrFail($id) : Empleado::findOrFail($id);
+      $model = ($type == 'contratos') ? Contrato::findOrFail($id) : ($type == 'empleados' ? Empleado::findOrFail($id) : TransporteConsumo::findOrFail($id));
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
       ]);
 
       $newCarpeta = new Carpeta($request->only('nombre'));
       $newCarpeta->empresa_id = Auth::user()->empresa->id;
-      $newCarpeta->carpeta_id = $carpeta;
+      $newCarpeta->carpeta_id = optional($carpeta)->id;
 
       if($model->carpetas()->save($newCarpeta)){
         return redirect()->route('carpeta.show', ['carpeta' => $newCarpeta->id])->with([
