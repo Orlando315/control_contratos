@@ -80,7 +80,7 @@
           @if($consumo->documentos->count() < 10)
             <div class="ibox-tools">
               <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => 'consumos', 'id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-              <a class="btn btn-primary btn-xs" href="{{ route('documentos.create.consumos', ['id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('documentos.create', ['type' => 'consumos', 'id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
             </div>
           @endif
         </div>
@@ -100,34 +100,7 @@
 
           <div class="row">
             @forelse($consumo->documentos as $documento)
-              <div id="adjunto-{{ $documento->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
-                <div class="file m-0 file-options">
-                  <div class="float-right dropdown">
-                    <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
-                    <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
-                      <li>
-                        <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('documentos.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
-                          <i class="fa fa-times" aria-hidden="true"></i> Eliminar
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <a href="{{ route('documentos.download', ['adjunto' => $documento->id]) }}">
-                    <span class="corner"></span>
-
-                    <div class="icon">
-                      <i class="fa {{ $documento->getIconByMime() }}"></i>
-                    </div>
-                    <div class="file-name">
-                      {{ $documento->nombre }}
-                      @if($documento->vencimiento)
-                        <br>
-                        <small><strong>Vencimiento:</strong> {{ $documento->vencimiento }}</small>
-                      @endif
-                    </div>
-                  </a>
-                </div>
-              </div>
+              @include('partials.documentos', ['edit' => true])
             @empty
               <div class="col-12">
                 <h4 class="text-center text-muted">No hay documentos adjuntos</h4>

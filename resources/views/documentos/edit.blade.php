@@ -39,12 +39,20 @@
                   <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $documento->nombre) }}" placeholder="Nombre" required>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('vencimiento') ? ' has-error' : '' }}">
-                  <label for="vencimiento">Vencimiento:</label>
-                  <input id="vencimiento" class="form-control" type="text" name="vencimiento" value="{{ old( 'vencimiento', $documento->vencimiento) }}" placeholder="dd-mm-yyyy">
+
+              @if(!$documento->isType('App\TransporteAdjunto'))
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('vencimiento') ? ' has-error' : '' }}">
+                    <label for="vencimiento">Vencimiento:</label>
+                    <input id="vencimiento" class="form-control" type="text" name="vencimiento" value="{{ old( 'vencimiento', $documento->vencimiento) }}" placeholder="dd-mm-yyyy">
+                  </div>
                 </div>
-              </div>
+              @endif
+            </div>
+
+            <div class="form-group{{ $errors->has('observacion') ? ' has-error' : '' }}">
+              <label for="observacion">Obervación:</label>
+              <input id="observacion" class="form-control" type="text" name="observacion" maxlength="100" value="{{ old('observacion', $documento->observacion) }}" placeholder="Observación">
             </div>
 
             @if(count($errors) > 0)

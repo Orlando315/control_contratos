@@ -21,14 +21,14 @@ class DocumentosController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  string $type
      * @param  int  $id
      * @param  \App\Carpeta  $carpeta
      * @return \Illuminate\Http\Response
      */
-    public function create($id, Carpeta $carpeta = null)
+    public function create($type, $id, Carpeta $carpeta = null)
     {
-      $type = explode('.', Route::currentRouteName())[2];
-      $class = 'App\\'.($type == 'contratos' ? 'Contrato' : ($type == 'empleados' ? 'Empleado' : 'TransporteConsumo'));
+      $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
 
       return view('documentos.create', compact('model', 'carpeta', 'type'));
@@ -38,43 +38,47 @@ class DocumentosController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $type
      * @param  int  $id
      * @param  \App\Carpeta  $carpeta
      * @return bool
      */
-    public function store(Request $request, $id, Carpeta $carpeta = null)
+    public function store(Request $request, $type, $id, Carpeta $carpeta = null)
     {
-      $type = explode('.', Route::currentRouteName())[2];
-      $class = 'App\\'.($type == 'contratos' ? 'Contrato' : ($type == 'empleados' ? 'Empleado' : 'TransporteConsumo'));
+      $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
 
       if($type == 'contratos'){
-        $modelDirectory = '/Contrato'.$model->id;
+        $directory = 'Empresa' . Auth::user()->empresa->id . '/Contrato'.$model->id;
       }
 
       if($type == 'empleados'){
         $class = 'App\Empleado';
-        $modelDirectory = '/Empleado'.$model->id;
+        $directory = 'Empresa' . Auth::user()->empresa->id . '/Empleado'.$model->id;
       }
 
-      if($type == 'consumos'){
-        $modelDirectory = '/Transportes/'.$model->transporte_id;
+      if($type == 'consumos' || $type == 'transportes'){
+        $directory = 'Empresa' . Auth::user()->empresa->id . '/Transportes/'.$model->transporte_id ?? $model->id;
+      }
+
+      if($type == 'inventarios'){
+        $class = 'App\Inventario';
+        $directory = $model->directory();
       }
 
       $this->validate($request, [
-        'nombre' => 'required|string',
+        'nombre' => 'required|string|max:50',
+        'observacion' => 'nullable|string|max:100',
         'documento' => 'required|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'vencimiento' => 'nullable|date_format:d-m-Y'
       ]);
 
-      $documento = new Documento($request->only('nombre', 'vencimiento'));
+      $documento = new Documento($request->only('nombre', 'observacion', 'vencimiento'));
       $documento->mime = $request->documento->getMimeType();
       $documento->empresa_id = Auth::user()->empresa->id;
       $documento->carpeta_id = optional($carpeta)->id;
 
       if($model->documentos()->save($documento)){
-        $directory = 'Empresa' . Auth::user()->empresa->id . $modelDirectory;
-
         if(!Storage::exists($directory)){
           Storage::makeDirectory($directory);
         }
@@ -85,7 +89,7 @@ class DocumentosController extends Controller
         $redirect = $carpeta ? route('carpeta.show', ['carpeta' => $carpeta]) : route($type.'.show', ['id' => $model->id]);
 
         return redirect($redirect)->with([
-          'flash_message' => 'Documento agregado exitosamente.',
+          'flash_message' => 'Adjunto agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }
@@ -130,15 +134,15 @@ class DocumentosController extends Controller
     {
       $this->validate($request, [
         'nombre' => 'required|string',
+        'observacion' => 'nullable|string|max:100',
         'vencimiento' => 'nullable|date_format:d-m-Y'
       ]);
 
-      $documento->nombre = $request->nombre;
-      $documento->vencimiento = $request->vencimiento;
+      $documento->fill($request->only('nombre', 'observacion', 'vencimiento'));
 
       if($documento->save()){        
         return redirect($documento->backUrl)->with([
-          'flash_message' => 'Documento editado exitosamente.',
+          'flash_message' => 'Adjunto editado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }

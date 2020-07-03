@@ -28,7 +28,7 @@
           <h5>Agregar documento</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('documentos.store.'.$type, ['id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('documentos.store', ['type' => $type, 'id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
             <div class="row">
@@ -46,6 +46,11 @@
                   </div>
                 </div>
               @endif
+            </div>
+
+            <div class="form-group{{ $errors->has('observacion') ? ' has-error' : '' }}">
+              <label for="observacion">Obervación:</label>
+              <input id="observacion" class="form-control" type="text" name="observacion" maxlength="100" value="{{ old('observacion') }}" placeholder="Observación">
             </div>
 
             <div class="form-group{{ $errors->has('documento') ? ' has-error' : '' }}">

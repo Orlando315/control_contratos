@@ -62,6 +62,43 @@
     </div>
 
     <div class="col-md-9">
+      <div class="ibox mb-3">
+        <div class="ibox-title">
+          <h5>Adjuntos</h5>
+
+          @if($transporte->documentos->count() < 10)
+            <div class="ibox-tools">
+              <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+            </div>
+          @endif
+        </div>
+        <div class="ibox-content">
+          <div class="row icons-box icons-folder">
+            @foreach($transporte->carpetas()->main()->get() as $carpeta)
+              <div class="col-md-3 col-xs-4 infont mb-3">
+                <a href="{{ route('carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                  <i class="fa fa-folder" aria-hidden="true"></i>
+                  <p class="m-0">{{ $carpeta->nombre }}</p>
+                </a>
+              </div>
+            @endforeach
+          </div>
+
+          <hr class="hr-line-dashed">
+
+          <div class="row">
+            @forelse($transporte->documentos as $documento)
+              @include('partials.documentos', ['edit' => true])
+            @empty
+              <div class="col-12">
+                <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
+              </div>
+            @endforelse
+          </div>
+        </div>
+      </div>
+
       <div class="tabs-container">
         <ul class="nav nav-tabs">
           <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-clipboard"></i> Contratos</a></li>
@@ -224,6 +261,30 @@
       </div>
     </div>
   @endif
+
+  <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="delete-file-form" action="#" method="POST">
+          {{ method_field('DELETE') }}
+          {{ csrf_field() }}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="delFileModalLabel">Eliminar Adjunto</h4>
+          </div>
+          <div class="modal-body">
+            <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('script')
@@ -243,6 +304,40 @@
 
         $('#destroyContrato').attr('action', `{{ route('transportes.show', ['transportes' => $transporte->id]) }}/delete/${contrato}`)
       })
+
+      $('#delFileModal').on('show.bs.modal', function(e){
+        let button = $(e.relatedTarget),
+            action = button.data('url');
+
+        $('#delete-file-form').attr('action', action);
+      });
+
+      $('#delete-file-form').submit(deleteFile);
     });
+
+    function deleteFile(e){
+      e.preventDefault();
+
+      let form = $(this),
+          action = form.attr('action');
+
+      $.ajax({
+        type: 'POST',
+        url: action,
+        data: form.serialize(),
+        dataType: 'json',
+      })
+      .done(function(r){
+        if(r.response){
+          $('#adjunto-' + r.id).remove();
+          $('#delFileModal').modal('hide');
+        }else{
+          $('.alert').show().delay(7000).hide('slow');
+        }
+      })
+      .fail(function(){
+        $('.alert').show().delay(7000).hide('slow');
+      })
+    }
   </script>
 @endsection

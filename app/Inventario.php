@@ -93,6 +93,22 @@ class Inventario extends model
     }
 
     /**
+     * Obtener las Carpetas
+     */
+    public function carpetas()
+    {
+      return $this->morphMany('App\Carpeta', 'carpetable');
+    }
+
+    /**
+     * Obtener los Documentos
+     */
+    public function documentos()
+    {
+      return $this->morphMany('App\Documento', 'documentable');
+    }
+
+    /**
      * Obtener el atributo formateado
      *
      * @return string

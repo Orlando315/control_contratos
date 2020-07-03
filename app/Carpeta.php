@@ -124,6 +124,42 @@ class Carpeta extends Model
         case 'App\TransporteConsumo':
           return 'consumos';
           break;
+        case 'App\Transporte':
+          return 'transportes';
+          break;
+        case 'App\Inventario':
+          return 'inventarios';
+          break;
       }
+    }
+
+    /**
+     * Obtener la clase segun el tipo especificado
+     * 
+     * @param  string  $type
+     * @return string
+     */
+    public static function getModelClass($type)
+    {
+      switch ($type){
+        case 'contratos':
+          return 'App\Contrato';
+          break;
+        case 'empleados':
+          return 'App\Empleado';
+          break;
+        case 'consumos':
+          return 'App\TransporteConsumo';
+          break;
+        case 'transportes':
+          return 'App\Transporte';
+          break;
+        case 'inventarios':
+          return 'App\Inventario';
+          break;
+        default:
+          abort(404);
+        break;
+      } 
     }
 }

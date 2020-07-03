@@ -55,3 +55,7 @@
 .form-control::placeholder{
   opacity: .7 !important;
 }
+
+.file .file-name{
+  word-wrap: break-word;
+}

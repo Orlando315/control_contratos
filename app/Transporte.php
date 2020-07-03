@@ -59,4 +59,20 @@ class Transporte extends Model
     {
       return $this->hasMany('App\TransporteConsumo');
     }
+
+    /**
+     * Obtener las Carpetas
+     */
+    public function carpetas()
+    {
+      return $this->morphMany('App\Carpeta', 'carpetable');
+    }
+
+    /**
+     * Obtener los Documentos
+     */
+    public function documentos()
+    {
+      return $this->morphMany('App\Documento', 'documentable');
+    }
 }

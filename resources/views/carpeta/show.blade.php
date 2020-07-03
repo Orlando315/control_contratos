@@ -55,7 +55,7 @@
           <div class="ibox-tools">
             <a class="btn btn-warning btn-xs" href="{{ route('carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
               @if($carpeta->carpetable->documentos()->count() < 10)
-                <a class="btn btn-primary btn-xs" href="{{ route('documentos.create.'.$carpeta->type(), ['id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                <a class="btn btn-primary btn-xs" href="{{ route('documentos.create', ['type' => $carpeta->type(),'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
               @endif
           </div>
         </div>
@@ -73,39 +73,7 @@
           <hr class="hr-line-dashed">
           <div class="row">
             @forelse($carpeta->documentos as $documento)
-              <div id="file-{{ $documento->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
-                <div class="file m-0 file-options">
-                  <div class="float-right dropdown">
-                    <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
-                    <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
-                      <li>
-                        <a title="Editar documento" href="{{ route('documentos.edit', ['id' => $documento->id]) }}">
-                          <i class="fa fa-pencil" aria-hidden="true"></i> Editar
-                        </a>
-                      </li>
-                      <li>
-                        <a class="btn-delete-file" type="button" title="Eliminar archivo" data-file="{{ $documento->id }}" data-toggle="modal" data-target="#delFileModal">
-                          <i class="fa fa-times" aria-hidden="true"></i> Eliminar
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <a href="{{ route('documentos.download', ['id' => $documento->id]) }}">
-                    <span class="corner"></span>
-
-                    <div class="icon">
-                      <i class="fa {{ $documento->getIconByMime() }}"></i>
-                    </div>
-                    <div class="file-name">
-                      {{ $documento->nombre }}
-                      @if($documento->vencimiento)
-                        <br>
-                        <small><strong>Vencimiento:</strong> {{ $documento->vencimiento }}</small>
-                      @endif
-                    </div>
-                  </a>
-                </div>
-              </div>
+              @include('partials.documentos', ['edit' => true])
             @empty
             <div class="col-12">
               <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
@@ -179,8 +147,7 @@
     $(document).ready(function(){
       $('#delFileModal').on('show.bs.modal', function(e){
         var button = $(e.relatedTarget),
-            file   = button.data('file'),
-            action = '{{ route("documentos.index") }}/' + file;
+            action = button.data('url');
 
         $('#delete-file-form').attr('action', action);
       });
@@ -202,7 +169,7 @@
       })
       .done(function(r){
         if(r.response){
-          $('#file-' + r.id).remove();
+          $('#adjunto-' + r.id).remove();
           $('#delFileModal').modal('hide');
         }else{
           $('.alert').show().delay(7000).hide('slow');

@@ -28,7 +28,8 @@ class CarpetaController extends Controller
      */
     public function create($type, $id, Carpeta $carpeta = null)
     {
-      $model = ($type == 'contratos') ? Contrato::findOrFail($id) : ($type == 'empleados' ? Empleado::findOrFail($id) : TransporteConsumo::findOrFail($id));
+      $class = Carpeta::getModelClass($type);
+      $model = $class::findOrFail($id);
 
       return view('carpeta.create', compact('type', 'model', 'carpeta'));
     }
@@ -44,7 +45,9 @@ class CarpetaController extends Controller
      */
     public function store(Request $request, $type, $id, Carpeta $carpeta = null)
     {
-      $model = ($type == 'contratos') ? Contrato::findOrFail($id) : ($type == 'empleados' ? Empleado::findOrFail($id) : TransporteConsumo::findOrFail($id));
+      $class = Carpeta::getModelClass($type);
+      $model = $class::findOrFail($id);
+
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
       ]);

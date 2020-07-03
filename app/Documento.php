@@ -24,6 +24,7 @@ class Documento extends Model
       'empresa_id',
       'carpeta_id',
       'nombre',
+      'observacion',
       'path',
       'mime',
       'vencimiento',
@@ -111,6 +112,17 @@ class Documento extends Model
     public function documentable()
     {
       return $this->morphTo();
+    }
+
+    /**
+     * Evaluar si la Carpeta pertenece a la clase especificada
+     *
+     * @param  string  $type
+     * @return bool
+     */
+    public function isType($type)
+    {
+      return $this->carpetable_type == $type;
     }
 
     /**
