@@ -48,8 +48,10 @@
 /*
   Igualar borde al resto de los inputs
  */
+.custom-file-label,
+.custom-file-label:after,
 .select2-container--bootstrap4 .select2-selection{
-  border-radius: 0;
+  border-radius: 0 !important;
 }
 
 .form-control::placeholder{
@@ -58,4 +60,30 @@
 
 .file .file-name{
   word-wrap: break-word;
+}
+
+/* Custom check with error */
+.custom-checkbox.has-error .custom-control-label:before{
+  border-color: #ed5565 !important;
+}
+/* Igualar apriencia al resto de los inputs */
+.custom-file-label,
+.custom-file-label:after{
+  overflow: hidden;
+}
+.custom-file-label{
+  color: rgba(108, 117, 125, .7) !important;
+  border: 1px solid #e5e6e7 !important;
+}
+
+/* Igualar tamaño a los input-sm*/
+.custom-file-input.input-sm ~ .custom-file-label,
+.custom-file-input.input-sm ~ .custom-file-label:after{
+  padding: 6px 12px !important;
+}
+.custom-file-input.input-sm ~ .custom-file-label:after{
+  height: calc(1.3em + .75rem) !important;
+}
+.custom-file-input.input-sm ~ .custom-file-label{
+  height: calc(1.3em + .75rem + 2px) !important;
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
 use App\{Anticipo, Contrato};
 
@@ -45,13 +45,27 @@ class AnticiposController extends Controller
       $this->validate($request, [
         'empleado_id' => 'required',
         'fecha' => 'required|date_format:d-m-Y',
-        'anticipo' => 'required|numeric',
+        'anticipo' => 'required|numeric|min:1|max:99999999',
+        'bono' => 'nullable|numeric|min:1|max:99999999',
+        'descripcion' => 'nullable|string|max:200',
+        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
       $anticipo = new Anticipo($request->all());
       $anticipo->contrato_id = $contrato->id;
 
-      if($anticipo = Auth::user()->empresa->anticipos()->save($anticipo)){
+      if(Auth::user()->empresa->anticipos()->save($anticipo)){
+        if($request->hasFile('adjunto')){
+          $directory = $anticipo->directory;
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          $anticipo->adjunto = $request->file('adjunto')->store($directory);
+          $anticipo->save();
+        }
+
         return redirect()->route('anticipos.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo agregado exitosamente.',
           'flash_class' => 'alert-success'
@@ -98,14 +112,30 @@ class AnticiposController extends Controller
     {
       $this->validate($request, [
         'fecha' => 'required|date_format:d-m-Y',
-        'anticipo' => 'required|numeric',
+        'anticipo' => 'required|numeric|min:1|max:99999999',
+        'bono' => 'nullable|numeric|min:1|max:99999999',
+        'descripcion' => 'nullable|string|max:200',
+        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $contrato = $anticipo->contrato_id;
-      $anticipo->fill($request->all());
-      $anticipo->contrato_id = $contrato;
+      $anticipo->fill($request->only('fecha', 'anticipo', 'bono', 'adjunto', 'descripcion'));
 
       if($anticipo->save()){
+        if($request->hasFile('adjunto')){
+          $directory = $anticipo->directory;
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          if($anticipo->adjunto){
+            Storage::delete($anticipo->adjunto);
+          }
+
+          $anticipo->adjunto = $request->file('adjunto')->store($directory);
+          $anticipo->save();
+        }
+
         return redirect()->route('anticipos.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo modificado exitosamente.',
           'flash_class' => 'alert-success'
@@ -128,6 +158,10 @@ class AnticiposController extends Controller
     public function destroy(Anticipo $anticipo)
     {
       if($anticipo->delete()){
+        if($anticipo->adjunto){
+          Storage::delete($anticipo->adjunto);
+        }
+
         return redirect()->route('anticipos.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Anticipo eliminado exitosamente.'
@@ -186,25 +220,44 @@ class AnticiposController extends Controller
       
       $this->validate($request, [
         'fecha' => 'required|date_format:d-m-Y',
+        'empleados.*.anticipo' => 'required|numeric|min:0|max:99999999',
+        'empleados.*.bono' => 'nullable|numeric|min:0|max:99999999',
+        'empleados.*.descripcion' => 'nullable|string|max:200',
+        'empleados.*.adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $data = json_decode($request->empleados, true);
-
-      if(count($data) == 0){
+      if(count($request->empleados) == 0){
         return redirect()->back()
                   ->withErrors('No se encontro información de los empleados.')
                   ->withInput();
       }
 
       $anticipos = [];
+      $files = [];
 
-      foreach ($data as $id => $anticipo) {
-        $anticipos[] = [
+      foreach ($request->empleados as $id => $anticipo) {
+        $data = [
           'contrato_id' => $contrato->id,
           'empleado_id' => $id,
           'fecha' => $request->fecha,
-          'anticipo' => $anticipo
+          'anticipo' => $anticipo['anticipo'],
+          'bono' => $anticipo['bono'],
+          'descripcion' => $anticipo['descripcion'],
         ];
+
+        if($request->hasFile('empleados.'.$id.'.adjunto')){
+          $directory = 'Empresa'.$contrato->empresa_id.'/Empleado'.$id.'/Anticipos';
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          $path = $request->empleados[$id]['adjunto']->store($directory);
+          $files[] = $path;
+          $data['adjunto'] = $path;
+        }
+
+        $anticipos[] = $data;
       }
 
       if(Auth::user()->empresa->anticipos()->createMany($anticipos)){
@@ -214,6 +267,9 @@ class AnticiposController extends Controller
           ]);
       }
 
+      // Si ocurre un error, eliminar adjuntos cargados
+      Storage::delete($files);
+
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
@@ -221,4 +277,18 @@ class AnticiposController extends Controller
         ]);
     }
 
+    /**
+     * Descargar el djunto de Anticipo especificado
+     * 
+     * @param  \App\Anticipo $anticipo
+     * @return \Illuminate\Http\Response
+     */
+    public function download(Anticipo $anticipo)
+    {
+      if(!$anticipo->adjunto || !Storage::exists($anticipo->adjunto)){
+        abort(404);
+      }
+
+      return Storage::download($anticipo->adjunto);
+    }
 }

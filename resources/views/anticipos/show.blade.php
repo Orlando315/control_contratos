@@ -53,6 +53,24 @@
               <b>Anticipo</b>
               <span class="pull-right"> {{ $anticipo->anticipo() }}</span>
             </li>
+            <li class="list-group-item">
+              <b>Bono</b>
+              <span class="pull-right"> {{ $anticipo->bono() }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Descripción</b>
+              <span class="pull-right"> {{ $anticipo->descripcion ?? 'N/A' }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Adjunto</b>
+              <span class="pull-right">
+                @if($anticipo->adjunto)
+                  <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
+                @else
+                  N/A
+                @endif
+              </span>
+            </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $anticipo->created_at }}</small>
             </li>

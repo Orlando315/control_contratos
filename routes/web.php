@@ -139,6 +139,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('anticipos', 'AnticiposController')->except([
       'create'
     ]);
+    Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
     Route::get('anticipos/create/individual', 'AnticiposController@create')->name('anticipos.individual');
     Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
     Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');

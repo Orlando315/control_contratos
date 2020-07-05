@@ -31,8 +31,12 @@
           <h5>Agregar anticipo masivo</h5>
         </div>
         <div class="ibox-content">
-          <form id="form-anticipos" action="{{ route('anticipos.storeMasivo') }}" method="POST">
-            <input id="empleados" type="hidden" name="empleados">
+          <div class="sk-spinner sk-spinner-double-bounce">
+            <div class="sk-double-bounce1"></div>
+            <div class="sk-double-bounce2"></div>
+          </div>
+
+          <form id="form-anticipos" action="{{ route('anticipos.storeMasivo') }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
             <div class="row">
@@ -45,15 +49,17 @@
                       <option value="{{ $contrato->id }}"{{ old('contrato') == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
                     @endforeach
                   </select>
-                </div>                
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
                   <label for="fecha">Fecha: *</label>
                   <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha') }}" placeholder="dd-mm-yyyy" required>
-                </div>                
+                </div>
               </div>
             </div>
+
+            <p class="text-center text-muted">Formatos permitidos para adjuntos: jpg, jpeg, png, pdf, txt, xlsx, docx</p>
 
             <fieldset>
               <legend style="border-bottom: none">Empleados</legend>
@@ -61,9 +67,15 @@
               <table class="table table-sm table-bordered table-condensed table-anticipos">
                 <thead>
                   <tr>
-                    <th>Empleado</th>
-                    <th>Anticipo</th>
-                    <th></th>
+                    <th class="align-middle">Empleado</th>
+                    <th class="align-middle">Anticipo</th>
+                    <th class="align-middle">Bono</th>
+                    <th class="text-center align-middle">
+                      <div class="custom-control custom-checkbox">
+                        <input id="check-master" class="custom-control-input" type="checkbox">
+                        <label for="check-master" class="custom-control-label"></label>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="tbody-empleados">
@@ -97,24 +109,41 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
+    const IBOX  = $('.ibox-content');
     let tbody = $('#tbody-empleados')
     let submit = $('#btn-submit')
-    let empleados = {}
-    let empleadosField = $('#empleados')
     let createElement = function(id, name, anticipo){
       return `<tr>
-                <td>${name}</td>
-                <td>
+                <td class="align-middle">${name}</td>
+                <td class="align-middle">
                   <div class="form-group m-0">
-                    <input id="empleado_${id}" data-id="${id}" class="form-control input-sm input-anticipo" type="number" value="${anticipo}" required>
+                    <input class="form-control input-sm" type="number" name="empleados[${id}][anticipo]" min="0" max="99999999" value="${anticipo}" required>
                   </div>
                 </td>
-                <td>
-                  <div class="checkbox">
-                    <label class="container-checkbox m-0">
-                      <input type="checkbox">
-                      <span class="checkmark-check"></span>
-                    </label>
+                <td class="align-middle">
+                  <div class="form-group m-0">
+                    <input class="form-control input-sm" type="number" name="empleados[${id}][bono]" min="0" max="99999999" value="0">
+                  </div>
+                </td>
+                <td rowspan="2" class="text-center align-middle">
+                  <div class="custom-control custom-checkbox m-0">
+                    <input id="check-${id}" class="custom-control-input empleados-check" type="checkbox">
+                    <label class="custom-control-label" for="check-${id}"></label>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="align-middle">
+                  <div class="form-group m-0">
+                    <input class="form-control input-sm" type="text" name="empleados[${id}][descripcion]" maxlength="200" placeholder="Agregar descripción">
+                  </div>
+                </td>
+                <td class="align-middle">
+                  <div class="form-group m-0">
+                    <div class="custom-file">
+                      <input id="adjunto-${id}" class="custom-file-input input-sm" type="file" name="empleados[${id}][adjunto]" data-msg-placeholder="Adjunto" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                      <label class="custom-file-label" for="adjunto-${id}">Adjunto</label>
+                    </div>
                   </div>
                 </td>
               </tr>`
@@ -129,56 +158,91 @@
         autoclose: true
       });
 
-      $('#contrato').change(getEmpleados)
-      $('#contrato').change()
-
       $('#contrato').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       })
 
-      $('#tbody-empleados').on('change', '.input-anticipo', updateEmpleadosInfo)
+      $('#contrato').change(getEmpleados)
+      $('#contrato').change()
 
-      $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
+      $('#tbody-empleados').on('click', '.empleados-check', function(){
         if($(this).is(':checked')){
-          $(this).closest('div.checkbox').removeClass('has-error');
+          $(this).closest('.custom-checkbox').removeClass('has-error');
         }
+
+        toggleMasterState()
+      })
+
+      $('#check-master').click(function () {
+        let isChecked = $(this).is(':checked')
+        
+        $('.empleados-check').prop('checked', isChecked)
+        $('.empleados-check').closest('.custom-checkbox').toggleClass('has-error', false);
       })
 
       $('#form-anticipos').submit(function(e){
         e.preventDefault();
-        let checkboxs = $('#tbody-empleados input[type="checkbox"]');
-        let counter = 0;
-        $.each(checkboxs, function(k, v){
-          if(!$(v).is(':checked')){
-            counter++
-          }
+        let checkboxs = $('.empleados-check')
 
-          $(v).closest('div.checkbox').toggleClass('has-error', !$(v).is(':checked'));
-        })
+        checkboxs.filter(':checked').closest('.custom-checkbox').toggleClass('has-error', false);
+        checkboxs.not(':checked').closest('.custom-checkbox').toggleClass('has-error', true);
 
-        if(counter == 0){
+        if(checkboxs.length == checkboxs.filter(':checked').length){
           e.currentTarget.submit();
         }else{
           $('.alert ul').empty().append(`<li>Debe marcar a todos los empleados antes de continuar.</li>`)
           $('.alert').show().delay(5000).hide('slow')
         }
       })
+
+      $('#tbody-empleados').on('change', '.custom-file-input', function () {
+        if(this.files && this.files[0]){
+          let file = this.files[0];
+          let id = $(this).attr('id');
+
+          if([
+              'image/png',
+              'image/jpeg',
+              'text/plain',
+              'application/pdf',
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ]
+            .includes(file.type)) {
+            changeLabel(id, file.name)
+          }else{
+            changeLabel(id, 'Seleccionar')
+            showAlert(id, 'El archivo no es de un tipo admitido.')
+          }
+        }
+      })
+
+      toggleMasterState()
     });
 
-    function updateEmpleadosInfo(){
-      let input = $(this),
-          id = input.data('id'),
-          anticipo = input.val();
+    function toggleMasterState(){
+      let checkboxs = $('.empleados-check')
+      let checked = checkboxs.filter(':checked').length
 
-      empleados[id] = anticipo * 1;
-      empleadosField.val(JSON.stringify(empleados))
+      if(checked > 0 && checked == checkboxs.length){
+        $('#check-master').prop('indeterminate', false)
+        $('#check-master').prop('checked', true)
+      }else if(checked > 0 && checked < checkboxs.length){
+        $('#check-master').prop('checked', false)
+        $('#check-master').prop('indeterminate', true)
+      }else{
+        $('#check-master').prop('indeterminate', false)
+        $('#check-master').prop('checked', false)
+      }
     }
 
     function getEmpleados(){
       let contrato = $(this).val();
 
       if(contrato == '') return;
+
+      IBOX.toggleClass('sk-loading', true);
 
       $.ajax({
         type: 'POST',
@@ -190,13 +254,10 @@
       })
       .done(function(data){
         tbody.empty()
-        empleados = {}
 
         if(data.length > 0){
           $.each(data, function(k, v){
             let anticipo = v.latest_anticipo ? v.latest_anticipo.anticipo : 0;
-
-            empleados[v.id] = anticipo
 
             let name = `${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`
             let element = createElement(v.id, name, anticipo)
@@ -212,12 +273,22 @@
       })
       .fail(function(){
         tbody.empty()
-        empleados = {}
         submit.prop('disabled', false)
       })
-      .always(function(){
-        empleadosField.val(JSON.stringify(empleados))
+      .always(function () {
+        IBOX.toggleClass('sk-loading', false);
       })
+    }
+
+    // Cambiar el nombre del label del input file, y colocar el nombre del archivo
+    function changeLabel(id, name){
+      $(`#${id}`).siblings(`label[for="${id}"]`).text(name);
+    }
+
+    function showAlert(id, error = 'Ha ocurrido un error'){
+      $('.alert ul').empty().append(`<li>${error}</li>`)
+      $('.alert').show().delay(5000).hide('slow')
+      $(`#${id}`).val('')
     }
   </script>
 @endsection

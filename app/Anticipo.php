@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Scopes\EmpresaScope;
+use App\Scopes\{EmpresaScope, LatestScope};
 
 class Anticipo extends Model
 {
@@ -23,7 +23,10 @@ class Anticipo extends Model
       'contrato_id',
       'empleado_id',
       'fecha',
-      'anticipo'
+      'anticipo',
+      'bono',
+      'descripcion',
+      'adjunto',
     ];
 
     /**
@@ -36,6 +39,7 @@ class Anticipo extends Model
       parent::boot();
 
       static::addGlobalScope(new EmpresaScope);
+      static::addGlobalScope(new LatestScope);
     }
 
     /**
@@ -58,6 +62,27 @@ class Anticipo extends Model
     public function getFechaAttribute($value)
     {
       return date('d-m-Y', strtotime($value));
+    }
+
+    /**
+     * Obtener directorio para los adjuntos
+     * 
+     * @param  string  $value
+     * @return string
+     */
+    public function getDirectoryAttribute()
+    {
+      return 'Empresa'.$this->empresa_id.'/Empleado'.$this->empleado_id.'/Anticipos';
+    }
+
+    /**
+     * Obtener el enlace de descarga del adjunto
+     * 
+     * @return string
+     */
+    public function getAdjuntoDownloadAttribute()
+    {
+      return $this->adjunto ? route('anticipos.download', ['anticipo' => $this->id]) : null;
     }
 
     /**
@@ -85,10 +110,18 @@ class Anticipo extends Model
     }
 
     /**
-     * Obtener el Anticipo
+     * Obtener el atributo formateado
      */
     public function anticipo()
     {
       return number_format($this->anticipo, 0, ',', '.');
+    }
+
+    /**
+     * Obtener el atributo formateado
+     */
+    public function bono()
+    {
+      return number_format($this->bono, 0, ',', '.');
     }
 }

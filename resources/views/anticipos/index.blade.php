@@ -48,6 +48,7 @@
                 <th class="text-center">Empleado</th>
                 <th class="text-center">Fecha</th>
                 <th class="text-center">Anticipo</th>
+                <th class="text-center">Agregado</th>
                 <th class="text-center">Acción</th>
               </tr>
             </thead>
@@ -59,6 +60,7 @@
                   <td><a href="{{ route('empleados.show', ['empleado' => $d->empleado->id]) }}">{{ $d->empleado->usuario->nombres }} {{ $d->empleado->usuario->apellidos }}</a></td>
                   <td>{{ $d->fecha }}</td>
                   <td>{{ $d->anticipo() }}</td>
+                  <td>{{ optional($d->created_at)->format('d-m-Y H:i:s') }}</td>
                   <td>
                     <a class="btn btn-success btn-xs" href="{{ route('anticipos.show', ['anticipo' => $d->id] )}}"><i class="fa fa-search"></i></a>
                     <a class="btn btn-primary btn-xs" href="{{ route('anticipos.edit', ['anticipo' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
