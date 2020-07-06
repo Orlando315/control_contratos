@@ -100,11 +100,11 @@
                     @foreach($documentosDeContratosPorVencer as $d)
                       <tr>
                         <td>{{ $loop->index + 1 }}</td>
-                        <td>{{ $d->contrato->nombre }}</td>
+                        <td>{{ $d->documentable->nombre }}</td>
                         <td>{{ $d->nombre }}</td>
                         <td>{{ $d->vencimiento }}</td>
                         <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('contratos.show', ['contrato' => $d->contrato_id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('contratos.show', ['contrato' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
                         </td>
                       </tr>
                     @endforeach
@@ -174,11 +174,11 @@
                       @foreach($documentosDeEmpleadosPorVencer as $d)
                         <tr>
                           <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $d->empleado->usuario->nombres }}</td>
+                          <td>{{ $d->doumentable->usuario->nombres }}</td>
                           <td>{{ $d->nombre }}</td>
                           <td>{{ $d->vencimiento }}</td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('empleados.show', ['id' => $d->empleado_id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('empleados.show', ['id' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
                           </td>
                         </tr>
                       @endforeach
