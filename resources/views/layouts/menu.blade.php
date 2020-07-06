@@ -4,7 +4,7 @@
       <li class="nav-header">
         <div class="dropdown profile-element">
           <div class="menu-logo-empresa">
-            <img src="{{ Auth::user()->empresa->logo == '' ? Auth::user()->empresa->logo_url : asset('images/logo-small-white.jpg') }}" class="user-image" alt="Logo empresa">
+            <img src="{{ Auth::user()->empresa->logo ? Auth::user()->empresa->logo_url : asset('images/logo-small-white.jpg') }}" class="user-image" alt="Logo empresa">
           </div>
           <a data-toggle="dropdown" class="dropdown-toggle" href="#">
             <span class="block m-t-xs font-bold">{{ Auth::user()->nombres }} {{ Auth::user()->apellidos }}</span>
