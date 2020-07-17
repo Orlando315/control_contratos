@@ -365,15 +365,25 @@ class EmpleadosController extends Controller
     }
 
     /**
-     * Cambiar el tipo del Empleado, si es Supervisor se cambia a Empleado
-     * Y viceversa
-     *
+     * Cambiar el role de un Empleado
+     * 
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Empleado  $empleado
      * @return \Illuminate\Http\Response
      */
-    public function toggleTipo(Empleado $empleado)
+    public function toggleTipo(Request $request, Empleado $empleado)
     {
-      $empleado->usuario->tipo = $empleado->usuario->tipo == 3 ? 4 : 3;
+      if($empleado->usuario->tipo < 2){
+        return redirect()->bacl()->withInput()->with([
+          'flash_message' => 'No se puede cambiar el Role de un Empelado con Usuario Empresa.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+          ]);
+      }
+
+      // No se puede asignar un tipo 1 (Empresa) a un Empleado
+      // Solo un Admin puede cambiar el role de un Empleado a Admin
+      $empleado->usuario->tipo = $request->role > 1 && (Auth::user()->tipo <= $request->role) ? $request->role : 4;
 
       if($empleado->push()){
         return redirect('empleados/' . $empleado->id)->with([
@@ -382,7 +392,7 @@ class EmpleadosController extends Controller
           ]);
       }
 
-      return redirect()->bacl()->withInput()->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true

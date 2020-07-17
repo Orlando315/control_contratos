@@ -33,7 +33,9 @@
       <a class="btn btn-default btn-sm" href="{{ route('contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       <a class="btn btn-default btn-sm" href="{{ route('empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       <a class="btn btn-default btn-sm" href="{{ route('empleados.cambio', [$empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
-      <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> {{ $empleado->usuario->tipo == 3 ? 'Volver Empleado' : 'Ascender a Supervisor' }} </button>
+      @if($empleado->usuario->tipo > 1)
+        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar rol</button>
+      @endif
       <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato</button>
       
       @if($empleado->usuario->tipo > 2 || ($empleado->usuario->tipo <= 2 && Auth::user()->tipo <= 2))
@@ -416,30 +418,48 @@
       </div>
     </div>
   </div>
-
-  <div id="toggleModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="toggleModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
-          {{ method_field('PATCH') }}
-          {{ csrf_field() }}
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="toggleModalLabel">Cambiar de nivel</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de cambiar a {{ $empleado->usuario->tipo == 3 ? 'Empleado' : 'Supervisor' }}?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-success btn-sm" type="submit">Guardar</button>
-          </div>
-        </form>
+  
+  @if($empleado->usuario->tipo > 1)
+    <div id="toggleModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="toggleModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
+            {{ method_field('PATCH') }}
+            {{ csrf_field() }}
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="toggleModalLabel">Cambiar de rol</h4>
+            </div>
+            <div class="modal-body">
+              <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
+                <label>Seleccionar role:</label>
+                @if(Auth::user()->tipo <= 2)
+                  <div class="custom-control custom-radio m-0">
+                    <input id="role-admin" class="custom-control-input" type="radio" name="role" value="2"{{ $empleado->usuario->tipo == 2 ? ' checked' : '' }}>
+                    <label for="role-admin" class="custom-control-label">Administrador</label>
+                  </div>
+                @endif
+                <div class="custom-control custom-radio">
+                  <input id="role-supervisor" class="custom-control-input" type="radio" name="role" value="3"{{ $empleado->usuario->tipo == 3 ? ' checked' : '' }}>
+                  <label for="role-supervisor" class="custom-control-label">Supervisor</label>
+                </div>
+                <div class="custom-control custom-radio">
+                  <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="4"{{ ($empleado->usuario->tipo == 4 || $empleado->usuario->tipo == 5) ? ' checked' : '' }}>
+                  <label for="role-empleado" class="custom-control-label">Empleado</label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-success btn-sm" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endif
 
   <div id="contratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
     <div class="modal-dialog" role="document">
