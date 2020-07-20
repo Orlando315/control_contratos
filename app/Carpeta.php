@@ -92,8 +92,8 @@ class Carpeta extends Model
      */
     public function getBackUrlAttribute()
     {
-      $backModel = route($this->type().'.show', ['id' => $this->carpetable_id]);
-      return $this->carpeta_id ? route('carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
+      $backModel = route('admin.'.$this->type().'.show', ['id' => $this->carpetable_id]);
+      return $this->carpeta_id ? route('admin.carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 
     /**

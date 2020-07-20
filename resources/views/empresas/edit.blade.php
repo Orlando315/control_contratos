@@ -11,7 +11,7 @@
 @section('content')
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <form action="{{ route('empresas.update') }}" method="POST" enctype="multipart/form-data">
+      <form action="{{ route('perfil.update') }}" method="POST" enctype="multipart/form-data">
         {{ method_field('PATCH') }}
         {{ csrf_field() }}
 
@@ -57,7 +57,7 @@
           </div>
           <div class="col-md-6">
             <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-              <label class="form-control" for="jornada">Jornada: *</label>
+              <label for="jornada">Jornada: *</label>
               <select id="jornada" class="form-control" name="jornada" required>
                 <option value="">Seleccione...</option>
                 <option value="5x2"{{ old('jornada', Auth::user()->empresa->configuracion->jornada) == '5x2' ? ' selected' : '' }}>5x2</option>
@@ -107,7 +107,7 @@
         </div>
 
         <div class="form-group text-right">
-          <a class="btn btn-default btn-sm" href="{{ route('usuarios.perfil') }}"><i class="fa fa-reply"></i> Atras</a>
+          <a class="btn btn-default btn-sm" href="{{ route('perfil') }}"><i class="fa fa-reply"></i> Atras</a>
           <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
         </div>
       </form>

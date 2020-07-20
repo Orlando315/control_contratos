@@ -77,7 +77,7 @@
                         <td>{{ $d->valor() }}</td>
                         <td>{{ $d->empleados->count() }}</td>
                         <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('contratos.show', ['contrato' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $d->id] )}}"><i class="fa fa-search"></i></a>
                         </td>
                       </tr>
                     @endforeach
@@ -104,7 +104,7 @@
                         <td>{{ $d->nombre }}</td>
                         <td>{{ $d->vencimiento }}</td>
                         <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('contratos.show', ['contrato' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
                         </td>
                       </tr>
                     @endforeach
@@ -151,7 +151,7 @@
                           <td>{{ $d->fin }}</td>
                           <td>{{ $d->jornada }}</td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('empleados.show', ['empleado' => $d->empleado_id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $d->empleado_id] )}}"><i class="fa fa-search"></i></a>
                           </td>
                         </tr>
                       @endforeach
@@ -178,7 +178,7 @@
                           <td>{{ $d->nombre }}</td>
                           <td>{{ $d->vencimiento }}</td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('empleados.show', ['id' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['id' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
                           </td>
                         </tr>
                       @endforeach
@@ -299,7 +299,7 @@
           eventClick: function(event){
             if(event.id){
               $('#delEventModal').modal('show');
-              $('#delEventForm').attr('action', '{{ route("eventos.index") }}/' + event.id);
+              $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
             }else{
               $('#delEventForm').attr('action', '#');
             }

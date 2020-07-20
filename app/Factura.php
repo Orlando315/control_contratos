@@ -152,7 +152,7 @@ class Factura extends Model
      */
     public function adjunto($adjunto)
     {
-      $link = route('facturas.download', ['factura' => $this->id, 'adjunto' => $adjunto]);
+      $link = route('admin.facturas.download', ['factura' => $this->id, 'adjunto' => $adjunto]);
       return $this->{"adjunto{$adjunto}"} ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
     }
 }

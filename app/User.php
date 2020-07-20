@@ -55,6 +55,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Verificar si el uer puede acceder al area Admin
+     *
+     * @return bool
+     */
+    public function isStaff()
+    {
+      return $this->tipo < 4;
+    }
+
+    /**
      * Verificar si el role especificado
      *
      * @param  int  $role

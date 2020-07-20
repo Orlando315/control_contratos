@@ -15,7 +15,7 @@ class CheckRole
      */
     public function handle($request, Closure $next, $role)
     {
-      if(!$request->user()->checkRole($role)){
+      if(! ($role == 'staff' ? $request->user()->isStaff() : $request->user()->checkRole($role))){
         return redirect('dashboard');
       }
 

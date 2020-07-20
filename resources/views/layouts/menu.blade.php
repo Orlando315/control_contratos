@@ -11,7 +11,7 @@
             <span class="text-muted text-xs block">{{ Auth::user()->usuario }} <b class="caret"></b></span>
           </a>
           <ul class="dropdown-menu animated fadeInRight m-t-xs">
-            <li><a class="dropdown-item" href="{{ route('usuarios.perfil') }}">Perfil</a></li>
+            <li><a class="dropdown-item" href="{{ route('perfil') }}">Perfil</a></li>
             <li class="dropdown-divider"></li>
             <li>
               <form action="{{ route('login.logout') }}" method="POST">
@@ -40,9 +40,9 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('contratos.index') }}">Ver contratos</a></li>
+            <li><a href="{{ route('admin.contratos.index') }}">Ver contratos</a></li>
             @if(Auth::user()->tipo == 1)
-              <li><a href="{{ route('contratos.create') }}">Agregar contrato</a></li>
+              <li><a href="{{ route('admin.contratos.create') }}">Agregar contrato</a></li>
             @endif
           </ul>
         </li>
@@ -53,8 +53,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('plantilla.documento.index') }}">Ver documentos</a></li>
-            <li><a href="{{ route('plantilla.documento.create') }}">Agregar documento</a></li>
+            <li><a href="{{ route('admin.plantilla.documento.index') }}">Ver documentos</a></li>
+            <li><a href="{{ route('admin.plantilla.documento.create') }}">Agregar documento</a></li>
           </ul>
         </li>
         <li>
@@ -64,8 +64,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('plantilla.index') }}">Ver plantillas</a></li>
-            <li><a href="{{ route('plantilla.create') }}">Agregar plantilla</a></li>
+            <li><a href="{{ route('admin.plantilla.index') }}">Ver plantillas</a></li>
+            <li><a href="{{ route('admin.plantilla.create') }}">Agregar plantilla</a></li>
           </ul>
         </li>
         <li>
@@ -75,12 +75,12 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('usuarios.index') }}">Ver usuarios</a></li>
-            <li><a href="{{ route('usuarios.create') }}">Agregar usuario</a></li>
+            <li><a href="{{ route('admin.usuarios.index') }}">Ver usuarios</a></li>
+            <li><a href="{{ route('admin.usuarios.create') }}">Agregar usuario</a></li>
           </ul>
         </li>
         <li>
-          <a href="{{ route('empleados.index') }}">
+          <a href="{{ route('admin.empleados.index') }}">
             <i class="fa fa-address-card"></i> <span class="nav-label">Empleados</span>
           </a>
         </li>
@@ -91,9 +91,9 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('anticipos.index') }}">Ver anticipos</a></li>
-            <li><a href="{{ route('anticipos.individual') }}">Anticipo Individual</a></li>
-            <li><a href="{{ route('anticipos.masivo') }}">Anticipo Masivo</a></li>
+            <li><a href="{{ route('admin.anticipos.index') }}">Ver anticipos</a></li>
+            <li><a href="{{ route('admin.anticipos.individual') }}">Anticipo Individual</a></li>
+            <li><a href="{{ route('admin.anticipos.masivo') }}">Anticipo Masivo</a></li>
           </ul>
         </li>
         <li>
@@ -103,8 +103,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('etiquetas.index') }}">Ver etiquetas</a></li>
-            <li><a href="{{ route('etiquetas.create') }}">Agregar etiqueta</a></li>
+            <li><a href="{{ route('admin.etiquetas.index') }}">Ver etiquetas</a></li>
+            <li><a href="{{ route('admin.etiquetas.create') }}">Agregar etiqueta</a></li>
           </ul>
         </li>
         <li>
@@ -114,8 +114,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('facturas.index') }}">Ver facturas</a></li>
-            <li><a href="{{ route('facturas.create') }}">Agregar factura</a></li>
+            <li><a href="{{ route('admin.facturas.index') }}">Ver facturas</a></li>
+            <li><a href="{{ route('admin.facturas.create') }}">Agregar factura</a></li>
           </ul>
         </li>
         <li>
@@ -125,8 +125,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('gastos.index') }}">Ver gastos</a></li>
-            <li><a href="{{ route('gastos.create') }}">Agregar gasto</a></li>
+            <li><a href="{{ route('admin.gastos.index') }}">Ver gastos</a></li>
+            <li><a href="{{ route('admin.gastos.create') }}">Agregar gasto</a></li>
           </ul>
         </li>
       @endif
@@ -139,8 +139,8 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('inventarios.index') }}">Ver inventarios</a></li>
-            <li><a href="{{ route('inventarios.create') }}">Agregar inventario</a></li>
+            <li><a href="{{ route('admin.inventarios.index') }}">Ver inventarios</a></li>
+            <li><a href="{{ route('admin.inventarios.create') }}">Agregar inventario</a></li>
           </ul>
         </li>
         <li>
@@ -150,9 +150,9 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('transportes.index') }}">Ver transportes</a></li>
+            <li><a href="{{ route('admin.transportes.index') }}">Ver transportes</a></li>
             @if(Auth::user()->tipo <= 2)
-            <li><a href="{{ route('transportes.create') }}">Agregar transporte</a></li>
+            <li><a href="{{ route('admin.transportes.create') }}">Agregar transporte</a></li>
             @endif
           </ul>
         </li>
@@ -166,14 +166,14 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('reportes.general.index') }}">General</a></li>
-            <li><a href="{{ route('reportes.inventarios.index') }}">Inventarios</a></li>
-            <li><a href="{{ route('reportes.facturas.index') }}">Facturas</a></li>
-            <li><a href="{{ route('reportes.eventos.index') }}">Eventos</a></li>
-            <li><a href="{{ route('reportes.sueldos.index') }}">Sueldos</a></li>
-            <li><a href="{{ route('reportes.anticipos.index') }}">Anticipos</a></li>
-            <li><a href="{{ route('reportes.transportes.index') }}">Transportes</a></li>
-            <li><a href="{{ route('reportes.reemplazos.index') }}">Reemplazos</a></li>
+            <li><a href="{{ route('admin.reportes.general.index') }}">General</a></li>
+            <li><a href="{{ route('admin.reportes.inventarios.index') }}">Inventarios</a></li>
+            <li><a href="{{ route('admin.reportes.facturas.index') }}">Facturas</a></li>
+            <li><a href="{{ route('admin.reportes.eventos.index') }}">Eventos</a></li>
+            <li><a href="{{ route('admin.reportes.sueldos.index') }}">Sueldos</a></li>
+            <li><a href="{{ route('admin.reportes.anticipos.index') }}">Anticipos</a></li>
+            <li><a href="{{ route('admin.reportes.transportes.index') }}">Transportes</a></li>
+            <li><a href="{{ route('admin.reportes.reemplazos.index') }}">Reemplazos</a></li>
           </ul>
         </li>
       @endif

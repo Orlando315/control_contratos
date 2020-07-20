@@ -8,9 +8,6 @@
       <h2>Sueldos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('contratos.index') }}">Contratos</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('contratos.show', ['contrato' => $sueldo->contrato_id]) }}">Contrato</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('sueldos.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
         <li class="breadcrumb-item active"><strong>Sueldo</strong></li>
       </ol>
     </div>
@@ -20,7 +17,7 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('sueldos.index', ['contrato' => $sueldo->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
     </div>
   </div>
 
@@ -29,14 +26,6 @@
       <div class="ibox">
         <div class="ibox-content no-padding">
           <ul class="list-group">
-            <li class="list-group-item">
-              <b>Empleado</b>
-              <span class="pull-right">
-                <a href="{{ route('empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
-                  {{ $sueldo->empleado->usuario->nombres }} {{ $sueldo->empleado->usuario->nombres }}
-                </a>
-              </span>
-            </li>
             <li class="list-group-item">
               <b>Mes pagado</b>
               <span class="pull-right">{{ $sueldo->mesPagado() }}</span>

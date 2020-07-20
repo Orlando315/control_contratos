@@ -4,95 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
-use App\{EmpleadosSueldo, Contrato};
+use App\EmpleadosSueldo;
 
 class EmpleadosSueldosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  \App\Contrato  $contrato
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Contrato $contrato)
-    {
-      $sueldos = $contrato->sueldos()->latest()->get();
-
-      return view('sueldos.index', compact('contrato', 'sueldos'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @param  \App\Contrato  $contrato
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Contrato $contrato)
-    {
-      $paymentMonth = $contrato->getPaymentMonth();
-      $empleados = $contrato->empleados()->get();
-
-      return view('sueldos.create', compact('contrato', 'paymentMonth', 'empleados'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Contrato  $contrato
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, Contrato $contrato)
-    {
-      $payments = [];
-      $month = $contrato->getPaymentMonth(true);
-
-      foreach ($contrato->empleados()->get() as $empleado) {
-        $alcanceLiquido = $empleado->getAlcanceLiquido();
-        $asistencias = $empleado->getAsistenciasByMonth($month);
-        $anticipo = $empleado->calculateAnticiposByMonth($month);
-        $bonoReemplazo = $empleado->calculateBonoReemplazoByMonth($month);
-        $sueldoLiquido = $empleado->calculateSueldoLiquido($alcanceLiquido, $asistencias, $anticipo, $bonoReemplazo);
-
-        $adjunto = null;
-
-        if($request->hasFile('empleado.'.$empleado->id)){
-          $directory = 'Empresa' . Auth::user()->empresa_id . '/Sueldos/Empleado'.$empleado->id;
-
-          if(!Storage::exists($directory)){
-            Storage::makeDirectory($directory);
-          }
-
-          $adjunto = $request->file('empleado.'.$empleado->id)->store($directory);
-        }
-
-        $payments[] = [
-          'contrato_id' => $contrato->id,
-          'empleado_id' => $empleado->id,
-          'alcance_liquido' => $alcanceLiquido,
-          'asistencias' => $asistencias,
-          'anticipo' => $anticipo,
-          'bono_reemplazo' => $bonoReemplazo,
-          'sueldo_liquido' => $sueldoLiquido,
-          'adjunto' => $adjunto,
-          'mes_pago' => $month,
-        ];
-      }
-
-      if(Auth::user()->empresa->sueldos()->createMany($payments)){
-        return redirect()->route('sueldos.index', ['contrato' => $contrato->id])->with([
-          'flash_message' => 'Sueldos agregados exitosamente.',
-          'flash_class' => 'alert-success',
-          ]);
-      }
-
-      return redirect()->back()->withInput()->with([
-        'flash_message' => 'Ha ocurrido un error.',
-        'flash_class' => 'alert-danger',
-        'flash_important' => true
-        ]);
-    }
-
     /**
      * Display the specified resource.
      *
@@ -107,40 +22,6 @@ class EmpleadosSueldosController extends Controller
       }
 
       return view('sueldos.show', compact('sueldo'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\EmpleadosSueldo  $sueldo
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(EmpleadosSueldo $sueldo)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\EmpleadosSueldo  $sueldo
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, EmpleadosSueldo $sueldo)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\EmpleadosSueldo  $sueldo
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(EmpleadosSueldo $sueldo)
-    {
-        //
     }
 
     /**

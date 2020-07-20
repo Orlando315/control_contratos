@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Usuario;
-use App\Contrato;
-use App\Inventario;
-use App\EmpleadosContrato;
-use App\Documento;
+use App\{Usuario, Contrato, Inventario, EmpleadosContrato, Documento};
+use App\Scopes\EmpresaScope;
 
 class HomeController extends Controller
 {
@@ -36,5 +32,30 @@ class HomeController extends Controller
         'empleadosContratosPorVencer' => $empleadosContratosPorVencer,
         'documentosDeEmpleadosPorVencer' => $documentosDeEmpleadosPorVencer,
       ]);
-    }    
+    }
+
+    /**
+     * Cronjob para generar las asistencias de los Empleados
+     *
+     * @param  \App\Empleado  $empleado
+     */
+    public function cronjobAsistencias(){
+      $empleados = Empleado::withoutGlobalScope(EmpresaScope::class)->get();
+      $today = date('Y-m-d');
+
+      foreach($empleados as $empleado){
+        if($empleado->isWorkDay()){
+          $eventosExists = $empleado->eventsToday()->exists();          
+          
+          $empleado->eventos()->firstOrCreate([
+            'inicio' => $today,
+            'tipo' =>  1,
+            'jornada' => $empleado->contratos->last()->jornada
+          ],[
+            'comida' => !$eventosExists,
+            'pago' => !$eventosExists
+          ]);
+        }
+      }
+    }
 }

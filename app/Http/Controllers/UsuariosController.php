@@ -3,23 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Usuario;
+use Illuminate\Support\Facades\{Auth, Storage};
+use App\{Usuario, Empresa, ConfiguracionEmpresa};
 
 class UsuariosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-      $usuarios  = Usuario::adminsYSupervisores();
-
-      return view('usuarios.index', ['usuarios' => $usuarios]);
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -27,7 +15,7 @@ class UsuariosController extends Controller
      */
     public function create()
     {
-      return view('usuarios.create');
+      return view('usuario.create');
     }
 
     /**
@@ -40,107 +28,37 @@ class UsuariosController extends Controller
     {
       $this->validate($request, [
         'nombres' => 'required|string',
-        'apellidos' => 'required|string',
-        'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut',
-        'email' => 'nullable|email|unique:users,email',
-        'telefono' => 'nullable|string'
+        'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut',
+        'representante' => 'required|string',
+        'email' => 'required|email|unique:users,email',
+        'telefono' => 'required',
+        'jornada' => 'required',
+        'password' => 'required|min:6|confirmed',
+        'password_confirmation' => 'required'
       ]);
 
-      $usuario = new Usuario($request->all());
-      $usuario->usuario = $request->rut;
-      $usuario->tipo = 2; // Administrador
-      $usuario->password = bcrypt($request->rut);
+      $empresa = new Empresa($request->all());
 
-      if($usuario = Auth::user()->empresa->usuario()->save($usuario)){
-        return redirect('usuarios/' . $usuario->id)->with([
-          'flash_message' => 'Usuario agregado exitosamente.',
+      if($empresa->save()){
+        $user = new Usuario($request->all());
+        $user->tipo = 1;
+        $user->usuario = $request->rut;
+        $user->password = bcrypt($request->input('password'));
+        $empresa->usuario()->save($user);
+
+        $empresa->configuracion()->create($request->all());        
+
+        return redirect()->route('login.view')->with([
+          'flash_message' => 'Registro completado con exito.',
           'flash_class' => 'alert-success'
           ]);
       }
-      
-      return redirect('usuarios/create')->with([
+
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
         ]);
-  }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Ususario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Usuario $usuario)
-    {
-      return view('usuarios.show', ['usuario' => $usuario]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Ususario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Usuario $usuario)
-    {
-      return view('usuarios.edit', ['usuario' => $usuario]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Usuario $usuario)
-    {
-      $this->validate($request, [
-        'nombres' => 'required|string',
-        'apellidos' => 'required|string',
-        'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut,' . $usuario->id . ',id',
-        'email' => 'nullable|email|unique:users,email,' . $usuario->id . ',id',
-        'telefono' => 'nullable|string'
-      ]);
-
-      $usuario->fill($request->all());
-      $usuario->usuario = $request->rut;
-
-      if($usuario->save()){
-        return redirect('usuarios/' . $usuario->id)->with([
-          'flash_message' => 'Usuario modificado exitosamente.',
-          'flash_class' => 'alert-success'
-          ]);
-      }else{
-        return redirect('usuarios/' . $usuario->id)->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
-      }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Usuario $usuario)
-    {
-      if($usuario->delete()){
-        return redirect('usuarios')->with([
-          'flash_class'   => 'alert-success',
-          'flash_message' => 'Usuario eliminado exitosamente.'
-        ]);
-      }else{
-        return redirect('usuarios')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
-      }
     }
 
     /**
@@ -151,7 +69,7 @@ class UsuariosController extends Controller
      */
     public function perfil()
     {
-      return view('usuarios.perfil');
+      return view('usuario.perfil');
     }
 
     /**
@@ -160,9 +78,9 @@ class UsuariosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function editPerfil()
+    public function edit()
     {
-      return view('usuarios.editPerfil');
+      return view('usuario.edit');
     }
     /**
      * Actualizar informacion del Usuario en sesion
@@ -170,59 +88,63 @@ class UsuariosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function updatePerfil(Request $request)
+    public function update(Request $request)
     {
       $this->validate($request, [
         'nombres' => 'required|string',
-        'apellidos' => 'required|string',
-        'email' => 'nullable|email|unique:users,email,' . Auth::user()->id . ',id',
-        'telefono' => 'nullable'
+        'email' => 'required|email|unique:users,email,' . Auth::user()->id . ',id',
+        'telefono' => 'required'
       ]);
 
-      $usuario = Usuario::find(Auth::user()->id);
-      $usuario->fill($request->all());
+      // Para Supervisores y Empleados
+      if(Auth::user()->tipo > 2){
+        $this->validate($request, [
+          'apellidos' => 'required|string',
+        ]);
+      }
+      
+      // Para Administradores
+      if(Auth::user()->tipo <= 2){
+        $this->validate($request, [
+          'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut,' . Auth::user()->id . ',id',
+          'representante' => 'required|string',
+          'jornada' => 'required',
+          'dias_vencimiento' => 'nullable|integer|min:1|max:255',
+          'logo' => 'nullable|file|mimes:jpeg,png|max:3000'
+        ]);
 
-      if($usuario->save()){
-        return redirect('perfil')->with([
+        Auth::user()->empresa->fill($request->only('nombres', 'representante'));
+        Auth::user()->empresa->configuracion->jornada = $request->jornada;
+        Auth::user()->empresa->configuracion->dias_vencimiento = $request->dias_vencimiento;
+        Auth::user()->empresa->usuario->usuario = $request->rut;
+      }
+
+      Auth::user()->nombres = $request->nombres;
+      Auth::user()->email = $request->email;
+      Auth::user()->telefono = $request->telefono;
+
+      if(Auth::user()->push()){
+        if(Auth::user()->tipo <= 2 && $request->hasFile('logo')){
+          $directory = Auth::user()->empresa->directory;
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          if(Auth::user()->empresa->logo){
+            Storage::delete(Auth::user()->empresa->logo);
+          }
+
+          Auth::user()->empresa->logo = $request->file('logo')->store($directory);
+          Auth::user()->empresa->save();
+        }
+
+        return redirect()->route('perfil')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Perfil modificado exitosamente.',
         ]);
-      }else{
-        return redirect('perfil')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
-      }
-    }
-
-    /**
-     * Cambiar la contraseña del Usuario en sesion u otro Usuario especificado
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Usuario|null $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function password(Request $request, Usuario $usuario = null)
-    {
-      $this->validate($request, [
-        'password' => 'required|min:6|confirmed',
-        'password_confirmation' => 'required'
-      ]);
-
-      $user = $usuario ?? Auth::user();
-      $user->password = bcrypt($request->password);
-
-      $redirect = $usuario ? 'usuarios/' . $user->id : 'perfil';
-
-      if($user->save()){
-        return redirect($redirect)->with([
-          'flash_class'   => 'alert-success',
-          'flash_message' => 'Contraseña cambiada exitosamente.'
-        ]);
       }
 
-      return redirect($redirect)->with([
+      return redirect()->back()->withInput()->with([
         'flash_class'     => 'alert-danger',
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
@@ -230,13 +152,32 @@ class UsuariosController extends Controller
     }
 
     /**
-     * Obtener la informacion del Usuario especificado
+     * Cambiar la contraseña del Usuario en sesion
      * 
-     * @param  \App\Usuario $usuario
-     * @return \Illuminate\Http\Response 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Usuario|null $usuario
+     * @return \Illuminate\Http\Response
      */
-    public function get(Usuario $usuario)
+    public function password(Request $request)
     {
-      return response()->json($usuario->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
+      $this->validate($request, [
+        'password' => 'required|min:6|confirmed',
+        'password_confirmation' => 'required'
+      ]);
+
+      Auth::user()->password = bcrypt($request->password);
+
+      if(Auth::user()->save()){
+        return redirect()->route('perfil')->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Contraseña cambiada exitosamente.'
+        ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 }

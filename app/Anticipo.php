@@ -82,7 +82,7 @@ class Anticipo extends Model
      */
     public function getAdjuntoDownloadAttribute()
     {
-      return $this->adjunto ? route('anticipos.download', ['anticipo' => $this->id]) : null;
+      return $this->adjunto ? route('admin.anticipos.download', ['anticipo' => $this->id]) : null;
     }
 
     /**

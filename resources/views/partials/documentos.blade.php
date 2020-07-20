@@ -5,19 +5,19 @@
       <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
         @if($edit)
           <li>
-            <a title="Editar documento" href="{{ route('documentos.edit', ['id' => $documento->id]) }}">
+            <a title="Editar documento" href="{{ route('admin.documentos.edit', ['id' => $documento->id]) }}">
               <i class="fa fa-pencil" aria-hidden="true"></i> Editar
             </a>
           </li>
         @endif
         <li>
-          <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('documentos.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
+          <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('admin.documentos.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
             <i class="fa fa-times" aria-hidden="true"></i> Eliminar
           </a>
         </li>
       </ul>
     </div>
-    <a href="{{ route('documentos.download', ['adjunto' => $documento->id]) }}">
+    <a href="{{ route('admin.documentos.download', ['adjunto' => $documento->id]) }}">
       <span class="corner"></span>
 
       <div class="icon">

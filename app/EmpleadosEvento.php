@@ -187,7 +187,7 @@ class EmpleadosEvento extends Model
     public function nombreReemplazo()
     {
       $nombre = $this->userReemplazo->usuario->nombres.' '.$this->userReemplazo->usuario->apellidos;
-      $route = route('empleados.show', ['empleado' => $this->empleado_id]);
+      $route = route('admin.empleados.show', ['empleado' => $this->empleado_id]);
 
       return "<a href='{$route}'>{$nombre}</a>";
     }

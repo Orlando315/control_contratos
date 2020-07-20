@@ -74,19 +74,23 @@ class Documento extends Model
     public function getBackUrlAttribute()
     {
       if($this->carpeta_id){
-        $route = 'carpeta.show';
+        $route = 'admin.carpeta.show';
         $id = $this->carpeta_id;
       }else{
         if($this->documentable_type == 'App\Contrato'){
-          $route = 'contratos.show';
+          $route = 'admin.contratos.show';
         }
 
         if($this->documentable_type == 'App\Empleado'){
-          $route = 'empleados.show';
+          $route = 'admin.empleados.show';
         }
 
         if($this->documentable_type == 'App\TransporteConsumo'){
-          $route = 'consumos.show';
+          $route = 'admin.consumos.show';
+        }
+
+        if($this->documentable_type == 'App\Inventario'){
+          $route = 'admin.inventarios.show';
         }
 
         $id = $this->documentable_id;

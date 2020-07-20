@@ -34,7 +34,7 @@ Route::get('registro', 'EmpresasController@create')->name('empresas.create');
 Route::post('registro', 'EmpresasController@store')->name('empresas.store');
 
 /* --- Cronjob --- */
-Route::get('cronjob/asistencias/create', 'EmpleadosController@cronjobAsistencias');
+Route::get('cronjob/asistencias/create', 'HomeController@cronjobAsistencias');
 
 /* --- Solo usuarios autenticados --- */
 Route::group(['middleware' => 'auth'], function () {
@@ -43,9 +43,9 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 
   /* --- Perfil --- */
-  Route::get('/perfil', 'UsuariosController@perfil')->name('usuarios.perfil');
-  Route::get('/perfil/edit', 'UsuariosController@editPerfil' )->name('usuarios.editPerfil');
-  Route::patch('/perfil', 'UsuariosController@updatePerfil')->name('usuarios.updatePerfil');
+  Route::get('/perfil', 'UsuariosController@perfil')->name('perfil');
+  Route::get('/perfil/edit', 'UsuariosController@edit' )->name('perfil.edit');
+  Route::patch('/perfil', 'UsuariosController@update')->name('perfil.update');
   Route::patch('/perfil/password', 'UsuariosController@password')->name('perfil.password');
 
   /* --- Sueldos --- */
@@ -54,175 +54,173 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('sueldos/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldos.download');
 
   /* --- Entregas ---*/
-  Route::patch('inventarios/entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
-  Route::get('inventarios/entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
+  Route::patch('entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
+  Route::get('entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
 
-  /* --- Solo usuarios 1 Empresa (Super admin) --- */
-  Route::group(['middleware' => 'checkRole:1'], function(){
-      /* --- Empresas --- */
-    Route::get('/empresa/edit', 'EmpresasController@edit')->name('empresas.edit');
-    Route::patch('/perfil/empresas', 'EmpresasController@update')->name('empresas.update');
+  /* --- Area Admin --- */
+  Route::prefix('/admin')->name('admin.')->namespace('Admin')->middleware('role:staff')->group(function(){
+    /* --- Solo usuarios 1 Empresa (Super admin) --- */
+    Route::group(['middleware' => 'role:1'], function(){
+      /* --- Contratos --- */
+      Route::resource('contratos', 'ContratosController')->except([
+        'index',
+        'show'
+      ]);
 
-    /* --- Contratos --- */
-    Route::resource('contratos', 'ContratosController')->except([
-      'index',
-      'show'
-    ]);
+      /* --- Migrar relaciones de Documentos (Contrato / Empleado) a morph --- */
+      Route::get('documentos/update/morph', 'DocumentosController@migrateToMorph');
+      /* --- Migrar informacion de TransporteConsumo a Documentos --- */
+      Route::get('documentos/migrate/adjuntos/morph', 'DocumentosController@migrateTransporteAdjuntosToDocumentos');
+    });
 
-    /* --- Migrar relaciones de Documentos (Contrato / Empleado) a morph --- */
-    Route::get('documentos/update/morph', 'DocumentosController@migrateToMorph');
-    /* --- Migrar informacion de TransporteConsumo a Documentos --- */
-    Route::get('documentos/migrate/adjuntos/morph', 'DocumentosController@migrateTransporteAdjuntosToDocumentos');
-  });
+    /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
+    Route::group(['middleware' => 'role:2'], function(){
+      /* --- Usuarios --- */
+      Route::post('usuarios/{usuario}/get', 'UsuariosController@get')->name('usuarios.get');
+      Route::resource('usuarios', 'UsuariosController');
+      Route::patch('usuarios/password/{usuario}', 'UsuariosController@password')->name('usuarios.password');
 
-  /* --- Solo usuarios 1 Empresa (Super admin) y 2 Administrador --- */
-  Route::group(['middleware' => 'checkRole:2'], function(){
+      /* --- Plantillas --- */
+      Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->name('plantilla.variables');
+      Route::resource('plantilla', 'PlantillaController');
 
-    /* --- Contratos --- */
-    Route::resource('contratos', 'ContratosController')->only([
-      'index',
-      'show'
-    ]);
-    Route::get('contratos/comida/{contrato}', 'ContratosController@comida')->name('contratos.comidas');
-    Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
-    Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
+      /* --- Variables --- */
+      Route::resource('variable', 'PlantillaVariableController')
+            ->except(['show']);
 
-    /* --- Plantillas --- */
-    Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->name('plantilla.variables');
-    Route::resource('plantilla', 'PlantillaController');
+      /* --- Documento plantillas --- */
+      Route::get('documento/plantilla/create/{contrato?}/{empleado?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
+      Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' => 'plantilla.documento'])
+            ->parameters([
+              'plantilla' => 'documento',
+            ])
+            ->except(['create']);
 
-    /* --- Variables --- */
-    Route::resource('variable', 'PlantillaVariableController')
-          ->except(['show']);
+      /* --- Empleados --- */
+      Route::patch('empleados/{empleado}/contrato', 'EmpleadosController@cambioContrato')->name('empleados.cambioContrato');
+      Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
+      Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
+      Route::get('empleados/{empleado}/cambio', 'EmpleadosController@cambio')->name('empleados.cambio');
+      Route::post('empleados/{empleado}/cambio', 'EmpleadosController@cambioStore')->name('empleados.cambioStore');
+      Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
+      Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
+      Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
+      Route::resource('empleados', 'EmpleadosController')->except([
+        'create',
+        'store'
+      ]);
 
-    /* --- Documento plantillas --- */
-    Route::get('documento/plantilla/create/{contrato?}/{empleado?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
-    Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' => 'plantilla.documento'])
-          ->parameters([
-            'plantilla' => 'documento',
-          ])
-          ->except(['create']);
+      /* --- Empleados - Eventos --- */
+      Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
+      Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')->name('eventos.store');
+      Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
 
-    /* --- Usuarios --- */
-    Route::post('usuarios/{usuario}/get', 'UsuariosController@get')->name('usuarios.get');
-    Route::resource('usuarios', 'UsuariosController');
-    Route::patch('usuarios/password/{usuario}', 'UsuariosController@password')->name('usuarios.password');
+      /* --- Sueldos --- */
+      Route::get('sueldos/{contrato}', 'EmpleadosSueldosController@index')->name('sueldos.index');
+      Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');
+      Route::get('sueldos/{contrato}/create', 'EmpleadosSueldosController@create')->name('sueldos.create');
+      Route::post('sueldos/{contrato}', 'EmpleadosSueldosController@store')->name('sueldos.store');
 
-    /* --- Empleados --- */
-    Route::patch('empleados/{empleado}/contrato', 'EmpleadosController@cambioContrato')->name('empleados.cambioContrato');
-    Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
-    Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
-    Route::get('empleados/{empleado}/cambio', 'EmpleadosController@cambio')->name('empleados.cambio');
-    Route::post('empleados/{empleado}/cambio', 'EmpleadosController@cambioStore')->name('empleados.cambioStore');
-    Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
-    Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
-    Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
-    Route::resource('empleados', 'EmpleadosController')->except([
-      'create',
-      'store'
-    ]);
+      /* --- Anticipos --- */
+      Route::resource('anticipos', 'AnticiposController')->except([
+        'create'
+      ]);
+      Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
+      Route::get('anticipos/create/individual', 'AnticiposController@create')->name('anticipos.individual');
+      Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
+      Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
+      Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
 
-    /* --- Eventos --- */
-    Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
-    Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')->name('eventos.store');
-    Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
+      /* --- Gastos --- */
+      Route::resource('gastos', 'GastosController');
 
-    /* --- Transportes --- */
-    Route::resource('transportes', 'TransportesController')->except([
-      'index',
-      'show'
-    ]);
-    Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.storeContratos');
-    Route::delete('transportes/{transporte}/delete/{contrato}', 'TransportesController@destroyContratos')->name('transportes.destroyContratos');
+      /* --- Facturas --- */
+      Route::resource('facturas', 'FacturasController');
+      Route::get('facturas/{factura}/download/{adjunto}', 'FacturasController@download')->name('facturas.download');
 
-    /* --- Anticipos --- */
-    Route::resource('anticipos', 'AnticiposController')->except([
-      'create'
-    ]);
-    Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
-    Route::get('anticipos/create/individual', 'AnticiposController@create')->name('anticipos.individual');
-    Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
-    Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
-    Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
+      /* --- Transportes --- */
+      Route::resource('transportes', 'TransportesController')->except([
+        'index',
+        'show'
+      ]);
+      Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.contratos.store');
+      Route::delete('transportes/contratos/{contrato}', 'TransportesController@destroyContratos')->name('transportes.contratos.destroy');
 
-    /* --- Sueldos --- */
-    Route::get('sueldos/{contrato}', 'EmpleadosSueldosController@index')->name('sueldos.index');
-    Route::get('sueldos/{contrato}/create', 'EmpleadosSueldosController@create')->name('sueldos.create');
-    Route::post('sueldos/{contrato}', 'EmpleadosSueldosController@store')->name('sueldos.store');
+      /* --- Reportes --- */
+      Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
+      Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');
+      Route::get('reportes/facturas', 'ReportesController@facturasIndex')->name('reportes.facturas.index');
+      Route::post('reportes/facturas', 'ReportesController@facturasGet')->name('reportes.facturas.get');
+      Route::get('reportes/eventos', 'ReportesController@eventosIndex')->name('reportes.eventos.index');
+      Route::post('reportes/eventos', 'ReportesController@eventosGet')->name('reportes.eventos.get');
+      Route::get('reportes/sueldos', 'ReportesController@sueldosIndex')->name('reportes.sueldos.index');
+      Route::post('reportes/sueldos', 'ReportesController@sueldosGet')->name('reportes.sueldos.get');
+      Route::get('reportes/anticipos', 'ReportesController@anticiposIndex')->name('reportes.anticipos.index');
+      Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticipos.get');
+      Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportes.index');
+      Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportes.get');
+      Route::get('reportes/comidas', 'ReportesController@comidasIndex')->name('reportes.comidas.index');
+      Route::post('reportes/comidas', 'ReportesController@comidasGet')->name('reportes.comidas.get');
+      Route::get('reportes/reemplazos', 'ReportesController@reemplazosIndex')->name('reportes.reemplazos.index');
+      Route::post('reportes/reemplazos', 'ReportesController@reemplazosGet')->name('reportes.reemplazos.get');
+      Route::get('reportes/general', 'ReportesController@generalIndex')->name('reportes.general.index');
+      Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.general.get');
+    });
 
-    /* --- Facturas --- */
-    Route::resource('facturas', 'FacturasController');
-    Route::get('facturas/{factura}/download/{adjunto}', 'FacturasController@download')->name('facturas.download');
-    
-    /* --- Etiquetas --- */
-    Route::resource('etiquetas', 'EtiquetasController');
+    /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */
+    Route::group(['middleware' => 'role:3'], function(){
+      /* --- Contratos --- */
+      Route::resource('contratos', 'ContratosController')->only([
+        'index',
+        'show'
+      ]);
+      Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
+      Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
 
-    /* --- Gastos --- */
-    Route::resource('gastos', 'GastosController');
+      /* --- Carpetas --- */
+      Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
+      Route::post('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@store')->name('carpeta.store');
+      Route::resource('carpeta', 'CarpetaController')
+            ->parameters(['carpeta' => 'carpeta'])
+            ->except(['create', 'store']);
 
-    /* --- Reportes --- */
-    Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
-    Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');
-    Route::get('reportes/facturas', 'ReportesController@facturasIndex')->name('reportes.facturas.index');
-    Route::post('reportes/facturas', 'ReportesController@facturasGet')->name('reportes.facturas.get');
-    Route::get('reportes/eventos', 'ReportesController@eventosIndex')->name('reportes.eventos.index');
-    Route::post('reportes/eventos', 'ReportesController@eventosGet')->name('reportes.eventos.get');
-    Route::get('reportes/sueldos', 'ReportesController@sueldosIndex')->name('reportes.sueldos.index');
-    Route::post('reportes/sueldos', 'ReportesController@sueldosGet')->name('reportes.sueldos.get');
-    Route::get('reportes/anticipos', 'ReportesController@anticiposIndex')->name('reportes.anticipos.index');
-    Route::post('reportes/anticipos', 'ReportesController@anticiposGet')->name('reportes.anticipos.get');
-    Route::get('reportes/transportes', 'ReportesController@transportesIndex')->name('reportes.transportes.index');
-    Route::post('reportes/transportes', 'ReportesController@transportesGet')->name('reportes.transportes.get');
-    Route::get('reportes/comidas', 'ReportesController@comidasIndex')->name('reportes.comidas.index');
-    Route::post('reportes/comidas', 'ReportesController@comidasGet')->name('reportes.comidas.get');
-    Route::get('reportes/reemplazos', 'ReportesController@reemplazosIndex')->name('reportes.reemplazos.index');
-    Route::post('reportes/reemplazos', 'ReportesController@reemplazosGet')->name('reportes.reemplazos.get');
-    Route::get('reportes/general', 'ReportesController@generalIndex')->name('reportes.general.index');
-    Route::post('reportes/general', 'ReportesController@generalGet')->name('reportes.general.get');
-  });
+      /* Documentos - Descarga */
+      Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
 
-  /* --- Solo usuarios 1 Empresa (Super admin), 2 Administrador y 3 Supervisor --- */
-  Route::group(['middleware' => 'checkRole:3'], function(){
-    /* --- Transportes --- */
-    Route::resource('transportes', 'TransportesController')->only([
-      'index',
-      'show'
-    ]);
+      /* --- Documentos --- */
+      Route::resource('documentos', 'DocumentosController')->only([
+        'edit',
+        'update',
+        'destroy'
+      ]);
+      Route::get('documentos/{type}/{id}/{carpeta?}', 'DocumentosController@create')->name('documentos.create');
+      Route::post('documentos/{type}/{id}/{carpeta?}', 'DocumentosController@store')->name('documentos.store');
 
-    /* --- Transporte consumo --- */
-    Route::resource('transportes/consumos', 'TransportesConsumosController')->except([
-      'create',
-      'store'
-    ]);
-    Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
-    Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
+      /* --- Etiquetas --- */
+      Route::resource('etiquetas', 'EtiquetasController');
 
-    /* Documentos - Descarga */
-    Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
+        /* --- Transportes --- */
+      Route::resource('transportes', 'TransportesController')->only([
+        'index',
+        'show'
+      ]);
 
-    /* --- Documentos --- */
-    Route::resource('documentos', 'DocumentosController')->only([
-      'edit',
-      'update',
-      'destroy'
-    ]);
-    Route::get('documentos/{type}/{id}/{carpeta?}', 'DocumentosController@create')->name('documentos.create');
-    Route::post('documentos/{type}/{id}/{carpeta?}', 'DocumentosController@store')->name('documentos.store');
-    
-    /* --- Caarpetas --- */
-    Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
-    Route::post('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@store')->name('carpeta.store');
-    Route::resource('carpeta', 'CarpetaController')
-          ->parameters(['carpeta' => 'carpeta'])
-          ->except(['create', 'store']);
+      /* --- Transporte consumo --- */
+      Route::resource('transportes/consumos', 'TransportesConsumosController')->except([
+        'create',
+        'store'
+      ]);
+      Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
+      Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
-    /* --- Inventario ---*/
-    Route::resource('inventarios', 'InventariosController');
-    Route::get('inventarios/download/{inventario}', 'InventariosController@download')->name('inventarios.download');
-    /* --- Inventarios Entregas ---*/
-    Route::get('inventarios/entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
-    Route::post('inventarios/entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');
-    Route::delete('inventarios/entregas/{inventario}/{entrega}', 'InventariosEntregasController@destroy')->name('entregas.destroy');
-    Route::get('inventarios/entregas', 'InventariosEntregasController@index')->name('entregas.index');
+      /* --- Inventario ---*/
+      Route::resource('inventarios', 'InventariosController');
+      Route::get('inventarios/download/{inventario}', 'InventariosController@download')->name('inventarios.download');
+      
+      /* --- Inventarios Entregas ---*/
+      Route::get('entregas/{inventario}', 'InventariosEntregasController@create')->name('entregas.create');
+      Route::post('entregas/{inventario}', 'InventariosEntregasController@store')->name('entregas.store');
+      Route::delete('entregas/{entrega}', 'InventariosEntregasController@destroy')->name('entregas.destroy');
+    });
   });
 });

@@ -132,7 +132,7 @@ class Inventario extends model
           $tipo = 'Herramienta';
           break;
         case 3:
-          $tipo = $this->otro;
+          $tipo = $this->otro ?? 'Otro';
           break;
         default:
           $tipo = 'Otro';
@@ -179,7 +179,7 @@ class Inventario extends model
      */
     public function adjunto()
     {
-      $link = route('inventarios.download', ['id' => $this->id]);
+      $link = route('admin.inventarios.download', ['id' => $this->id]);
       return $this->adjunto ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
     }
 

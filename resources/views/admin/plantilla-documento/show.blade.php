@@ -1,0 +1,128 @@
+@extends('layouts.app')
+
+@section('title', 'Documento')
+
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Documentos</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.documento.index') }}">Documentos</a></li>
+        <li class="breadcrumb-item active"><strong>Documento</strong></li>
+      </ol>
+    </div>
+  </div>
+@endsection
+
+@section('content')
+  <div class="row mb-3">
+    <div class="col-12">      
+      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @if(Auth::user()->tipo < 2)
+        <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endif
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="ibox">
+        <div class="ibox-content no-padding">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <b>Nombre</b>
+              <span class="pull-right">{{ $documento->nombre }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Contrato</b>
+              <span class="pull-right">
+                <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+                  {{ $documento->contrato->nombre }}
+                </a>
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Empleado</b>
+              <span class="pull-right">
+                <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                  {{ $documento->empleado->nombre() }}
+                </a>
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Plantilla</b>
+              <span class="pull-right">
+                <a href="{{ route('admin.plantilla.show', ['plantilla' => $documento->plantilla_id]) }}">
+                  {{ $documento->plantilla->nombre }}
+                </a>
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Padre</b>
+              <span class="pull-right">
+                @if($documento->padre)
+                  <a href="{{ route('admin.plantilla.documento.show', ['plantilla' => $documento->documento_id]) }}">
+                    {{ $documento->padre->nombre }}
+                  </a>
+                @else
+                  N/A
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Caducidad</b>
+              <span class="pull-right">{{ $documento->caducidad ? $documento->caducidad->format('d-m-Y') : 'N/A' }}</span>
+            </li>
+            <li class="list-group-item text-center">
+              <small class="text-muted">{{ $documento->created_at->format('d-m-Y H:i:s') }}</small>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      @foreach($documento->plantilla->secciones as $seccion)
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Sección #{{ $loop->iteration }}: {!! $seccion->nombre ?? '<span class="text-muted">N/A</span>' !!}</h5>
+          </div>
+          <div class="ibox-content">
+            {!! $documento->fillSeccionVariables($seccion) !!}
+          </div><!-- /.box-body -->
+        </div>
+      @endforeach
+    </div>
+  </div>
+
+  @if(Auth::user()->tipo < 2)
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.plantilla.documento.destroy', ['documento' => $documento->id]) }}" method="POST">
+            {{ method_field('DELETE') }}
+            {{ csrf_field() }}
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Cerrar</span>
+              </button>
+
+              <h4 class="modal-title" id="delModalLabel">Eliminar Documento</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Documento?</h4>
+              <p class="text-center">Esta acción no se puede deshacer</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endif
+@endsection
