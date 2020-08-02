@@ -98,7 +98,7 @@ return [
     'required_unless'      => 'The :attribute field is required unless :other is in :values.',
     'required_with'        => 'El elemento :attribute es requerido cuando el elemento :values esta presente.',
     'required_with_all'    => 'The :attribute field is required when :values is present.',
-    'required_without'     => 'The :attribute field is required when :values is not present.',
+    'required_without'     => 'El elemento :attribute es requerido',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
     'same'                 => 'El elemento :attribute y :other deben ser iguales.',
     'size'                 => [

@@ -52,6 +52,22 @@ class ContratosController extends Controller
       $contrato = new Contrato($request->all());
 
       if($contrato = Auth::user()->empresa->contratos()->save($contrato)){
+
+        if($request->has('requisitos')){
+          foreach ($request->requisitos as $type => $requisitos) {
+            $data = [];
+            foreach ($requisitos as $requisito) {
+              $data[] = [
+                'nombre' => $requisito,
+                'empresa_id' => Auth::user()->empresa->id,
+                'type' => $type,
+              ];
+            }
+
+            $contrato->requisitos()->createMany($data);
+          }
+        }
+
         return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Contrato agregado exitosamente.',
           'flash_class' => 'alert-success'

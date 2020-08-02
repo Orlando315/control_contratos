@@ -66,6 +66,73 @@
               <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="150" value="{{ old('descripcion') }}" placeholder="Descripción">
             </div>
 
+            <div class="requisitos-container">
+              <div class="custom-control custom-checkbox">
+                <input id="allow" class="custom-control-input check-requisitos" type="checkbox" data-type="requisitos">
+                <label class="custom-control-label" for="allow">Agregar requisitos de Documentos adjuntos</label>
+              </div>
+
+              <fieldset id="section-requisitos" class="mt-2 px-3" style="display: none;" disabled>
+                <legend>Requisitos</legend>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="allow-contratos" class="custom-control-input check-requisitos" type="checkbox" data-type="contratos">
+                  <label class="custom-control-label" for="allow-contratos">Agregar requisitos para el Contrato</label>
+                </div>
+                <fieldset id="section-contratos" class="mt-2 px-3" style="display: none" disabled>
+                  <legend>Contrato</legend>
+
+                  <table class="table">
+                    <tbody id="tbody-contratos">
+                      <tr>
+                        <td class="text-center align-middle">
+                          <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                        </td>
+                        <td>
+                          <input class="form-control form-control-sm" type="text" name="requisitos[contratos][]" maxlength="50" value="{{ old('requisitos.contratos.0') }}" placeholder="Nombre">
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+                          <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="contratos">Nuevo requisito</button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>                  
+                </fieldset>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="allow-empleados" class="custom-control-input check-requisitos" type="checkbox" data-type="empleados">
+                  <label class="custom-control-label" for="allow-empleados">Agregar requisitos para los Empleados</label>
+                </div>
+                <fieldset id="section-empleados" class="mt-2 px-3" style="display: none" disabled>
+                  <legend>Empleados</legend>
+
+                  <table class="table">
+                    <tbody id="tbody-empleados">
+                      <tr>
+                        <td class="text-center align-middle">
+                          <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                        </td>
+                        <td>
+                          <input class="form-control form-control-sm" type="text" name="requisitos[empleados][]" maxlength="50" value="{{ old('requisitos.empleados.0') }}" placeholder="Nombre">
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2">
+                          <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="empleados">Nuevo requisito</button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </fieldset>
+              </fieldset>
+            </div>
+
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important">
                 <ul class="m-0">
@@ -92,6 +159,18 @@
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
   <script type="text/javascript">
+    let requisitoField = function (index, type) {
+      return `<tr>
+                <td class="text-center align-middle">
+                  <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                </td>
+                <td>
+                  <input class="form-control form-control-sm" type="text" name="requisitos[${type}][]" maxlength="50" placeholder="Nombre">
+                </td>
+              </tr>
+            `;
+    }
+
     $(document).ready( function(){
       $('#inicio, #fin').datepicker({
         format: 'dd-mm-yyyy',
@@ -99,6 +178,25 @@
         keyboardNavigation: false,
         autoclose: true
       });
+
+      $('.requisitos-container').on('change', '.check-requisitos', function () {
+        let type = $(this).data('type');
+        let checked = $(this).is(':checked');
+        $(`#section-${type}`).toggle(checked).prop('disabled', !checked)
+      });
+
+      $('.check-requisitos').change()
+
+      $('.requisitos-container').on('click', '.btn-add-field', function () {
+        let type = $(this).data('type')
+        let index = $(`#tbody-${type} tr`).length
+
+        $(`#tbody-${type}`).append(requisitoField(index, type))
+      })
+
+      $('.requisitos-container').on('click', '.btn-delete-requisito', function () {
+        $(this).closest('tr').remove()
+      })
     });
   </script>
 @endsection

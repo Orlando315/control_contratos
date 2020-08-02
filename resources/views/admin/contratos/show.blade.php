@@ -59,11 +59,108 @@
     <div class="col-md-9">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+          <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
+          <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
           <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
         </ul>
         <div class="tab-content">
-          <div class="tab-pane active" id="tab-11">
+          <div class="tab-pane active" id="tab-13">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="ibox m-2 m-lg-0">
+                    <div class="ibox-title">
+                      <h5>Contrato</h5>
+                      <div class="ibox-tools">
+                        <a class="collapse-link" href="#">
+                          <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                          <i class="fa fa-cogs"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user" x-placement="bottom-start">
+                          <li><a href="{{ route('admin.requisito.create', ['contrato' => $contrato->id, 'type' => 'contratos']) }}" class="dropdown-item"><i class="fa fa-plus"></i> Agregar</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    @forelse($contrato->requisitosWithDocumentos() as $requisitoContrato)
+                      <div class="ibox-content p-2">
+                        <div class="row">
+                          <div class="col-9">
+                            <i class="fa {{ $requisitoContrato->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
+                            @if($requisitoContrato->documento)
+                              <a href="{{ route('admin.documentos.download', ['adjunto' => $requisitoContrato->documento->id]) }}">
+                                {{ $requisitoContrato->nombre }}
+                                @if($requisitoContrato->documento->vencimiento)
+                                  <small class="text-muted">- {{ $requisitoContrato->documento->vencimiento }}</small>
+                                @endif
+                              </a>
+                            @else
+                              {{ $requisitoContrato->nombre }}
+                            @endif
+                          </div>
+                          <div class="col-3">
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu" x-placement="bottom-start">
+                                <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoContrato->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                <li><a class="dropdown-item text-danger" type="button" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoContrato->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @empty
+                      <div class="ibox-content p-2">
+                        <p class="text-muted text-center mb-1">No hay requisitos</p>
+                      </div>
+                    @endforelse
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="ibox m-2 m-lg-0">
+                    <div class="ibox-title">
+                      <h5>Empleado</h5>
+                      <div class="ibox-tools">
+                        <a class="collapse-link" href="#">
+                          <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                          <i class="fa fa-cogs"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user" x-placement="bottom-start">
+                          <li><a href="{{ route('admin.requisito.create', ['contrato' => $contrato->id, 'type' => 'empleados']) }}" class="dropdown-item"><i class="fa fa-plus"></i> Agregar</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    @forelse($contrato->requisitos()->ofType('empleados')->get() as $requisitoEmpleados)
+                      <div class="ibox-content p-2">
+                        <div class="row">
+                          <div class="col-9">
+                            {{ $requisitoEmpleados->nombre }}
+                          </div>
+                          <div class="col-3">
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu" x-placement="bottom-start">
+                                <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                <li><a class="dropdown-item text-danger" button="type" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @empty
+                      <div class="ibox-content p-2">
+                        <p class="text-muted text-center mb-1">No hay requisitos</p>
+                      </div>
+                    @endforelse
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-11">
             <div class="panel-body">
               <div class="mb-3">
                 <a class="btn btn-warning btn-sm" href="{{ route('admin.carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
@@ -255,14 +352,15 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
             </button>
-            <h4 class="modal-title" id="delFileModalLabel">Eliminar documento</h4>
+            <h4 class="modal-title" id="delFileModalLabel">Eliminar <span class="delItemType"></span></h4>
           </div>
           <div class="modal-body text-center">
-            <h4 class="text-center">¿Esta seguro de eliminar este Documento?</h4>
+            <h4 class="text-center">¿Esta seguro de eliminar este <span class="delItemType"></span>?</h4>
+            <p class="text-center text-info-requisito">No se eliminarán los documentos asociados a este Requisito</p>
           </div>
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
           </div>
         </form>
       </div>
@@ -302,38 +400,16 @@
     $(document).ready(function(){
       $('#delFileModal').on('show.bs.modal', function(e){
         var button = $(e.relatedTarget),
-            file   = button.data('file'),
-            action = button.data('url');
+            type   = button.data('type'),
+            url = button.data('url');
 
-        $('#delete-file-form').attr('action', action);
+        let title = type ? 'Requisito' : 'Adjunto';
+
+        $('#delete-file-form button[type="submit"]').prop('disabled', !url)
+        $('.text-info-requisito').toggle(!!type)
+        $('.delItemType').text(title)
+        $('#delete-file-form').attr('action', url);
       });
-
-      $('#delete-file-form').submit(deleteFile);
     });
-
-    function deleteFile(e){
-      e.preventDefault();
-
-      var form = $(this),
-          action = form.attr('action');
-
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function(r){
-        if(r.response){
-          $('#adjunto-' + r.id).remove();
-          $('#delFileModal').modal('hide');
-        }else{
-          $('.alert').show().delay(7000).hide('slow');
-        }
-      })
-      .fail(function(){
-        $('.alert').show().delay(7000).hide('slow');
-      })
-    }
   </script>
 @endsection

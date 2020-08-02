@@ -115,7 +115,7 @@ class Empleado extends Model
     }
 
     /**
-     * Obtener los Documentos (Adjutos) de Empleado
+     * Obtener los Documentos (Adjuntos) del Empleado
      */
     public function documentos()
     {
@@ -192,6 +192,32 @@ class Empleado extends Model
     public function plantillaDocumentos()
     {
       return $this->hasMany('App\PlantillaDocumento');
+    }
+
+    /**
+     * Obtener los Requisitos en el Contrato
+     */
+    public function requisitos()
+    {
+      $documentosRequisitos = $this->documentos()->requisito()->distinct('requisito_id')->get();
+
+      return $this->contrato
+                  ->requisitos()
+                  ->ofType('empleados')
+                  ->get()
+                  ->map(function ($requisito) use ($documentosRequisitos) {
+                    $requisito->documento = $documentosRequisitos->firstWhere('requisito_id', $requisito->id);
+                    return $requisito;
+                  });
+    }
+
+    /**
+     * Obtener los Requisitos que aun no tienen un Documento agregado
+     */
+    public function requisitosFaltantes()
+    {
+      $ids = $this->documentos()->requisito()->distinct('requisito_id')->pluck('requisito_id');
+      return $this->contrato->requisitos()->ofType('empleados')->whereNotIn('id', $ids)->get();
     }
 
     /**

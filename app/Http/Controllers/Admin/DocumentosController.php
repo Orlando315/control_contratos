@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage, Route};
-use App\{Empleado, Contrato, Documento, Carpeta, TransporteConsumo};
+use App\{Empleado, Contrato, Documento, Carpeta, TransporteConsumo, Requisito};
 
 class DocumentosController extends Controller
 {
@@ -31,8 +31,10 @@ class DocumentosController extends Controller
     {
       $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
+      $requisitos = ($class == 'App\Empleado' || $class == 'App\Contrato') ? $model->requisitosFaltantes() : [];
+      $requisitoSelected = Requisito::where([['id', request()->requisito], ['type', 'empleados']])->first();
 
-      return view('admin.documentos.create', compact('model', 'carpeta', 'type'));
+      return view('admin.documentos.create', compact('model', 'carpeta', 'type', 'requisitos', 'requisitoSelected'));
     }
 
     /**
@@ -68,7 +70,7 @@ class DocumentosController extends Controller
       }
 
       $this->validate($request, [
-        'nombre' => 'required|string|max:50',
+        'nombre' => 'required_without:requisito|string|max:50',
         'observacion' => 'nullable|string|max:100',
         'documento' => 'required|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'vencimiento' => 'nullable|date_format:d-m-Y'
@@ -78,6 +80,13 @@ class DocumentosController extends Controller
       $documento->mime = $request->documento->getMimeType();
       $documento->empresa_id = Auth::user()->empresa->id;
       $documento->carpeta_id = optional($carpeta)->id;
+
+      // Varificar si se esta cargando un documento que sea "requisito"
+      if($request->requisito){
+        $requisito = Requisito::where([['id', $request->requisito], ['type', $type]])->firstOrFail();
+        $documento->nombre = $requisito->nombre;
+        $documento->requisito_id = $requisito->id;
+      }
 
       if($model->documentos()->save($documento)){
         if(!Storage::exists($directory)){
@@ -121,7 +130,9 @@ class DocumentosController extends Controller
      */
     public function edit(Documento $documento)
     {
-      return view('admin.documentos.edit', compact('documento'));
+      $requisitos = ($documento->isType('App\Empleado') || $documento->isType('App\Contrato')) ? $documento->documentable->requisitosFaltantes() : [];
+
+      return view('admin.documentos.edit', compact('documento', 'requisitos'));
     }
 
     /**
@@ -134,12 +145,19 @@ class DocumentosController extends Controller
     public function update(Request $request, Documento $documento)
     {
       $this->validate($request, [
-        'nombre' => 'required|string',
+        'nombre' => 'required_without:requisito|string|max:50',
         'observacion' => 'nullable|string|max:100',
         'vencimiento' => 'nullable|date_format:d-m-Y'
       ]);
 
       $documento->fill($request->only('nombre', 'observacion', 'vencimiento'));
+
+      if($request->requisito){
+        $type = $documento->isType('App\Empleado') ? 'empleados' : 'contratos';
+        $requisito = Requisito::where([['id', $request->requisito], ['type', $type]])->firstOrFail();
+        $documento->nombre = $requisito->nombre;
+        $documento->requisito_id = $requisito->id;
+      }
 
       if($documento->save()){        
         return redirect($documento->backUrl)->with([
@@ -166,12 +184,25 @@ class DocumentosController extends Controller
       if($documento->delete()){
         Storage::delete($documento->path);
 
-        $response = ['response' => true, 'id' => $documento->id];
-      }else{
-        $response = ['response' => false];
+        if(request()->ajax()){
+          $response = ['response' => true, 'id' => $documento->id];
+        }
+
+        return redirect()->back()->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Documento eliminado exitosamente.'
+        ]);
       }
 
-      return $response;
+      if(request()->ajax()){
+        return response()->json(['response' => false]);
+      }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 
     /**

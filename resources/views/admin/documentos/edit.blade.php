@@ -5,6 +5,11 @@
 @section('head')
   <!-- Datepicker -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
+  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+    <!-- Select2 -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
+  @endif
 @endsection
 
 @section('page-heading')
@@ -32,11 +37,27 @@
             {{ method_field('PATCH') }}
             {{ csrf_field() }}
 
+            @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('requisito') ? ' has-error' : '' }}">
+                    <label for="requisito">Requisitos faltantes:</label>
+                    <select id="requisito" class="form-control" name="requisito" style="width: 100%">
+                      <option value="">Seleccione...</option>
+                      @foreach($requisitos as $requisito)
+                        <option value="{{ $requisito->id }}"{{ old('requisito', $documento->requisito_id) == $requisito->id ? ' selected' : '' }}>{{ $requisito->nombre }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+            @endif
+
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
                   <label for="nombre">Nombre: *</label>
-                  <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $documento->nombre) }}" placeholder="Nombre" required>
+                  <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $documento->nombre) }}" placeholder="Nombre" {{ $documento->isRequisito() ? 'readonly' : 'required' }}>
                 </div>
               </div>
 
@@ -80,6 +101,10 @@
   <!-- Datepicker -->
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+    <!-- Select2 -->
+    <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
+  @endif
   <script type="text/javascript">
     $(document).ready( function(){
       $('#vencimiento').datepicker({
@@ -89,6 +114,20 @@
         keyboardNavigation: false,
         autoclose: true
       });
+
+      @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+        $('#requisito').select2({
+          allowClear: true,
+          theme: 'bootstrap4',
+          placeholder: 'Seleccionar...',
+        });
+
+        $('#requisito').change(function (){
+          $('#nombre').prop('disabled', $(this).val() != '')
+        })
+
+        $('#requisito').change()
+      @endif
     });
   </script>
 @endsection

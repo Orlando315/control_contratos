@@ -1,5 +1,8 @@
 <div id="adjunto-{{ $documento->id }}" class="col-md-3 col-sm-4 col-xs-6 mb-3">
   <div class="file m-0 file-options">
+    @if($documento->isRequisito())
+      <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true"></i></span>
+    @endif
     <div class="float-right dropdown">
       <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
       <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">

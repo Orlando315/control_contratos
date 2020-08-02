@@ -23,6 +23,7 @@ class Documento extends Model
     protected $fillable = [
       'empresa_id',
       'carpeta_id',
+      'requisito_id',
       'nombre',
       'observacion',
       'path',
@@ -111,6 +112,18 @@ class Documento extends Model
     }
 
     /**
+     * Incluir solo los Documentos que son Requisitos.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isRequisito
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRequisito($query, $isRequisito = true)
+    {
+      return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
+    }
+
+    /**
      * Get all of the owning documentable models.
      */
     public function documentable()
@@ -119,14 +132,24 @@ class Documento extends Model
     }
 
     /**
-     * Evaluar si la Carpeta pertenece a la clase especificada
+     * Evaluar si el Documento pertenece a la clase especificada
      *
      * @param  string  $type
      * @return bool
      */
     public function isType($type)
     {
-      return $this->carpetable_type == $type;
+      return $this->documentable_type == $type;
+    }
+
+    /**
+     * Evaluar si el Documento es un Requisito
+     *
+     * @return bool
+     */
+    public function isRequisito()
+    {
+      return !is_null($this->requisito_id);
     }
 
     /**

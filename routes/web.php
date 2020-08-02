@@ -30,8 +30,8 @@ Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showresetForm
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 /* --- Empresas --- */
-Route::get('registro', 'EmpresasController@create')->name('empresas.create');
-Route::post('registro', 'EmpresasController@store')->name('empresas.store');
+Route::get('registro', 'UsuariosController@create')->name('empresas.create');
+Route::post('registro', 'UsuariosController@store')->name('empresas.store');
 
 /* --- Cronjob --- */
 Route::get('cronjob/asistencias/create', 'HomeController@cronjobAsistencias');
@@ -66,6 +66,12 @@ Route::group(['middleware' => 'auth'], function () {
         'index',
         'show'
       ]);
+
+      /* --- Contratos - Requisitos --- */
+      Route::resource('requisito', 'RequisitoController')
+          ->except(['index', 'create', 'store']);
+      Route::get('requisito/{contrato}/{type}', 'RequisitoController@create')->name('requisito.create');
+      Route::post('requisito/{contrato}/{type}', 'RequisitoController@store')->name('requisito.store');
 
       /* --- Migrar relaciones de Documentos (Contrato / Empleado) a morph --- */
       Route::get('documentos/update/morph', 'DocumentosController@migrateToMorph');

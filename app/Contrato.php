@@ -214,6 +214,39 @@ class Contrato extends Model
     }
 
     /**
+     * Obtener los Requisitos
+     */
+    public function requisitos()
+    {
+      return $this->hasMany('App\Requisito');
+    }
+
+    /**
+     * Obtener los Requisitos (Documetos) en el Contrato
+     */
+    public function requisitosWithDocumentos()
+    {
+      $documentosRequisitos = $this->documentos()->requisito()->distinct('requisito_id')->get();
+
+      return $this->requisitos()
+                  ->ofType('contratos')
+                  ->get()
+                  ->map(function ($requisito) use ($documentosRequisitos) {
+                    $requisito->documento = $documentosRequisitos->firstWhere('requisito_id', $requisito->id);
+                    return $requisito;
+                  });
+    }
+
+    /**
+     * Obtener los Requisitos que aun no tienen un Documento agregado
+     */
+    public function requisitosFaltantes()
+    {
+      $ids = $this->documentos()->requisito()->distinct('requisito_id')->pluck('requisito_id');
+      return $this->requisitos()->ofType('contratos')->whereNotIn('id', $ids)->get();
+    }
+
+    /**
      * Obtener el atributo formateado
      */
     public function valor()

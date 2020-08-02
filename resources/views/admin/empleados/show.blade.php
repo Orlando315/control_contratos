@@ -207,11 +207,58 @@
         <div class="col-md-12">
           <div class="tabs-container">
             <ul class="nav nav-tabs">
-              <li><a class="nav-link active" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+              <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
+              <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
               <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
             </ul>
             <div class="tab-content">
-              <div class="tab-pane active" id="tab-11">
+              <div class="tab-pane active" id="tab-13">
+                <div class="panel-body">
+                  <div class="row">
+                    @forelse($empleado->requisitos() as $requisito)
+                      <div class="col-lg-4">
+                        <div class="ibox">
+                          <div class="ibox-content p-2">
+                            <div class="row">
+                              <div class="col-9">
+                                <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
+                                @if($requisito->documento)
+                                  <a href="{{ route('admin.documentos.download', ['adjunto' => $requisito->documento->id]) }}">
+                                    {{ $requisito->nombre }}
+                                    @if($requisito->documento->vencimiento)
+                                      <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
+                                    @endif
+                                  </a>
+                                @else
+                                  {{ $requisito->nombre }}
+                                @endif
+                              </div>
+                              <div class="col-3">
+                                <div class="btn-group">
+                                  <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                  <ul class="dropdown-menu" x-placement="bottom-start">
+                                    @if($requisito->documento)
+                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                      <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                    @else
+                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                    @endif
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @empty
+                      <div class="col-12">
+                        <p class="text-muted text-center mb-1">No hay requisitos</p>
+                      </div>
+                    @endforelse
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane" id="tab-11">
                 <div class="panel-body">
                   <div class="mb-3">
                     <a class="btn btn-warning btn-sm" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
@@ -794,7 +841,6 @@
 
       $('#reemplazo').trigger('change')
 
-      $('#delete-file-form').submit(deleteFile);
       $('#eventForm').submit(storeEvent)
       $('#delEventForm').submit(delEvent)
 
@@ -849,31 +895,6 @@
           .attr('hidden', !isReemplazo)
       })
    	});//Ready
-
-    function deleteFile(e){
-      e.preventDefault();
-
-      var form = $(this),
-          action = form.attr('action');
-
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function(r){
-        if(r.response){
-          $('#adjunto-' + r.id).remove();
-          $('#delFileModal').modal('hide');
-        }else{
-          $('.alert').show().delay(7000).hide('slow');
-        }
-      })
-      .fail(function(){
-        $('.alert').show().delay(7000).hide('slow');
-      })
-    }
 
     function storeEvent(e){
       e.preventDefault();
