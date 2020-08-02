@@ -73,6 +73,14 @@
               <b>Adjunto</b>
               <span class="pull-right">{!! $inventario->adjunto() !!}</span>
             </li>
+            <li class="list-group-item">
+              <b>Requiere calibración</b>
+              <span class="pull-right">{!! $inventario->calibracion() !!}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Certificado</b>
+              <span class="pull-right">{!! $inventario->certificado() !!}</span>
+            </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $inventario->created_at }}</small>
             </li>

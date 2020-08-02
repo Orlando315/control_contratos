@@ -53,10 +53,14 @@ class InventariosController extends Controller
         'descripcion' => 'nullable|string|max:200',
         'observacion' => 'nullable|string|max:200',
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'calibracion' => 'nullable|boolean',
+        'certificado' => 'nullable|boolean',
       ]);
 
       $inventario = new Inventario($request->all());
       $inventario->low_stock = $request->stock_critico;
+      $inventario->calibracion = $request->has('calibracion');
+      $inventario->certificado = $request->has('certificado');
 
       if(Auth::user()->tipo >= 3){
         $inventario->tipo = 3;
@@ -140,10 +144,14 @@ class InventariosController extends Controller
         'descripcion' => 'nullable|string|max:200',
         'observacion' => 'nullable|string|max:200',
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'calibracion' => 'nullable|boolean',
+        'certificado' => 'nullable|boolean',
       ]);
 
       $inventario->fill($request->all());
       $inventario->low_stock = $request->stock_critico;
+      $inventario->calibracion = $request->has('calibracion');
+      $inventario->certificado = $request->has('certificado');
 
       if($inventario->save()){
         if($request->hasFile('adjunto')){

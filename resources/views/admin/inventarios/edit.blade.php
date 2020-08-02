@@ -25,7 +25,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
           <h4>Editar inventario</h4>
@@ -35,9 +35,8 @@
             {{ method_field('PATCH') }}
             {{ csrf_field() }}
 
-
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('tipo') ? ' has-error' : '' }}">
                   <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
                   <select id="tipo" class="form-control" name="tipo" required>
@@ -57,61 +56,84 @@
                   <small class="form-text-text-muted">Especifique el tipo</small>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
                   <label class="control-label" for="nombre">Nombre: *</label>
                   <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $inventario->nombre) }}" placeholder="Nombre" required>
                 </div>
               </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('valor') ? ' has-error' : '' }}">
                   <label class="control-label" for="valor">Valor: *</label>
                   <input id="valor" class="form-control" type="number" step="1" min="1" max="9999999999999" name="valor" value="{{ old('valor', $inventario->valor) }}" placeholder="Valor" required>
                 </div>
               </div>
-              <div class="col-md-6">
+            </div>
+            
+            <fieldset id="section-extras" class="border-bottom border-top mb-2 py-3" style="display: none" disabled>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="custom-control custom-checkbox">
+                    <input id="calibracion" class="custom-control-input" type="checkbox" name="calibracion" value="1"{{ $inventario->calibracion ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="calibracion">Requiere calibración</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="custom-control custom-checkbox">
+                    <input id="certificado" class="custom-control-input" type="checkbox" name="certificado" value="1"{{ $inventario->certificado ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="certificado">Certificado</label>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            
+            <div class="row">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
                   <label class="control-label" for="fecha">Fecha: *</label>
                   <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha', $inventario->fecha) }}" placeholder="dd-mm-yyyy" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('cantidad') ? ' has-error' : '' }}">
                   <label class="control-label" for="cantidad">Cantidad: *</label>
                   <input id="cantidad" class="form-control" type="number" step="1" min="1" max="999999" name="cantidad" value="{{ old('cantidad', $inventario->cantidad) }}" placeholder="Valor" required>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('stock_critico') ? ' has-error' : '' }}">
                   <label class="control-label" for="stock_critico">Stock crítico:</label>
                   <input id="stock_critico" class="form-control" type="number" step="1" min="1" max="999" name="stock_critico" value="{{ old('stock_critico', $inventario->low_stock) }}" placeholder="Stcok crítico">
                 </div>
               </div>
             </div>
-
-            <div class="form-group{{ $errors->has('descripcion') ? ' has-error' : '' }}">
-              <label class="control-label" for="descripcion">Descripción:</label>
-              <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="200" value="{{ old('descripcion', $inventario->descripcion) }}" placeholder="Descripción">
-            </div>
-
-            <div class="form-group{{ $errors->has('observacion') ? ' has-error' : '' }}">
-              <label class="control-label" for="observacion">Observación:</label>
-              <input id="observacion" class="form-control" type="text" name="observacion" maxlength="200" value="{{ old('observacion', $inventario->observacion) }}" placeholder="Observación">
-            </div>
-
-            <div class="form-group{{ $errors->has('adjunto') ? ' has-error' : '' }}">
-              <label for="adjunto">Adjunto:</label>
-              <div class="custom-file">
-                <input id="adjunto" class="custom-file-input" type="file" name="adjunto" data-msg-placeholder="Seleccionar" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-                <label class="custom-file-label" for="adjunto">Seleccionar</label>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('descripcion') ? ' has-error' : '' }}">
+                  <label class="control-label" for="descripcion">Descripción:</label>
+                  <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="200" value="{{ old('descripcion', $inventario->descripcion) }}" placeholder="Descripción">
+                </div>
               </div>
-              <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, pdf, txt, xlsx, docx</small>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('observacion') ? ' has-error' : '' }}">
+                  <label class="control-label" for="observacion">Observación:</label>
+                  <input id="observacion" class="form-control" type="text" name="observacion" maxlength="200" value="{{ old('observacion', $inventario->observacion) }}" placeholder="Observación">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('adjunto') ? ' has-error' : '' }}">
+                  <label for="adjunto">Adjunto:</label>
+                  <div class="custom-file">
+                    <input id="adjunto" class="custom-file-input" type="file" name="adjunto" data-msg-placeholder="Seleccionar" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                    <label class="custom-file-label" for="adjunto">Seleccionar</label>
+                  </div>
+                  <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, pdf, txt, xlsx, docx</small>
+                </div>
+              </div>
             </div>
 
             <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
@@ -176,8 +198,12 @@
       })
 
       $('#tipo').change(function () {
-        let isOtro = $(this).val() == 3;
+        let tipo = +$(this).val();
+        let isOtro = (tipo == 3);
+        let hasExtras = ([4,5,6].includes(tipo));
+
         $('#otro').prop('disabled', !isOtro).closest('.form-group').toggle(isOtro)
+        $('#section-extras').toggle(hasExtras).prop('disabled', !hasExtras)
       })
 
       $('#tipo').change()

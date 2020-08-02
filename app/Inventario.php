@@ -33,6 +33,18 @@ class Inventario extends model
       'low_stock',
       'observacion',
       'descripcion',
+      'calibracion',
+      'certificado',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'calibracion' => 'boolean',
+        'certificado' => 'boolean',
     ];
 
     /**
@@ -191,5 +203,36 @@ class Inventario extends model
     public function directory()
     {
       return 'Empresa' . Auth::user()->empresa_id . '/Inventarios/' . $this->id;
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function calibracion()
+    {
+      return $this->formatBoolean($this->calibracion);
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function certificado()
+    {
+      return $this->formatBoolean($this->certificado);
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @param  bool  $bool 
+     * @return string
+     */
+    protected function formatBoolean($bool)
+    {
+      return $bool ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
     }
 }
