@@ -218,7 +218,7 @@ class InventariosController extends Controller
     /**
      * Descargar el adjunto del Recurso especficado
      *
-     * @param  \App\Factura  $factura
+     * @param  \App\Inventario  $inventario
      * @return \Illuminate\Http\Response
      */
     public function download(Inventario $inventario)
@@ -228,5 +228,31 @@ class InventariosController extends Controller
       }
 
       return Storage::download($inventario->adjunto);
+    }
+
+    /**
+     * Clonar el registro del Inventario especificado
+     *
+     * @param  \App\Inventario  $inventario
+     * @return \Illuminate\Http\Response
+     */
+    public function clone(Inventario $inventario)
+    {
+      $copy = $inventario->replicate();
+      $copy->adjunto = null;
+      $copy->nombre = $inventario->nombre.' (copia)';
+
+      if($copy->save()){
+        return redirect()->route('admin.inventarios.show', ['inventario' => $copy->id])->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Inventario clonado exitosamente.'
+        ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 }

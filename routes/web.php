@@ -152,6 +152,9 @@ Route::group(['middleware' => 'auth'], function () {
       Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.contratos.store');
       Route::delete('transportes/contratos/{contrato}', 'TransportesController@destroyContratos')->name('transportes.contratos.destroy');
 
+      /* --- Inventarios --- */
+      Route::patch('inventarios/clone/{inventario}', 'InventariosController@clone')->name('inventarios.clone');
+
       /* --- Reportes --- */
       Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
       Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');

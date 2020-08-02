@@ -21,6 +21,7 @@
       <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @if(Auth::user()->tipo <= 2 || $inventario->tipo == 3)
         <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.edit', ['inventario' => $inventario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-clone" aria-hidden="true"></i> Clonar</button>
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif
     </div>
@@ -169,6 +170,31 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cloneModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="cloneModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form action="{{ route('admin.inventarios.clone', ['inventario' => $inventario->id]) }}" method="POST">
+          @method('PATCH')
+          {{ csrf_field() }}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="cloneModalLabel">Clonar inventario</h4>
+          </div>
+          <div class="modal-body">
+            <h4 class="text-center">¿Esta seguro de clonar este Inventario?</h4>
+            <p class="text-center">No se clonarán las Carpetas, Adjuntos o Entregas</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-warning btn-sm" type="submit">Clonar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
