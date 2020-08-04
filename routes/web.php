@@ -91,6 +91,7 @@ Route::group(['middleware' => 'auth'], function () {
       Route::resource('plantilla', 'PlantillaController');
 
       /* --- Variables --- */
+      Route::post('variable/generate/statics', 'PlantillaVariableController@generateStatic')->name('variable.generate');
       Route::resource('variable', 'PlantillaVariableController')
             ->except(['show']);
 

@@ -71,6 +71,9 @@ class PlantillaVariable extends Model
     public function tipo()
     {
       switch ($this->tipo) {
+        case 'empleado':
+          $tipo = 'Empleado';
+          break;
         case 'rut':
           $tipo = 'RUT';
           break;
@@ -114,5 +117,44 @@ class PlantillaVariable extends Model
       }
 
       $this->variable = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';
+    }
+
+    /**
+     * Evaluar si la Variable es estatica
+     *
+     * @return  bool
+     */
+    public function isStatic()
+    {
+      return $this->tipo == 'empleado';
+    }
+
+    /**
+     * Obtener las variables estaticas con sus valores
+     *
+     * @param  \App\Empleado $empleado
+     * @return array
+     */
+    public static function mappedVariablesToAttributes(Empleado $empleado)
+    {
+      return [
+        '{{e_nombres}}' => $empleado->usuario->nombres,
+        '{{e_apellidos}}' => $empleado->usuario->apellidos,
+        '{{e_rut}}' => $empleado->usuario->rut,
+        '{{e_fecha_de_nacimiento}}' => $empleado->fecha_nacimiento,
+        '{{e_telefono}}' => $empleado->usuario->telefono,
+        '{{e_email}}' => $empleado->usuario->email,
+        '{{e_direccion}}' => $empleado->direccion,
+        '{{e_profesion}}' => $empleado->profesion,
+        '{{e_sexo}}' => $empleado->sexo,
+        '{{e_talla_camisa}}' => $empleado->talla_camisa,
+        '{{e_talla_zapato}}' => $empleado->talla_zapato,
+        '{{e_talla_pantalon}}' => $empleado->talla_pantalon,
+        '{{e_nombre_contacto_de_emergencia}}' => $empleado->nombre_emergencia,
+        '{{e_telefono_contacto_de_emergencia}}' => $empleado->telefono_emergencia,
+        '{{e_nombre_del_banco}}' => $empleado->banco->nombre,
+        '{{e_tipo_de_cuenta_del_banco}}' => $empleado->banco->tipo_cuenta,
+        '{{e_cuenta_del_banco}}' => $empleado->banco->cuenta,
+      ];
     }
 }

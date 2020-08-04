@@ -115,8 +115,20 @@ class PlantillaDocumento extends Model
      */
     public function fillSeccionVariables(PlantillaSeccion $seccion)
     {
-      return array_key_exists($seccion->id,$this->secciones) ? strtr($seccion->contenido, $this->secciones[$seccion->id]) : $seccion->contenido;
+      return array_key_exists($seccion->id, $this->secciones) ? strtr($seccion->contenido, $this->fillStaticVariables($this->secciones[$seccion->id])) : $seccion->contenido;
     }
 
+    /**
+     * Llenar las variables estaticas del contenido de la Seccion con los datos del Empleado
+     *
+     * @param  int  $seccion
+     * @return array
+     */
+    private function fillStaticVariables($seccion)
+    {
+      $staticMapped = PlantillaVariable::mappedVariablesToAttributes($this->empleado);
+      $staticNeeded = array_intersect_key($staticMapped, $seccion);
+      return collect($seccion)->merge($staticNeeded)->toArray();
+    }
 
 }

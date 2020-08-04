@@ -77,6 +77,8 @@ class PlantillaVariableController extends Controller
      */
     public function edit(PlantillaVariable $variable)
     {
+      $this->authorize('update', $variable);
+
       return view('admin.plantilla.variable.edit', compact('variable'));
     }
 
@@ -89,6 +91,7 @@ class PlantillaVariableController extends Controller
      */
     public function update(Request $request, PlantillaVariable $variable)
     {
+      $this->authorize('update', $variable);
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
         'tipo' => 'required|in:text,number,date,email,rut,firma'
@@ -118,6 +121,8 @@ class PlantillaVariableController extends Controller
      */
     public function destroy(PlantillaVariable $variable)
     {
+      $this->authorize('delete', $variable);
+
       if($variable->delete()){
         return redirect()->back()->with([
           'flash_message' => 'Variable eliminada exitosamente.',
@@ -130,5 +135,44 @@ class PlantillaVariableController extends Controller
         'flash_class' => 'alert-danger',
         'flash_important' => true
         ]);
+    }
+
+    /**
+     * Generar variables estaticas
+     */
+    public function generateStatic()
+    {
+      $vars = [
+        ['variable' => '{{e_nombres}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombres'],
+        ['variable' => '{{e_apellidos}}', 'tipo' => 'empleado', 'nombre' => 'E - Apellidos'],
+        ['variable' => '{{e_rut}}', 'tipo' => 'empleado', 'nombre' => 'E - RUT'],
+        ['variable' => '{{e_fecha_de_nacimiento}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de nacimiento'],
+        ['variable' => '{{e_telefono}}', 'tipo' => 'empleado', 'nombre' => 'E - Teléfono'],
+        ['variable' => '{{e_email}}', 'tipo' => 'empleado', 'nombre' => 'E - Email'],
+        ['variable' => '{{e_direccion}}', 'tipo' => 'empleado', 'nombre' => 'E - Dirección'],
+        ['variable' => '{{e_profesion}}', 'tipo' => 'empleado', 'nombre' => 'E - Profesión'],
+        ['variable' => '{{e_sexo}}', 'tipo' => 'empleado', 'nombre' => 'E - Sexo'],
+        ['variable' => '{{e_talla_camisa}}', 'tipo' => 'empleado', 'nombre' => 'E - Talla camisa'],
+        ['variable' => '{{e_talla_zapato}}', 'tipo' => 'empleado', 'nombre' => 'E - Talla zapato'],
+        ['variable' => '{{e_talla_pantalon}}', 'tipo' => 'empleado', 'nombre' => 'E - Talla pantalón'],
+        ['variable' => '{{e_nombre_contacto_de_emergencia}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombre contacto de emergencia'],
+        ['variable' => '{{e_telefono_contacto_de_emergencia}}', 'tipo' => 'empleado', 'nombre' => 'E - Teléfono contacto de emergencia'],
+        ['variable' => '{{e_nombre_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombre del Banco'],
+        ['variable' => '{{e_tipo_de_cuenta_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Tipo de cuenta del Banco'],
+        ['variable' => '{{e_cuenta_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Cuenta del Banco'],
+      ];
+
+      $i = 0;
+      foreach ($vars as $variable) {
+        if(!PlantillaVariable::where('variable', $variable['variable'])->exists()){
+          Auth::user()->empresa->variables()->create($vars[$i]);
+        }
+        $i++;
+      }
+
+      return redirect()->route('admin.plantilla.index')->with([
+          'flash_message' => 'Variable generadas exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
     }
 }

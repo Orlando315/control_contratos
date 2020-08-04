@@ -140,11 +140,15 @@
 
       $.each(seccion.variables, function (k, v){
         let tipo = converType(v.tipo)
-        let value = getOldValue(seccion.id, v.variable)
+        let value = getOldValue(seccion.id, v.variable) ?? ''
+        let isDisabled = v.tipo == 'empleado' ? ' readonly' : '';
+        let helpText = v.tipo == 'empleado' ? '<small class="text-form text-muted">Se tomará automáticamente la información del Empleado.</small>' : '';
+
         vargGroups += `<div class="form-group row">
                           <label class="col-md-3" for="${v.variable}">${v.nombre}:</label>
                           <div class="col-md-9">
-                            <input id="${v.variable}" class="form-control" type="${tipo}" name="secciones[${seccion.id}][${v.variable}]" maxlength="50" value="${value}" placeholder="${v.nombre}" required>
+                            <input id="${v.variable}" class="form-control" type="${tipo}" name="secciones[${seccion.id}][${v.variable}]" maxlength="50" value="${value}" placeholder="${v.nombre}" required${isDisabled}>
+                            ${helpText}
                           </div>
                         </div>`;
       })
@@ -158,7 +162,13 @@
     const oldSectionsValues = @json(old('secciones', $documento->secciones));
 
     $(document).ready( function(){
-      $('#contrato, #empleado, #plantilla, #padre').select2({
+      $('#contrato, #empleado, #plantilla').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccionar...',
+      });
+
+      $('#padre').select2({
+        allowClear: true,
         theme: 'bootstrap4',
         placeholder: 'Seleccionar...',
       });
@@ -244,8 +254,9 @@
         case 'tel':
           return 'tel';
           break;
-        case 'string':
+        case 'text':
         case 'rut':
+        case 'empleado':
         default:
           return 'text'
           break;

@@ -83,6 +83,7 @@
             <div class="panel-body">
               <div class="mb-3">
                 <a class="btn btn-primary btn-sm" href="{{ route('admin.variable.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Variable</a>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#generateModal"><i class="fa fa-random" aria-hidden="true"></i> Generar variables</button>
               </div>
               <table class="table data-table table-bordered table-hover table-sm w-100">
                 <thead>
@@ -102,8 +103,10 @@
                       <td>{{ $v->tipo() }}</td>
                       <td>{{ $v->variable }}</td>
                       <td>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.variable.edit', ['plantilla' => $v->id] )}}"><i class="fa fa-pencil"></i></a>
-                        <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delModal" data-variable="{{ $v->id }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        @if(!$v->isStatic())
+                          <a class="btn btn-primary btn-xs" href="{{ route('admin.variable.edit', ['plantilla' => $v->id] )}}"><i class="fa fa-pencil"></i></a>
+                          <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delModal" data-variable="{{ $v->id }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        @endif
                       </td>
                     </tr>
                   @endforeach
@@ -135,6 +138,31 @@
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
             <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="generateModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="generateModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="generateete-form" action="{{ route('admin.variable.generate') }}" method="POST">
+
+          <div class="modal-header">           
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="generateModalLabel">Generar variables de Empleado</h4>
+          </div>
+          <div class="modal-body">
+            <h4 class="text-center">Generar variables</h4>
+            <p class="text-center">Se crearán variables estaticas para los Documentos que se sustituirán con la información del Empleado</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-warning btn-sm" type="submit">Generar</button>
           </div>
         </form>
       </div>
