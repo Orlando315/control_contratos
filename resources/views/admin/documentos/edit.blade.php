@@ -5,7 +5,7 @@
 @section('head')
   <!-- Datepicker -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
-  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte'))
     <!-- Select2 -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
@@ -37,7 +37,7 @@
             {{ method_field('PATCH') }}
             {{ csrf_field() }}
 
-            @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+            @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte'))
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group{{ $errors->has('requisito') ? ' has-error' : '' }}">
@@ -101,7 +101,7 @@
   <!-- Datepicker -->
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
-  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+  @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte'))
     <!-- Select2 -->
     <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   @endif
@@ -115,7 +115,7 @@
         autoclose: true
       });
 
-      @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato'))
+      @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte'))
         $('#requisito').select2({
           allowClear: true,
           theme: 'bootstrap4',

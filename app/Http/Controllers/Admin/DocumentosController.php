@@ -31,8 +31,8 @@ class DocumentosController extends Controller
     {
       $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
-      $requisitos = ($class == 'App\Empleado' || $class == 'App\Contrato') ? $model->requisitosFaltantes() : [];
-      $requisitoSelected = Requisito::where([['id', request()->requisito], ['type', 'empleados']])->first();
+      $requisitos = ($class == 'App\Empleado' || $class == 'App\Contrato' || $class == 'App\Transporte') ? $model->requisitosFaltantes() : [];
+      $requisitoSelected = Requisito::where([['id', request()->requisito], ['type', $type]])->first();
 
       return view('admin.documentos.create', compact('model', 'carpeta', 'type', 'requisitos', 'requisitoSelected'));
     }
@@ -153,8 +153,7 @@ class DocumentosController extends Controller
       $documento->fill($request->only('nombre', 'observacion', 'vencimiento'));
 
       if($request->requisito){
-        $type = $documento->isType('App\Empleado') ? 'empleados' : 'contratos';
-        $requisito = Requisito::where([['id', $request->requisito], ['type', $type]])->firstOrFail();
+        $requisito = Requisito::where([['id', $request->requisito], ['type', Carpeta::getTypeFromClass($documento->documentable_type)]])->firstOrFail();
         $documento->nombre = $requisito->nombre;
         $documento->requisito_id = $requisito->id;
       }

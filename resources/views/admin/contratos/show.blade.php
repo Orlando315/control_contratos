@@ -120,7 +120,7 @@
                 <div class="col-lg-4">
                   <div class="ibox m-2 m-lg-0">
                     <div class="ibox-title">
-                      <h5>Empleado</h5>
+                      <h5>Empleados</h5>
                       <div class="ibox-tools">
                         <a class="collapse-link" href="#">
                           <i class="fa fa-chevron-up"></i>
@@ -145,6 +145,46 @@
                               <ul class="dropdown-menu" x-placement="bottom-start">
                                 <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
                                 <li><a class="dropdown-item text-danger" button="type" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @empty
+                      <div class="ibox-content p-2">
+                        <p class="text-muted text-center mb-1">No hay requisitos</p>
+                      </div>
+                    @endforelse
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="ibox m-2 m-lg-0">
+                    <div class="ibox-title">
+                      <h5>Transportes</h5>
+                      <div class="ibox-tools">
+                        <a class="collapse-link" href="#">
+                          <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                          <i class="fa fa-cogs"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user" x-placement="bottom-start">
+                          <li><a href="{{ route('admin.requisito.create', ['contrato' => $contrato->id, 'type' => 'transportes']) }}" class="dropdown-item"><i class="fa fa-plus"></i> Agregar</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    @forelse($contrato->requisitos()->ofType('transportes')->get() as $requisitoTransporte)
+                      <div class="ibox-content p-2">
+                        <div class="row">
+                          <div class="col-9">
+                            {{ $requisitoTransporte->nombre }}
+                          </div>
+                          <div class="col-3">
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu" x-placement="bottom-start">
+                                <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoTransporte->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                <li><a class="dropdown-item text-danger" button="type" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoTransporte->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
                               </ul>
                             </div>
                           </div>

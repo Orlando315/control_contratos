@@ -62,39 +62,99 @@
     </div>
 
     <div class="col-md-9">
-      <div class="ibox mb-3">
-        <div class="ibox-title">
-          <h5>Adjuntos</h5>
-
-          @if($transporte->documentos->count() < 10)
-            <div class="ibox-tools">
-              <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+      <div class="tabs-container mb-3">
+        <ul class="nav nav-tabs">
+          <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
+          <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="tab-13">
+            <div class="panel-body">
+              <div class="row">
+                @foreach($transporte->contratos as $contrato)
+                  <div class="col-lg-4">
+                    <div class="ibox m-2 m-lg-0">
+                      <div class="ibox-title">
+                        <h5>{{ $contrato->contrato->nombre }}</h5>
+                        <div class="ibox-tools">
+                          <a class="collapse-link" href="#">
+                            <i class="fa fa-chevron-up"></i>
+                          </a>
+                        </div>
+                      </div>
+                      @forelse($transporte->requisitosWithDocumentos($contrato->contrato) as $requisito)
+                        <div class="ibox-content p-2">
+                          <div class="row">
+                            <div class="col-9">
+                              <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
+                              @if($requisito->documento)
+                                <a href="{{ route('admin.documentos.download', ['adjunto' => $requisito->documento->id]) }}">
+                                  {{ $requisito->nombre }}
+                                  @if($requisito->documento->vencimiento)
+                                    <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
+                                  @endif
+                                </a>
+                              @else
+                                {{ $requisito->nombre }}
+                              @endif
+                            </div>
+                            <div class="col-3">
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu" x-placement="bottom-start">
+                                  @if($requisito->documento)
+                                    <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                    <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                  @else
+                                    <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                  @endif
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      @empty
+                        <div class="ibox-content p-2">
+                          <p class="text-muted text-center mb-1">No hay requisitos</p>
+                        </div>
+                      @endforelse
+                    </div>
+                  </div>
+                @endforeach
+              </div>
             </div>
-          @endif
-        </div>
-        <div class="ibox-content">
-          <div class="row icons-box icons-folder">
-            @foreach($transporte->carpetas()->main()->get() as $carpeta)
-              <div class="col-md-3 col-xs-4 infont mb-3">
-                <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
-                  <i class="fa fa-folder" aria-hidden="true"></i>
-                  <p class="m-0">{{ $carpeta->nombre }}</p>
-                </a>
-              </div>
-            @endforeach
           </div>
-
-          <hr class="hr-line-dashed">
-
-          <div class="row">
-            @forelse($transporte->documentos()->main()->get() as $documento)
-              @include('partials.documentos', ['edit' => true])
-            @empty
-              <div class="col-12">
-                <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
+          <div class="tab-pane" id="tab-11">
+            <div class="panel-body">
+              @if($transporte->documentos->count() < 10)
+                <div class="mb-3">
+                  <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                </div>
+              @endif
+              <div class="row icons-box icons-folder">
+                @foreach($transporte->carpetas()->main()->get() as $carpeta)
+                  <div class="col-md-3 col-xs-4 infont mb-3">
+                    <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                      <i class="fa fa-folder" aria-hidden="true"></i>
+                      <p class="m-0">{{ $carpeta->nombre }}</p>
+                    </a>
+                  </div>
+                @endforeach
               </div>
-            @endforelse
+
+              <hr class="hr-line-dashed">
+
+              <div class="row">
+                @forelse($transporte->documentos()->main()->get() as $documento)
+                  @include('partials.documentos', ['edit' => true])
+                @empty
+                  <div class="col-12">
+                    <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
+                  </div>
+                @endforelse
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -279,7 +339,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
           </div>
         </form>
       </div>
@@ -309,37 +369,11 @@
 
       $('#delFileModal').on('show.bs.modal', function(e){
         let button = $(e.relatedTarget),
-            action = button.data('url');
+            url = button.data('url');
 
-        $('#delete-file-form').attr('action', action);
+        $('#delete-file-form button[type="submit"]').prop('disabled', !url)
+        $('#delete-file-form').attr('action', url);
       });
-
-      $('#delete-file-form').submit(deleteFile);
     });
-
-    function deleteFile(e){
-      e.preventDefault();
-
-      let form = $(this),
-          action = form.attr('action');
-
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function(r){
-        if(r.response){
-          $('#adjunto-' + r.id).remove();
-          $('#delFileModal').modal('hide');
-        }else{
-          $('.alert').show().delay(7000).hide('slow');
-        }
-      })
-      .fail(function(){
-        $('.alert').show().delay(7000).hide('slow');
-      })
-    }
   </script>
 @endsection

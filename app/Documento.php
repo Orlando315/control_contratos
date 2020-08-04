@@ -90,6 +90,10 @@ class Documento extends Model
           $route = 'admin.consumos.show';
         }
 
+        if($this->documentable_type == 'App\Transporte'){
+          $route = 'admin.transportes.show';
+        }
+
         if($this->documentable_type == 'App\Inventario'){
           $route = 'admin.inventarios.show';
         }

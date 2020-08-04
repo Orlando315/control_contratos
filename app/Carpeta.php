@@ -114,23 +114,7 @@ class Carpeta extends Model
      */
     public function type()
     {
-      switch ($this->carpetable_type) {
-        case 'App\Contrato':
-          return 'contratos';
-          break;
-        case 'App\Empleado':
-          return 'empleados';
-          break;
-        case 'App\TransporteConsumo':
-          return 'consumos';
-          break;
-        case 'App\Transporte':
-          return 'transportes';
-          break;
-        case 'App\Inventario':
-          return 'inventarios';
-          break;
-      }
+      return self::getTypeFromClass($this->carpetable_type);
     }
 
     /**
@@ -161,5 +145,32 @@ class Carpeta extends Model
           abort(404);
         break;
       } 
+    }
+
+    /**
+     * Obtener el type segun la clase especificada
+     * 
+     * @param  string  $class
+     * @return string
+     */
+    public static function getTypeFromClass($class)
+    {
+      switch ($class) {
+        case 'App\Contrato':
+          return 'contratos';
+          break;
+        case 'App\Empleado':
+          return 'empleados';
+          break;
+        case 'App\TransporteConsumo':
+          return 'consumos';
+          break;
+        case 'App\Transporte':
+          return 'transportes';
+          break;
+        case 'App\Inventario':
+          return 'inventarios';
+          break;
+      }
     }
 }

@@ -26,7 +26,7 @@ class Requisito extends Model
      *
      * @var array
      */
-    private static $allowedTypes = ['contratos', 'empleados'];
+    private static $allowedTypes = ['contratos', 'empleados', 'transportes'];
 
     /**
      * The "booting" method of the model.

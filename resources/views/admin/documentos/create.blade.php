@@ -5,7 +5,7 @@
 @section('head')
   <!-- Datepicker -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
-  @if($type == 'empleados' || $type == 'contratos')
+  @if($type == 'empleados' || $type == 'contratos' || $type == 'transportes')
     <!-- Select2 -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
@@ -36,7 +36,7 @@
           <form action="{{ route('admin.documentos.store', ['type' => $type, 'id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
-            @if($type == 'empleados' || $type == 'contratos')
+            @if($type == 'empleados' || $type == 'contratos' || $type == 'transportes')
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group{{ $errors->has('requisito') ? ' has-error' : '' }}">
@@ -106,7 +106,7 @@
   <!-- Datepicker -->
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
-  @if($type == 'empleados' || $type == 'contratos')
+  @if($type == 'empleados' || $type == 'contratos' || $type == 'transportes')
     <!-- Select2 -->
     <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   @endif
@@ -122,7 +122,7 @@
         });
       @endif
 
-      @if($type == 'empleados' || $type == 'contratos')
+      @if($type == 'empleados' || $type == 'contratos' || $type == 'transportes')
         $('#requisito').select2({
           allowClear: true,
           theme: 'bootstrap4',
