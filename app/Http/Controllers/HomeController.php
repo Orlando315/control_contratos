@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\{Usuario, Contrato, Inventario, EmpleadosContrato, Documento};
 use App\Scopes\EmpresaScope;
 
@@ -22,6 +23,8 @@ class HomeController extends Controller
       $documentosDeContratosPorVencer = Documento::deContratosPorVencer();
       $empleadosContratosPorVencer = EmpleadosContrato::porVencer();
       $documentosDeEmpleadosPorVencer = Documento::deEmpleadosPorVencer();
+      $otrosEmpleados = Auth::user()->isEmpleado() ? Auth::user()->empleado->otrosEmpleados()->get()
+                                              : [];
 
       return view('dashboard', [
         'inventarios' => $inventarios,
@@ -31,6 +34,7 @@ class HomeController extends Controller
         'documentosDeContratosPorVencer' => $documentosDeContratosPorVencer,
         'empleadosContratosPorVencer' => $empleadosContratosPorVencer,
         'documentosDeEmpleadosPorVencer' => $documentosDeEmpleadosPorVencer,
+        'otrosEmpleados' => $otrosEmpleados,
       ]);
     }
 

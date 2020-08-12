@@ -203,6 +203,18 @@ class Empleado extends Model
     }
 
     /**
+     * Obtener otros Empleados en el mismo Contrato
+     */
+    public function otrosEmpleados()
+    {
+      return $this->contrato
+                  ->empleados()
+                  ->select('id')
+                  ->where('id', '!=', $this->id)
+                  ->with('usuario:empleado_id,nombres,apellidos,rut');
+    }
+
+    /**
      * Obtener los Requisitos en el Contrato
      */
     public function requisitos()
@@ -321,9 +333,10 @@ class Empleado extends Model
      * @param  string  $comparacion  El tipo de comparacion usaba en el metodo where para la consulta de los Eventos
      * @param  int  $tipo  El tipo de Evento a buscar
      * @param  bool  $pago  Si el Evento es pago o no
+     * @param  bool  $status  Si el Evento esta aprobado o no
      * @return array  $eventos
      */
-    public function getEventos($clickable = true, $comparacion = '!=', $tipo = 1, $pago = null)
+    public function getEventos($clickable = true, $comparacion = '!=', $tipo = 1, $pago = null, $status = true)
     {
       $eventos = [];
       $search = $this->eventos()
@@ -333,6 +346,7 @@ class Empleado extends Model
                               $queryWhen->where('pago', $pago);
                             });
                       })
+                      ->where('status', $status)
                       ->get();
 
       $className = $clickable ? 'clickableEvent' : '';

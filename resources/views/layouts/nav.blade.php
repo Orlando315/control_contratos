@@ -13,6 +13,30 @@
     @if(Auth::user()->isAdmin())
       <li class="dropdown">
         <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+          <i class="fa fa-address-card"></i>
+          @if(count($notificationEmpleadoEventosPendientes) > 0)
+            <span class="label label-success">{{ count($notificationEmpleadoEventosPendientes) }}</span>
+          @endif
+        </a>
+        <ul class="dropdown-menu dropdown-messages">
+          @foreach($notificationEmpleadoEventosPendientes as $notificationEmpleadoEvento)
+            <li>
+              <a class="dropdown-item px-2" href="{{ route('admin.empleados.show', ['empleado' => $notificationEmpleadoEvento->empleado_id]) }}">
+                <div class="dropdown-messages-box">
+                  <div class="media-body">
+                    <p class="notification-description"><strong>{{ $notificationEmpleadoEvento->empleado->usuario->nombre() }}</strong> ha solicitado: <strong>{{ $notificationEmpleadoEvento->tipo() }}</strong>
+                    ({{ $notificationEmpleadoEvento->inicio}}{{ $notificationEmpleadoEvento->fin ? ' hasta '.$notificationEmpleadoEvento->fin : '' }}).</p>
+                    <small class="text-muted">{{ optional($notificationEmpleadoEvento->created_at)->format('d-m-Y H:i:s') }}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="dropdown-divider"></li>
+          @endforeach
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
           <i class="fa fa-archive"></i>
           @if(count($notificationSolicitudesPendientes) > 0)
             <span class="label label-danger">{{ count($notificationSolicitudesPendientes) }}</span>
@@ -21,10 +45,10 @@
         <ul class="dropdown-menu dropdown-messages">
           @foreach($notificationSolicitudesPendientes as $notificationSolicitud)
             <li>
-              <a class="dropdown-item" href="{{ route('admin.solicitud.edit', ['solicitud' => $notificationSolicitud->id]) }}">
+              <a class="dropdown-item px-2" href="{{ route('admin.solicitud.edit', ['solicitud' => $notificationSolicitud->id]) }}">
                 <div class="dropdown-messages-box">
                   <div class="media-body">
-                    <strong>{{ $notificationSolicitud->empleado->usuario->nombre() }}</strong> ha solicitado: <strong>{{ $notificationSolicitud->tipo() }}</strong>. <br>
+                    <p class="notification-description"><strong>{{ $notificationSolicitud->empleado->usuario->nombre() }}</strong> ha solicitado: <strong>{{ $notificationSolicitud->tipo() }}</strong>.</p>
                     <small class="text-muted">{{ optional($notificationSolicitud->fecha)->format('d-m-Y H:i:s') }}</small>
                   </div>
                 </div>
@@ -44,10 +68,10 @@
         <ul class="dropdown-menu dropdown-messages">
           @foreach($notificationSolicitudesAnticiposPendientes as $notificationSolicitudAnticipo)
             <li>
-              <a class="dropdown-item" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitudAnticipo->id]) }}">
+              <a class="dropdown-item px-2" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitudAnticipo->id]) }}">
                 <div class="dropdown-messages-box">
                   <div class="media-body">
-                    <strong>{{ $notificationSolicitudAnticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitudAnticipo->anticipo() }}</strong>. <br>
+                    <p class="notification-description"><strong>{{ $notificationSolicitudAnticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitudAnticipo->anticipo() }}</strong>.</p>
                     <small class="text-muted">{{ optional($notificationSolicitudAnticipo->fecha)->format('d-m-Y H:i:s') }}</small>
                   </div>
                 </div>

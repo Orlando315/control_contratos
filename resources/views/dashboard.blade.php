@@ -3,6 +3,11 @@
 @section('title', 'Inicio - '.config('app.name'))
 
 @section('head')
+  <!-- Datepicker -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
   <!-- Fullcalendar -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/fullcalendar/fullcalendar.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/fullcalendar/scheduler.min.css') }}">
@@ -174,7 +179,7 @@
                       @foreach($documentosDeEmpleadosPorVencer as $d)
                         <tr>
                           <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $d->doumentable->usuario->nombres }}</td>
+                          <td>{{ $d->documentable->usuario->nombres }}</td>
                           <td>{{ $d->nombre }}</td>
                           <td>{{ $d->vencimiento }}</td>
                           <td>
@@ -277,20 +282,162 @@
           </div>
         </div>
       </div>
-
       <div class="col-md-12">
-        <div class="ibox">
-          <div class="ibox-content">
-            <div id="calendar"></div>
+        <div class="tabs-container">
+          <ul class="nav nav-tabs">
+            <li><a class="nav-link active" href="#tab-21" data-toggle="tab">Calendario</a></li>
+            @if(Auth::user()->isEmpleado())
+              <li><a class="nav-link" href="#tab-22" data-toggle="tab">Eventos</a></li>
+            @endif
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-21">
+              <div class="panel-body">
+                <div class="alert alert-success alert-calendar" style="display: none">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  <strong class="text-center">Solicitud enviada exitosamente.</strong> 
+                </div>
+                <div id="calendar"></div>
+              </div>
+            </div>
+            @if(Auth::user()->isEmpleado())
+              <div class="tab-pane" id="tab-22">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-center">Inicio</th>
+                        <th class="text-center">Fin</th>
+                        <th class="text-center">Estatus</th>
+                        <th class="text-center">Agregado</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-center">
+                      @foreach(Auth::user()->empleado->eventos()->notAsistencias()->latest()->get() as $evento)
+                        <tr id="evento-{{ $evento->id }}">
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $evento->tipo() }}</td>
+                          <td>{{ $evento->inicio }}</td>
+                          <td>{{ $evento->fin ?? 'N/A' }}</td>
+                          <td>{!! $evento->status() !!}</td>
+                          <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endif
           </div>
         </div>
       </div>
     @endif
   </div>
+
+  @if(Auth::user()->isEmpleado())
+    <div id="delEventModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delEventModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delEventForm" action="#" method="POST">
+            {{ method_field('DELETE') }}
+            {{ csrf_field() }}
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delEventModalLabel">Eliminar Evento</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Desea eliminar este evento?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="eventForm" action="{{ route('eventos.store') }}" method="POST">
+            <input id="eventDay" type="hidden" name="inicio" value="">
+            {{ csrf_field() }}
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delModalLabel">Agregar evento</h4>
+            </div>
+            <div id="events-modal-body" class="modal-body">
+              <div class="alert alert-danger" style="display: none">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong class="text-center">Ha ocurrido un error.</strong> 
+              </div>
+
+              <h4 class="text-center" id="eventTitle"></h4>
+
+              <div class="form-group">
+                <label for="tipo">Evento: *</label>
+                <select id="tipo" class="form-control" name="tipo" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                  <option value="2">Licencia médica</option>
+                  <option value="3">Vacaciones</option>
+                  <option value="4">Permiso</option>
+                  <option value="5">Permiso no remunerable</option>
+                  @if(Auth::user()->empleado->despidoORenuncia())
+                    <option value="6">Despido</option>
+                    <option value="7">Renuncia</option>
+                  @endif
+                  <option value="8">Inasistencia</option>
+                  <option value="9">Reemplazo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="fin">Fin: <small>(Opcional)</small></label>
+                <input id="fin" class="form-control" type="text" name="fin" placeholder="yyyy-mm-dd">
+              </div>
+
+              <div class="form-group{{ $errors->has('reemplazo') ? ' has-error' : '' }}" style="display: none">
+                <label for="reemplazo">Reemplazo: *</label>
+                <select id="reemplazo" class="form-control" name="reemplazo" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                  @foreach($otrosEmpleados as $d)
+                    <option value="{{ $d->id }}">{{ $d->usuario->rut }} | {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div class="form-group" hidden>
+                <label for="valor">Valor: *</label>
+                <input id="valor" class="form-control" type="number" step="1" min="1" max="999999999" name="valor" placeholder="Valor" rqeuired>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endif
 @endsection
 
 @section('script')
-  @if(Auth::user()->empleado)
+  @if(Auth::user()->isEmpleado())
+    <!-- Datepicker -->
+    <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+    <!-- Select2 -->
+    <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
     <!-- Fullcalendar -->
     <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/lib/moment.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/fullcalendar.min.js') }}"></script>
@@ -342,14 +489,135 @@
           },
           eventClick: function(event){
             if(event.id){
-              $('#delEventModal').modal('show');
-              $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
+              // $('#delEventModal').modal('show');
+              // $('#delEventForm').attr('action', '{{ route("eventos.index") }}/' + event.id);
             }else{
-              $('#delEventForm').attr('action', '#');
+              // $('#delEventForm').attr('action', '#');
             }
           }
         })
+
+        $('#fin').datepicker({
+          format: 'yyyy-mm-dd',
+          startDate: 'today',
+          language: 'es',
+          keyboardNavigation: false,
+          autoclose: true
+        });
+
+        $('#reemplazo, #tipo').select2({
+          dropdownParent: $('#events-modal-body'),
+          theme: 'bootstrap4',
+          placeholder: 'Seleccione...',
+        })
+
+        $('#reemplazo').trigger('change')
+
+        $('#eventForm').submit(storeEvent)
+        ///$('#delEventForm').submit(delEvent)
+
+        $('#tipo').change(function(){
+          let tipo = $(this).val()
+
+          let isReemplazo = tipo == 9
+          let isDespidoRenuncia = (tipo == 6 || tipo == 7)
+
+          $('#fin')
+            .closest('.form-group')
+            .attr('hidden', (isReemplazo || isDespidoRenuncia))
+
+          $('#reemplazo, #valor')
+            .prop('required', isReemplazo)
+            .closest('.form-group')
+            .toggle(isReemplazo)
+        })
       })
+
+      function storeEvent(e){
+        e.preventDefault();
+
+        let form = $(this),
+            action = form.attr('action'),
+            alert  = $('#eventsModal .alert');
+            button = form.find('button[type="submit"]');
+
+        console.log('Submiting...')
+        button.prop('disabled', true);
+        alert.hide();
+
+        console.log('Submiting...')
+
+        $.ajax({
+          type: 'POST',
+          url: action,
+          data: form.serialize(),
+          dataType: 'json',
+        })
+        .done(function(r){
+          if(r.response){
+
+            if(r.evento.tipo == 6 || r.evento.tipo == 7 || r.evento.tipo == 9){
+              location.reload()
+            }
+
+            $('#calendar').fullCalendar('renderEvent', {
+              id: r.evento.id,
+              className: 'clickableEvent',
+              title: r.data.titulo,
+              start: r.evento.inicio,
+              end: r.evento.fin,
+              allDay: true,
+              color: r.data.color
+            });
+            form[0].reset()
+            $('#eventsModal').modal('hide');
+            $('.alert-calendar').show().delay(5000).hide('slow')
+          }else{
+            alert.show().delay(7000).hide('slow');
+            alert.find('strong').text(r.message || 'Ha ocurrido un error.')
+          }
+        })
+        .fail(function(){
+          alert.show().delay(7000).hide('slow');
+          alert.find('strong').text('Ha ocurrido un error')
+        })
+        .always(function(){
+          button.prop('disabled', false);
+        })
+      }
+
+      function delEvent(e){
+        e.preventDefault();
+
+        let form = $(this),
+            action = form.attr('action'),
+            alert  = form.find('.alert');
+            button = form.find('button[type="submit"]');
+
+        button.prop('disabled', true);
+        alert.hide();
+
+        $.ajax({
+          type: 'POST',
+          url: action,
+          data: form.serialize(),
+          dataType: 'json',
+        })
+        .done(function(r){
+          if(r.response){
+            $('#calendar').fullCalendar('removeEvents', r.evento.id);
+            $('#delEventModal').modal('hide');
+          }else{
+            alert.show().delay(7000).hide('slow');
+          }
+        })
+        .fail(function(){
+          alert.show().delay(7000).hide('slow');
+        })
+        .always(function(){
+          button.prop('disabled', false);
+        })
+      }
     </script>
   @endif
 @endsection

@@ -28,15 +28,61 @@ class EmpleadosEvento extends Model
       'tipo',
       'jornada',
       'comida',
-      'pago'
+      'pago',
+      'status',
     ];
 
     /**
-     * Obtener el Empleado que realizo el Reemplazo (Evento Reemplazo)
+     * The attributes that should be cast to native types.
+     *
+     * @var array
      */
-    public function userReemplazo()
+    protected $casts = [
+      'status' => 'boolean',
+    ];
+
+    /**
+     * Filtro para obtener solo las Solicitudes aprobados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNotAsistencias($query)
     {
-      return $this->belongsTo('App\Empleado', 'empleado_id');
+      return $query->where('tipo', '!=', 1);
+    }
+
+    /**
+     * Filtro para obtener solo las Solicitudes aprobados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAprobados($query)
+    {
+      return $query->where('status', true);
+    }
+
+    /**
+     * Filtro para obtener solo las Solicitudes Pendientes
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePendientes($query)
+    {
+      return $query->whereNull('status');
+    }
+
+    /**
+     * Filtro para obtener solo las Solicitudes Rechazados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRechazados($query)
+    {
+      return $query->where('status', false);
     }
 
     /**
@@ -51,6 +97,68 @@ class EmpleadosEvento extends Model
         $value = new Carbon($value);
         return $value->addDays(1)->toDateString();
       }
+    }
+
+    /**
+     * Obtener el Empleado que genero el Evento
+     */
+    public function empleado()
+    {
+      return $this->belongsTo('App\Empleado', 'empleado_id');
+    }
+
+    /**
+     * Evaluar si la Solicitud fue aprobada
+     * 
+     * @return boolean
+     */
+    public function isAprobado()
+    {
+      return $this->status === true;
+    }
+
+    /**
+     * Evaluar si la Solicitud esta pendiente por aprobar / rechazar
+     * 
+     * @return boolean
+     */
+    public function isPendiente()
+    {
+      return is_null($this->status);
+    }
+
+    /**
+     * Evaluar si la Solicitud fue rechazada
+     * 
+     * @return boolean
+     */
+    public function isRechazado()
+    {
+      return $this->status === false;
+    }
+
+    /**
+     * Obtener el status formateado como label
+     *
+     * @return string
+     */
+    public function status()
+    {
+      if(is_null($this->status)){
+        return '<small class="label label-default">Pendiente</small>';
+      }
+
+      return $this->status ? '<small class="label label-primary">Aprobado</small>' : '<small class="label label-danger">Rechazado</small>';
+    }
+
+    /**
+     * Obtener el tipo del evento
+     *
+     * @return string
+     */
+    public function tipo()
+    {
+      return $this->eventoData()->titulo;
     }
 
     /**
@@ -186,7 +294,7 @@ class EmpleadosEvento extends Model
      */
     public function nombreReemplazo()
     {
-      $nombre = $this->userReemplazo->usuario->nombres.' '.$this->userReemplazo->usuario->apellidos;
+      $nombre = $this->empleado->nombre();
       $route = route('admin.empleados.show', ['empleado' => $this->empleado_id]);
 
       return "<a href='{$route}'>{$nombre}</a>";

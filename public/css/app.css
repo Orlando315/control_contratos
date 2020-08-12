@@ -87,3 +87,8 @@
 .custom-file-input.input-sm ~ .custom-file-label{
   height: calc(1.3em + .75rem + 2px) !important;
 }
+
+.notification-description{
+  margin: 0;
+  line-height: 1.5;
+}

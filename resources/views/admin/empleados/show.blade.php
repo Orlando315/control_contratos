@@ -489,15 +489,61 @@
 
   <div class="row mb-3">
     <div class="col-md-12">
-      <div class="ibox">
-        <div class="ibox-title">
-          <h5>Calendario</h5>
-          <div class="ibox-tools">
-            <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-excel-o"></i> Exportar a excel</button>
+      <div class="tabs-container">
+        <ul class="nav nav-tabs">
+          <li><a class="nav-link active" href="#tab-21" data-toggle="tab">Calendario</a></li>
+          <li><a class="nav-link" href="#tab-22" data-toggle="tab">Eventos</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="tab-21">
+            <div class="panel-body">
+              <div class="mb-3 text-right">
+                <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-excel-o"></i> Exportar a excel</button>
+              </div>
+              <div id="calendar"></div>
+            </div>
           </div>
-        </div>
-        <div class="ibox-content">
-          <div id="calendar"></div>
+          <div class="tab-pane" id="tab-22">
+            <div class="panel-body">
+              <table class="table data-table table-bordered table-hover table-sm w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Tipo</th>
+                    <th class="text-center">Inicio</th>
+                    <th class="text-center">Fin</th>
+                    <th class="text-center">Estatus</th>
+                    <th class="text-center">Agregado</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @foreach($empleado->eventos()->notAsistencias()->latest()->get() as $evento)
+                    <tr id="evento-{{ $evento->id }}">
+                      <td>{{ $loop->iteration }}</td>
+                      <td>{{ $evento->tipo() }}</td>
+                      <td>{{ $evento->inicio }}</td>
+                      <td>{{ $evento->fin ?? 'N/A' }}</td>
+                      <td>{!! $evento->status() !!}</td>
+                      <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
+                      <td>
+                        <div class="btn-group">
+                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                            @if($evento->isPendiente())
+                              <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-check"></i> Aprobar</a></li>
+                              <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
+                            @endif
+                            <li><a class="dropdown-item" type="button" data-toggle="modal" data-target="#delEventModal" data-url="{{ route('admin.eventos.destroy', ['evento' => $evento->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -709,7 +755,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
           </div>
         </form>
       </div>
@@ -776,7 +822,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm" type="submit">Gardar</button>
+            <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
           </div>
         </form>
       </div>
@@ -809,6 +855,30 @@
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
             <button class="btn btn-success btn-sm" type="submit">Enviar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="statusEventoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusEventoModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="status-modal-form" action="#" method="POST">
+          <input id="status-modal-value" type="hidden" name="status">
+          {{ method_field('PUT') }}
+          {{ csrf_field() }}
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="statusEventoModalLabel">Cambiar estatus</h4>
+          </div>
+          <div class="modal-body">
+            <h4 class="text-center">¿Esta seguro de <span id="status-modal-label"></span> este Evento?</h4>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-primary btn-sm" type="submit" disabled>Enviar</button>
           </div>
         </form>
       </div>
@@ -913,6 +983,8 @@
           }else{
             $('#delEventForm').attr('action', '#');
           }
+
+          $('#delEventForm button[type="submit"]').prop('disabled', !event.id)
         }
       })
 
@@ -930,6 +1002,27 @@
           .prop('required', isReemplazo)
           .closest('.form-group')
           .attr('hidden', !isReemplazo)
+      })
+
+      $('#delEventModal').on('show.bs.modal', function (e) {
+        let url = $(e.relatedTarget).data('url');
+
+        if(url){
+          $('#delEventForm').attr('action', url);
+        }
+        $('#delEventForm button[type="submit"]').prop('disabled', !url)
+      })
+
+      $('#statusEventoModal').on('show.bs.modal', function (e) {
+        let type = +$(e.relatedTarget).data('type'),
+            url = $(e.relatedTarget).data('url');
+
+        title = type == 1 ? 'aprobar' : 'rechazar';
+
+        $('#status-modal-form button[type="submit"]').prop('disabled', !url)
+        $('#status-modal-form').attr('action', url)
+        $('#status-modal-value').val(type)
+        $('#status-modal-label').text(title)
       })
    	});//Ready
 
@@ -1002,6 +1095,7 @@
       .done(function(r){
         if(r.response){
           $('#calendar').fullCalendar('removeEvents', r.evento.id);
+          $(`#evento-${r.evento.id}`)
           $('#delEventModal').modal('hide');
         }else{
           alert.show().delay(7000).hide('slow');

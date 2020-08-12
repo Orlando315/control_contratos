@@ -66,6 +66,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::resource('solicitud', 'SolicitudController');
   Route::get('solicitud/{solicitud}/download', 'SolicitudController@download')->name('solicitud.download');
 
+  /* --- Empleado - Eventos --- */
+  Route::get('eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
+  Route::post('eventos/', 'EmpleadosEventosController@store')->name('eventos.store');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->middleware('role:staff')->group(function(){
     /* --- Solo usuarios 1 Empresa (Super admin) --- */
@@ -134,6 +138,7 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
       Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')->name('eventos.store');
       Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
+      Route::put('empleados/eventos/{evento}/status', 'EmpleadosEventosController@status')->name('eventos.status');
 
       /* --- Sueldos --- */
       Route::get('sueldos/{contrato}', 'EmpleadosSueldosController@index')->name('sueldos.index');
