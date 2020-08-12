@@ -177,6 +177,14 @@
           </ul>
         </li>
       @endif
+
+      @if(Auth::user()->isEmpleado())
+        <li>
+          <a href="{{ route('anticipos.create') }}">
+            <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
+          </a>
+        </li>
+      @endif
     </ul>
   </div>
 </nav>

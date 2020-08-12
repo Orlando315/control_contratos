@@ -200,36 +200,80 @@
           <h3 class="text-center"> Información como Empleado</h3>
         </div>
       @endif
-      <div class="col-md-12">
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5 class="text-center"><i class="fa fa-money"></i> Sueldos</h5>
-          </div>
-          <div class="ibox-content">
-            <table class="table data-table table-bordered table-hover table-sm w-100">
-              <thead>
-                <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Fecha</th>
-                <th class="text-center">Alcance líquido</th>
-                <th class="text-center">Sueldo líquido</th>
-                <th class="text-center">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="text-center">
-                @foreach(Auth::user()->sueldos()->get() as $d)
-                  <tr>
-                    <td>{{ $loop->index + 1 }}</td>
-                    <td>{{ $d->created_at }}</td>
-                    <td>{{ $d->alcanceLiquido() }}</td>
-                    <td>{{ $d->sueldoLiquido() }}</td>
-                    <td>
-                      <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['suedldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
+      <div class="col-md-12 mb-3">
+        <div class="tabs-container">
+          <ul class="nav nav-tabs">
+            <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-money"></i> Sueldos</a></li>
+            <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab-1">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Fecha</th>
+                    <th class="text-center">Alcance líquido</th>
+                    <th class="text-center">Sueldo líquido</th>
+                    <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach(Auth::user()->sueldos()->get() as $d)
+                      <tr>
+                        <td>{{ $loop->index + 1 }}</td>
+                        <td>{{ $d->created_at }}</td>
+                        <td>{{ $d->alcanceLiquido() }}</td>
+                        <td>{{ $d->sueldoLiquido() }}</td>
+                        <td>
+                          <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['suedldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane" id="tab-2">
+              <div class="panel-body">
+                <div class="mb-3 text-right">
+                  <a class="btn btn-primary btn-xs" href="{{ route('anticipos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Solicitar anticipo</a>
+                </div>
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Anticipo</th>
+                      <th class="text-center">Bono</th>
+                      <th class="text-center">Fecha</th>
+                      <th class="text-center">Descripción</th>
+                      <th class="text-center">Adjunto</th>
+                      <th class="text-center">Estatus</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach(Auth::user()->empleado->anticipos()->get() as $anticipo)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $anticipo->anticipo() }}</td>
+                        <td>{{ $anticipo->bono() }}</td>
+                        <td>{{ $anticipo->fecha }}</td>
+                        <td>{{ $anticipo->descripcion }}</td>
+                        <td>
+                          @if($anticipo->adjunto)
+                            <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
+                          @else
+                            N/A
+                          @endif
+                        </td>
+                        <td>{!! $anticipo->status() !!}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

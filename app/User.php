@@ -65,6 +65,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Evaluar si el Usuario es Administrador (Tipo 1 o 2)
+     * 
+     * @return bool
+     */
+    public function isAdmin()
+    {
+      return $this->tipo < 3;
+    }
+
+    /**
+     * Evaluar si el Usuario es Empleado
+     * 
+     * @return bool
+     */
+    public function isEmpleado()
+    {
+      return !is_null($this->empleado);
+    }
+
+    /**
      * Verificar si el role especificado
      *
      * @param  int  $role

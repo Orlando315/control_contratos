@@ -16,9 +16,11 @@ class AnticiposController extends Controller
      */
     public function index()
     {
-      $anticipos = Anticipo::all();
+      $anticipos = Anticipo::aprobados()->get();
+      $pendientes = Anticipo::pendientes()->get();
+      $rechazados = Anticipo::rechazados()->get();
 
-      return view('admin.anticipos.index', compact('anticipos'));
+      return view('admin.anticipos.index', compact('anticipos', 'pendientes', 'rechazados'));
     }
 
     /**
@@ -54,6 +56,7 @@ class AnticiposController extends Controller
 
       $anticipo = new Anticipo($request->all());
       $anticipo->contrato_id = $contrato->id;
+      $anticipo->status = true;
 
       if(Auth::user()->empresa->anticipos()->save($anticipo)){
         if($request->hasFile('adjunto')){
@@ -99,6 +102,8 @@ class AnticiposController extends Controller
      */
     public function edit(Anticipo $anticipo)
     {
+      $this->authorize('update', $anticipo);
+
       return view('admin.anticipos.edit', compact('anticipo'));
     }
 
@@ -111,6 +116,7 @@ class AnticiposController extends Controller
      */
     public function update(Request $request, Anticipo $anticipo)
     {
+      $this->authorize('update', $anticipo);
       $this->validate($request, [
         'fecha' => 'required|date_format:d-m-Y',
         'anticipo' => 'required|numeric|min:1|max:99999999',
@@ -244,6 +250,7 @@ class AnticiposController extends Controller
           'anticipo' => $anticipo['anticipo'],
           'bono' => $anticipo['bono'],
           'descripcion' => $anticipo['descripcion'],
+          'status' => true,
         ];
 
         if($request->hasFile('empleados.'.$id.'.adjunto')){
@@ -291,5 +298,30 @@ class AnticiposController extends Controller
       }
 
       return Storage::download($anticipo->adjunto);
+    }
+
+    /**
+     * Descargar el djunto de Anticipo especificado
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Anticipo $anticipo
+     * @return \Illuminate\Http\Response
+     */
+    public function status(Request $request, Anticipo $anticipo)
+    {
+      $anticipo->status = $request->status == '1';
+
+      if($anticipo->save()){
+        return redirect()->back()->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Estatus modificado exitosamente.'
+        ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
     }
 }

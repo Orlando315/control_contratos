@@ -16,10 +16,28 @@
 @endsection
 
 @section('content')
+  @if($anticipo->isPendiente())
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+          <div class="alert alert-info alert-important text-center" role="alert">
+            <h4><i class="icon fa fa-level-up"></i> Solicitud de Anticipo</h4>
+            <p class="m-0"><strong>{{ $anticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $anticipo->anticipo() }}</strong></p>
+            <button class="btn btn-danger btn-sm mt-2" type="button" data-type="0" data-toggle="modal" data-target="#statusAnticipoModal">
+              <i class="fa fa-ban"></i> Rechazar
+            </button>
+            <button class="btn btn-success btn-sm mt-2" type="button" data-type="1" data-toggle="modal" data-target="#statusAnticipoModal">
+              <i class="fa fa-check"></i> Aprobar
+            </button>
+          </div>
+      </div>
+    </div>
+  @endif
   <div class="row mb-3">
     <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.edit', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @if(!$anticipo->isRechazado())
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.edit', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endif
       <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
     </div>
   </div>
@@ -71,6 +89,12 @@
                 @endif
               </span>
             </li>
+            <li class="list-group-item">
+              <b>Estatus</b>
+              <span class="pull-right">
+                {!! $anticipo->status() !!}
+              </span>
+            </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $anticipo->created_at }}</small>
             </li>
@@ -101,4 +125,45 @@
       </div>
     </div>
   </div>
+  
+  @if($anticipo->isPendiente())
+    <div id="statusAnticipoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusAnticipoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="status-modal-form" action="{{ route('admin.anticipos.status', ['anticipo' => $anticipo->id]) }}" method="POST">
+            <input id="status-modal-value" type="hidden" name="status">
+            {{ method_field('PUT') }}
+            {{ csrf_field() }}
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="statusAnticipoModalLabel">Cambiar estatus</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de <span id="status-modal-label"></span> este Anticipo?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm" type="submit">Enviar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endif
+@endsection
+
+@section('script')
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#statusAnticipoModal').on('show.bs.modal', function (e) {
+        let type = +$(e.relatedTarget).data('type');
+
+        title = type == 1 ? 'aprobar' : 'rechazar';
+
+        $('#status-modal-value').val(type)
+        $('#status-modal-label').text(title)
+      })
+    })
+  </script>
 @endsection

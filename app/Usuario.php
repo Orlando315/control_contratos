@@ -104,4 +104,14 @@ class Usuario extends User
     {
       return Usuario::where('tipo', 4)->get();
     }
+
+    /**
+     * Obtener el nombre completo del Usuario
+     * 
+     * @return string
+     */
+    public function nombre()
+    {
+      return $this->nombres.' '.$this->apellidos;
+    }
 }

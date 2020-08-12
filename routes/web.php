@@ -53,6 +53,11 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('sueldos/{sueldo}/confirmar', 'EmpleadosSueldosController@recibido')->name('sueldos.confirmar');
   Route::get('sueldos/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldos.download');
 
+  /* --- Anticipos --- */
+  Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
+  Route::resource('anticipos', 'AnticiposController')
+        ->only(['create', 'store']);
+
   /* --- Entregas ---*/
   Route::patch('entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
   Route::get('entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
@@ -137,6 +142,7 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
       Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
       Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
+      Route::put('anticipos/{anticipo}/status', 'AnticiposController@status')->name('anticipos.status');
 
       /* --- Gastos --- */
       Route::resource('gastos', 'GastosController');

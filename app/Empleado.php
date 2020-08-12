@@ -151,7 +151,7 @@ class Empleado extends Model
      */
     public function latestAnticipo()
     {
-      return $this->hasOne('App\Anticipo')->select(['empleado_id', 'anticipo'])->latest();
+      return $this->hasOne('App\Anticipo')->aprobados()->select(['empleado_id', 'anticipo'])->latest();
     }
 
     /**
@@ -810,11 +810,12 @@ class Empleado extends Model
       $fin = $inicio->copy()->endOfMonth();
 
       $anticipos = $this->anticipos()
-                          ->where([
-                            ['fecha', '>=', $inicio->toDateString()],
-                            ['fecha', '<=', $fin->toDateString()]
-                          ])
-                          ->sum('anticipo');
+                        ->aprobados()
+                        ->where([
+                          ['fecha', '>=', $inicio->toDateString()],
+                          ['fecha', '<=', $fin->toDateString()]
+                        ])
+                        ->sum('anticipo');
 
       return $anticipos;
     }

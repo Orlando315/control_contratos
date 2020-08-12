@@ -10,6 +10,28 @@
         <span class="m-r-sm text-muted welcome-message">Bienvenidos a <strong>{{ config('app.name') }}</strong>.</span>
       @endif
     </li>
+    @if(Auth::user()->isAdmin())
+      <li class="dropdown">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+          <i class="fa fa-level-up"></i>  <span class="label label-success">{{ count($notificationSolicitudesAnticiposPendientes) }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-messages">
+          @foreach($notificationSolicitudesAnticiposPendientes as $notificationSolicitud)
+            <li>
+              <a class="dropdown-item" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitud->id]) }}">
+                <div class="dropdown-messages-box">
+                  <div class="media-body">
+                    <strong>{{ $notificationSolicitud->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitud->anticipo() }}</strong>. <br>
+                    <small class="text-muted">{{ optional($notificationSolicitud->fecha)->format('d-m-Y H:i:s') }}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="dropdown-divider"></li>
+          @endforeach
+        </ul>
+      </li>
+    @endif
     <li>
       <a href="{{ route('login.logout') }}">
         <i class="fa fa-sign-out"></i> Salir

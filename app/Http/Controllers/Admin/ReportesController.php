@@ -181,8 +181,9 @@ class ReportesController extends Controller
       foreach ($contratos as $contrato) {
 
         $contratoAnticipo = $contrato->anticipos()
-                                            ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
-                                            ->sum('anticipo');
+                                      ->aprobados()
+                                      ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                      ->sum('anticipo');
 
         $dataContratos[] = [
           'contrato' => $contrato->nombre,
@@ -192,8 +193,9 @@ class ReportesController extends Controller
 
         foreach ($contrato->empleados()->with('usuario')->get() as $empleado) {
           $empleadoAnticipo = $empleado->anticipos()
-                                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
-                                              ->sum('anticipo');
+                                        ->aprobados()
+                                        ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                        ->sum('anticipo');
 
           $dataEmpleados[] = [
             'contrato' => $contrato->nombre,
@@ -405,33 +407,34 @@ class ReportesController extends Controller
       foreach ($contratos as $contrato) {
 
         $facturasIngresos = $contrato->facturas()
-                              ->where('tipo', 1)
-                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
-                              ->sum('valor');
+                                      ->where('tipo', 1)
+                                      ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                      ->sum('valor');
 
         $facturasEgresos = $contrato->facturas()
-                              ->where('tipo', 2)
-                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
-                              ->sum('valor');
+                                    ->where('tipo', 2)
+                                    ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                                    ->sum('valor');
 
         $anticipos = $contrato->anticipos()
-                                      ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
-                                      ->sum('anticipo');
+                              ->aprobados()
+                              ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
+                              ->sum('anticipo');
 
         $sueldoAlcanceLiquido = $contrato->sueldos()
-                                            ->whereBetween('created_at', [$inicio->toDateString(), $fin->toDateString()])
-                                            ->sum('alcance_liquido');
+                                        ->whereBetween('created_at', [$inicio->toDateString(), $fin->toDateString()])
+                                        ->sum('alcance_liquido');
 
         $comidas = $contrato->empleadosEventos()
-                                      ->where(function($query) use ($inicio, $fin){
-                                        $query->where([
-                                          ['tipo', 1],
-                                          ['comida', true],
-                                          ['pago', true]
-                                          ])
-                                          ->whereBetween('inicio', [$inicio->toDateString(), $fin->toDateString()]);
-                                      })
-                                      ->count() * 500;
+                            ->where(function($query) use ($inicio, $fin){
+                              $query->where([
+                                ['tipo', 1],
+                                ['comida', true],
+                                ['pago', true]
+                                ])
+                                ->whereBetween('inicio', [$inicio->toDateString(), $fin->toDateString()]);
+                            })
+                            ->count() * 500;
 
         $transporteMantenimiento = $contrato->transportesConsumos()
                                             ->where('tipo', 1)
