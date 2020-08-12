@@ -13,16 +13,42 @@
     @if(Auth::user()->isAdmin())
       <li class="dropdown">
         <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
-          <i class="fa fa-level-up"></i>  <span class="label label-success">{{ count($notificationSolicitudesAnticiposPendientes) }}</span>
+          <i class="fa fa-archive"></i>
+          @if(count($notificationSolicitudesPendientes) > 0)
+            <span class="label label-danger">{{ count($notificationSolicitudesPendientes) }}</span>
+          @endif
         </a>
         <ul class="dropdown-menu dropdown-messages">
-          @foreach($notificationSolicitudesAnticiposPendientes as $notificationSolicitud)
+          @foreach($notificationSolicitudesPendientes as $notificationSolicitud)
             <li>
-              <a class="dropdown-item" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitud->id]) }}">
+              <a class="dropdown-item" href="{{ route('admin.solicitud.edit', ['solicitud' => $notificationSolicitud->id]) }}">
                 <div class="dropdown-messages-box">
                   <div class="media-body">
-                    <strong>{{ $notificationSolicitud->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitud->anticipo() }}</strong>. <br>
+                    <strong>{{ $notificationSolicitud->empleado->usuario->nombre() }}</strong> ha solicitado: <strong>{{ $notificationSolicitud->tipo() }}</strong>. <br>
                     <small class="text-muted">{{ optional($notificationSolicitud->fecha)->format('d-m-Y H:i:s') }}</small>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="dropdown-divider"></li>
+          @endforeach
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+          <i class="fa fa-level-up"></i>
+          @if(count($notificationSolicitudesAnticiposPendientes) > 0)
+            <span class="label label-success">{{ count($notificationSolicitudesAnticiposPendientes) }}</span>
+          @endif
+        </a>
+        <ul class="dropdown-menu dropdown-messages">
+          @foreach($notificationSolicitudesAnticiposPendientes as $notificationSolicitudAnticipo)
+            <li>
+              <a class="dropdown-item" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitudAnticipo->id]) }}">
+                <div class="dropdown-messages-box">
+                  <div class="media-body">
+                    <strong>{{ $notificationSolicitudAnticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitudAnticipo->anticipo() }}</strong>. <br>
+                    <small class="text-muted">{{ optional($notificationSolicitudAnticipo->fecha)->format('d-m-Y H:i:s') }}</small>
                   </div>
                 </div>
               </a>

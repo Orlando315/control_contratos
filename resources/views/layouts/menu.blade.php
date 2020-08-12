@@ -85,6 +85,11 @@
           </a>
         </li>
         <li>
+          <a href="{{ route('admin.solicitud.index') }}">
+            <i class="fa fa-archive"></i> <span class="nav-label">Solicitudes</span>
+          </a>
+        </li>
+        <li>
           <a href="#">
             <i class="fa fa-level-up"></i>
             <span class="nav-label">Anticipos</span>
@@ -183,6 +188,17 @@
           <a href="{{ route('anticipos.create') }}">
             <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
           </a>
+        </li>
+        <li>
+          <a href="#">
+            <i class="fa fa-archive"></i>
+            <span class="nav-label">Solicitudes</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('solicitud.index') }}">Ver solicitudes</a></li>
+            <li><a href="{{ route('solicitud.create') }}">Agregar solicitud</a></li>
+          </ul>
         </li>
       @endif
     </ul>

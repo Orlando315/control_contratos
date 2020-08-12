@@ -210,6 +210,7 @@
               <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
               <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
               <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
+              <li><a class="nav-link" href="#tab-14" data-toggle="tab"><i class="fa fa-archive"></i> Solicitudes</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="tab-13">
@@ -321,6 +322,42 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+              <div class="tab-pane" id="tab-14">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-center">Descripción</th>
+                        <th class="text-center">Estatus</th>
+                        <th class="text-center">Adjunto</th>
+                        <th class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-center">
+                      @foreach($empleado->solicitudes as $solicitud)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td> {{ $solicitud->tipo() }}</td>
+                          <td>{{ $solicitud->descripcion ?? 'N/A' }}</td>
+                          <td>{!! $solicitud->status() !!}</td>
+                          <td>
+                            @if($solicitud->adjunto)
+                              <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
+                            @else
+                              N/A
+                            @endif
+                          </td>
+                          <td>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['inventario' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>                
               </div>
             </div>
           </div>

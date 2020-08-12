@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\PlantillaVariable' => 'App\Policies\PlantillaVariablePolicy',
         'App\Anticipo' => 'App\Policies\AnticipoPolicy',
+        'App\Solicitud' => 'App\Policies\SolicitudPolicy',
     ];
 
     /**

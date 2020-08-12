@@ -62,6 +62,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
   Route::get('entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
 
+  /* --- Solicitudes --- */
+  Route::resource('solicitud', 'SolicitudController');
+  Route::get('solicitud/{solicitud}/download', 'SolicitudController@download')->name('solicitud.download');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->middleware('role:staff')->group(function(){
     /* --- Solo usuarios 1 Empresa (Super admin) --- */
@@ -121,6 +125,10 @@ Route::group(['middleware' => 'auth'], function () {
         'create',
         'store'
       ]);
+
+      /* --- Solicitudes --- */
+      Route::resource('solicitud', 'SolicitudController')
+            ->except(['create', 'store']);
 
       /* --- Empleados - Eventos --- */
       Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');

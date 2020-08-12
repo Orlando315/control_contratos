@@ -195,6 +195,14 @@ class Empleado extends Model
     }
 
     /**
+     * Obtener las Solicitudes
+     */
+    public function solicitudes()
+    {
+      return $this->hasMany('App\Solicitud');
+    }
+
+    /**
      * Obtener los Requisitos en el Contrato
      */
     public function requisitos()

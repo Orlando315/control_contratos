@@ -39,7 +39,7 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab-1">
             <div class="panel-body">
-              <div class="mb-3">
+              <div class="mb-3 text-right">
                 <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
                 <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
               </div>
