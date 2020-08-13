@@ -115,7 +115,7 @@ class PlantillaDocumento extends Model
      */
     public function fillSeccionVariables(PlantillaSeccion $seccion)
     {
-      return array_key_exists($seccion->id, $this->secciones) ? strtr($seccion->contenido, $this->fillStaticVariables($this->secciones[$seccion->id])) : $seccion->contenido;
+      return array_key_exists($seccion->id, $this->secciones ?? []) ? strtr($seccion->contenido, $this->fillStaticVariables($this->secciones[$seccion->id])) : $seccion->contenido;
     }
 
     /**

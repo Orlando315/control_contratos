@@ -178,8 +178,8 @@ class PlantillaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function variables(Plantilla $plantilla)
-    {
-      $secciones = $plantilla->secciones()->select('id', 'nombre', 'variables')->whereJsonLength('variables', '>', '1')->get();
+    { 
+      $secciones = $plantilla->secciones()->select('id', 'nombre', 'variables')->where('variables', 'LIKE', '[{"id":%')->get();
 
       return response()->json(['response' => $secciones->count() > 0, 'secciones' => $secciones]);
     }
