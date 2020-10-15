@@ -23,6 +23,31 @@ class PlantillaVariable extends Model
     protected $fillable = ['nombre', 'tipo', 'variable'];
 
     /**
+     * Variables reservadas para las variables estaticas del sistema
+     * 
+     * @var array
+     */
+    private $_reserved = [
+      '{{e_nombres}}',
+      '{{e_apellidos}}',
+      '{{e_rut}}',
+      '{{e_fecha_de_nacimiento}}',
+      '{{e_telefono}}',
+      '{{e_email}}',
+      '{{e_direccion}}',
+      '{{e_profesion}}',
+      '{{e_sexo}}',
+      '{{e_talla_camisa}}',
+      '{{e_talla_zapato}}',
+      '{{e_talla_pantalon}}',
+      '{{e_nombre_contacto_de_emergencia}}',
+      '{{e_telefono_contacto_de_emergencia}}',
+      '{{e_nombre_del_banco}}',
+      '{{e_tipo_de_cuenta_del_banco}}',
+      '{{e_cuenta_del_banco}}',
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -107,13 +132,23 @@ class PlantillaVariable extends Model
       $variable = Str::slug($this->nombre, '_');
       $count = 0;
       $id = $this->id ?? false;
+      $keepChecking = true;
 
-      while ($variableExist = self::where('variable', '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}')
-                                  ->when($id, function($query, $id){
-                                    return $query->where('id', '!=', $id);
-                                  })
-                                  ->exists()){
+      while($keepChecking){
+        $nombre = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';
+
+        // Evaluar si existe en la base de datos
+        $isRegistered = self::where('variable', $nombre)
+        ->when($id, function($query, $id){
+          return $query->where('id', '!=', $id);
+        })
+        ->exists();
+
+        // Evaluar si es una variable reservada
+        $isReserved = in_array($nombre, $this->_reserved);
+
         $count++;
+        $keepChecking = $isRegistered || $isReserved;
       }
 
       $this->variable = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';
