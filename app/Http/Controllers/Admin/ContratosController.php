@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
-use App\Contrato;
+use App\{Contrato, Faena};
 
 class ContratosController extends Controller
 {
@@ -19,8 +19,9 @@ class ContratosController extends Controller
     public function index()
     {
       $contratos = Contrato::all();
+      $faenas = Faena::all();
 
-      return view('admin.contratos.index', compact('contratos'));
+      return view('admin.contratos.index', compact('contratos', 'faenas'));
     }
 
     /**
@@ -30,7 +31,9 @@ class ContratosController extends Controller
      */
     public function create()
     {
-      return view('admin.contratos.create');
+      $faenas = Faena::all();
+
+      return view('admin.contratos.create', compact('faenas'));
     }
 
     /**
@@ -46,12 +49,14 @@ class ContratosController extends Controller
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'required|date_format:d-m-Y',
         'valor' => 'required|numeric',
+        'faena' => 'nullable',
         'descripcion' => 'nullable|string|max:150'
       ]);
 
-      $contrato = new Contrato($request->all());
+      $contrato = new Contrato($request->only('nombre', 'inicio', 'fin', 'valor', 'descripcion'));
+      $contrato->faena_id = $request->faena;
 
-      if($contrato = Auth::user()->empresa->contratos()->save($contrato)){
+      if(Auth::user()->empresa->contratos()->save($contrato)){
 
         if($request->has('requisitos')){
           foreach ($request->requisitos as $type => $requisitos) {
@@ -100,7 +105,9 @@ class ContratosController extends Controller
      */
     public function edit(Contrato $contrato)
     {
-      return view('admin.contratos.edit', compact('contrato'));
+      $faenas = Faena::all();
+
+      return view('admin.contratos.edit', compact('contrato', 'faenas'));
     }
 
     /**
@@ -117,10 +124,12 @@ class ContratosController extends Controller
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'required|date_format:d-m-Y',
         'valor' => 'required|numeric',
+        'faena' => 'nullable',
         'descripcion' => 'nullable|string|max:150'
       ]);
 
-      $contrato->fill($request->all());
+      $contrato->fill($request->only('nombre', 'inicio', 'fin', 'valor', 'descripcion'));
+      $contrato->faena_id = $request->faena;
 
       if($contrato->save()){
         return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([

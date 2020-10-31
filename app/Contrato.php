@@ -222,6 +222,14 @@ class Contrato extends Model
     }
 
     /**
+     * Obtener la Faena
+     */
+    public function faena()
+    {
+      return $this->belongsTo('App\Faena');
+    }
+
+    /**
      * Obtener los Requisitos (Documetos) en el Contrato
      */
     public function requisitosWithDocumentos()

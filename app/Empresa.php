@@ -136,6 +136,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener las Faenas
+     */
+    public function faenas()
+    {
+      return $this->hasMany('App\Faena');
+    }
+
+    /**
      * Obtener el path del Logo, si no tiene un logo se carga la imagen por defecto
      */
     public function getLogoUrlAttribute()

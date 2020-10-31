@@ -80,6 +80,11 @@ Route::group(['middleware' => 'auth'], function () {
         'show'
       ]);
 
+      /* --- Faenas --- */
+      Route::resource('faena', 'FaenaController')->except([
+        'index',
+      ]);
+
       /* --- Contratos - Requisitos --- */
       Route::resource('requisito', 'RequisitoController')
           ->except(['index', 'create', 'store']);

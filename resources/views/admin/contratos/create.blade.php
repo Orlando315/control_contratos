@@ -5,6 +5,9 @@
 @section('head')
   <!-- Datepicker -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
 @endsection
 
 @section('page-heading')
@@ -57,6 +60,22 @@
                 <div class="form-group{{ $errors->has('fin') ? ' has-error' : '' }}">
                   <label for="fin">Fin: *</label>
                   <input id="fin" class="form-control" type="text" name="fin" value="{{ old('fin') }}" placeholder="dd-mm-yyyy" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
+                  <label for="faena">Nombre:</label>
+                  <select id="faena" class="form-control" name="faena">
+                    <option value="">Seleccione...</option>
+                    @foreach($faenas as $faena)
+                      <option value="{{ $faena->id }}"{{ old('faena') == $faena->id ? ' selected' : '' }}>{{ $faena->nombre }}</option>
+                    @endforeach
+                  </select>
+
+                  <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Faena</button>
                 </div>
               </div>
             </div>
@@ -180,13 +199,51 @@
       </div>
     </div>
   </div>
+
+  <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="option-form" action="{{ route('admin.faena.store') }}" method="POST">
+          @csrf
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="optionModalLabel">Agregar Faena</h4>
+          </div>
+          <div class="modal-body">
+            
+            <div class="form-group">
+              <label class="control-label" for="faena">Nombre: *</label>
+              <input id="faena" class="form-control" type="text" name="nombre" maxlength="50" required>
+            </div>
+
+            <div class="alert alert-dismissible alert-danger alert-option" role="alert" style="display: none">
+              <strong class="text-center">Ha ocurrido un error</strong> 
+
+              <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            <button class="btn btn-primary btn-sm option-submit" type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('script')
   <!-- Datepicker -->
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
+    const alertOption = $('.alert-option');
+    const optionSubmit = $('.option-submit');
     let requisitoField = function (index, type) {
       return `<tr>
                 <td class="text-center align-middle">
@@ -207,24 +264,63 @@
         autoclose: true
       });
 
+      $('#faena').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+        allowClear: true,
+      });
+
       $('.requisitos-container').on('change', '.check-requisitos', function () {
         let type = $(this).data('type');
         let checked = $(this).is(':checked');
         $(`#section-${type}`).toggle(checked).prop('disabled', !checked)
       });
 
-      $('.check-requisitos').change()
+      $('.check-requisitos').change();
 
       $('.requisitos-container').on('click', '.btn-add-field', function () {
         let type = $(this).data('type')
         let index = $(`#tbody-${type} tr`).length
 
         $(`#tbody-${type}`).append(requisitoField(index, type))
-      })
+      });
 
       $('.requisitos-container').on('click', '.btn-delete-requisito', function () {
-        $(this).closest('tr').remove()
-      })
+        $(this).closest('tr').remove();
+      });
+
+      $('#option-form').submit(function(e){
+        e.preventDefault();
+
+        optionSubmit.prop('disabled', true)
+
+        let form = $(this),
+            action = form.attr('action');
+
+        $.ajax({
+          type: 'POST',
+          data: form.serialize(),
+          url: action,
+          dataType: 'json'
+        })
+        .done(function (response) {
+          if(response.response){
+            $('#faena').append(`<option value="${response.faena.id}">${response.faena.nombre}</option`);
+            $('#faena').val(response.faena.id);
+            $('#faena').trigger('change');
+            $('#option-form')[0].reset();
+            $('#optionModal').modal('hide');
+          }else{
+            alertOption.show().delay(7000).hide('slow');  
+          }
+        })
+        .fail(function () {
+          alertOption.show().delay(7000).hide('slow');
+        })
+        .always(function () {
+          optionSubmit.prop('disabled', false);
+        })
+      });
     });
   </script>
 @endsection

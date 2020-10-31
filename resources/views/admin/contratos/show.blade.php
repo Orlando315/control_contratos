@@ -48,6 +48,18 @@
               <span class="pull-right"> {{ $contrato->valor() }} </span>
             </li>
             <li class="list-group-item">
+              <b>Faena</b>
+              <span class="pull-right">
+                @if($contrato->faena_id)
+                  <a href="{{ route('admin.faena.show', ['faena' => $contrato->faena_id]) }}">
+                    {{ $contrato->faena->nombre }}
+                  </a>
+                @else
+                  N/A
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Descripción</b>
               <span class="pull-right"> {{ $contrato->descripcion }} </span>
             </li>
