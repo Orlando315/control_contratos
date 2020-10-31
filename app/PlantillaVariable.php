@@ -134,21 +134,21 @@ class PlantillaVariable extends Model
       $id = $this->id ?? false;
       $keepChecking = true;
 
+      // Evaluar si es una variable reservada
+      if(in_array('{{'.$variable.'}}', $this->_reserved)){
+        $count++;
+      }
+
       while($keepChecking){
         $nombre = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';
 
         // Evaluar si existe en la base de datos
-        $isRegistered = self::where('variable', $nombre)
-        ->when($id, function($query, $id){
-          return $query->where('id', '!=', $id);
-        })
-        ->exists();
-
-        // Evaluar si es una variable reservada
-        $isReserved = in_array($nombre, $this->_reserved);
-
-        $count++;
-        $keepChecking = $isRegistered || $isReserved;
+        $keepChecking = self::where('variable', $nombre)
+          ->when($id, function($query, $id){
+            return $query->where('id', '!=', $id);
+          })
+          ->exists();
+        $count += $keepChecking ? 1 : 0;
       }
 
       $this->variable = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';

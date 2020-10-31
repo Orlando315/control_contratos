@@ -59,17 +59,6 @@
         </li>
         <li>
           <a href="#">
-            <i class="fa fa-object-group"></i>
-            <span class="nav-label">Plantillas</span>
-            <span class="fa arrow"></span>
-          </a>
-          <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.plantilla.index') }}">Ver plantillas</a></li>
-            <li><a href="{{ route('admin.plantilla.create') }}">Agregar plantilla</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">
             <i class="fa fa-users"></i>
             <span class="nav-label">Usuarios</span>
             <span class="fa arrow"></span>

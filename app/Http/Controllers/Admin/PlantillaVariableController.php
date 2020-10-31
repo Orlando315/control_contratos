@@ -16,7 +16,7 @@ class PlantillaVariableController extends Controller
      */
     public function index()
     {
-      abort(404);
+        //
     }
 
     /**
@@ -45,7 +45,7 @@ class PlantillaVariableController extends Controller
       $variable = new PlantillaVariable($request->only('nombre', 'tipo'));
 
       if(Auth::user()->empresa->variables()->save($variable)){
-        return redirect()->route('admin.plantilla.index')->with([
+        return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Variable agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -100,7 +100,7 @@ class PlantillaVariableController extends Controller
       $variable->fill($request->only('nombre', 'tipo'));
 
       if($variable->save()){
-        return redirect()->route('admin.plantilla.index')->with([
+        return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Variable modificada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -170,7 +170,7 @@ class PlantillaVariableController extends Controller
         $i++;
       }
 
-      return redirect()->route('admin.plantilla.index')->with([
+      return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Variable generadas exitosamente.',
           'flash_class' => 'alert-success'
           ]);

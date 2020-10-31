@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\{PlantillaDocumento as Documento, Contrato, Empleado, Plantilla};
+use App\{PlantillaDocumento as Documento, Contrato, Empleado, Plantilla, PlantillaVariable};
 
 class PlantillaDocumentoController extends Controller
 {
@@ -17,8 +17,10 @@ class PlantillaDocumentoController extends Controller
     public function index()
     {
       $documentos = Documento::all();
+      $plantillas = Plantilla::withCount(['secciones', 'documentos'])->get();
+      $variables = PlantillaVariable::all();
 
-      return view('admin.plantilla-documento.index', compact('documentos'));
+      return view('admin.plantilla-documento.index', compact('documentos', 'plantillas', 'variables'));
     }
 
     /**

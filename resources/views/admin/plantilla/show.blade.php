@@ -8,7 +8,7 @@
       <h2>Plantillas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.index') }}">Plantillas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.documento.index') }}">Plantillas</a></li>
         <li class="breadcrumb-item active"><strong>Plantilla</strong></li>
       </ol>
     </div>
@@ -18,7 +18,7 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @if(Auth::user()->tipo < 2)
         <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.edit', ['plantilla' => $plantilla->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>

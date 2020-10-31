@@ -8,7 +8,7 @@
       <h2>Plantillas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.index') }}">Plantillas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.documento.index') }}">Plantillas</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -40,7 +40,7 @@
                   <div class="input-group">
                     <input id="seccion-{{ $loop->iteration }}-nombre" class="form-control" type="text" name="secciones[{{ $loop->iteration }}][nombre]" maxlength="50" value="{{ old('secciones.'.$loop->iteration.'.nombre', $seccion->nombre) }}" placeholder="Sección {{ $loop->iteration }}">
                     <span class="input-group-append">
-                      <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}" {{ $loop->first ? ' disabled' : '' }}><i class="fa fa-times"></i></button>
+                      <button class="btn btn-danger rounded-0 btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}" {{ $loop->first ? ' disabled' : '' }}><i class="fa fa-times"></i></button>
                     </span>
                   </div>
                   <textarea id="seccion-{{ $loop->iteration }}-contenido" class="form-control" name="secciones[{{ $loop->iteration }}][contenido]" required>{!! old('secciones.'.$loop->iteration.'.contenido', $seccion->contenido) !!}</textarea>
@@ -54,7 +54,7 @@
                     <div class="input-group">
                       <input id="seccion-{{ $loop->iteration }}-nombre" class="form-control" type="text" name="secciones[{{ $loop->iteration }}][nombre]" maxlength="50" value="{{ old('secciones.'.$loop->iteration.'.nombre') }}" placeholder="Sección {{ $loop->iteration }}">
                       <span class="input-group-append">
-                        <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}"><i class="fa fa-times"></i></button>
+                        <button class="btn btn-danger rounded-0 btn-delete-seccion" type="button" data-seccion="{{ $loop->iteration }}"><i class="fa fa-times"></i></button>
                       </span>
                     </div>
                     <textarea id="seccion-{{ $loop->iteration }}-contenido" class="form-control" name="secciones[{{ $loop->iteration }}][contenido]" required>{{ old('secciones.'.$loop->iteration.'.contenido') }}</textarea>
@@ -95,7 +95,7 @@
                 <div class="input-group">
                   <input id="seccion-${index}-nombre" class="form-control" type="text" name="secciones[${index}][nombre]" maxlength="50" placeholder="Sección ${index}">
                   <span class="input-group-append">
-                    <button class="btn btn-danger btn-delete-seccion" type="button" data-seccion="${index}"><i class="fa fa-times"></i></button>
+                    <button class="btn btn-danger rounded-0 btn-delete-seccion" type="button" data-seccion="${index}"><i class="fa fa-times"></i></button>
                   </span>
                 </div>
                 <textarea id="seccion-${index}-contenido" class="form-control" name="secciones[${index}][contenido]" data-seccion="${index}" required></textarea>

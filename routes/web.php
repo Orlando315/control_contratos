@@ -106,12 +106,13 @@ Route::group(['middleware' => 'auth'], function () {
 
       /* --- Plantillas --- */
       Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->name('plantilla.variables');
-      Route::resource('plantilla', 'PlantillaController');
+      Route::resource('plantilla', 'PlantillaController')
+            ->except(['index']);
 
       /* --- Variables --- */
       Route::post('variable/generate/statics', 'PlantillaVariableController@generateStatic')->name('variable.generate');
       Route::resource('variable', 'PlantillaVariableController')
-            ->except(['show']);
+            ->except(['index', 'show']);
 
       /* --- Documento plantillas --- */
       Route::get('documento/plantilla/create/{contrato?}/{empleado?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');

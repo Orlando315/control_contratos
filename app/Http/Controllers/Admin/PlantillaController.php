@@ -16,10 +16,7 @@ class PlantillaController extends Controller
      */
     public function index()
     {
-      $plantillas = Plantilla::withCount(['secciones', 'documentos'])->get();
-      $variables = PlantillaVariable::all();
-
-      return view('admin.plantilla.index', compact('plantillas', 'variables'));
+        //
     }
 
     /**
@@ -158,7 +155,7 @@ class PlantillaController extends Controller
     public function destroy(Plantilla $plantilla)
     {
       if($plantilla->delete()){
-        return redirect()->route('admin.plantilla.index')->with([
+        return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Plantilla eliminada exitosamente.',
           'flash_class' => 'alert-success'
           ]); 
