@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Support\Facades\Auth;
 
 class EmpleadosContrato extends Model
@@ -28,6 +28,58 @@ class EmpleadosContrato extends Model
       'inicio_jornada',
       'descripcion',
     ];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
+      static::addGlobalScope('hasEmpleado', function (Builder $builder) {
+        $builder->whereHas('empleado');
+      });
+    }
+
+    /**
+     * Filtro para obtener los registros expirados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExpired($query)
+    {
+      $now = date('Y-m-d H:i:s');
+      return $query->whereNotNull('fin')->where('fin', '<=', $now);
+    }
+
+    /**
+     * Filtro para obtener los registros que estan por vencer faltando los dias especificados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  int  $days
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function scopeAboutToExpire($query, $days)
+    {
+      $now = date('Y-m-d H:i:s');
+      $plusDays = date('Y-m-d H:i:s', strtotime("{$now} +{$days} days"));
+      return $query->whereNotNull('fin')->whereBetween('fin', [$now, $plusDays])->latestPerEmpleado();
+    }
+
+    /**
+     * Obtener el ultimo contrato por Empleado
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeLatestPerEmpleado($query)
+    {
+      return $query->whereIn('id', function ($query){
+        return $query->from(self::getTable())->selectRaw('MAX(id)')->groupBy('empleado_id');
+      });
+    }
 
     /**
      * Establecer la fecna de inicio del Contrato.
@@ -144,14 +196,22 @@ class EmpleadosContrato extends Model
     }
 
     /**
-     * Obtener los Contratos por vencer (menos de 30 dias)
+     * Obtener los Contratos de que estan por vencer por el type proporcionado
+     *
+     * @return  object
      */
-    public static function porVencer()
+    public static function groupedAboutToExpire()
     {
-      $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
-      $today = date('Y-m-d H:i:s');
-      $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
+      $vencidos = self::expired()->latestPerEmpleado()->count();
+      $lessThan3 = self::aboutToExpire(3)->count();
+      $lessThan7 = self::aboutToExpire(7)->count();
+      $lessThan21 = self::aboutToExpire(21)->count();
 
-      return self::has('empleado')->whereNotNull('fin')->whereBetween('fin', [$today, $less30Days])->orderBy('fin', 'desc')->get();
+      return (object)[
+        'vencidos' => $vencidos,
+        'lessThan3' => $lessThan3,
+        'lessThan7' => $lessThan7,
+        'lessThan21' => $lessThan21,
+      ];
     }
 }

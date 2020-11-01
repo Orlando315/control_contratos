@@ -63,7 +63,7 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $d->nombre }}</td>
-                      <td>{{ $d->descripcion ?? 'M/A' }}</td>
+                      <td>{{ $d->descripcion ?? 'N/A' }}</td>
                       <td>{{ $d->inicio }}</td>
                       <td>{{ $d->fin }}</td>
                       <td>{{ $d->valor() }}</td>

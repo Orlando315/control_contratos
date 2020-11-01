@@ -91,6 +91,9 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('requisito/{contrato}/{type}', 'RequisitoController@create')->name('requisito.create');
       Route::post('requisito/{contrato}/{type}', 'RequisitoController@store')->name('requisito.store');
 
+      /* --- Contratos / Documentos por expirar --- */
+      Route::get('expiration/{type}/{days}', 'HomeController@aboutToExpire')->name('expiration');
+
       /* --- Migrar relaciones de Documentos (Contrato / Empleado) a morph --- */
       Route::get('documentos/update/morph', 'DocumentosController@migrateToMorph');
       /* --- Migrar informacion de TransporteConsumo a Documentos --- */

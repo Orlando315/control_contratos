@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\{Usuario, Contrato, Inventario, EmpleadosContrato, Documento};
+use App\{Contrato, Inventario, EmpleadosContrato, Documento};
 use App\Scopes\EmpresaScope;
 
 class HomeController extends Controller
@@ -16,24 +16,25 @@ class HomeController extends Controller
      */
     public function dashboard()
     {
-      $inventarios = Inventario::all();
-      $usuarios  = Usuario::adminsYSupervisores();
-      $contratos = Contrato::all();
-      $contratosPorVencer = Contrato::porVencer();
-      $documentosDeContratosPorVencer = Documento::deContratosPorVencer();
-      $empleadosContratosPorVencer = EmpleadosContrato::porVencer();
-      $documentosDeEmpleadosPorVencer = Documento::deEmpleadosPorVencer();
-      $otrosEmpleados = Auth::user()->isEmpleado() ? Auth::user()->empleado->otrosEmpleados()->get()
-                                              : [];
+      $inventarios = Inventario::count();
+      $contratos = Contrato::count();
+      $contratosPorVencer = Contrato::groupedAboutToExpire();
+      $empleadosContratosPorVencer = EmpleadosContrato::groupedAboutToExpire();
+      $documentosContratosPorVencer = Documento::groupedAboutToExpireByType('contratos');
+      $documentosEmpleadosPorVencer = Documento::groupedAboutToExpireByType('empleados');
+      $documentosTransportesPorVencer = Documento::groupedAboutToExpireByType('transportes');
+      $otrosEmpleados = Auth::user()->isEmpleado()
+        ? Auth::user()->empleado->otrosEmpleados()->get()
+        : [];
 
       return view('dashboard', [
         'inventarios' => $inventarios,
-        'usuarios' => $usuarios,
         'contratos' => $contratos,
         'contratosPorVencer' => $contratosPorVencer,
-        'documentosDeContratosPorVencer' => $documentosDeContratosPorVencer,
         'empleadosContratosPorVencer' => $empleadosContratosPorVencer,
-        'documentosDeEmpleadosPorVencer' => $documentosDeEmpleadosPorVencer,
+        'documentosContratosPorVencer' => $documentosContratosPorVencer,
+        'documentosEmpleadosPorVencer' => $documentosEmpleadosPorVencer,
+        'documentosTransportesPorVencer' => $documentosTransportesPorVencer,
         'otrosEmpleados' => $otrosEmpleados,
       ]);
     }
@@ -43,7 +44,8 @@ class HomeController extends Controller
      *
      * @param  \App\Empleado  $empleado
      */
-    public function cronjobAsistencias(){
+    public function cronjobAsistencias()
+    {
       $empleados = Empleado::withoutGlobalScope(EmpresaScope::class)->get();
       $today = date('Y-m-d');
 

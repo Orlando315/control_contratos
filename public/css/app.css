@@ -92,3 +92,18 @@
   margin: 0;
   line-height: 1.5;
 }
+
+.main-expiration-clocks:hover{
+  cursor: pointer;
+}
+.main-expiration-clocks i{
+  font-size: 32px;
+}
+.main-expiration-clocks p{
+  font-size: 16px;
+}
+
+/* Fix de color hover de success */
+a.text-primary:focus, a.text-primary:hover {
+  color: #19692c !important;
+}

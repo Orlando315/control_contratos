@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inicio - '.config('app.name'))
+@section('title', 'Inicio')
 
 @section('head')
   <!-- Datepicker -->
@@ -22,9 +22,7 @@
             <h5>Contratos</h5>
           </div>
           <div class="ibox-content">
-            <h2 class="">
-              <i class="fa fa-clipboard text-warning"></i> {{ count($contratos) }}
-            </h2>
+            <h2><i class="fa fa-clipboard"></i> {{ $contratos }}</h2>
           </div>
         </div>
       </div>
@@ -37,9 +35,158 @@
             <h5>Inventarios</h5>
           </div>
           <div class="ibox-content">
-            <h2 class="">
-              <i class="fa fa-cubes text-danger"></i> {{ count($inventarios) }}
-            </h2>
+            <h2><i class="fa fa-cubes"></i> {{ $inventarios }}</h2>
+          </div>
+        </div>
+      </div>
+    @endif
+
+    @if(Auth::user()->tipo <= 2)
+      <div class="col-12 col-md-6">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Contratos / Documentos por vencer</h5>
+          </div>
+          <div class="ibox-content py-1">
+            <div class="row">
+              <div class="col-12 text-center">
+                <p class="mb-1"><strong>Contratos</strong></p>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}#vencidos" title="Contratos {{ $contratosPorVencer->vencidos }} / Documentos {{ $documentosContratosPorVencer->vencidos }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $contratosPorVencer->vencidos }}/{{ $documentosContratosPorVencer->vencidos }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>Vencidos</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 3]) }}" title="Contratos {{ $contratosPorVencer->lessThan3 }} / Documentos {{ $documentosContratosPorVencer->lessThan3 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $contratosPorVencer->lessThan3 }}/{{ $documentosContratosPorVencer->lessThan3 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>3 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 7]) }}" title="Contratos {{ $contratosPorVencer->lessThan7 }} / Documentos {{ $documentosContratosPorVencer->lessThan7 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $contratosPorVencer->lessThan7 }}/{{ $documentosContratosPorVencer->lessThan7 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>7 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}" title="Contratos {{ $contratosPorVencer->lessThan21 }} / Documentos {{ $documentosContratosPorVencer->lessThan21 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $contratosPorVencer->lessThan21 }}/{{ $documentosContratosPorVencer->lessThan21 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>21 días</small>
+              </div>
+            </div>
+          </div>
+          <div class="ibox-content py-1">
+            <div class="row">
+              <div class="col-12 text-center">
+                <p class="mb-1"><strong>Empleados</strong></p>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}#vencidos" title="Contratos {{ $empleadosContratosPorVencer->vencidos }} / Documentos {{ $documentosEmpleadosPorVencer->vencidos }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $empleadosContratosPorVencer->vencidos }}/{{ $documentosEmpleadosPorVencer->vencidos }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>Vencidos</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 3]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan3 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan3 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan3 }}/{{ $documentosEmpleadosPorVencer->lessThan3 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>3 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 7]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan7 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan7 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan7 }}/{{ $documentosEmpleadosPorVencer->lessThan7 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>7 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan21 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan21 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan21 }}/{{ $documentosEmpleadosPorVencer->lessThan21 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>21 días</small>
+              </div>
+            </div>
+          </div>
+          <div class="ibox-content py-1">
+            <div class="row">
+              <div class="col-12 text-center">
+                <p class="mb-1"><strong>Transportes</strong></p>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}#vencidos" title="Documentos {{ $documentosTransportesPorVencer->vencidos }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $documentosTransportesPorVencer->vencidos }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>Vencidos</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 3]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan3 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan3 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>3 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 7]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan7 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan7 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>7 días</small>
+              </div>
+              <div class="col-md-3 text-center">
+                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan21 }}">
+                  <div class="w-100">
+                    <i class="fa fa-clock-o"></i>
+                    <br>
+                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan21 }}</p>
+                  </div>
+                </a>
+                <small class=text-muted>21 días</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -47,158 +194,6 @@
   </div>
 
   <div class="row">
-    @if(Auth::user()->tipo <= 2)
-      <div class="col-md-12">
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Contratos / Documentos por vencer (Menos de {{ Auth::user()->empresa->configuracion->dias_vencimiento }} días)</h5>
-          </div>
-          <div class="ibox-content">
-            <ul class="nav nav-tabs" role="tablist">
-              <li><a class="nav-link active" href="#tab-1" data-toggle="tab" aria-expanded="true"><i class="fa fa-clipboard"></i> Contratos</a></li>
-              <li><a class="nav-link" href="#tab-2" data-toggle="tab" aria-expanded="false"><i class="fa fa-clone"></i> Documentos</a></li>
-            </ul>
-            <div class="tab-content pt-3">
-              <div class="tab-pane active" id="tab-1" role="tabpanel" aria-labelledby="contratos-tab">
-                <table class="table data-table table-bordered table-hover table-sm w-100">
-                  <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Nombre</th>
-                      <th class="text-center">Inicio</th>
-                      <th class="text-center">Fin</th>
-                      <th class="text-center">Valor</th>
-                      <th class="text-center">Empleados</th>
-                      <th class="text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody class="text-center">
-                    @foreach($contratosPorVencer as $d)
-                      <tr>
-                        <td>{{ $loop->index + 1 }}</td>
-                        <td>{{ $d->nombre }}</td>
-                        <td>{{ $d->inicio }}</td>
-                        <td>{{ $d->fin }}</td>
-                        <td>{{ $d->valor() }}</td>
-                        <td>{{ $d->empleados->count() }}</td>
-                        <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                        </td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.tab-pane -->
-              <div class="tab-pane" id="tab-2"  role="tabpanel" aria-labelledby="documentos-tab">
-                <table class="table data-table table-bordered table-hover table-sm w-100">
-                  <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Contrato</th>
-                      <th class="text-center">Nombre</th>
-                      <th class="text-center">Vencimiento</th>
-                      <th class="text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody class="text-center">
-                    @foreach($documentosDeContratosPorVencer as $d)
-                      <tr>
-                        <td>{{ $loop->index + 1 }}</td>
-                        <td>{{ $d->documentable->nombre }}</td>
-                        <td>{{ $d->nombre }}</td>
-                        <td>{{ $d->vencimiento }}</td>
-                        <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
-                        </td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.tab-pane -->
-            </div>
-            <!-- /.tab-content -->
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-12">
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Contratos / Documentos de Empleados por vencer (Menos de {{ Auth::user()->empresa->configuracion->dias_vencimiento }} días)</h5>
-          </div>
-          <div class="ibox-content">
-            <div class="nav-tabs-custom">
-              <ul class="nav nav-tabs">
-                <li><a class="nav-link active" href="#tab-3" data-toggle="tab" aria-expanded="true"><i class="fa fa-clipboard"></i> Contratos</a></li>
-                <li><a class="nav-link" href="#tab-4" data-toggle="tab" aria-expanded="false"><i class="fa fa-clone"></i> Documentos</a></li>
-              </ul>
-              <div class="tab-content pt-3">
-                <div class="tab-pane active" id="tab-3" role="tabpanel" aria-labelledby="contratos-tab">
-                  <table class="table data-table table-bordered table-hover table-sm w-100">
-                    <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Empleado</th>
-                        <th class="text-center">Inicio</th>
-                        <th class="text-center">Fin</th>
-                        <th class="text-center">Jornada</th>
-                        <th class="text-center">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody class="text-center">
-                      @foreach($empleadosContratosPorVencer as $d)
-                        <tr>
-                          <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $d->empleado->usuario->nombres }}</td>
-                          <td>{{ $d->inicio }}</td>
-                          <td>{{ $d->fin }}</td>
-                          <td>{{ $d->jornada }}</td>
-                          <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $d->empleado_id] )}}"><i class="fa fa-search"></i></a>
-                          </td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab-4" role="tabpanel" aria-labelledby="documentos-tab">
-                  <table class="table data-table table-bordered table-hover table-sm w-100">
-                    <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Empleado</th>
-                        <th class="text-center">Nombre</th>
-                        <th class="text-center">Vencimiento</th>
-                        <th class="text-center">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody class="text-center">
-                      @foreach($documentosDeEmpleadosPorVencer as $d)
-                        <tr>
-                          <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $d->documentable->usuario->nombres }}</td>
-                          <td>{{ $d->nombre }}</td>
-                          <td>{{ $d->vencimiento }}</td>
-                          <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['id' => $d->documentable_id] )}}"><i class="fa fa-search"></i></a>
-                          </td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.tab-pane -->
-              </div>
-              <!-- /.tab-content -->
-            </div>
-          </div>
-        </div>
-      </div>
-    @endif
-    
     @if(Auth::user()->empleado)
       @if(Auth::user()->tipo <= 2)
         <div class="col-md-12">
@@ -337,31 +332,6 @@
   </div>
 
   @if(Auth::user()->isEmpleado())
-    <div id="delEventModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delEventModalLabel">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <form id="delEventForm" action="#" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
-
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-              </button>
-              <h4 class="modal-title" id="delEventModalLabel">Eliminar Evento</h4>
-            </div>
-            <div class="modal-body">
-              <h4 class="text-center">¿Desea eliminar este evento?</h4>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
     <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -487,14 +457,6 @@
             $('#eventDay').val(date.format())
             $('#eventsModal').modal('show')
           },
-          eventClick: function(event){
-            if(event.id){
-              // $('#delEventModal').modal('show');
-              // $('#delEventForm').attr('action', '{{ route("eventos.index") }}/' + event.id);
-            }else{
-              // $('#delEventForm').attr('action', '#');
-            }
-          }
         })
 
         $('#fin').datepicker({
@@ -514,7 +476,6 @@
         $('#reemplazo').trigger('change')
 
         $('#eventForm').submit(storeEvent)
-        ///$('#delEventForm').submit(delEvent)
 
         $('#tipo').change(function(){
           let tipo = $(this).val()
@@ -541,11 +502,8 @@
             alert  = $('#eventsModal .alert');
             button = form.find('button[type="submit"]');
 
-        console.log('Submiting...')
         button.prop('disabled', true);
         alert.hide();
-
-        console.log('Submiting...')
 
         $.ajax({
           type: 'POST',
@@ -580,39 +538,6 @@
         .fail(function(){
           alert.show().delay(7000).hide('slow');
           alert.find('strong').text('Ha ocurrido un error')
-        })
-        .always(function(){
-          button.prop('disabled', false);
-        })
-      }
-
-      function delEvent(e){
-        e.preventDefault();
-
-        let form = $(this),
-            action = form.attr('action'),
-            alert  = form.find('.alert');
-            button = form.find('button[type="submit"]');
-
-        button.prop('disabled', true);
-        alert.hide();
-
-        $.ajax({
-          type: 'POST',
-          url: action,
-          data: form.serialize(),
-          dataType: 'json',
-        })
-        .done(function(r){
-          if(r.response){
-            $('#calendar').fullCalendar('removeEvents', r.evento.id);
-            $('#delEventModal').modal('hide');
-          }else{
-            alert.show().delay(7000).hide('slow');
-          }
-        })
-        .fail(function(){
-          alert.show().delay(7000).hide('slow');
         })
         .always(function(){
           button.prop('disabled', false);

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
+use App\Carpeta;
 
 class Documento extends Model
 {
@@ -43,6 +44,81 @@ class Documento extends Model
       parent::boot();
 
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Filtro para obtener Documentos sin carpetas
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMain($query)
+    {
+      return $query->whereNull('carpeta_id');
+    }
+
+    /**
+     * Incluir solo los Documentos que son Requisitos.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isRequisito
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRequisito($query, $isRequisito = true)
+    {
+      return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
+    }
+
+    /**
+     * Incluir solo los Documentos del tipo especificado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByType($query, $type)
+    {
+      return $query->where('documentable_type', $type);
+    }
+
+    /**
+     * Filtro para obtener los registros expirados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExpired($query)
+    {
+      $now = date('Y-m-d H:i:s');
+      return $query->whereNotNull('vencimiento')->where('vencimiento', '<=', $now);
+    }
+
+    /**
+     * Filtro para obtener los registos expirados por el tipo especificado
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeExpiredByType($query, $type)
+    {
+      return $query->byType($type)->expired();
+    }
+
+    /**
+     * Filtro para obtener los registros que estan por vencer faltando los dias especificados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $model
+     * @param  int  $days
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function scopeAboutToExpireByType($query, string $model, $days)
+    {
+      $now = date('Y-m-d H:i:s');
+      $plusDays = date('Y-m-d H:i:s', strtotime("{$now} +{$days} days"));
+
+      return $query->byType($model)->whereNotNull('vencimiento')->whereBetween('vencimiento', [$now, $plusDays]);
     }
 
     /**
@@ -105,29 +181,6 @@ class Documento extends Model
     }
 
     /**
-     * Scope a query to only include active coupons.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeMain($query)
-    {
-      return $query->whereNull('carpeta_id');
-    }
-
-    /**
-     * Incluir solo los Documentos que son Requisitos.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  bool  $isRequisito
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeRequisito($query, $isRequisito = true)
-    {
-      return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
-    }
-
-    /**
      * Get all of the owning documentable models.
      */
     public function documentable()
@@ -154,20 +207,6 @@ class Documento extends Model
     public function isRequisito()
     {
       return !is_null($this->requisito_id);
-    }
-
-    /**
-     * Obtener los Documentos que estan por vencer
-     *
-     * @param  string  $model
-     */
-    protected static function porVencer($model = 'App\Contrato')
-    {
-      $dias =  Auth::user()->empresa->configuracion->dias_vencimiento;
-      $today = date('Y-m-d H:i:s');
-      $less30Days = date('Y-m-d H:i:s', strtotime("{$today} +{$dias} days"));
-
-      return self::whereNotNull('vencimiento')->where('documentable_type', $model)->whereBetween('vencimiento', [$today, $less30Days])->get();
     }
 
     /**
@@ -208,18 +247,24 @@ class Documento extends Model
     }
 
     /**
-     * Obtener los Documentos de los Contratos que estan por vencer
+     * Obtener los Documentos de que estan por vencer por el type proporcionado
+     *
+     * @param  string  $type
+     * @return  object
      */
-    public static function deContratosPorVencer()
+    public static function groupedAboutToExpireByType(string $type)
     {
-      return self::porVencer();
-    }
+      $model = Carpeta::getModelClass($type);
+      $vencidos = self::expiredByType($model)->count();
+      $lessThan3 = self::aboutToExpireByType($model, 3)->count();
+      $lessThan7 = self::aboutToExpireByType($model, 7)->count();
+      $lessThan21 = self::aboutToExpireByType($model, 21)->count();
 
-    /**
-     * Obtener los Documentos de los Empleados que estan por vencer
-     */
-    public static function deEmpleadosPorVencer()
-    {
-      return self::porVencer('App\Empleado');
+      return (object)[
+        'vencidos' => $vencidos,
+        'lessThan3' => $lessThan3,
+        'lessThan7' => $lessThan7,
+        'lessThan21' => $lessThan21,
+      ];
     }
 }
