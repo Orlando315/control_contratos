@@ -322,4 +322,15 @@ class EmpleadosController extends Controller
         'flash_important' => true
         ]);
     }
+
+    /**
+     * Imprimir la informacion del Empleado
+     * 
+     * @param  \App\Empleado  $empleado
+     * @return \Illuminate\Http\Response
+     */
+    public function print(Empleado $empleado)
+    {
+      return view('admin.empleados.print', compact('empleado'));
+    }
 }

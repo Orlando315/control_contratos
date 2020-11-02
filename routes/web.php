@@ -126,6 +126,7 @@ Route::group(['middleware' => 'auth'], function () {
             ->except(['create']);
 
       /* --- Empleados --- */
+      Route::get('empleados/{empleado}/print', 'EmpleadosController@print')->name('empleados.print');
       Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
       Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
       Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');

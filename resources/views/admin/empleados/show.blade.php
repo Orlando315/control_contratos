@@ -37,7 +37,7 @@
         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar rol</button>
       @endif
       <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato</button>
-      
+      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.print', ['empleado' => $empleado->id]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
       @if($empleado->usuario->tipo > 2 || ($empleado->usuario->tipo <= 2 && Auth::user()->tipo <= 2))
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif

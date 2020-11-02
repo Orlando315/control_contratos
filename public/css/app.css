@@ -39,6 +39,7 @@
   Ocultar elementos en la vista de impresion
  */
 @media print{
+  .btn,
   .no-print,
   .wrapper-heading{
     display: none !important;

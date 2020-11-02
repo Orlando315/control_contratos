@@ -147,7 +147,8 @@ class EmpleadosContratoController extends Controller
      * @param  \App\Empleado  $empleado
      * @return \Illuminate\Http\Response
      */
-    public function cambio(Request $request, Empleado $empleado){
+    public function cambio(Request $request, Empleado $empleado)
+    {
       $contrato = Contrato::findOrFail($request->contrato);
       $empleado->contrato_id = $contrato->id;
 
