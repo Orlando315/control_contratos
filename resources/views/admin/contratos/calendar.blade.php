@@ -150,6 +150,29 @@
       </div>
     </div>
   </div>
+
+  <div id="gotoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="gotoModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cerrar</span>
+          </button>
+          <h4 class="modal-title" id="gotoModalLabel">Seleccionar fecha</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="gotoDate">Fecha: *</label>
+            <input id="gotoDate" class="form-control" type="text" placeholder="yyyy-mm-dd" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('script')
@@ -164,7 +187,8 @@
   <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/locale/es.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/scheduler.min.js') }}"></script>
  	<script type="text/javascript">
-    var eventos  = @json($eventos),
+    let calendar = null;
+    let eventos  = @json($eventos),
         jornadas = @json($jornadas);
 
     $(document).ready(function(){
@@ -184,63 +208,94 @@
         }
       });
 
-      $('#calendar').fullCalendar(
-        {
-          schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-          locale: 'es',
-          defaultView: 'daysTimeline',
-          views: {
-            daysTimeline: {
-              type: 'timeline',
-              duration: { days: 7 },
-              slotDuration: { days: 1 },
-              slotLabelFormat: 'dd D/M'
-            }
+      $('#gotoDate').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'es',
+        keyboardNavigation: false,
+        autoclose: true
+      }).on('changeDate', function(e){
+        calendar.fullCalendar('gotoDate', moment($('#gotoDate').val()));
+        $('#gotoModal').modal('hide');
+      });
+
+      calendar = $('#calendar').fullCalendar({
+        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+        locale: 'es',
+        themeSystem: 'bootstrap4',
+        bootstrapFontAwesome: {
+          customDatePicker: 'fa-calendar',
+        },
+        header: {
+          left:   'title',
+          center: '',
+          right:  'today,daysTimeline,daysTimeline15,monthTimeline,customDatePicker prev,next'
+        },
+        customButtons: {
+          customDatePicker: {
+            text: '',
+            click: function() {
+              $('#gotoModal').modal('show');
+            },
+          }
+        },
+        defaultView: 'daysTimeline',
+        views: {
+          daysTimeline: {
+            type: 'timeline',
+            duration: { days: 7 },
+            slotDuration: { days: 1 },
+            slotLabelFormat: 'dd D/M'
           },
-          resourcesColumns:
-          [
-            {
-              labelText: 'Empleados',
-              field: 'title',
-              width: '30%'
-            }
-          ],
-          resources: [
-            @foreach($empleados as $d)
+          daysTimeline15: {
+            type: 'timeline',
+            duration: { days: 15 },
+            slotDuration: { days: 1 },
+            slotLabelFormat: 'D/M',
+          },
+          monthTimeline: {
+            type: 'timeline',
+            duration: { days: 30 },
+            slotDuration: { days: 1 },
+            slotLabelFormat: 'D/M',
+            buttonText: 'Mes'
+          }
+        },
+        resourceAreaWidth: '20%',
+        resources: [
+          @foreach($empleados as $d)
             {id: '{{$d->id}}', title: '{{$d->usuario->nombres}} {{$d->usuario->apellidos}}', path: '{{ route("admin.eventos.store", ["empleado"=>$d->id]) }}'},
-            @endforeach
-          ],
-          eventSources: [
-            {
-              events: eventos
-            },
-            {
-              events: jornadas.trabajo,
-              color: '#00a65a',
-              textcolor: 'white'
-            },
-            {
-              events: jornadas.descanso,
-              color: '#9c9c9c',
-              textcolor: 'white'
-            }
-          ],
-          dayClick: function(date, jsEvent, view, resourceObj){
-            $('#eventTitle').html(resourceObj.title + '<br>' + date.format())
-            $('#eventDay').val(date.format())
-            $('#eventsModal').modal('show')
-            $('#eventForm').attr('action', resourceObj.path)
+          @endforeach
+        ],
+        eventSources: [
+          {
+            events: eventos
           },
-          eventClick: function(event){
-            if(event.id){
-              $('#delEventModal').modal('show');
-              $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
-            }else{
-              $('#delEventForm').attr('action', '#');
-            }
+          {
+            events: jornadas.trabajo,
+            color: '#00a65a',
+            textcolor: 'white'
+          },
+          {
+            events: jornadas.descanso,
+            color: '#9c9c9c',
+            textcolor: 'white'
+          }
+        ],
+        dayClick: function(date, jsEvent, view, resourceObj){
+          $('#eventTitle').html(resourceObj.title + '<br>' + date.format())
+          $('#eventDay').val(date.format())
+          $('#eventsModal').modal('show')
+          $('#eventForm').attr('action', resourceObj.path)
+        },
+        eventClick: function(event){
+          if(event.id){
+            $('#delEventModal').modal('show');
+            $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
+          }else{
+            $('#delEventForm').attr('action', '#');
           }
         }
-      )
+      })
 
       $('#tipo').change(function(){
         let tipo = $(this).val()

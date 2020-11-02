@@ -126,11 +126,8 @@ Route::group(['middleware' => 'auth'], function () {
             ->except(['create']);
 
       /* --- Empleados --- */
-      Route::patch('empleados/{empleado}/contrato', 'EmpleadosController@cambioContrato')->name('empleados.cambioContrato');
       Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
       Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
-      Route::get('empleados/{empleado}/cambio', 'EmpleadosController@cambio')->name('empleados.cambio');
-      Route::post('empleados/{empleado}/cambio', 'EmpleadosController@cambioStore')->name('empleados.cambioStore');
       Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
       Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
       Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
@@ -138,6 +135,13 @@ Route::group(['middleware' => 'auth'], function () {
         'create',
         'store'
       ]);
+
+      /* --- Empleados - Contratos --- */
+      Route::patch('empleados/{empleado}/contrato/cambio', 'EmpleadosContratoController@cambio')->name('empleados.contrato.cambio');
+      Route::get('empleados/{empleado}/contrato/create', 'EmpleadosContratoController@create')->name('empleados.contrato.create');
+      Route::post('empleados/{empleado}/contrato', 'EmpleadosContratoController@store')->name('empleados.contrato.store');
+      Route::get('empleados/{empleado}/contrato/edit', 'EmpleadosContratoController@edit')->name('empleados.contrato.edit');
+      Route::patch('empleados/{empleado}/contrato/edit', 'EmpleadosContratoController@update')->name('empleados.contrato.update');
 
       /* --- Solicitudes --- */
       Route::resource('solicitud', 'SolicitudController')

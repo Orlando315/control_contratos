@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title','Empleados -'.config('app.name'))
+@section('title', 'Empleados')
 
 @section('head')
   <!-- Datepicker -->
@@ -17,6 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
+        <li class="breadcrumb-item">Contratos</li>
         <li class="breadcrumb-item active"><strong>Cambio</strong></li>
       </ol>
     </div>
@@ -31,8 +32,8 @@
           <h4>Cambio de jornada</h4>        
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.cambioStore', ['empleado'=>$empleado]) }}" method="POST">
-            {{ csrf_field() }}
+          <form action="{{ route('admin.empleados.contrato.store', ['empleado' => $empleado->id]) }}" method="POST">
+            @csrf
 
             <fieldset>
               <legend>Contrato</legend>
@@ -55,8 +56,8 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-                    <label for="jornada">Jornada:</label>
-                    <select id="jornada" class="form-control" name="jornada">
+                    <label for="jornada">Jornada: *</label>
+                    <select id="jornada" class="form-control" name="jornada" required>
                       <option value="">Seleccione...</option>
                       <option value="5x2" {{ old('jornada') == '5x2' ? 'selected' : '' }}>5x2</option>
                       <option value="4x3" {{ old('jornada') == '4x3' ? 'selected' : '' }}>4x3</option>
@@ -68,7 +69,6 @@
                       <option value="7x14" {{ old('jornada') == '7x14' ? 'selected' : '' }}>7x14</option>
                       <option value="14x14" {{ old('jornada') == '14x14' ? 'selected' : '' }}>14x14</option>
                     </select>
-                    <span class="help-block">Si no se selecciona, se colocara la jornada de la empresa</span>
                   </div>
                 </div>
 
@@ -92,7 +92,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

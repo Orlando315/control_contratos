@@ -398,6 +398,29 @@
         </div>
       </div>
     </div>
+
+    <div id="gotoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="gotoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+              <span class="sr-only">Cerrar</span>
+            </button>
+            <h4 class="modal-title" id="gotoModalLabel">Seleccionar fecha</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="gotoDate">Fecha: *</label>
+              <input id="gotoDate" class="form-control" type="text" placeholder="yyyy-mm-dd" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   @endif
 @endsection
 
@@ -417,12 +440,30 @@
       const jornada     = @json(Auth::user()->empleado->proyectarJornada());
       const eventos     = @json(Auth::user()->empleado->getEventos());
       const feriados    = @json(Auth::user()->empleado->getFeriados());
-      const comidas     = @json(Auth::user()->empleado->getComidasToCalendar());
       const asistencias = @json(Auth::user()->empleado->getAsistencias());
+      let calendar = null;
 
       $(document).ready(function(){
-        $('#calendar').fullCalendar({
+        calendar = $('#calendar').fullCalendar({
+          schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
           locale: 'es',
+          themeSystem: 'bootstrap4',
+          bootstrapFontAwesome: {
+            customDatePicker: 'fa-calendar',
+          },
+          header: {
+            left:   'title',
+            center: '',
+            right:  'today,customDatePicker prev,next'
+          },
+          customButtons: {
+            customDatePicker: {
+              text: '',
+              click: function() {
+                $('#gotoModal').modal('show');
+              },
+            }
+          },
           eventSources:
           [
             {
@@ -442,9 +483,6 @@
             },
             {
               events: eventos,
-            },
-            {
-              events: comidas
             },
             {
               events: asistencias,
@@ -467,6 +505,16 @@
           autoclose: true
         });
 
+        $('#gotoDate').datepicker({
+          format: 'yyyy-mm-dd',
+          language: 'es',
+          keyboardNavigation: false,
+          autoclose: true
+        }).on('changeDate', function(e){
+          calendar.fullCalendar('gotoDate', moment($('#gotoDate').val()));
+          $('#gotoModal').modal('hide');
+        });
+
         $('#reemplazo, #tipo').select2({
           dropdownParent: $('#events-modal-body'),
           theme: 'bootstrap4',
@@ -474,7 +522,6 @@
         })
 
         $('#reemplazo').trigger('change')
-
         $('#eventForm').submit(storeEvent)
 
         $('#tipo').change(function(){

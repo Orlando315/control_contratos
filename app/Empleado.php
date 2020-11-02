@@ -49,6 +49,13 @@ class Empleado extends Model
     protected $guarded = ['empresa_id'];
 
     /**
+     * Ultimo contrato del Empleado
+     * 
+     * @var null
+     */
+    private $_lastContrato = null;
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -80,6 +87,18 @@ class Empleado extends Model
     public function getFechaNacimientoAttribute($value)
     {
       return date('d-m-Y', strtotime($value));
+    }
+
+    /**
+     * Obtener el ultimo contrato
+     *
+     * @param  string  $value
+     * @return \App\EmpleadosContrato|null
+     */
+    public function getLastContratoAttribute($value)
+    {
+      $this->_lastContrato = $value ?? $this->contratos()->latest()->first();
+      return $this->_lastContrato;
     }
 
     /**
@@ -258,8 +277,8 @@ class Empleado extends Model
       foreach ($this->contratos()->get() as $contrato){
         
         $contratoStart = new Carbon($contrato->inicio_jornada);
-        // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
-        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
+        // Si el contrato no tiene fecha de fin, se proyectan 10 años desde la fecha de inicio
+        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(10);
         
         //Diferencia en dias desde el inicio hasta el fin del contrato      
         $diffInDays = $contratoStart->diffInDays($contratoEnd);
@@ -400,8 +419,8 @@ class Empleado extends Model
       $firstContrato = $this->contratos->first();
       
       $carbonInicioLastContrato = new Carbon($lastContrato->inicio_jornada);
-      // Si el lastContrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
-      $finLastContrato = $lastContrato->fin ?? $carbonInicioLastContrato->addYears(3);
+      // Si el lastContrato no tiene fecha de fin, se proyectan 10 años desde la fecha de inicio
+      $finLastContrato = $lastContrato->fin ?? $carbonInicioLastContrato->addYears(10);
 
       // Periodo desde el inicio del 1er contrato, hasta el fin del ultimo
       $inicio = $inicio ?? $firstContrato->inicio_jornada;
@@ -437,8 +456,8 @@ class Empleado extends Model
       foreach ($this->contratos()->get() as $contrato){
         
         $contratoStart = new Carbon($contrato->inicio_jornada);
-        // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
-        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
+        // Si el contrato no tiene fecha de fin, se proyectan 10 años desde la fecha de inicio
+        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(10);
 
         // Diferencia en dias desde el inicio hasta el fin del contrato      
         $diffInDays = $contratoStart->diffInDays($contratoEnd);
@@ -609,8 +628,8 @@ class Empleado extends Model
       foreach ($this->contratos()->where('inicio', '<', $fin)->get() as $contrato){
         
         $contratoStart = new Carbon($contrato->inicio_jornada);
-        // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
-        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
+        // Si el contrato no tiene fecha de fin, se proyectan 10 años desde la fecha de inicio
+        $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(10);
 
         // Diferencia en dias desde el inicio hasta el fin del contrato      
         $diffInDays = $contratoStart->diffInDays($contratoEnd);
@@ -714,8 +733,8 @@ class Empleado extends Model
       $contrato = $this->contratos->last();
       $contratoStart = new Carbon($contrato->inicio_jornada);
 
-      // Si el contrato no tiene fecha de fin, se proyectan 3 años desde la fecha de inicio
-      $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(3);
+      // Si el contrato no tiene fecha de fin, se proyectan 10 años desde la fecha de inicio
+      $contratoEnd = $contrato->fin ?? $contratoStart->copy()->addYears(10);
       
       // Diferencia en dias desde el inicio hasta el fin del contrato      
       $diffInDays = $contratoStart->diffInDays($contratoEnd);
@@ -876,44 +895,6 @@ class Empleado extends Model
       $sueldoLiquido = (($sueldoDiario * $asistencias) - $anticipo) + $bonoReemplazo;
 
       return $sueldoLiquido;
-    }
-
-    /**
-     * Obtener la informacion de los Eventos tipo comidas del Empleado
-     */
-    public function getComidas()
-    {
-      return $this->eventos()
-                  ->where([
-                    ['tipo', 1],
-                    ['comida', true],
-                    ['pago', true]
-                  ])
-                  ->get();
-    }
-
-    /**
-     * Obtener la informacion de los Eventos tipo comidas del Empleado, como un Array
-     *
-     * @return array
-     */
-    public function getComidasToCalendar()
-    {
-      $comidas = [];
-
-      foreach($this->getComidas() as $comida){
-        $comidas[] = [
-          'resourceId' => $this->id,
-          'id' => 'C'.$comida->id,
-          'className' => '',
-          'title' => 'Comida',
-          'start' => $comida->inicio,
-          'end' => null,
-          'color' => '#001f3f'
-        ];
-      }// Foreach Comidas
-
-      return $comidas;
     }
 
     /**

@@ -175,10 +175,10 @@
         data: form.serialize(),
         dataType: 'json',
       })
-      .done(function(comidas){
+      .done(function(reemplazos){
         $('#tbody-contratos, #tbody-empleados').empty();
 
-        $.each(comidas.contratos, function(i, contrato){
+        $.each(reemplazos.contratos, function(i, contrato){
           let tr = '<tr>'
           tr += `<td class="text-center">${contrato.contrato}</td>`
           tr += `<td class="text-center">${contrato.empleados}</td>`
@@ -189,7 +189,7 @@
           $('#tbody-contratos').append(tr)
         })
 
-        $.each(comidas.empleados, function(i, empleado){
+        $.each(reemplazos.empleados, function(i, empleado){
           let tr = '<tr>'
           tr += `<td class="text-center">${empleado.contrato}</td>`
           tr += `<td class="text-center">${empleado.rut}</td>`

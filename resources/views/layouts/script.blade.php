@@ -41,7 +41,14 @@
         extend: 'print',
         text: 'Imprimir'
       }],
-      pageLength: 25
+      pageLength: 25,
+      columnDefs: [
+        {
+          targets: [0],
+          visible: false,
+          searchable: false
+        }
+      ]
     });
 
     $('.btn-confirmar').click(function(){

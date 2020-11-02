@@ -80,14 +80,12 @@
                 <th class="text-center">F. Egresos</th>
                 <th class="text-center">Anticipos</th>
                 <th class="text-center">Sueldos</th>
-                <th class="text-center">Comidas</th>
                 <th class="text-center">Transporte</th>
                 <th class="text-center">Total</th>
               </tr>
             </thead>
             <tbody id="tbody-contratos">
               <tr>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -159,7 +157,6 @@
           tr += `<td class="text-center">${contrato.egresos.toLocaleString('de-DE')}</td>`
           tr += `<td class="text-center">${contrato.anticipos.toLocaleString('de-DE')}</td>`
           tr += `<td class="text-center">${contrato.sueldos.toLocaleString('de-DE')}</td>`
-          tr += `<td class="text-center">${contrato.comidas.toLocaleString('de-DE')}</td>`
           tr += `<td class="text-center">${contrato.transporte.toLocaleString('de-DE')}</td>`
           tr += `<td class="text-center ${clase}">${contrato.total.toLocaleString('de-DE')}</td>`
           tr += '</tr>'

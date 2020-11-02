@@ -319,34 +319,6 @@ class Contrato extends Model
     }
 
     /**
-     * Obtener las Comidas como array para el Calendario
-     */
-    public function comidasToCalendar()
-    {
-      $comidas = [];
-      foreach($this->empleados()->get() as $empleado){
-        $search = $empleado->getComidas();
-        $data = [];
-
-        foreach($search as $comida){
-          $data[] = [
-            'resourceId' => $empleado->id,
-            'id' => 'C'.$comida->id,
-            'className' => 'clickableEvent',
-            'title' => 'Comida',
-            'start' => $comida->inicio,
-            'end' => null,
-            'color' => '#001f3f'
-          ];
-        }// Foreach Comidas
-
-        $comidas = array_merge($comidas, $data);
-      }// Foreach Empleados
-
-      return $comidas;
-    }
-
-    /**
      * Obtener las jornadas para exportarlas
      *
      * @param  string  $inicio  Fecha de inicio de las Jornadas

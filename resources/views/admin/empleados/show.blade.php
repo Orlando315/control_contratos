@@ -31,8 +31,8 @@
   <div class="row mb-3">
     <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', [$empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.cambio', [$empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
       @if($empleado->usuario->tipo > 1)
         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar rol</button>
       @endif
@@ -126,34 +126,35 @@
             <div class="ibox-title px-3">
               <h5>Contrato</h5>
               <div class="ibox-tools">
-                <button class="btn btn-default btn-xs" titl="Ver historial" data-toggle="modal" data-target="#historyModal"><i class="fa fa-list"></i></button>
+                <a class="btn btn-default btn-xs" href="{{ route('admin.empleados.contrato.edit', ['empleado' => $empleado->id]) }}" title="Editar contrato"><i class="fa fa-pencil"></i></a>
+                <button class="btn btn-default btn-xs" title="Ver historial" data-toggle="modal" data-target="#historyModal"><i class="fa fa-list"></i></button>
               </div>
             </div>
             <div class="ibox-content no-padding">
               <ul class="list-group">
                 <li class="list-group-item">
                   <b>Jornada</b>
-                  <span class="pull-right">{{ $empleado->contratos->last()->jornada }}</span>
+                  <span class="pull-right">{{ $empleado->lastContrato->jornada }}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Sueldo</b>
-                  <span class="pull-right">{{ number_format($empleado->contratos->last()->sueldo, 0, ',', '.') }}</span>
+                  <span class="pull-right">{{ number_format($empleado->lastContrato->sueldo, 0, ',', '.') }}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Inicio</b>
-                  <span class="pull-right">{{ $empleado->contratos->last()->inicio }}</span>
+                  <span class="pull-right">{{ $empleado->lastContrato->inicio }}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Inicio de Jornada</b>
-                  <span class="pull-right"> {{$empleado->contratos->last()->inicio_jornada}} </span>
+                  <span class="pull-right"> {{$empleado->lastContrato->inicio_jornada}} </span>
                 </li>
                 <li class="list-group-item">
                   <b>Fin</b>
-                  <span class="pull-right"> {!! $empleado->contratos->last()->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                  <span class="pull-right"> {!! $empleado->lastContrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
                 </li>
                 <li class="list-group-item">
                   <b>Descripción</b>
-                  <span class="pull-right"> {!! $empleado->contratos->last()->descripcion ?? 'N/A' !!} </span>
+                  <span class="pull-right"> {!! $empleado->lastContrato->descripcion ?? 'N/A' !!} </span>
                 </li>
               </ul>
             </div><!-- /.ibox-content -->
@@ -366,7 +367,7 @@
     </div>
   </div>
 
-  <div class="row mb-3">
+  <div class="row mb-5">
     <div class="col-md-12">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
@@ -594,7 +595,7 @@
   <div id="contratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <form action="{{ route('admin.empleados.cambioContrato', ['empleado' => $empleado->id]) }}" method="POST">
+        <form action="{{ route('admin.empleados.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
           {{ method_field('PATCH') }}
           {{ csrf_field() }}
 
@@ -884,6 +885,29 @@
       </div>
     </div>
   </div>
+
+  <div id="gotoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="gotoModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cerrar</span>
+          </button>
+          <h4 class="modal-title" id="gotoModalLabel">Seleccionar fecha</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="gotoDate">Fecha: *</label>
+            <input id="gotoDate" class="form-control" type="text" placeholder="yyyy-mm-dd" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('script')
@@ -898,6 +922,7 @@
   <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/locale/es.js') }}"></script>
   <script type="text/javascript" src="{{ asset('js/plugins/fullcalendar/scheduler.min.js') }}"></script>
  	<script type="text/javascript">
+    let calendar = null;
     let jornada = @json($empleado->proyectarJornada()),
         eventos = @json($empleado->getEventos()),
         feriados = @json($empleado->getFeriados());
@@ -934,6 +959,16 @@
         }
       });
 
+      $('#gotoDate').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'es',
+        keyboardNavigation: false,
+        autoclose: true
+      }).on('changeDate', function(e){
+        calendar.fullCalendar('gotoDate', moment($('#gotoDate').val()));
+        $('#gotoModal').modal('hide');
+      });
+
       $('#contrato').select2({
         dropdownParent: $('#contrato-modal-body'),
         theme: 'bootstrap4',
@@ -951,8 +986,26 @@
       $('#eventForm').submit(storeEvent)
       $('#delEventForm').submit(delEvent)
 
-      $('#calendar').fullCalendar({
+      calendar = $('#calendar').fullCalendar({
+        schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         locale: 'es',
+        themeSystem: 'bootstrap4',
+        bootstrapFontAwesome: {
+          customDatePicker: 'fa-calendar',
+        },
+        header: {
+          left:   'title',
+          center: '',
+          right:  'today,customDatePicker prev,next'
+        },
+        customButtons: {
+          customDatePicker: {
+            text: '',
+            click: function() {
+              $('#gotoModal').modal('show');
+            },
+          }
+        },
         eventSources: [{
           events: jornada.trabajo,
           color: '#00a65a',

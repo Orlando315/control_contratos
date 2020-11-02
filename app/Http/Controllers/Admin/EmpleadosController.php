@@ -251,85 +251,6 @@ class EmpleadosController extends Controller
     }
 
     /**
-     * Mostrar el formulario para cambiar de Jornada
-     *
-     * @param  \App\Empleado  $empleado
-     * @return \Illuminate\Http\Response
-     */
-    public function cambio($empleado)
-    {
-      return view('admin.empleados.cambio', compact('empleado'));
-    }
-
-    /**
-     * Cambiar la Jornada del Empleado
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Empleado  $empleado
-     * @return \Illuminate\Http\Response
-     */
-    public function cambioStore(Request $request, Empleado $empleado)
-    {
-      $this->validate($request, [
-        'inicio' => 'required|date_format:d-m-Y',
-        'fin' => 'nullable|date_format:d-m-Y',
-        'jornada' => 'nullable',
-        'descripcion' => 'nullable|string|max:200',
-      ]);
-
-      if($empleado->despidoORenuncia()){
-        $evento = $empleado->eventos()->where('tipo', 6)->orWhere('tipo', 7)->first();
-        $eventoDate = new Carbon($evento->inicio);
-
-        $inicio = new Carbon($request->inicio);
-        if($eventoDate->lessThanOrEqualTo($inicio)){
-          return redirect()
-                    ->back()
-                    ->withErrors('La fecha de inicio del contrato no puede ser mayor o igual a la fecha de Renuncia/Despido: '. $evento->inicio)
-                    ->withInput();  
-        }
-
-        if($request->fin){
-          $fin = new Carbon($request->fin);  
-          if($eventoDate->lessThan($fin)){
-            return redirect()
-                      ->back()
-                      ->withErrors('La fecha de fin del contrato no puede ser mayor a la fecha de Renuncia/Despido: '. $evento->inicio)
-                      ->withInput();  
-          }
-        }else{
-          $request->merge(['fin' => $evento->inicio]);
-        }
-      }
-      
-      $request->merge(['inicio_jornada' => $request->inicio]);
-
-      $lastContrato = $empleado->contratos->last();
-
-      if(!$request->jornada){
-        $request->merge(['jornada' => Auth::user()->configuracion->jornada]);
-      }
-
-      $request->merge(['sueldo' => $lastContrato->sueldo]);
-
-      if($empleado->contratos()->create($request->all())){
-        $lastContrato->fin = $request->inicio;
-        $lastContrato->save();
-
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
-          'flash_message' => 'Cambio de jornada exitoso.',
-          'flash_class' => 'alert-success'
-          ]);
-      }
-
-      return redirect()->back()->withInput()->with([
-        'flash_message' => 'Ha ocurrido un error.',
-        'flash_class' => 'alert-danger',
-        'flash_important' => true
-        ]);
-    }
-
-    /**
      * Exportar toda la informacion de Jornadas y Eventos del Empleado especificado
      *
      * @param  \Illuminate\Http\Request  $request
@@ -353,7 +274,6 @@ class EmpleadosController extends Controller
       $writer = WriterFactory::create(Type::XLSX);
       $writer->openToBrowser("{$nombre}.xlsx");
       $writer->addRows($data);
-
       $writer->close(); 
     }
 
@@ -397,31 +317,6 @@ class EmpleadosController extends Controller
       }
 
       return redirect()->back()->withInput()->with([
-        'flash_message' => 'Ha ocurrido un error.',
-        'flash_class' => 'alert-danger',
-        'flash_important' => true
-        ]);
-    }
-
-    /**
-     * Cambiar el Empleado de Contrato
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Empleado  $empleado
-     * @return \Illuminate\Http\Response
-     */
-    public function cambioContrato(Request $request, Empleado $empleado){
-      $contrato = Contrato::findOrFail($request->contrato);
-      $empleado->contrato_id = $contrato->id;
-
-      if($empleado->save()){
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
-          'flash_message' => 'Empleado actualizado exitosamente.',
-          'flash_class' => 'alert-success'
-          ]);
-      }
-
-      return redirect()->back()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true

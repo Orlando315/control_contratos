@@ -28,6 +28,9 @@
 .ibox-tools a.btn{
   color: #fff !important;
 }
+.ibox-tools a.btn.btn-default{
+  color: #666 !important;
+}
 .text-primary{
   color: #1ab394 !important;
 }

@@ -425,17 +425,6 @@ class ReportesController extends Controller
                                         ->whereBetween('created_at', [$inicio->toDateString(), $fin->toDateString()])
                                         ->sum('alcance_liquido');
 
-        $comidas = $contrato->empleadosEventos()
-                            ->where(function($query) use ($inicio, $fin){
-                              $query->where([
-                                ['tipo', 1],
-                                ['comida', true],
-                                ['pago', true]
-                                ])
-                                ->whereBetween('inicio', [$inicio->toDateString(), $fin->toDateString()]);
-                            })
-                            ->count() * 500;
-
         $transporteMantenimiento = $contrato->transportesConsumos()
                                             ->where('tipo', 1)
                                             ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])
@@ -452,9 +441,8 @@ class ReportesController extends Controller
           'egresos' => $facturasEgresos,
           'anticipos' => $anticipos,
           'sueldos' => $sueldoAlcanceLiquido,
-          'comidas' => $comidas,
           'transporte' => $transporteMantenimiento + $transporteCombustible,
-          'total' => $facturasIngresos - ($facturasEgresos + $anticipos + $sueldoAlcanceLiquido + $comidas + $transporteMantenimiento + $transporteCombustible)
+          'total' => $facturasIngresos - ($facturasEgresos + $anticipos + $sueldoAlcanceLiquido + $transporteMantenimiento + $transporteCombustible)
         ];
       }
 
