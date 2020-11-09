@@ -164,12 +164,15 @@ Route::group(['middleware' => 'auth'], function () {
       Route::resource('anticipos', 'AnticiposController')->except([
         'create'
       ]);
+      Route::get('anticipos/serie/{serie}', 'AnticiposController@serie')->name('anticipos.show.serie');
+      Route::get('anticipos/serie/{serie}/print', 'AnticiposController@printSerie')->name('anticipos.print.serie');
       Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
       Route::get('anticipos/create/individual', 'AnticiposController@create')->name('anticipos.individual');
       Route::get('anticipos/create/masivo', 'AnticiposController@masivo')->name('anticipos.masivo');
-      Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
       Route::post('anticipos/create/masivo', 'AnticiposController@storeMasivo')->name('anticipos.storeMasivo');
+      Route::post('anticipos/empleados/{contrato}', 'AnticiposController@getEmpleados');
       Route::put('anticipos/{anticipo}/status', 'AnticiposController@status')->name('anticipos.status');
+      Route::delete('anticipos/serie/{serie}', 'AnticiposController@destroySerie')->name('anticipos.destroy.serie');
 
       /* --- Gastos --- */
       Route::resource('gastos', 'GastosController');

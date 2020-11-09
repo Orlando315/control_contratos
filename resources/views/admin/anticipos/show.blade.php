@@ -21,7 +21,7 @@
       <div class="col-md-8">
           <div class="alert alert-info alert-important text-center" role="alert">
             <h4><i class="icon fa fa-level-up"></i> Solicitud de Anticipo</h4>
-            <p class="m-0"><strong>{{ $anticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $anticipo->anticipo() }}</strong></p>
+            <p class="m-0"><strong>{{ $anticipo->empleado->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $anticipo->anticipo() }}</strong></p>
             <button class="btn btn-danger btn-sm mt-2" type="button" data-type="0" data-toggle="modal" data-target="#statusAnticipoModal">
               <i class="fa fa-ban"></i> Rechazar
             </button>
@@ -59,8 +59,20 @@
               <b>Empleado</b>
               <span class="pull-right">
                 <a href="{{ route('admin.empleados.show', ['empleado' => $anticipo->empleado_id]) }}">
-                  {{ $anticipo->empleado->usuario->nombres }} {{ $anticipo->empleado->usuario->apellidos }}
+                  {{ $anticipo->empleado->nombre() }}
                 </a>
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Serie</b>
+              <span class="pull-right">
+                @if($anticipo->hasSerie())
+                  <a href="{{ route('admin.anticipos.show.serie', ['serie' => $anticipo->serie]) }}">
+                    {{ $anticipo->serie }}
+                  </a>
+                @else
+                  N/A
+                @endif
               </span>
             </li>
             <li class="list-group-item">

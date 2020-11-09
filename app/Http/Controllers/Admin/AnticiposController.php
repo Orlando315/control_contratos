@@ -16,11 +16,21 @@ class AnticiposController extends Controller
      */
     public function index()
     {
-      $anticipos = Anticipo::aprobados()->get();
-      $pendientes = Anticipo::pendientes()->get();
-      $rechazados = Anticipo::rechazados()->get();
+      $actualYear = request()->year ?? date('Y');
+      $allYears = Anticipo::allYears()->get()->pluck('year')->toArray();
+      $monthlyGroupedSeries = Anticipo::monthlySeriesGroupedByYear($actualYear);
+      $monthlyGroupedAprobados = Anticipo::monthlyGroupedByYearAndStatus($actualYear, true);
+      $monthlyGroupedPendientes = Anticipo::monthlyGroupedByYearAndStatus($actualYear, null);
+      $monthlyGroupedRechazados = Anticipo::monthlyGroupedByYearAndStatus($actualYear, false);
 
-      return view('admin.anticipos.index', compact('anticipos', 'pendientes', 'rechazados'));
+      return view('admin.anticipos.index', compact(
+        'actualYear',
+        'allYears',
+        'monthlyGroupedSeries',
+        'monthlyGroupedAprobados',
+        'monthlyGroupedPendientes',
+        'monthlyGroupedRechazados'
+      ));
     }
 
     /**
@@ -241,11 +251,13 @@ class AnticiposController extends Controller
 
       $anticipos = [];
       $files = [];
+      $serie = Anticipo::generateSerie($contrato->id);
 
       foreach ($request->empleados as $id => $anticipo) {
         $data = [
           'contrato_id' => $contrato->id,
           'empleado_id' => $id,
+          'serie' => $serie,
           'fecha' => $request->fecha,
           'anticipo' => $anticipo['anticipo'],
           'bono' => $anticipo['bono'],
@@ -269,7 +281,7 @@ class AnticiposController extends Controller
       }
 
       if(Auth::user()->empresa->anticipos()->createMany($anticipos)){
-        return redirect()->route('admin.anticipos.index')->with([
+        return redirect()->route('admin.anticipos.show.serie', ['serie' => $serie])->with([
           'flash_message' => 'Anticipos agregados exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -323,5 +335,85 @@ class AnticiposController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $serie
+     * @return \Illuminate\Http\Response
+     */
+    public function serie($serie)
+    {
+      $anticipos = Anticipo::whereSerie($serie)->get();
+
+      if($anticipos->isEmpty()){
+        abort(404);
+      }
+
+      $contrato = $anticipos->first()->contrato;
+      $totalAnticipos = $anticipos->sum('anticipo');
+      $totalBonos = $anticipos->sum('bono');
+      $serieFecha = $anticipos->first()->fecha;
+
+      return view('admin.anticipos.serie', compact('serie', 'contrato', 'totalAnticipos', 'totalBonos', 'serieFecha', 'anticipos'));
+    }
+
+    /**
+     * Display print view of the specified resource.
+     *
+     * @param  string  $serie
+     * @return \Illuminate\Http\Response
+     */
+    public function printSerie($serie)
+    {
+      $anticipos = Anticipo::whereSerie($serie)->get();
+
+      if($anticipos->isEmpty()){
+        abort(404);
+      }
+
+      $contrato = $anticipos->first()->contrato;
+      $totalAnticipos = $anticipos->sum('anticipo');
+      $totalBonos = $anticipos->sum('bono');
+      $serieFecha = $anticipos->first()->fecha;
+
+      return view('admin.anticipos.print.serie', compact('serie', 'contrato', 'totalAnticipos', 'totalBonos', 'serieFecha', 'anticipos'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  string  $serie
+     * @return \Illuminate\Http\Response
+     */
+    public function destroySerie($serie)
+    {
+      $anticipos = Anticipo::select('id', 'adjunto')->whereSerie($serie)->get();
+      $adjuntos = $anticipos->pluck('adjunto')->reject(function($adjunto){
+        return is_null($adjunto);
+      });
+
+      if($anticipos->isEmpty()){
+        abort(404);
+      }
+
+      try{
+        Anticipo::whereSerie($serie)->delete();
+        if($adjuntos->count()){
+          Storage::delete($adjuntos->toArray());
+        }
+
+        return redirect()->route('admin.anticipos.index')->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Serie eliminada exitosamente.'
+        ]);
+      }catch(\Exception $e){
+        return redirect()->back()->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => 'Ha ocurrido un error.',
+          'flash_important' => true
+        ]);
+      }
     }
 }

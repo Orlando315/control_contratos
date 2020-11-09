@@ -25,7 +25,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
           <h5>Agregar anticipo masivo</h5>
@@ -37,7 +37,7 @@
           </div>
 
           <form id="form-anticipos" action="{{ route('admin.anticipos.storeMasivo') }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="row">
               <div class="col-md-6">
@@ -67,6 +67,7 @@
               <table class="table table-sm table-bordered table-condensed table-anticipos">
                 <thead>
                   <tr>
+                    <th></th>
                     <th class="align-middle">Empleado</th>
                     <th class="align-middle">Anticipo</th>
                     <th class="align-middle">Bono</th>
@@ -113,7 +114,10 @@
     let tbody = $('#tbody-empleados')
     let submit = $('#btn-submit')
     let createElement = function(id, name, anticipo){
-      return `<tr>
+      return `<tr class="empleado-${id}">
+                <td rowspan="2" class="text-center align-middle">
+                  <button class="btn btn-danger btn-xs btn-delete" data-empleado="${id}" type="button" role="button"><i class="fa fa-times"></i></button>
+                </td>
                 <td class="align-middle">${name}</td>
                 <td class="align-middle">
                   <div class="form-group m-0">
@@ -132,7 +136,7 @@
                   </div>
                 </td>
               </tr>
-              <tr>
+              <tr class="empleado-${id}">
                 <td colspan="2" class="align-middle">
                   <div class="form-group m-0">
                     <input class="form-control input-sm" type="text" name="empleados[${id}][descripcion]" maxlength="200" placeholder="Agregar descripción">
@@ -153,7 +157,6 @@
       $('#fecha').datepicker({
         format: 'dd-mm-yyyy',
         language: 'es',
-        endDate: 'today',
         keyboardNavigation: false,
         autoclose: true
       });
@@ -166,20 +169,9 @@
       $('#contrato').change(getEmpleados)
       $('#contrato').change()
 
-      $('#tbody-empleados').on('click', '.empleados-check', function(){
-        if($(this).is(':checked')){
-          $(this).closest('.custom-checkbox').removeClass('has-error');
-        }
-
-        toggleMasterState()
-      })
-
-      $('#check-master').click(function () {
-        let isChecked = $(this).is(':checked')
-        
-        $('.empleados-check').prop('checked', isChecked)
-        $('.empleados-check').closest('.custom-checkbox').toggleClass('has-error', false);
-      })
+      $('#tbody-empleados').on('click', '.empleados-check', empleadosCheck);
+      $('#tbody-empleados').on('click', '.btn-delete', deleteEmpleado);
+      $('#check-master').click(checkMaster);
 
       $('#form-anticipos').submit(function(e){
         e.preventDefault();
@@ -221,6 +213,13 @@
       toggleMasterState()
     });
 
+    function checkMaster() {
+      let isChecked = $(this).is(':checked')
+      
+      $('.empleados-check').prop('checked', isChecked)
+      $('.empleados-check').closest('.custom-checkbox').toggleClass('has-error', false);
+    }
+
     function toggleMasterState(){
       let checkboxs = $('.empleados-check')
       let checked = checkboxs.filter(':checked').length
@@ -259,15 +258,14 @@
           $.each(data, function(k, v){
             let anticipo = v.latest_anticipo ? v.latest_anticipo.anticipo : 0;
 
-            let name = `${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos}`
+            let name = `${v.usuario.rut} | ${v.usuario.nombres} ${v.usuario.apellidos ?? ''}`
             let element = createElement(v.id, name, anticipo)
             tbody.append(element)
           })
 
           submit.prop('disabled', false)
         }else{
-          tbody.insertRow(0)
-              .insertCell(0).innerHTML = 'No hay empleados registrados'
+          tbody.append('<tr><td colspan="5" class="text-center text-muted">No hay empleados registrados</td></tr>');
           submit.prop('disabled', true)
         }
       })
@@ -289,6 +287,20 @@
       $('.alert ul').empty().append(`<li>${error}</li>`)
       $('.alert').show().delay(5000).hide('slow')
       $(`#${id}`).val('')
+    }
+
+    function empleadosCheck() {
+      if($(this).is(':checked')){
+        $(this).closest('.custom-checkbox').removeClass('has-error');
+      }
+
+      toggleMasterState()
+    }
+
+    function deleteEmpleado() {
+      let empleado = $(this).data('empleado');
+
+      $(`.empleado-${empleado}`).remove();
     }
   </script>
 @endsection

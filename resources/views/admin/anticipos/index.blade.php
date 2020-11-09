@@ -15,131 +15,262 @@
 @endsection
 
 @section('content')
-  <div class="row mb-3"> 
-    <div class="col-6 col-md-3">
-      <div class="ibox ">
-        <div class="ibox-title">
-          <h5>Anticipos</h5>
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center text-md-right">
+      <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
+    </div>
+    <div class="col-md-6 text-center text-md-left">
+      <form id="form-years" action="{{ route('admin.anticipos.index') }}">
+        <div class="form-group">
+          <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
+            <option value="">Seleccione</option>
+            @foreach($allYears as $year)
+              <option value="{{ $year }}"{{ $year == $actualYear ? ' selected' : '' }}>{{ $year }}</option>
+            @endforeach
+          </select>
         </div>
-        <div class="ibox-content">
-          <h2><i class="fa fa-level-up text-success"></i> {{ count($anticipos) }}</h2>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
-
   <div class="row mb-3">
     <div class="col-md-12">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-1" data-toggle="tab">Anticipos</a></li>
-          <li><a class="nav-link" href="#tab-2" data-toggle="tab">Solicitudes</a></li>
-          <li><a class="nav-link" href="#tab-3" data-toggle="tab">Rechazados</a></li>
+          <li><a class="nav-link active" href="#tab-1" data-toggle="tab">Series</a></li>
+          <li><a class="nav-link" href="#tab-2" data-toggle="tab">Anticipos</a></li>
+          <li><a class="nav-link" href="#tab-3" data-toggle="tab">Solicitudes</a></li>
+          <li><a class="nav-link" href="#tab-4" data-toggle="tab">Rechazados</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab-1">
             <div class="panel-body">
               <div class="mb-3 text-right">
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
                 <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
               </div>
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Contrato</th>
-                    <th class="text-center">Empleado</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Anticipo</th>
-                    <th class="text-center">Agregado</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($anticipos as $anticipo)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.contratos.show', ['contrato' => $anticipo->contrato->id]) }}">{{ $anticipo->contrato->nombre }} </a></td>
-                      <td><a href="{{ route('admin.empleados.show', ['empleado' => $anticipo->empleado->id]) }}">{{ $anticipo->empleado->usuario->nombre() }}</a></td>
-                      <td>{{ $anticipo->fecha }}</td>
-                      <td>{{ $anticipo->anticipo() }}</td>
-                      <td>{{ optional($anticipo->created_at)->format('d-m-Y H:i:s') }}</td>
-                      <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id] )}}"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.edit', ['anticipo' => $anticipo->id] )}}"><i class="fa fa-pencil"></i></a>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
+
+              <div class="accordion" id="accordion-anticipos-series">
+                @forelse($monthlyGroupedSeries as $month)
+                  <div class="card">
+                    <div class="card-header p-0" id="heading-series-{{ $month->month }}">
+                      <button class="btn btn-link btn-block text-left p-3" type="button" data-toggle="collapse" data-target="#collapse-series-{{ $month->month }}" aria-expanded="false" aria-controls="collapse-series-{{ $month->month }}">
+                        {{ $month->title }} ({{ $month->series->count() }})
+                      </button>
+                    </div>
+                    <div id="collapse-series-{{ $month->month }}" class="collapse" aria-labelledby="heading-series-{{ $month->month }}" data-parent="#accordion-anticipos-series">
+                      <div class="card-body">
+                        <table class="table data-table table-bordered table-hover table-sm w-100">
+                          <thead>
+                            <tr>
+                              <th class="text-center">#</th>
+                              <th class="text-center">Serie</th>
+                              <th class="text-center">Contrato</th>
+                              <th class="text-center">Fecha</th>
+                              <th class="text-center">Anticipo</th>
+                              <th class="text-center">Bono</th>
+                              <th class="text-center">Acción</th>
+                            </tr>
+                          </thead>
+                          <tbody class="text-center">
+                            @foreach($month->series as $serie)
+                              <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $serie->serie }}</td>
+                                <td>{{ $serie->contrato->nombre }}</td>
+                                <td>{{ $serie->fecha }}</td>
+                                <td class="text-right">{{ $serie->anticipo() }}</td>
+                                <td class="text-right">{{ $serie->bono() }}</td>
+                                <td>
+                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
+                                </td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                @empty
+                  <h3 class="text-center text-muted my-3">No hay resultados</h3>
+                @endforelse
+              </div>
             </div>
           </div>
           <div class="tab-pane" id="tab-2">
             <div class="panel-body">
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Contrato</th>
-                    <th class="text-center">Empleado</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Anticipo</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($pendientes as $pendiente)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.contratos.show', ['contrato' => $pendiente->contrato->id]) }}">{{ $pendiente->contrato->nombre }} </a></td>
-                      <td><a href="{{ route('admin.empleados.show', ['empleado' => $pendiente->empleado->id]) }}">{{ $pendiente->empleado->usuario->nombre() }}</a></td>
-                      <td>{{ $pendiente->fecha }}</td>
-                      <td>{{ $pendiente->anticipo() }}</td>
-                      <td>
-                        <div class="btn-group">
-                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                            <li><a class="dropdown-item" href="{{ route('admin.anticipos.show', ['anticipo' => $pendiente->id] ) }}"><i class="fa fa-search"></i> Ver</a></li>
-                            <li><a class="dropdown-item" href="{{ route('admin.anticipos.edit', ['anticipo' => $pendiente->id] ) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                            <li><a class="dropdown-item" type="button" data-url="{{ route('admin.anticipos.status', ['anticipo' => $pendiente->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusAnticipoModal"><i class="fa fa-check"></i> Aprobar</a></li>
-                            <li><a class="dropdown-item" type="button" data-url="{{ route('admin.anticipos.status', ['anticipo' => $pendiente->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusAnticipoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
+              <div class="mb-3 text-right">
+                <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
+              </div>
+
+              <div class="accordion" id="accordion-anticipos-aprobados">
+                @forelse($monthlyGroupedAprobados as $month)
+                  <div class="card">
+                    <div class="card-header p-0" id="heading-aprobados-{{ $month->month }}">
+                      <button class="btn btn-link btn-block text-left p-3" type="button" data-toggle="collapse" data-target="#collapse-aprobados-{{ $month->month }}" aria-expanded="false" aria-controls="collapse-aprobados-{{ $month->month }}">
+                        {{ $month->title }} ({{ $month->anticipos->count() }})
+                      </button>
+                    </div>
+                    <div id="collapse-aprobados-{{ $month->month }}" class="collapse" aria-labelledby="heading-aprobados-{{ $month->month }}" data-parent="#accordion-anticipos-aprobados">
+                      <div class="card-body">
+                        <table class="table data-table table-bordered table-hover table-sm w-100">
+                          <thead>
+                            <tr>
+                              <th class="text-center">#</th>
+                              <th class="text-center">Contrato</th>
+                              <th class="text-center">Empleado</th>
+                              <th class="text-center">Fecha</th>
+                              <th class="text-center">Anticipo</th>
+                              <th class="text-center">Bono</th>
+                              <th class="text-center">Agregado</th>
+                              <th class="text-center">Acción</th>
+                            </tr>
+                          </thead>
+                          <tbody class="text-center">
+                            @foreach($month->anticipos as $aprobado)
+                              <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                  <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">
+                                    {{ $aprobado->contrato->nombre }}
+                                  </a>
+                                </td>
+                                <td>
+                                  <a href="{{ route('admin.empleados.show', ['empleado' => $aprobado->empleado->id]) }}">
+                                    {{ $aprobado->empleado->usuario->nombre() }}
+                                  </a>
+                                </td>
+                                <td>{{ $aprobado->fecha }}</td>
+                                <td class="text-right">{{ $aprobado->anticipo() }}</td>
+                                <td class="text-right">{{ $aprobado->bono() }}</td>
+                                <td>{{ optional($aprobado->created_at)->format('d-m-Y H:i:s') }}</td>
+                                <td>
+                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
+                                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.edit', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-pencil"></i></a>
+                                </td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                @empty
+                  <h3 class="text-center text-muted my-3">No hay resultados</h3>
+                @endforelse
+              </div>
             </div>
           </div>
           <div class="tab-pane" id="tab-3">
             <div class="panel-body">
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Contrato</th>
-                    <th class="text-center">Empleado</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Anticipo</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($rechazados as $rechazado)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">{{ $rechazado->contrato->nombre }} </a></td>
-                      <td><a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">{{ $rechazado->empleado->usuario->nombre() }}</a></td>
-                      <td>{{ $rechazado->fecha }}</td>
-                      <td>{{ $rechazado->anticipo() }}</td>
-                      <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id] ) }}"><i class="fa fa-search"></i></a>
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
+              <div class="accordion" id="accordion-anticipos-pendientes">
+                @forelse($monthlyGroupedPendientes as $month)
+                  <div class="card">
+                    <div class="card-header p-0" id="heading-pendientes-{{ $month->month }}">
+                      <button class="btn btn-link btn-block text-left p-3" type="button" data-toggle="collapse" data-target="#collapse-pendientes-{{ $month->month }}" aria-expanded="false" aria-controls="collapse-pendientes-{{ $month->month }}">
+                        {{ $month->title }} ({{ $month->anticipos->count() }})
+                      </button>
+                    </div>
+                    <div id="collapse-pendientes-{{ $month->month }}" class="collapse" aria-labelledby="heading-pendientes-{{ $month->month }}" data-parent="#accordion-anticipos-pendientes">
+                      <div class="card-body">
+                        <table class="table data-table table-bordered table-hover table-sm w-100">
+                          <thead>
+                            <tr>
+                              <th class="text-center">#</th>
+                              <th class="text-center">Contrato</th>
+                              <th class="text-center">Empleado</th>
+                              <th class="text-center">Fecha</th>
+                              <th class="text-center">Anticipo</th>
+                              <th class="text-center">Bono</th>
+                              <th class="text-center">Acción</th>
+                            </tr>
+                          </thead>
+                          <tbody class="text-center">
+                            @foreach($month->anticipos as $rechazado)
+                              <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                  <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
+                                    {{ $rechazado->contrato->nombre }}
+                                  </a>
+                                </td>
+                                <td>
+                                  <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
+                                    {{ $rechazado->empleado->usuario->nombre() }}
+                                  </a>
+                                </td>
+                                <td>{{ $rechazado->fecha }}</td>
+                                <td class="text-right">{{ $rechazado->anticipo() }}</td>
+                                <td class="text-right">{{ $rechazado->bono() }}</td>
+                                <td>
+                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                </td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                @empty
+                  <h3 class="text-center text-muted my-3">No hay resultados</h3>
+                @endforelse
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="tab-4">
+            <div class="panel-body">
+              <div class="accordion" id="accordion-anticipos-rechazados">
+                @forelse($monthlyGroupedRechazados as $month)
+                  <div class="card">
+                    <div class="card-header p-0" id="heading-rechazados-{{ $month->month }}">
+                      <button class="btn btn-link btn-block text-left p-3" type="button" data-toggle="collapse" data-target="#collapse-rechazados-{{ $month->month }}" aria-expanded="false" aria-controls="collapse-rechazados-{{ $month->month }}">
+                        {{ $month->title }} ({{ $month->anticipos->count() }})
+                      </button>
+                    </div>
+                    <div id="collapse-rechazados-{{ $month->month }}" class="collapse" aria-labelledby="heading-rechazados-{{ $month->month }}" data-parent="#accordion-anticipos-rechazados">
+                      <div class="card-body">
+                        <table class="table data-table table-bordered table-hover table-sm w-100">
+                          <thead>
+                            <tr>
+                              <th class="text-center">#</th>
+                              <th class="text-center">Contrato</th>
+                              <th class="text-center">Empleado</th>
+                              <th class="text-center">Fecha</th>
+                              <th class="text-center">Anticipo</th>
+                              <th class="text-center">Bono</th>
+                              <th class="text-center">Acción</th>
+                            </tr>
+                          </thead>
+                          <tbody class="text-center">
+                            @foreach($month->anticipos as $rechazado)
+                              <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                  <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
+                                    {{ $rechazado->contrato->nombre }}
+                                  </a>
+                                </td>
+                                <td>
+                                  <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
+                                    {{ $rechazado->empleado->usuario->nombre() }}
+                                  </a>
+                                </td>
+                                <td>{{ $rechazado->fecha }}</td>
+                                <td class="text-right">{{ $rechazado->anticipo() }}</td>
+                                <td class="text-right">{{ $rechazado->bono() }}</td>
+                                <td>
+                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                </td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                @empty
+                  <h3 class="text-center text-muted my-3">No hay resultados</h3>
+                @endforelse
+              </div>
             </div>
           </div>
         </div>
@@ -185,6 +316,10 @@
         $('#status-modal-form').attr('action', url)
         $('#status-modal-value').val(type)
         $('#status-modal-label').text(title)
+      });
+
+      $('#select-years').change(function () {
+        $('#form-years').submit();
       })
     })
   </script>

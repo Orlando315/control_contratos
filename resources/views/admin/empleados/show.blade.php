@@ -411,19 +411,25 @@
                 <thead>
                   <tr>
                     <th class="text-center">#</th>
+                    <th class="text-center">Serie</th>
                     <th class="text-center">Fecha</th>
                     <th class="text-center">Anticipo</th>
+                    <th class="text-center">Bono</th>
+                    <th class="text-center">Estatus</th>
                     <th class="text-center">Acción</th>
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($empleado->anticipos as $d)
+                  @foreach($empleado->anticipos as $anticipo)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->fecha }}</td>
-                      <td>{{ $d->anticipo() }}</td>
+                      <td>{{ $anticipo->serie ?? 'N/A' }}</td>
+                      <td>{{ $anticipo->fecha }}</td>
+                      <td class="text-right">{{ $anticipo->anticipo() }}</td>
+                      <td class="text-right">{{ $anticipo->bono() }}</td>
+                      <td><small>{!! $anticipo->status() !!}</small></td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
                       </td>
                     </tr>
                   @endforeach

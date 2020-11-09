@@ -125,7 +125,6 @@
       $('#fecha').datepicker({
         format: 'dd-mm-yyyy',
         language: 'es',
-        endDate: 'today',
         keyboardNavigation: false,
         autoclose: true
       });
