@@ -23,18 +23,21 @@
     </div>
   </div>
 
-  <div class="row mb-3"> 
-    <div class="col-6 col-md-3">
-      <div class="ibox">
-        <div class="ibox-title">
-          <h5>Sueldos</h5>
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center text-md-right">
+      <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
+    </div>
+    <div class="col-md-6 text-center text-md-left">
+      <form id="form-years" action="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}">
+        <div class="form-group">
+          <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
+            <option value="">Seleccione</option>
+            @foreach($allYears as $year)
+              <option value="{{ $year }}"{{ $year == $actualYear ? ' selected' : '' }}>{{ $year }}</option>
+            @endforeach
+          </select>
         </div>
-        <div class="ibox-content">
-          <h2>
-            <i class="fa fa-money text-primary"></i> {{ count($sueldos) }}
-          </h2>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -49,38 +52,66 @@
           </div>
         </div>
         <div class="ibox-content">
-          <table class="table data-table table-bordered table-hover table-sm w-100">
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Fecha</th>
-                <th class="text-center">Empleado</th>
-                <th class="text-center">Alcance líquido</th>
-                <th class="text-center">Sueldo líquido</th>
-                <th class="text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody class="text-center">
-              @foreach($sueldos as $d)
-                <tr>
-                  <td>{{ $loop->index + 1 }}</td>
-                  <td>{{ $d->mesPagado() }}</td>
-                  <td>
-                    <a href="{{ route('admin.empleados.show', ['empleado' => $d->empleado_id]) }}">
-                      {{ $d->nombreEmpleado() }}
-                    </a>
-                  </td>
-                  <td class="text-right">{{ $d->alcanceLiquido() }}</td>
-                  <td class="text-right">{{ $d->sueldoLiquido() }}</td>
-                  <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
+          <div class="accordion" id="accordion-sueldos">
+            @forelse($monthlyGroupedSueldos as $month)
+              <div class="card">
+                <div class="card-header p-0" id="heading-{{ $month->month }}">
+                  <button class="btn btn-link btn-block text-left p-3" type="button" data-toggle="collapse" data-target="#collapse-{{ $month->month }}" aria-expanded="false" aria-controls="collapse-{{ $month->month }}">
+                    {{ $month->title }} ({{ $month->sueldos->count() }})
+                  </button>
+                </div>
+                <div id="collapse-{{ $month->month }}" class="collapse" aria-labelledby="heading-{{ $month->month }}" data-parent="#accordion-sueldos">
+                  <div class="card-body">
+                    <table class="table data-table table-bordered table-hover table-sm w-100">
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th class="text-center">Fecha</th>
+                          <th class="text-center">Empleado</th>
+                          <th class="text-center">Alcance líquido</th>
+                          <th class="text-center">Sueldo líquido</th>
+                          <th class="text-center">Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody class="text-center">
+                        @foreach($month->sueldos as $sueldo)
+                          <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $sueldo->mesPagado() }}</td>
+                            <td>
+                              <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                                {{ $sueldo->nombreEmpleado() }}
+                              </a>
+                            </td>
+                            <td class="text-right">{{ $sueldo->alcanceLiquido() }}</td>
+                            <td class="text-right">{{ $sueldo->sueldoLiquido() }}</td>
+                            <td>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                            </td>
+                          </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            @empty
+              <h3 class="text-center text-muted my-3">No hay resultados</h3>
+            @endforelse
+          </div>
         </div>
       </div>
     </div>
   </div>
 @endsection
+
+@section('script')
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#select-years').change(function () {
+        $('#form-years').submit();
+      })
+    })
+  </script>
+@endsection
+

@@ -17,9 +17,11 @@ class EmpleadosSueldosController extends Controller
      */
     public function index(Contrato $contrato)
     {
-      $sueldos = $contrato->sueldos()->latest()->get();
+      $actualYear = request()->year ?? date('Y');
+      $allYears = EmpleadosSueldo::allYears($contrato->id)->get()->pluck('year')->toArray();
+      $monthlyGroupedSueldos = EmpleadosSueldo::monthlyGroupedByYear($contrato->id, $actualYear);
 
-      return view('admin.sueldos.index', compact('contrato', 'sueldos'));
+      return view('admin.sueldos.index', compact('contrato', 'actualYear', 'allYears', 'monthlyGroupedSueldos'));
     }
 
     /**

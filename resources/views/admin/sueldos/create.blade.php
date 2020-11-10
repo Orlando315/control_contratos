@@ -26,7 +26,7 @@
         </div>
         <div class="ibox-content">
           <form id="form-pagos" action="{{ route('admin.sueldos.store', ['contrato' => $contrato->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf
             
             <p class="m-0"><strong>Contrato:</strong> {{ $contrato->nombre }}</p>
             <p class="m-0"><strong>Empleados:</strong> {{ $contrato->empleados()->count() }}</p>
@@ -50,7 +50,12 @@
                     <th>Empleado</th>
                     <th>Pago</th>
                     <th>Adjunto</th>
-                    <th></th>
+                    <th class="text-center align-middle">
+                      <div class="custom-control custom-checkbox">
+                        <input id="check-master" class="custom-control-input" type="checkbox">
+                        <label for="check-master" class="custom-control-label"></label>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="tbody-empleados">
@@ -63,19 +68,17 @@
                       <p>{{number_format($empleado->getSueldoLiquido(), 2, ',','.')}}</p>
                     </td>
                     <td>
-                      <div class="form-group">
+                      <div class="form-group m-0">
                         <div class="custom-file">
                           <input id="empleado-{{ $empleado->id }}" class="custom-file-input" type="file" name="empleado[{{ $empleado->id }}]" data-msg-placeholder="Seleccionar" accept="image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                           <label class="custom-file-label" for="empleado-{{ $empleado->id }}">Seleccionar</label>
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <div class="checkbox">
-                        <label class="container-checkbox">
-                          <input type="checkbox">
-                          <span class="checkmark-check"></span>
-                        </label>
+                    <td class="align-middle text-center">
+                      <div class="custom-control custom-checkbox m-0">
+                        <input id="check-{{ $empleado->id }}" class="custom-control-input empleados-check" type="checkbox">
+                        <label class="custom-control-label" for="check-{{ $empleado->id }}"></label>
                       </div>
                     </td>
                   </tr>
@@ -108,11 +111,8 @@
 @section('script')
   <script type="text/javascript">
     $(document).ready( function(){
-      $('#tbody-empleados').on('click', 'input[type="checkbox"]', function(){
-        if($(this).is(':checked')){
-          $(this).closest('div.checkbox').removeClass('has-error');
-        }
-      })
+      $('#tbody-empleados').on('click', '.empleados-check', empleadosCheck);
+      $('#check-master').click(checkMaster);
 
       $('#form-pagos').submit(function(e){
         e.preventDefault();
@@ -167,6 +167,37 @@
     function showAlert(error = 'Ha ocurrido un error'){
       $('.alert ul').empty().append(`<li>${error}</li>`)
       $('.alert').show().delay(5000).hide('slow')
+    }
+
+    function checkMaster() {
+      let isChecked = $(this).is(':checked');
+      
+      $('.empleados-check').prop('checked', isChecked);
+      $('.empleados-check').closest('.custom-checkbox').toggleClass('has-error', false);
+    }
+
+    function toggleMasterState(){
+      let checkboxs = $('.empleados-check');
+      let checked = checkboxs.filter(':checked').length;
+
+      if(checked > 0 && checked == checkboxs.length){
+        $('#check-master').prop('indeterminate', false);
+        $('#check-master').prop('checked', true);
+      }else if(checked > 0 && checked < checkboxs.length){
+        $('#check-master').prop('checked', false);
+        $('#check-master').prop('indeterminate', true);
+      }else{
+        $('#check-master').prop('indeterminate', false);
+        $('#check-master').prop('checked', false);
+      }
+    }
+
+    function empleadosCheck() {
+      if($(this).is(':checked')){
+        $(this).closest('.custom-checkbox').removeClass('has-error');
+      }
+
+      toggleMasterState();
     }
 </script>
 @endsection
