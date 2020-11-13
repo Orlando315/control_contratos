@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Carbon\Carbon;
 use App\{Usuario, Empleado, Contrato};
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\EmpleadoImport;
 
 class EmpleadosController extends Controller
 {
@@ -40,6 +41,7 @@ class EmpleadosController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Contrato $contrato)
@@ -271,10 +273,15 @@ class EmpleadosController extends Controller
      */
     protected function exportExcel($data, $nombre)
     {
-      $writer = WriterFactory::create(Type::XLSX);
-      $writer->openToBrowser("{$nombre}.xlsx");
-      $writer->addRows($data);
-      $writer->close(); 
+      $rows = [];
+      foreach ($data as $row) {
+        $rows[] = WriterEntityFactory::createRowFromArray($row);
+      }
+
+      $writer = WriterEntityFactory::createXLSXWriter();
+      $writer->openToBrowser("{$nombre}.xlsx")
+        ->addRows($rows)
+        ->close();
     }
 
     /**
@@ -332,5 +339,45 @@ class EmpleadosController extends Controller
     public function print(Empleado $empleado)
     {
       return view('admin.empleados.print', compact('empleado'));
+    }
+
+    /**
+     * Mostrar formulario para importar Empleados
+     * 
+     * @param  \App\Contrato  $contrato
+     * @return \Illuminate\Http\Response
+     */
+    public function importCreate(Contrato $contrato)
+    {
+      return view('admin.empleados.import', compact('contrato'));
+    }
+
+    /**
+     * Importar Empleados por excel al Contrato proporcionado
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Contrato  $contrato
+     * @return \Illuminate\Http\Response
+     */
+    public function importStore(Request $request, Contrato $contrato)
+    {
+      $this->validate($request, [
+        'archivo' => 'required|file|mimes:xlsx,xls',
+      ]);
+
+      try{
+        $excel = Excel::import(new EmpleadoImport($contrato), $request->archivo);
+
+        return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
+          'flash_message' => 'Empleados importados exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->with([
+            'flash_message' => 'Ha ocurrido un error. Revise el formato utilizado.',
+            'flash_class' => 'alert-danger',
+            'flash_important' => true
+          ]);        
+      }
     }
 }

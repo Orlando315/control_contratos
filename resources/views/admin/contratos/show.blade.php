@@ -293,7 +293,13 @@
               <div class="mb-3">
                 <a class="btn btn-default btn-sm" href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
                 <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
-                <a class="btn btn-primary btn-sm" href="{{ route('admin.empleados.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</a>
+                <div class="btn-group">
+                  <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</button>
+                  <ul class="dropdown-menu" x-placement="bottom-start">
+                    <li><a class="dropdown-item" href="{{ route('admin.empleados.create', ['contrato' => $contrato->id]) }}">Nuevo Empleado</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create', ['contrato' => $contrato->id]) }}">Impotar Empleados</a></li>
+                  </ul>
+                </div>
               </div>
               <table class="table data-table table-bordered table-hover table-sm w-100">
                 <thead>
@@ -311,7 +317,7 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $d->usuario->nombres }}</td>
-                      <td>{{ $d->usuario->apellidos }}</td>
+                      <td>{{ $d->usuario->apellidos ?? 'N/A' }}</td>
                       <td>{{ $d->usuario->rut }}</td>
                       <td>{{ $d->usuario->telefono ?? 'N/A' }}</td>
                       <td>

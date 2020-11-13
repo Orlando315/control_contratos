@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use App\{Contrato, Faena};
 
 class ContratosController extends Controller
@@ -203,10 +202,14 @@ class ContratosController extends Controller
      */
     protected function exportExcel($data, $nombre)
     {
-      $writer = WriterFactory::create(Type::XLSX);
-      $writer->openToBrowser("{$nombre}.xlsx");
-      $writer->addRows($data);
+      $rows = [];
+      foreach ($data as $row) {
+        $rows[] = WriterEntityFactory::createRowFromArray($row);
+      }
 
-      $writer->close(); 
+      $writer = WriterEntityFactory::createXLSXWriter();
+      $writer->openToBrowser("{$nombre}.xlsx")
+        ->addRows($rows)
+        ->close();
     }
 }

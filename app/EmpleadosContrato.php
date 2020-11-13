@@ -30,6 +30,23 @@ class EmpleadosContrato extends Model
     ];
 
     /**
+     * Jornadas admitidas
+     * 
+     * @var array
+     */
+    private static $_jornadas = [
+      '5x2',
+      '4x3',
+      '6x1',
+      '7x7',
+      '10x10',
+      '12x12',
+      '20x10',
+      '7x14',
+      '14x14',      
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -193,6 +210,16 @@ class EmpleadosContrato extends Model
       }
 
       return (object)$dias;
+    }
+
+    /**
+     * Obtener las Jornadas disponibles
+     * 
+     * @return array
+     */
+    public static function getJornadas()
+    {
+      return self::$_jornadas;
     }
 
     /**

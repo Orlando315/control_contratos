@@ -130,6 +130,8 @@ Route::group(['middleware' => 'auth'], function () {
       Route::patch('empleados/{empleado}/toggle', 'EmpleadosController@toggleTipo')->name('empleados.toggleTipo');
       Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
       Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
+      Route::get('empleados/{contrato}/import', 'EmpleadosController@importCreate')->name('empleados.import.create');
+      Route::post('empleados/{contrato}/import', 'EmpleadosController@importStore')->name('empleados.import.store');
       Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
       Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
       Route::resource('empleados', 'EmpleadosController')->except([
