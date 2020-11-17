@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Carbon\Carbon;
 use App\{Usuario, Empleado, Contrato};
 use Maatwebsite\Excel\Facades\Excel;
@@ -261,26 +262,95 @@ class EmpleadosController extends Controller
      */
     public function export(Request $request, Empleado $empleado)
     {
-      $this->exportExcel($empleado->getDataAsArray($request->inicio, $request->fin), 'Empleado' . $empleado->id);
+      $this->exportExcel($empleado->getDataAsArray($request->inicio, $request->fin), $empleado);
     }
 
     /**
      * Generar el Excel con la informacion proporcionada
      *
      * @param  array  $data
-     * @param  string  $empleado
-     * @return \Illuminate\Http\Response
+     * @param  \App\Empleado $empleado
      */
-    protected function exportExcel($data, $nombre)
+    protected function exportExcel($data, Empleado $empleado)
     {
-      $rows = [];
-      foreach ($data as $row) {
-        $rows[] = WriterEntityFactory::createRowFromArray($row);
-      }
+      $empleadoInfo = [
+        ['Empleado', $empleado->nombre()],
+        ['RUT', $empleado->usuario->rut],
+      ];
+
+      $data = array_merge($empleadoInfo, $data);
+
+      $rows = collect($data)->map(function($cells, $rowKey){
+        $headerStyle = (new StyleBuilder())
+          ->setBackgroundColor('FF2F4050')
+          ->setFontBold()
+          ->setFontSize(11)
+          ->setFontColor('FFFFFF')
+          ->build();
+
+        // Header de fechas
+        if($rowKey === 2){
+          return WriterEntityFactory::createRowFromArray($cells, $headerStyle);
+        }
+
+        $cells = collect($cells)->map(function($cell, $cellKey) use ($rowKey, $headerStyle){
+          $style = null;
+
+          $trabajoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FF40BD84')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          $descansoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FFB5B5B5')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          $eventoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FFD1ECF1')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          $feriadoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FFF39C12')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          // Darle estilos a la primera columna de cada fila
+          if($cellKey === 0){
+            $style = $headerStyle;
+          }
+
+          if($cellKey > 0 && !is_null($cell)){
+            // Estilos para los dias de la jornada
+            if($rowKey == 3){
+              $style = starts_with($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
+            }
+
+            // Estilos para los dias con eventos
+            if($rowKey == 4){
+              $style = $eventoCellStyle;
+            }
+
+            // Estilos para dias feriados
+            if($rowKey == 5){
+              $style = $feriadoCellStyle;
+            }
+          }
+
+          return WriterEntityFactory::createCell($cell, $style);
+        });
+
+        return WriterEntityFactory::createRow($cells->all());
+      }); 
 
       $writer = WriterEntityFactory::createXLSXWriter();
-      $writer->openToBrowser("{$nombre}.xlsx")
-        ->addRows($rows)
+      $writer->openToBrowser("Empleado-{$empleado->id}.xlsx")
+        ->addRows($rows->all())
         ->close();
     }
 

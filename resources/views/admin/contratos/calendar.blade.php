@@ -266,6 +266,7 @@
             {id: '{{$d->id}}', title: '{{$d->usuario->nombres}} {{$d->usuario->apellidos}}', path: '{{ route("admin.eventos.store", ["empleado"=>$d->id]) }}'},
           @endforeach
         ],
+        resourceLabelText: 'Empleados',
         eventSources: [
           {
             events: eventos

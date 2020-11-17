@@ -22,7 +22,7 @@
           <h5>Contratos</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-clipboard text-warning"></i> {{ count($contratos) }}</h2>
+          <h2><i class="fa fa-clipboard"></i> {{ count($contratos) }}</h2>
         </div>
       </div>
     </div>

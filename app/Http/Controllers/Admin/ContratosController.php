@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\Color;
 use App\{Contrato, Faena};
 
 class ContratosController extends Controller
@@ -198,18 +200,73 @@ class ContratosController extends Controller
      *
      * @param  array  $data
      * @param  string  $nombre
-     * @return \Illuminate\Http\Response
      */
     protected function exportExcel($data, $nombre)
     {
-      $rows = [];
-      foreach ($data as $row) {
-        $rows[] = WriterEntityFactory::createRowFromArray($row);
-      }
+      $rows = collect($data)->map(function($cells, $rowKey){
+
+        // Estilos para la cabecera
+        if($rowKey === 0){
+          $headerStyle = (new StyleBuilder())
+            ->setBackgroundColor('FF2F4050')
+            ->setFontBold()
+            ->setFontSize(11)
+            ->setFontColor('FFFFFF')
+            ->build();
+
+          return WriterEntityFactory::createRowFromArray($cells, $headerStyle);
+        }
+
+        // Las columnas impares (en el excel) son para los eventos de los Empleados
+        // aqui se toman las pares ya que el index de map inicia con 0, no 1 como excel
+        $isEventRow = $rowKey % 2 == 0;
+
+        $cells = collect($cells)->map(function($cell, $cellKey) use ($isEventRow){
+          $style = null;
+          $trabajoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FF40BD84')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          $descansoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FFB5B5B5')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          $eventoCellStyle = (new StyleBuilder())
+            ->setBackgroundColor('FFD1ECF1')
+            ->setFontSize(11)
+            ->setShouldWrapText()
+            ->build();
+
+          // Eliminar el nombre repetido del empleado para en la 2da fila donde se muestran los eventos
+          // para evitar que aparezca el nombre duplicado en 2 filas
+          if($cellKey === 0){
+            $cell = $isEventRow ? null : $cell;
+          }
+
+          if($cellKey > 0 && !is_null($cell)){
+
+            // Si el row es de evento, se aplica el estilo para eventos
+            // sino, se aplica el estilo para jornadas
+            if($isEventRow){
+              $style = $eventoCellStyle;
+            }else{
+              $style = starts_with($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
+            }
+          }
+
+          return WriterEntityFactory::createCell($cell, $style);
+        });
+
+        return WriterEntityFactory::createRow($cells->all());
+      }); 
 
       $writer = WriterEntityFactory::createXLSXWriter();
       $writer->openToBrowser("{$nombre}.xlsx")
-        ->addRows($rows)
+        ->addRows($rows->all())
         ->close();
     }
 }

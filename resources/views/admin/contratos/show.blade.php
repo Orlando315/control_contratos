@@ -70,12 +70,19 @@
 
     <div class="col-md-9">
       <div class="tabs-container">
-        <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
-          <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
-          <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
-        </ul>
-        <div class="tab-content">
+        <div class="collapsable-tabs">
+          <ul class="nav nav-tabs">
+            <li><a class="nav-link active" href="#tab-13" data-toggle="tab"><i class="fa fa-asterisk"></i> Requisitos</a></li>
+            <li><a class="nav-link" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
+            <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
+          </ul>
+          <div class="ibox-tools">
+            <a class="collapse-link" href="#" data-toggle="collapse" data-target="#panels-tab-1" aria-expanded="true">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div id="panels-tab-1" class="tab-content collapse show">
           <div class="tab-pane active" id="tab-13">
             <div class="panel-body">
               <div class="row">
@@ -282,12 +289,19 @@
   <div class="row mb-3">
     <div class="col-md-12">
       <div class="tabs-container">
-        <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-21" data-toggle="tab"><i class="fa fa-address-card"></i> Empleados</a></li>
-          <li><a class="nav-link" href="#tab-22" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
-          <li><a class="nav-link" href="#tab-23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
-        </ul>
-        <div class="tab-content">
+        <div class="collapsable-tabs">
+          <ul class="nav nav-tabs">
+            <li><a class="nav-link active" href="#tab-21" data-toggle="tab"><i class="fa fa-address-card"></i> Empleados</a></li>
+            <li><a class="nav-link" href="#tab-22" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
+            <li><a class="nav-link" href="#tab-23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
+          </ul>
+          <div class="ibox-tools">
+            <a class="collapse-link" href="#" data-toggle="collapse" data-target="#panels-tab-2" aria-expanded="true">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+          </div>
+        </div>
+        <div id="panels-tab-2" class="tab-content collapse show">
           <div class="tab-pane active" id="tab-21">
             <div class="panel-body">
               <div class="mb-3">

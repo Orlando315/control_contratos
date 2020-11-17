@@ -22,7 +22,7 @@
           </ul>
         </div>
         <div class="logo-element">
-          IN+
+          <img src="{{ asset('images/icon-white.png') }}" alt="V" style="max-height: 32px">
         </div>
       </li>
 

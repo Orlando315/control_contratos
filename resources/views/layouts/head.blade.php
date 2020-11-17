@@ -3,7 +3,7 @@
 <title>@yield('title', config('app.name')) - {{ config('app.name') }}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- Icon -->
-<link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon-small.jpg') }}">
+<link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
 <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/font-awesome/css/font-awesome.css') }}">

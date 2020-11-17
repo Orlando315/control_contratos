@@ -357,11 +357,11 @@ class Contrato extends Model
       $allData = [$dataHeaders];
 
       foreach ($this->empleados()->get() as $empleado) {
-        $nombre = "{$empleado->rut} | {$empleado->nombres} {$empleado->apellidos}";
+        $nombre = "{$empleado->usuario->rut} | {$empleado->nombre()}";
 
-        $jornadas    = $empleado->proyectarJornadaAsArray($dataRow, $dataHeaders);
+        $jornadas    = $empleado->proyectarJornadaAsArray($dataRow, $dataHeaders, $inicio, $fin);
         $jornadas[0] = $nombre;
-        $eventos     = $empleado->getEventosAsArray($dataRow, $dataHeaders);
+        $eventos     = $empleado->getEventosAsArray($dataRow, $dataHeaders, $inicio, $fin);
         $eventos[0]  = $nombre;
 
         $allData = array_merge($allData, [$jornadas, $eventos]);
