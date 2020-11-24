@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Model, Builder};
 use Carbon\Carbon;
 
 class EmpleadosEvento extends Model
@@ -40,6 +40,19 @@ class EmpleadosEvento extends Model
     protected $casts = [
       'status' => 'boolean',
     ];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+      parent::boot();
+      static::addGlobalScope('hasEmpleado', function (Builder $builder) {
+        $builder->whereHas('empleado')->with('empleado');
+      });
+    }
 
     /**
      * Filtro para obtener solo las Solicitudes aprobados
