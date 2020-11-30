@@ -130,3 +130,9 @@ a.text-primary:focus, a.text-primary:hover {
 .collapsable-tabs .ibox-tools{
   top: 10px;
 }
+
+
+/* Arreglar color de enlaces en los dropdown dentro de ibox-tools */
+.ibox-tools .dropdown-item{
+  color: #212529 !important;
+}

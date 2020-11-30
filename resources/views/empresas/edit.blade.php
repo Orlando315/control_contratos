@@ -12,8 +12,8 @@
   <div class="row justify-content-center">
     <div class="col-md-6">
       <form action="{{ route('perfil.update') }}" method="POST" enctype="multipart/form-data">
-        {{ method_field('PATCH') }}
-        {{ csrf_field() }}
+        @method('PATCH')
+        @csrf
 
         <h4>Editar Perfil</h4>
 

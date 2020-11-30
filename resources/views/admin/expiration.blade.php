@@ -48,12 +48,12 @@
                     <tbody class="text-center">
                       @foreach($contratosPorVencer as $contrato)
                         <tr>
-                          <td>{{ $loop->index + 1 }}</td>
+                          <td>{{ $loop->iteration }}</td>
                           <td>{{ $contrato->nombre }}</td>
                           <td>{{ $contrato->inicio }}</td>
                           <td>{{ $contrato->fin }}</td>
                           <td>{{ $contrato->valor() }}</td>
-                          <td>{{ $contrato->empleados->count() }}</td>
+                          <td>{{ $contrato->empleados()->count() }}</td>
                           <td>
                             <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-search"></i></a>
                           </td>
@@ -76,8 +76,8 @@
                     <tbody class="text-center">
                       @foreach($contratosPorVencer as $contrato)
                         <tr>
-                          <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $contrato->empleado->usuario->nombres }}</td>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $contrato->empleado->nombre() }}</td>
                           <td>{{ $contrato->inicio }}</td>
                           <td>{{ $contrato->fin }}</td>
                           <td>{{ $contrato->jornada }}</td>
@@ -115,7 +115,7 @@
                 <tbody class="text-center">
                   @foreach($documentosPorVencer as $documento)
                     <tr>
-                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $loop->iteration }}</td>
                       <td>
                         @if($type == 'contratos')
                           {{ $documento->documentable->nombre }}
@@ -180,12 +180,12 @@
                     <tbody class="text-center">
                       @foreach($contratosVencidos as $contratoVencido)
                         <tr>
-                          <td>{{ $loop->index + 1 }}</td>
+                          <td>{{ $loop->iteration }}</td>
                           <td>{{ $contratoVencido->nombre }}</td>
                           <td>{{ $contratoVencido->inicio }}</td>
                           <td>{{ $contratoVencido->fin }}</td>
                           <td>{{ $contratoVencido->valor() }}</td>
-                          <td>{{ $contratoVencido->empleados->count() }}</td>
+                          <td>{{ $contratoVencido->empleados()->count() }}</td>
                           <td>
                             <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contratoVencido->id]) }}"><i class="fa fa-search"></i></a>
                           </td>
@@ -208,8 +208,8 @@
                     <tbody class="text-center">
                       @foreach($contratosVencidos as $contratoVencido)
                         <tr>
-                          <td>{{ $loop->index + 1 }}</td>
-                          <td>{{ $contratoVencido->empleado->usuario->nombres }}</td>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $contratoVencido->empleado->nombres() }}</td>
                           <td>{{ $contratoVencido->inicio }}</td>
                           <td>{{ $contratoVencido->fin }}</td>
                           <td>{{ $contratoVencido->jornada }}</td>
@@ -247,7 +247,7 @@
                 <tbody class="text-center">
                   @foreach($documentosVencidos as $documentoVencido)
                     <tr>
-                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $loop->iteration }}</td>
                       <td>
                         @if($type == 'contratos')
                           {{ $documentoVencido->documentable->nombre }}

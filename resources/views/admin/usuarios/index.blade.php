@@ -22,7 +22,7 @@
           <h5>Usuarios</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-users text-success"></i> {{ count($usuarios) }}</h2>
+          <h2><i class="fa fa-users"></i> {{ count($usuarios) }}</h2>
         </div>
       </div>
     </div>
@@ -52,17 +52,17 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($usuarios as $d)
+              @foreach($usuarios as $usuario)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $d->tipo() }}</td>
-                  <td>{{ $d->nombres }}</td>
-                  <td>{{ $d->apellidos }}</td>
-                  <td>{{ $d->rut }}</td>
-                  <td>{{ $d->telefono ?? 'N/A' }}</td>
+                  <td>{{ $usuario->tipo() }}</td>
+                  <td>{{ $usuario->nombres }}</td>
+                  <td>{{ $usuario->apellidos }}</td>
+                  <td>{{ $usuario->rut }}</td>
+                  <td>{{ $usuario->telefono ?? 'N/A' }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

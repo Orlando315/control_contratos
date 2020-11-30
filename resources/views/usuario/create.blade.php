@@ -27,7 +27,7 @@
                   <label for="rut">RUT: *</label>
                   <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old('rut') }}" placeholder="RUT" required>
                   <span class="help-block">Ejemplo: 00000000-0</span>
-                </div>            
+                </div>
               </div>
             </div>
 
@@ -36,7 +36,7 @@
                 <div class="form-group{{ $errors->has('representante') ? ' has-error' : '' }}">
                   <label for="representante">Representante: *</label>
                   <input id="representante" class="form-control" type="text" name="representante" maxlength="100" value="{{ old('representante') }}" placeholder="Representante" required>
-                </div>            
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -77,7 +77,7 @@
                 <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                   <label for="password">Contraseña: *</label>
                   <input id="password" class="form-control" type="password" name="password" minlength="6" placeholder="Contraseña" required>
-                </div>            
+                </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">

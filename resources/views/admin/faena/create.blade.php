@@ -26,7 +26,7 @@
           <form action="{{ route('admin.faena.store') }}" method="POST">
             @csrf
 
-            <div class="form-group {{ $errors->has('nombre') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label class="control-label" for="nombre">Nombre: *</label>
               <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
             </div>

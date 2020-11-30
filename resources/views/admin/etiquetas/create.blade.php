@@ -24,9 +24,9 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.etiquetas.store') }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
-            <div class="form-group {{ $errors->has('etiqueta') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('etiqueta') ? ' has-error' : '' }}">
               <label class="control-label" for="etiqueta">Nombre: *</label>
               <input id="etiqueta" class="form-control" type="text" name="etiqueta" maxlength="50" value="{{ old('etiqueta') ?? '' }}" placeholder="Etiqueta" required>
             </div>

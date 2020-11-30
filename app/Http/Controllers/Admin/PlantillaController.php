@@ -16,7 +16,7 @@ class PlantillaController extends Controller
      */
     public function index()
     {
-        //
+      abort(404);
     }
 
     /**

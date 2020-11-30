@@ -93,7 +93,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button id="btn-submit" class="btn btn-primary btn-sm" type="submit" disabled><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

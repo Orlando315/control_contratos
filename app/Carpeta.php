@@ -92,7 +92,8 @@ class Carpeta extends Model
      */
     public function getBackUrlAttribute()
     {
-      $backModel = route('admin.'.$this->type().'.show', ['id' => $this->carpetable_id]);
+      $varName = substr($this->type(), 0, -1);
+      $backModel = route('admin.'.$this->type().'.show', [$varName => $this->carpetable_id]);
       return $this->carpeta_id ? route('admin.carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 
@@ -172,5 +173,16 @@ class Carpeta extends Model
           return 'inventarios';
           break;
       }
+    }
+
+    /**
+     * Obtener el type segun la clase especificada
+     * 
+     * @param  string  $class
+     * @return string
+     */
+    public static function getRouteVarNameByType($type)
+    {
+      return substr($type, 0, -1);
     }
 }

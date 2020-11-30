@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'failed' => 'Usuario y/o contraseña invalidos..',
+    'failed' => 'Usuario y/o contraseña invalidos.',
     'throttle' => 'Muchos intentos de inicio de sesion. Por favor intente de nuevo en :seconds segundos.',
 
 ];

@@ -20,12 +20,12 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar plantilla</h5>          
+          <h5>Editar plantilla</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.plantilla.update', ['plantilla' => $plantilla->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label for="nombre">Nombre de la plantilla: *</label>
@@ -71,7 +71,7 @@
                   @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                   @endforeach
-                </ul>  
+                </ul>
               </div>
             @endif
 

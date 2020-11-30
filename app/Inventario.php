@@ -81,6 +81,16 @@ class Inventario extends model
     }
 
     /**
+     * Obtener la url de descarga del adjunto
+     * 
+     * @return string
+     */
+    public function getDownloadAttribute()
+    {
+      return route('admin.inventarios.download', ['inventario' => $this->id]);
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -182,17 +192,6 @@ class Inventario extends model
     public function valor()
     {
       return number_format($this->valor, 0, ',', '.');
-    }
-
-    /**
-     * Obtener el elemento link (html) de descarga del Inventario
-     *
-     * @return string
-     */
-    public function adjunto()
-    {
-      $link = route('admin.inventarios.download', ['id' => $this->id]);
-      return $this->adjunto ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
     }
 
     /**

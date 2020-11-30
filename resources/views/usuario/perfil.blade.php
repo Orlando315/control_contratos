@@ -7,7 +7,7 @@
     <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('dashboard') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       <a class="btn btn-default btn-sm" href="{{ route('perfil.edit') }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#passModal"><i class="fa fa-lock" aria-hidden="true"></i> Cambiar contraseña</button>
+      <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#passModal"><i class="fa fa-lock" aria-hidden="true"></i> Cambiar contraseña</button>
     </div>
   </div>
 
@@ -67,8 +67,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('perfil.password') }}" method="POST">
-          {{ method_field('PATCH') }}
-          {{ csrf_field() }}
+          @method('PATCH')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

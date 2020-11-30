@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\Color;
@@ -254,7 +255,7 @@ class ContratosController extends Controller
             if($isEventRow){
               $style = $eventoCellStyle;
             }else{
-              $style = starts_with($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
+              $style = Str::startsWith($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
             }
           }
 

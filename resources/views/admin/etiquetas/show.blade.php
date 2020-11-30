@@ -64,18 +64,18 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($etiqueta->facturas as $d)
+                  @foreach($etiqueta->facturas as $factura)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.contratos.show', ['contrato' => $d->contrato->id]) }}">{{ $d->contrato->nombre }} </a></td>
-                      <td>{{ $d->tipo() }}</td>
-                      <td>{{ $d->nombre }}</td>
-                      <td>{{ $d->valor() }}</td>
-                      <td>{{ $d->fecha }}</td>
-                      <td>{!! $d->pago() !!}</td>
+                      <td><a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato_id]) }}">{{ $factura->contrato->nombre }} </a></td>
+                      <td>{{ $factura->tipo() }}</td>
+                      <td>{{ $factura->nombre }}</td>
+                      <td>{{ $factura->valor() }}</td>
+                      <td>{{ $factura->fecha }}</td>
+                      <td>{!! $factura->pago() !!}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -96,15 +96,15 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($etiqueta->gastos as $d)
+                  @foreach($etiqueta->gastos as $gasto)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.contratos.show', ['id', $d->contrato_id]) }}">{{ $d->contrato->nombre }}</a></td>
-                      <td>{{ $d->nombre }}</td>
-                      <td>{{ $d->valor() }}</td>
+                      <td><a href="{{ route('admin.contratos.show', ['contrato', $gasto->contrato_id]) }}">{{ $gasto->contrato->nombre }}</a></td>
+                      <td>{{ $gasto->nombre }}</td>
+                      <td>{{ $gasto->valor() }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $d->id]) }}"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $d->id]) }}"><i class="fa fa-pencil"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -121,8 +121,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.etiquetas.destroy', ['etiqueta' => $etiqueta->id]) }}" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

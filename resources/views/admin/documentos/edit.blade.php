@@ -34,8 +34,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.documentos.update', ['documento' => $documento->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             @if($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte'))
               <div class="row">
@@ -61,7 +61,7 @@
                 </div>
               </div>
 
-              @if(!$documento->isType('App\TransporteAdjunto'))
+              @if(!$documento->isType('App\TransporteConsumo'))
                 <div class="col-md-6">
                   <div class="form-group{{ $errors->has('vencimiento') ? ' has-error' : '' }}">
                     <label for="vencimiento">Vencimiento:</label>

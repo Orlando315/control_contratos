@@ -8,7 +8,6 @@
       <h2>Sueldos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $sueldo->contrato_id]) }}">Contrato</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.sueldos.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
         <li class="breadcrumb-item active"><strong>Sueldo</strong></li>
@@ -63,7 +62,13 @@
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
-              <span class="pull-right">{!! $sueldo->adjunto() !!}</span>
+              <span class="pull-right">
+                @if($sueldo->adjunto)
+                  <a href="{{ $sueldo->download }}">Descargar</a>
+                @else
+                  N/A
+                @endif
+              </span>
             </li>
             <li class="list-group-item">
               <b>Recibido</b>

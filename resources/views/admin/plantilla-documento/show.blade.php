@@ -17,7 +17,7 @@
 
 @section('content')
   <div class="row mb-3">
-    <div class="col-12">      
+    <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @if(Auth::user()->tipo < 2)
         <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
@@ -63,7 +63,7 @@
               <b>Padre</b>
               <span class="pull-right">
                 @if($documento->padre)
-                  <a href="{{ route('admin.plantilla.documento.show', ['plantilla' => $documento->documento_id]) }}">
+                  <a href="{{ route('admin.plantilla.documento.show', ['documento' => $documento->documento_id]) }}">
                     {{ $documento->padre->nombre }}
                   </a>
                 @else
@@ -101,8 +101,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.plantilla.documento.destroy', ['documento' => $documento->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+            @method('DELETE')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">

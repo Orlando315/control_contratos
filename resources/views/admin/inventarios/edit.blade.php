@@ -31,9 +31,9 @@
           <h4>Editar inventario</h4>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.inventarios.update', ['id' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+          <form action="{{ route('admin.inventarios.update', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-4">

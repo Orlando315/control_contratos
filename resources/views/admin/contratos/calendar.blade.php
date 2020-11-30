@@ -49,7 +49,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="eventForm" action="#" method="POST">
-          {{ csrf_field() }}
+          @csrf
+
           <input id="eventDay" type="hidden" name="inicio">
 
           <div class="modal-header">
@@ -97,8 +98,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delEventForm" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -123,7 +124,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="exportForm" action="{{ route('admin.contratos.exportJornadas', ['contrato' => $contrato->id]) }}" method="POST">
-          {{ csrf_field() }}
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -263,7 +265,7 @@
         resourceAreaWidth: '20%',
         resources: [
           @foreach($empleados as $d)
-            {id: '{{$d->id}}', title: '{{$d->usuario->nombres}} {{$d->usuario->apellidos}}', path: '{{ route("admin.eventos.store", ["empleado"=>$d->id]) }}'},
+            {id: '{{ $d->id }}', title: '{{ $d->usuario->nombre() }}', path: '{{ route("admin.eventos.store", ["empleado" => $d->id]) }}'},
           @endforeach
         ],
         resourceLabelText: 'Empleados',

@@ -31,9 +31,9 @@
           <h5>Editar contrato</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.contratos.update', ['id' => $contrato->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+          <form action="{{ route('admin.contratos.update', ['contrato' => $contrato->id]) }}" method="POST">
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">
@@ -96,7 +96,7 @@
             @endif
             
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', [$contrato->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

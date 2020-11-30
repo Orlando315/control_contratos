@@ -82,9 +82,9 @@ class TransportesController extends Controller
     public function show(Transporte $transporte)
     {
       $contratosIds = $transporte->contratos()->pluck('contrato_id')->toArray();
-      $contratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
+      $otherContratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
 
-      return view('admin.transportes.show', ['transporte' => $transporte, 'contratos' => $contratos]);
+      return view('admin.transportes.show', compact('transporte', 'otherContratos'));
     }
 
     /**

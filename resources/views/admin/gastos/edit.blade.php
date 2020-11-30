@@ -30,8 +30,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.gastos.update', ['gasto' => $gasto->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

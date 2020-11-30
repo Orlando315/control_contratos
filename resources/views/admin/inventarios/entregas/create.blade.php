@@ -32,7 +32,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.entregas.store', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="form-group{{ $errors->has('usuario') ? 'has-error' : '' }}">
               <label for="usuario">Empleado: *</label>

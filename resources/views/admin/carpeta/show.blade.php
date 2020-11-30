@@ -55,7 +55,7 @@
           <div class="ibox-tools">
             <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
               @if($carpeta->carpetable->documentos()->count() < 10)
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => $carpeta->type(),'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
               @endif
           </div>
         </div>
@@ -89,8 +89,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,9 +115,9 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.carpeta.destroy', [$carpeta->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+          <form action="{{ route('admin.carpeta.destroy', ['carpeta' => $carpeta->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">

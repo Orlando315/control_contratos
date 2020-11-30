@@ -22,7 +22,7 @@
           <h5>Documentos</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-file-text-o text-warning"></i> {{ count($documentos) }}</h2>
+          <h2><i class="fa fa-file-text-o"></i> {{ count($documentos) }}</h2>
         </div>
       </div>
     </div>
@@ -152,7 +152,7 @@
         <form id="delete-form" action="#" method="POST">
           @method('DELETE')
 
-          <div class="modal-header">           
+          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               <span class="sr-only">Cerrar</span>
@@ -176,7 +176,7 @@
       <div class="modal-content">
         <form id="generateete-form" action="{{ route('admin.variable.generate') }}" method="POST">
 
-          <div class="modal-header">           
+          <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
               <span class="sr-only">Cerrar</span>

@@ -33,8 +33,8 @@
         </div>
         <div class="ibox-content">
           <form  action="{{ route('admin.consumos.update', ['consumo' => $consumo->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">
@@ -92,7 +92,7 @@
                   @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                   @endforeach
-                </ul>  
+                </ul>
               </div>
             @endif
 

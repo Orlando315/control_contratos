@@ -22,7 +22,7 @@
           <h5>Solicitudes</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-archive text-danger"></i> {{ count($solicitudes) }}</h2>
+          <h2><i class="fa fa-archive"></i> {{ count($solicitudes) }}</h2>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
                     @endif
                   </td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('solicitud.show', ['inventario' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
                   </td>
                 </tr>
               @endforeach

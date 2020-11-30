@@ -32,8 +32,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.facturas.update', ['factura' => $factura->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

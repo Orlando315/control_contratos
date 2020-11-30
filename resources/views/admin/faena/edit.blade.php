@@ -20,14 +20,14 @@
     <div class="col-md-6">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar faena</h5>          
+          <h5>Editar faena</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.faena.update', ['faena' => $faena->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
-            <div class="form-group {{ $errors->has('nombre') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label class="control-label" for="nombre">Nombre: *</label>
               <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $faena->nombre) }}" placeholder="Nombre" required>
             </div>

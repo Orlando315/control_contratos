@@ -22,7 +22,7 @@
           <h5>Facturas</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-clipboard text-info"></i> {{ count($facturas) }}</h2>
+          <h2><i class="fa fa-clipboard"></i> {{ count($facturas) }}</h2>
         </div>
       </div>
     </div>
@@ -53,18 +53,18 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($facturas as $d)
+              @foreach($facturas as $factura)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td><a href="{{ route('admin.contratos.show', ['contrato' => $d->contrato->id]) }}">{{ $d->contrato->nombre }} </a></td>
-                  <td>{{ $d->tipo() }}</td>
-                  <td>{{ $d->nombre }}</td>
-                  <td>{{ $d->valor() }}</td>
-                  <td>{{ $d->fecha }}</td>
-                  <td>{!! $d->pago() !!}</td>
+                  <td><a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato->id]) }}">{{ $factura->contrato->nombre }} </a></td>
+                  <td>{{ $factura->tipo() }}</td>
+                  <td>{{ $factura->nombre }}</td>
+                  <td>{{ $factura->valor() }}</td>
+                  <td>{{ $factura->fecha }}</td>
+                  <td>{!! $factura->pago() !!}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

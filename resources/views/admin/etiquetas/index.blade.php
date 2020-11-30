@@ -22,7 +22,7 @@
           <h5>Etiquetas</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-tags text-warning"></i> {{ count($etiquetas) }}</h2>
+          <h2><i class="fa fa-tags"></i> {{ count($etiquetas) }}</h2>
         </div>
       </div>
     </div>
@@ -49,15 +49,15 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($etiquetas as $d)
+              @foreach($etiquetas as $etiqueta)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $d->etiqueta }}</td>
-                  <td>{{ $d->facturas->count() }}</td>
-                  <td>{{ $d->gastos->count() }}</td>
+                  <td>{{ $etiqueta->etiqueta }}</td>
+                  <td>{{ $etiqueta->facturas()->count() }}</td>
+                  <td>{{ $etiqueta->gastos()->count() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

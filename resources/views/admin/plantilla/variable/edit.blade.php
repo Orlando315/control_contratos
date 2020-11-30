@@ -27,11 +27,11 @@
     <div class="col-md-6">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar variable</h5>          
+          <h5>Editar variable</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.variable.update', ['variable' => $variable->id]) }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
             @method('PUT')
 
             <div class="row">

@@ -28,12 +28,12 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar documento</h5>          
+          <h5>Editar documento</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.plantilla.documento.update', ['documento' => $documento->id]) }}" method="POST">
-            {{ method_field('PUT') }}
-            {{ csrf_field() }}
+            @method('PUT')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

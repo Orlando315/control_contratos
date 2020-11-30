@@ -88,7 +88,7 @@
                             <div class="col-9">
                               <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                               @if($requisito->documento)
-                                <a href="{{ route('admin.documentos.download', ['adjunto' => $requisito->documento->id]) }}">
+                                <a href="{{ route('admin.documentos.download', ['documento' => $requisito->documento->id]) }}">
                                   {{ $requisito->nombre }}
                                   @if($requisito->documento->vencimiento)
                                     <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
@@ -126,7 +126,7 @@
           </div>
           <div class="tab-pane" id="tab-11">
             <div class="panel-body">
-              @if($transporte->documentos->count() < 10)
+              @if($transporte->documentos()->count() < 10)
                 <div class="mb-3">
                   <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                   <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
@@ -182,14 +182,14 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($transporte->contratos as $d)
+                  @foreach($transporte->contratos as $contrato)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->contrato->nombre }} </td>
-                      <td>{{ $d->created_at }} </td>
+                      <td>{{ $contrato->contrato->nombre }} </td>
+                      <td>{{ $contrato->created_at }} </td>
                       @if(Auth::user()->tipo <= 2)
                         <td>
-                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $d->id]) }}" data-toggle="modal" data-target="#delContratoModal"><i class="fa fa-times" aria-hidden="true"></i></button>
+                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delContratoModal"><i class="fa fa-times" aria-hidden="true"></i></button>
                         </td>
                       @endif
                     </tr>
@@ -215,19 +215,19 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($transporte->consumos as $d)
+                  @foreach($transporte->consumos as $consumo)
                     <tr>
-                      <td>{{ $loop->index + 1 }}</td>
+                      <td>{{ $loop->iteration }}</td>
                       <td>
-                        <a href="{{ route('admin.contratos.show', ['contrato' => $d->contrato_id]) }}">
-                          {{ $d->contrato->nombre }}
+                        <a href="{{ route('admin.contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                          {{ $consumo->contrato->nombre }}
                         </a>
                       </td>
-                      <td>{{ $d->tipo() }} </td>
-                      <td>{{ $d->fecha() }} </td>
-                      <td>{{ $d->valor() }}</td>
+                      <td>{{ $consumo->tipo() }} </td>
+                      <td>{{ $consumo->fecha() }} </td>
+                      <td>{{ $consumo->valor() }}</td>
                       <td>
-                        <a class="btn btn-success btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $d->id]) }}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-search"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -245,7 +245,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.transportes.contratos.store', ['transporte' => $transporte->id]) }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
             
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -258,8 +258,8 @@
                 <label for="contrato">Contrato: *</label>
                 <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
                   <option value="">Seleccione...</option>
-                  @foreach($contratos as $contrato)
-                    <option value="{{ $contrato->id }}">{{ $contrato->nombre }}</option>
+                  @foreach($otherContratos as $otherContrato)
+                    <option value="{{ $otherContrato->id }}">{{ $otherContrato->nombre }}</option>
                   @endforeach
                 </select>
               </div>
@@ -277,8 +277,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form id="destroyContrato" action="#" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+            @method('DELETE')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -302,8 +302,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.transportes.destroy', ['transporte' => $transporte->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+            @method('DELETE')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -326,8 +326,9 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>

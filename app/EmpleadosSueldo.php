@@ -55,6 +55,16 @@ class EmpleadosSueldo extends Model
     }
 
     /**
+     * Obtener la url de descarga del adjunto
+     * 
+     * @return string
+     */
+    public function getDownloadAttribute()
+    {
+      return route('sueldos.download', ['sueldo' => $this->id]);
+    }
+
+    /**
      * Obtener la Empresa
      */
     public function empresas()
@@ -137,17 +147,6 @@ class EmpleadosSueldo extends Model
     public function sueldoLiquido()
     {
       return number_format($this->sueldo_liquido, 0, ',', '.');
-    }
-
-    /**
-     * Obtener el atributo formateado
-     *
-     * @return string
-     */
-    public function adjunto()
-    {
-      $link = route('sueldos.download', ['id' => $this->id]);
-      return $this->adjunto ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
     }
 
     /**

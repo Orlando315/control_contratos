@@ -79,8 +79,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.usuarios.password', ['usuario' => $usuario->id]) }}" method="POST">
-          {{ method_field('PATCH') }}
-          {{ csrf_field() }}
+          @method('PATCH')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -124,8 +124,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.usuarios.destroy', ['usuario' => $usuario->id]) }}" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

@@ -22,7 +22,7 @@
           <h5>Gastos</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-credit-card text-primary"></i> {{ count($gastos) }}</h2>
+          <h2><i class="fa fa-credit-card"></i> {{ count($gastos) }}</h2>
         </div>
       </div>
     </div>
@@ -50,16 +50,16 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($gastos as $d)
+              @foreach($gastos as $gasto)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td><a href="{{ route('admin.contratos.show', ['contrato', $d->contrato_id]) }}">{{ $d->contrato->nombre }}</a></td>
-                  <td><a href="{{ route('admin.etiquetas.show', ['etiqueta', $d->etiqueta_id]) }}">{{ $d->etiqueta->etiqueta }}</a></td>
-                  <td>{{ $d->nombre }}</td>
-                  <td>{{ $d->valor() }}</td>
+                  <td><a href="{{ route('admin.contratos.show', ['contrato' => $gasto->contrato_id]) }}">{{ $gasto->contrato->nombre }}</a></td>
+                  <td><a href="{{ route('admin.etiquetas.show', ['etiqueta' => $gasto->etiqueta_id]) }}">{{ $gasto->etiqueta->etiqueta }}</a></td>
+                  <td>{{ $gasto->nombre }}</td>
+                  <td>{{ $gasto->valor() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $d->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $d->id]) }}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

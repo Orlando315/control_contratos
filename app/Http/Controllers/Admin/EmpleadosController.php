@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
+use Illuminate\Support\Str;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Carbon\Carbon;
-use App\{Usuario, Empleado, Contrato};
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\EmpleadoImport;
+use App\{Usuario, Empleado, Contrato};
 
 class EmpleadosController extends Controller
 {
@@ -328,7 +329,7 @@ class EmpleadosController extends Controller
           if($cellKey > 0 && !is_null($cell)){
             // Estilos para los dias de la jornada
             if($rowKey == 3){
-              $style = starts_with($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
+              $style = Str::startsWith($cell, 'Trabajo') ? $trabajoCellStyle : $descansoCellStyle; 
             }
 
             // Estilos para los dias con eventos

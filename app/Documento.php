@@ -153,6 +153,7 @@ class Documento extends Model
       if($this->carpeta_id){
         $route = 'admin.carpeta.show';
         $id = $this->carpeta_id;
+        $varName = 'carpeta';
       }else{
         if($this->documentable_type == 'App\Contrato'){
           $route = 'admin.contratos.show';
@@ -174,10 +175,11 @@ class Documento extends Model
           $route = 'admin.inventarios.show';
         }
 
+        $varName = Carpeta::getRouteVarNameByType($this->type());
         $id = $this->documentable_id;
       }
 
-      return route($route, ['id' => $id]);
+      return route($route, [$varName => $id]);
     }
 
     /**
@@ -207,6 +209,16 @@ class Documento extends Model
     public function isRequisito()
     {
       return !is_null($this->requisito_id);
+    }
+
+    /**
+     * Obtener el modelo al que pertenece la Carpeta
+     *
+     * @return string
+     */
+    public function type()
+    {
+      return Carpeta::getTypeFromClass($this->documentable_type);
     }
 
     /**

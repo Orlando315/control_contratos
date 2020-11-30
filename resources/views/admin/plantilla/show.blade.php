@@ -66,8 +66,9 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.plantilla.destroy', ['plantilla' => $plantilla->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+            @method('DELETE')
+            @csrf
+
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>

@@ -20,14 +20,14 @@
     <div class="col-md-6">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar etiqueta</h5>          
+          <h5>Editar etiqueta</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.etiquetas.update', ['etiqueta' => $etiqueta->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
-            <div class="form-group {{ $errors->has('etiqueta') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('etiqueta') ? ' has-error' : '' }}">
               <label class="control-label" for="etiqueta">Etiqueta: *</label>
               <input id="etiqueta" class="form-control" type="text" name="etiqueta" maxlength="50" value="{{ old('etiqueta') ?? $etiqueta->etiqueta }}" placeholder="Etiqueta" required>
             </div>

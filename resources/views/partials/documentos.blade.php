@@ -8,7 +8,7 @@
       <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
         @if($edit)
           <li>
-            <a title="Editar documento" href="{{ route('admin.documentos.edit', ['id' => $documento->id]) }}">
+            <a title="Editar documento" href="{{ route('admin.documentos.edit', ['documento' => $documento->id]) }}">
               <i class="fa fa-pencil" aria-hidden="true"></i> Editar
             </a>
           </li>
@@ -20,7 +20,7 @@
         </li>
       </ul>
     </div>
-    <a href="{{ route('admin.documentos.download', ['adjunto' => $documento->id]) }}">
+    <a href="{{ route('admin.documentos.download', ['documento' => $documento->id]) }}">
       <span class="corner"></span>
 
       <div class="icon">

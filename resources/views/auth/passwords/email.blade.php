@@ -12,10 +12,10 @@
           <div class="row">
             <div class="col-lg-12">
               <form action="{{ route('password.email') }}" method="POST">
-                {{ csrf_field() }}
+                @csrf
 
                 <div class="form-group">
-                  <input type="email" class="form-control" placeholder="Email" required="">
+                  <input type="email" class="form-control" name="email" placeholder="Email" required>
                 </div>
 
                 @if(count($errors) > 0)

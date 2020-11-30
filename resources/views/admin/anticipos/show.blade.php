@@ -120,8 +120,9 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.anticipos.destroy', ['anticipo' => $anticipo->id]) }}" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="delModalLabel">Eliminar Anticipo</h4>
@@ -144,8 +145,8 @@
         <div class="modal-content">
           <form id="status-modal-form" action="{{ route('admin.anticipos.status', ['anticipo' => $anticipo->id]) }}" method="POST">
             <input id="status-modal-value" type="hidden" name="status">
-            {{ method_field('PUT') }}
-            {{ csrf_field() }}
+            @method('PUT')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -59,19 +59,19 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($contratos as $d)
+                  @foreach($contratos as $contrato)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->nombre }}</td>
-                      <td>{{ $d->descripcion ?? 'N/A' }}</td>
-                      <td>{{ $d->inicio }}</td>
-                      <td>{{ $d->fin }}</td>
-                      <td>{{ $d->valor() }}</td>
-                      <td>{{ $d->empleados->count() }}</td>
+                      <td>{{ $contrato->nombre }}</td>
+                      <td>{{ $contrato->descripcion ?? 'N/A' }}</td>
+                      <td>{{ $contrato->inicio }}</td>
+                      <td>{{ $contrato->fin }}</td>
+                      <td>{{ $contrato->valor() }}</td>
+                      <td>{{ $contrato->empleados()->count() }}</td>
                       <td>
-                        <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['id' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
                         @if(Auth::user()->tipo < 2)
-                          <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contratos.edit', ['id' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                          <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contratos.edit', ['contrato' => $contrato->id] )}}"><i class="fa fa-pencil"></i></a>
                         @endif
                       </td>
                     </tr>

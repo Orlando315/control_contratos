@@ -22,7 +22,7 @@
           <h5>Inventarios</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-cubes text-danger"></i> {{ count($inventarios) }}</h2>
+          <h2><i class="fa fa-cubes"></i> {{ count($inventarios) }}</h2>
         </div>
       </div>
     </div>
@@ -52,21 +52,21 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($inventarios as $d)
+              @foreach($inventarios as $inventario)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>
-                    <a href="{{ route('admin.contratos.show', ['contrato' => $d->contrato_id]) }}">{{ $d->contrato->nombre }}</a>
+                    <a href="{{ route('admin.contratos.show', ['contrato' => $inventario->contrato_id]) }}">{{ $inventario->contrato->nombre }}</a>
                   </td>
-                  <td>{{ $d->tipo() }}</td>
-                  <td>{{ $d->nombre }}</td>
-                  <td>{{ $d->valor() }}</td>
-                  <td>{{ $d->fecha }}</td>
-                  <td>{{ $d->cantidad() }}</td>
+                  <td>{{ $inventario->tipo() }}</td>
+                  <td>{{ $inventario->nombre }}</td>
+                  <td>{{ $inventario->valor() }}</td>
+                  <td>{{ $inventario->fecha }}</td>
+                  <td>{{ $inventario->cantidad() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    @if(Auth::user()->tipo <= 2 || $d->tipo == 3)
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.edit', ['inventario' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
+                    @if(Auth::user()->tipo <= 2 || $inventario->tipo == 3)
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.edit', ['inventario' => $inventario->id] )}}"><i class="fa fa-pencil"></i></a>
                     @endif
                   </td>
                 </tr>

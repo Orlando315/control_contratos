@@ -18,7 +18,7 @@
 
 @section('content')
   <div class="row mb-3">
-    <div class="col-12">      
+    <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.show', ['transporte' => $consumo->transporte_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       <a class="btn btn-default btns-sm" href="{{ route('admin.consumos.edit', ['consumo' => $consumo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -77,7 +77,7 @@
         <div class="ibox-title">
           <h5>Adjuntos</h5>
 
-          @if($consumo->documentos->count() < 10)
+          @if($consumo->documentos()->count() < 10)
             <div class="ibox-tools">
               <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'consumos', 'id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
               <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'consumos', 'id' => $consumo->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
@@ -116,8 +116,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.consumos.destroy', ['consumo' => $consumo->id]) }}" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
           
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -141,8 +141,9 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>

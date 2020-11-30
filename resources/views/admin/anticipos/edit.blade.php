@@ -29,8 +29,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.anticipos.update', ['anticipo' => $anticipo->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">
@@ -80,7 +80,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

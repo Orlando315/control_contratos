@@ -24,8 +24,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.carpeta.update', ['carpeta' => $carpeta->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label for="nombre">Nombre: *</label>

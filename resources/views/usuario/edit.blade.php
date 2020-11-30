@@ -19,8 +19,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('perfil.update') }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

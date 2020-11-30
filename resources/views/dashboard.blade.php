@@ -220,14 +220,14 @@
                     </tr>
                   </thead>
                   <tbody class="text-center">
-                    @foreach(Auth::user()->sueldos()->get() as $d)
+                    @foreach(Auth::user()->sueldos as $d)
                       <tr>
-                        <td>{{ $loop->index + 1 }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $d->created_at }}</td>
                         <td>{{ $d->alcanceLiquido() }}</td>
                         <td>{{ $d->sueldoLiquido() }}</td>
                         <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['suedldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['sueldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
                         </td>
                       </tr>
                     @endforeach

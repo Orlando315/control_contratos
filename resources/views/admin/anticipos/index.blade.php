@@ -283,8 +283,8 @@
       <div class="modal-content">
         <form id="status-modal-form" action="#" method="POST">
           <input id="status-modal-value" type="hidden" name="status">
-          {{ method_field('PUT') }}
-          {{ csrf_field() }}
+          @method('PUT')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

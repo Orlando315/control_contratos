@@ -24,9 +24,9 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.requisito.store', ['contrato' => $contrato->id, 'type' => $type]) }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
-            <div class="form-group {{ $errors->has('nombre') ? 'has-error' : '' }}">
+            <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label class="control-label" for="nombre">Nombre: *</label>
               <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
             </div>

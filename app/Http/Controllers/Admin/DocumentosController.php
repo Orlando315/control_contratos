@@ -33,8 +33,9 @@ class DocumentosController extends Controller
       $model = $class::findOrFail($id);
       $requisitos = ($class == 'App\Empleado' || $class == 'App\Contrato' || $class == 'App\Transporte') ? $model->requisitosFaltantes() : [];
       $requisitoSelected = Requisito::where([['id', request()->requisito], ['type', $type]])->first();
+      $varName = Carpeta::getRouteVarNameByType($type);
 
-      return view('admin.documentos.create', compact('model', 'carpeta', 'type', 'requisitos', 'requisitoSelected'));
+      return view('admin.documentos.create', compact('model', 'carpeta', 'type', 'varName', 'requisitos', 'requisitoSelected'));
     }
 
     /**
@@ -50,6 +51,7 @@ class DocumentosController extends Controller
     {
       $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
+      $varName = Carpeta::getRouteVarNameByType($type);
 
       if($type == 'contratos'){
         $directory = 'Empresa' . Auth::user()->empresa->id . '/Contrato'.$model->id;
@@ -96,7 +98,7 @@ class DocumentosController extends Controller
         $documento->path = $request->file('documento')->store($directory);
         $documento->save();
         
-        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$type.'.show', ['id' => $model->id]);
+        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$type.'.show', [$varName => $model->id]);
 
         return redirect($redirect)->with([
           'flash_message' => 'Adjunto agregado exitosamente.',

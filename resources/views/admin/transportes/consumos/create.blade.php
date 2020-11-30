@@ -33,7 +33,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.consumos.store', ['transporte' => $transporte->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

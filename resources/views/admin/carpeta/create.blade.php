@@ -8,7 +8,7 @@
       <h2>Carpetas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.'.$type.'.show', ['id' => $model->id]) }}">Carpetas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.'.$type.'.show', [$varName => $model->id]) }}">Carpetas</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -24,7 +24,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.carpeta.store', ['type' => $type, 'id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label for="nombre">Nombre: *</label>
@@ -42,7 +42,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route(($carpeta ? 'admin.carpeta.show' : 'admin.'.$type.'.show'), ['id' => ($carpeta ? $carpeta->id : $model->id)]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route(($carpeta ? 'admin.carpeta.show' : 'admin.'.$type.'.show'), ($carpeta ? ['carpeta' => $carpeta->id] : [$varName => $model->id])) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

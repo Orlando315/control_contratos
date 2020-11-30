@@ -72,7 +72,13 @@
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
-              <span class="pull-right">{!! $inventario->adjunto() !!}</span>
+              <span class="pull-right">
+                @if($inventario->adjunto)
+                  <a href="{{ $inventario->download }}">Descargar</a>
+                @else
+                  N/A
+                @endif
+              </span>
             </li>
             <li class="list-group-item">
               <b>Requiere calibración</b>
@@ -95,7 +101,7 @@
         <div class="ibox-title">
           <h5>Adjuntos</h5>
 
-          @if($inventario->documentos->count() < 10)
+          @if($inventario->documentos()->count() < 10)
             <div class="ibox-tools">
               <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'inventarios', 'id' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
               <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'inventarios', 'id' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
@@ -149,20 +155,20 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($inventario->entregas as $d)
+              @foreach($inventario->entregas as $entrega)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
-                  <td>{{ $d->entregadoA->nombres }} {{ $d->entregadoA->apellidos }}</td>
-                  <td>{{ $d->cantidad() }}</td>
-                  <td>{{ $d->created_at }}</td>
-                  <td>{!! $d->recibido() !!}</td>
+                  <td>{{ $entrega->realizadoPor->nombres }} {{ $entrega->realizadoPor->apellidos }}</td>
+                  <td>{{ $entrega->entregadoA->nombres }} {{ $entrega->entregadoA->apellidos }}</td>
+                  <td>{{ $entrega->cantidad() }}</td>
+                  <td>{{ $entrega->created_at }}</td>
+                  <td>{!! $entrega->recibido() !!}</td>
                   <td>
-                    @if($d->adjunto)
-                      <a class="btn btn-default btn-xs" href="{{ $d->download }}"><i class="fa fa-download" aria-hidden="true"></i></a>
+                    @if($entrega->adjunto)
+                      <a class="btn btn-default btn-xs" href="{{ $entrega->download }}"><i class="fa fa-download" aria-hidden="true"></i></a>
                     @endif
-                    @if(!$d->recibido)
-                      <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delEntregaModal" data-url="{{ route('admin.entregas.destroy', ['entrega' => $d->id]) }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    @if(!$entrega->recibido)
+                      <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delEntregaModal" data-url="{{ route('admin.entregas.destroy', ['entrega' => $entrega->id]) }}"><i class="fa fa-times" aria-hidden="true"></i></button>
                     @endif
                   </td>
                 </tr>
@@ -179,7 +185,8 @@
       <div class="modal-content">
         <form action="{{ route('admin.inventarios.clone', ['inventario' => $inventario->id]) }}" method="POST">
           @method('PATCH')
-          {{ csrf_field() }}
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
@@ -203,8 +210,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.inventarios.destroy', ['inventario' => $inventario->id]) }}" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -228,8 +235,9 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-entrega" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
@@ -252,8 +260,9 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
+
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>

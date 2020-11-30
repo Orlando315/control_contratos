@@ -69,7 +69,7 @@
                   <td>{{ $contrato->inicio }}</td>
                   <td>{{ $contrato->fin }}</td>
                   <td>{{ $contrato->valor() }}</td>
-                  <td>{{ $contrato->empleados->count() }}</td>
+                  <td>{{ $contrato->empleados()->count() }}</td>
                   <td>
                     <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
                   </td>

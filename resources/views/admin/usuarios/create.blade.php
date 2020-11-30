@@ -24,7 +24,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.usuarios.store') }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
               <label for="nombres">Nombres: *</label>

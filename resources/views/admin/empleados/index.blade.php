@@ -22,7 +22,7 @@
           <h5>Empleados</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-address-card text-success"></i> {{ count($empleados) }}</h2>
+          <h2><i class="fa fa-address-card"></i> {{ count($empleados) }}</h2>
         </div>
       </div>
     </div>
@@ -48,17 +48,17 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($empleados as $d)
+              @foreach($empleados as $empleado)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $d->contrato->nombre }}</td>
-                  <td>{{ $d->usuario->nombres }}</td>
-                  <td>{{ $d->usuario->apellidos }}</td>
-                  <td>{{ $d->usuario->rut }}</td>
-                  <td>{{ $d->usuario->telefono ?? 'N/A' }}</td>
+                  <td>{{ $empleado->contrato->nombre }}</td>
+                  <td>{{ $empleado->usuario->nombres }}</td>
+                  <td>{{ $empleado->usuario->apellidos }}</td>
+                  <td>{{ $empleado->usuario->rut }}</td>
+                  <td>{{ $empleado->usuario->telefono ?? 'N/A' }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id] )}}"><i class="fa fa-pencil"></i></a>
                   </td>
                 </tr>
               @endforeach

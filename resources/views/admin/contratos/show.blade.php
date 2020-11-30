@@ -222,9 +222,9 @@
           <div class="tab-pane" id="tab-11">
             <div class="panel-body">
               <div class="mb-3">
-                <a class="btn btn-warning btn-sm" href="{{ route('admin.carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-                @if($contrato->documentos->count() < 10)
-                  <a class="btn btn-primary btn-sm" href="{{ route('admin.documentos.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                @if($contrato->documentos()->count() < 10)
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                 @endif
               </div>
               <div class="row icons-box icons-folder">
@@ -252,7 +252,7 @@
           <div class="tab-pane" id="tab-12">
             <div class="panel-body">
               <div class="mb-3">
-                <a class="btn btn-primary btn-sm" href="{{ route('admin.plantilla.documento.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Documento</a>
+                <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Documento</a>
               </div>
               <table class="table data-table table-bordered table-hover table-sm w-100">
                 <thead>
@@ -305,10 +305,10 @@
           <div class="tab-pane active" id="tab-21">
             <div class="panel-body">
               <div class="mb-3">
-                <a class="btn btn-default btn-sm" href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
-                <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
+                <a class="btn btn-default btn-xs" href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
+                <a class="btn btn-default btn-xs" href="{{ route('admin.contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
                 <div class="btn-group">
-                  <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</button>
+                  <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</button>
                   <ul class="dropdown-menu" x-placement="bottom-start">
                     <li><a class="dropdown-item" href="{{ route('admin.empleados.create', ['contrato' => $contrato->id]) }}">Nuevo Empleado</a></li>
                     <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create', ['contrato' => $contrato->id]) }}">Impotar Empleados</a></li>
@@ -327,16 +327,16 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($contrato->empleados as $d)
+                  @foreach($contrato->empleados as $empleado)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->usuario->nombres }}</td>
-                      <td>{{ $d->usuario->apellidos ?? 'N/A' }}</td>
-                      <td>{{ $d->usuario->rut }}</td>
-                      <td>{{ $d->usuario->telefono ?? 'N/A' }}</td>
+                      <td>{{ $empleado->usuario->nombres }}</td>
+                      <td>{{ $empleado->usuario->apellidos ?? 'N/A' }}</td>
+                      <td>{{ $empleado->usuario->rut }}</td>
+                      <td>{{ $empleado->usuario->telefono ?? 'N/A' }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $d->id]) }}"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $d->id]) }}"><i class="fa fa-pencil"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -358,19 +358,19 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($contrato->transportes as $d)
+                  @foreach($contrato->transportes as $transporte)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>
-                        <a href="{{ route('admin.usuarios.show', ['usuario' => $d->user_id]) }}">
-                          {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
+                        <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
+                          {{ $transporte->usuario->nombres }} {{ $transporte->usuario->apellidos }}
                         </a>
                       </td>
-                      <td>{{ $d->vehiculo }}</td>
-                      <td>{{ $d->patente }}</td>
-                      <td>{{ $d->created_at }}</td>
+                      <td>{{ $transporte->vehiculo }}</td>
+                      <td>{{ $transporte->patente }}</td>
+                      <td>{{ $transporte->created_at }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id] )}}"><i class="fa fa-search"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -393,15 +393,15 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($contrato->entregas()->get() as $d)
+                  @foreach($contrato->entregas()->get() as $entrega)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                        <td><a href="{{ route('admin.inventarios.show', ['inventario' => $d->inventario->id]) }}">{{ $d->inventario->nombre }}</a></td>
-                      <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
-                      <td>{{ $d->nombres }} {{ $d->apellidos }}</td>
-                      <td>{{ $d->cantidad() }}</td>
-                      <td>{{ $d->created_at }}</td>
-                      <td>{!! $d->recibido() !!}</td>
+                        <td><a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario->id]) }}">{{ $entrega->inventario->nombre }}</a></td>
+                      <td>{{ $entrega->realizadoPor->nombres }} {{ $entrega->realizadoPor->apellidos }}</td>
+                      <td>{{ $entrega->nombres }} {{ $entrega->apellidos }}</td>
+                      <td>{{ $entrega->cantidad() }}</td>
+                      <td>{{ $entrega->created_at }}</td>
+                      <td>{!! $entrega->recibido() !!}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -417,8 +417,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -443,9 +443,10 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.contratos.destroy', [$contrato->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+          <form action="{{ route('admin.contratos.destroy', ['contrato' => $contrato->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
+
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>

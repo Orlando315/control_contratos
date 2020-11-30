@@ -22,7 +22,7 @@
           <h5>Transportes</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-car text-info"></i> {{ count($transportes) }}</h2>
+          <h2><i class="fa fa-car"></i> {{ count($transportes) }}</h2>
         </div>
       </div>
     </div>
@@ -51,20 +51,20 @@
               </tr>
             </thead>
             <tbody class="text-center">
-              @foreach($transportes as $d)
+              @foreach($transportes as $transporte)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $d->user_id]) }}">
-                      {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}
+                    <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
+                      {{ $transporte->usuario->nombre() }}
                     </a>
                   </td>
-                  <td>{{ $d->vehiculo }}</td>
-                  <td>{{ $d->patente }}</td>
+                  <td>{{ $transporte->vehiculo }}</td>
+                  <td>{{ $transporte->patente }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
                     @if(Auth::user()->tipo <= 2)
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.edit', ['transporte' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil"></i></a>
                     @endif
                   </td>
                 </tr>

@@ -26,11 +26,11 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4>Agregar gasto</h4>          
+          <h4>Agregar gasto</h4>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.gastos.store') }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

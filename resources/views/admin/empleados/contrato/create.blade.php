@@ -29,7 +29,7 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4>Cambio de jornada</h4>        
+          <h4>Cambio de jornada</h4>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.empleados.contrato.store', ['empleado' => $empleado->id]) }}" method="POST">

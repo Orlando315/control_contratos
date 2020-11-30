@@ -32,7 +32,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.inventarios.store') }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf()
 
             @if(Auth::user()->tipo <= 2)
               <div class="row">

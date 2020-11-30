@@ -22,7 +22,7 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Realizar pagos</h5>          
+          <h5>Realizar pagos</h5>
         </div>
         <div class="ibox-content">
           <form id="form-pagos" action="{{ route('admin.sueldos.store', ['contrato' => $contrato->id]) }}" method="POST" enctype="multipart/form-data">

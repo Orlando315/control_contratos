@@ -20,11 +20,11 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Agregar plantilla</h5>          
+          <h5>Agregar plantilla</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.plantilla.store') }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
               <label for="nombre">Nombre de la plantilla: *</label>

@@ -24,9 +24,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.usuarios.update', ['usuario' => $usuario->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
-
+            @method('PATCH')
+            @csrf
 
             <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
               <label for="nombres">Nombres: *</label>
@@ -60,12 +59,12 @@
                   @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                   @endforeach
-                </ul>  
+                </ul>
               </div>
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

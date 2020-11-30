@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,6 +30,10 @@ Route::get('password', 'Auth\ForgotPasswordController@showLinkRequestForm')->nam
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showresetForm')->name('password.reset');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+/* --- Confirmar contraseña --- */
+Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')->name('password.confirm');
+Route::post('password/confirm', 'Auth\ConfirmPasswordController@confirm');
 
 /* --- Empresas --- */
 Route::get('registro', 'UsuariosController@create')->name('empresas.create');
@@ -109,8 +115,7 @@ Route::group(['middleware' => 'auth'], function () {
 
       /* --- Plantillas --- */
       Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->name('plantilla.variables');
-      Route::resource('plantilla', 'PlantillaController')
-            ->except(['index']);
+      Route::resource('plantilla', 'PlantillaController');
 
       /* --- Variables --- */
       Route::post('variable/generate/statics', 'PlantillaVariableController@generateStatic')->name('variable.generate');

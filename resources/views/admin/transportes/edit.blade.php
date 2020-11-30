@@ -24,8 +24,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.transportes.update', ['transporte' => $transporte->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <div class="form-group{{ $errors->has('vehiculo') ? ' has-error' : '' }}">
               <label for="vehiculo">Vehiculo: *</label>

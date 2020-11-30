@@ -31,8 +31,9 @@ class CarpetaController extends Controller
     {
       $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
+      $varName = Carpeta::getRouteVarNameByType($type);
 
-      return view('admin.carpeta.create', compact('type', 'model', 'carpeta'));
+      return view('admin.carpeta.create', compact('type', 'model', 'carpeta', 'varName'));
     }
 
     /**

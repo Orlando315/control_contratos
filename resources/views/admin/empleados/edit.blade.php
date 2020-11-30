@@ -28,12 +28,12 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4>Editar Empleado</h4>          
+          <h4>Editar Empleado</h4>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.empleados.update', ['empleado' => $empleado->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
 
             <fieldset class="mb-3">
               <div class="row">

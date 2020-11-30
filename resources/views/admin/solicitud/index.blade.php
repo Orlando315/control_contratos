@@ -22,7 +22,7 @@
           <h5>Solicitudes</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-archive text-danger"></i> {{ count($solicitudes) }}</h2>
+          <h2><i class="fa fa-archive"></i> {{ count($solicitudes) }}</h2>
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
               @foreach($solicitudes as $solicitud)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td> {{ $solicitud->tipo() }}</td>
+                  <td>{{ $solicitud->tipo() }}</td>
                   <td>{{ $solicitud->descripcion ?? 'N/A' }}</td>
                   <td>{!! $solicitud->status() !!}</td>
                   <td>
@@ -61,7 +61,7 @@
                     @endif
                   </td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['inventario' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                    <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
                   </td>
                 </tr>
               @endforeach

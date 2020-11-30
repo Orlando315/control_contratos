@@ -24,8 +24,8 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.solicitud.update', ['solicitud' => $solicitud->id]) }}" method="POST" enctype="multipart/form-data">
-            {{ method_field('PUT') }}
-            {{ csrf_field() }}
+            @method('PUT')
+            @csrf
 
             <div class="row">
               <div class="col-12">

@@ -32,7 +32,7 @@
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.facturas.store') }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="row">
               <div class="col-md-6">

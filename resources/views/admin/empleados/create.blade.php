@@ -28,11 +28,11 @@
     <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Agregar empleado</h5>          
+          <h5>Agregar empleado</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.empleados.store', ['contrato' => $contrato->id]) }}" method="POST">
-            {{ csrf_field() }}
+            @csrf
 
             <fieldset class="mb-3">
               <p>¿Agregar un empleado a partir de un Usuario del Sistema?</p>

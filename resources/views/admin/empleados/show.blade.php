@@ -225,7 +225,7 @@
                               <div class="col-9">
                                 <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                                 @if($requisito->documento)
-                                  <a href="{{ route('admin.documentos.download', ['adjunto' => $requisito->documento->id]) }}">
+                                  <a href="{{ route('admin.documentos.download', ['documento' => $requisito->documento->id]) }}">
                                     {{ $requisito->nombre }}
                                     @if($requisito->documento->vencimiento)
                                       <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
@@ -263,9 +263,9 @@
               <div class="tab-pane" id="tab-11">
                 <div class="panel-body">
                   <div class="mb-3">
-                    <a class="btn btn-warning btn-sm" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                    <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                     @if($empleado->documentos->count() < 10)
-                      <a class="btn btn-primary btn-sm" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                     @endif
                   </div>
                   <div class="row icons-box icons-folder">
@@ -295,28 +295,28 @@
               <div class="tab-pane" id="tab-12">
                 <div class="panel-body">
                   <div class="mb-3">
-                    <a class="btn btn-primary btn-sm" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
                   </div>
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
                         <th class="text-center">Documento</th>
-                        <th class="text-center">Empleado</th>
                         <th class="text-center">Padre</th>
+                        <th class="text-center">Caducidad</th>
                         <th class="text-center">Acción</th>
                       </tr>
                     </thead>
                     <tbody class="text-center">
-                      @foreach($empleado->plantillaDocumentos as $d)
+                      @foreach($empleado->plantillaDocumentos as $plantillaDocumento)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td>{{ $d->nombre }}</td>
-                          <td>{{ $d->empleado->nombre() }}</td>
-                          <td>{{ optional($d->padre)->nombre ?? 'N/A' }}</td>
+                          <td>{{ $plantillaDocumento->nombre }}</td>
+                          <td>{{ optional($plantillaDocumento->padre)->nombre ?? 'N/A' }}</td>
+                          <td>{{ $documento->caducidad ? $documento->caducidad->format('d-m-Y') : 'N/A' }}</td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $d->id] )}}"><i class="fa fa-search"></i></a>
-                            <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
                           </td>
                         </tr>
                       @endforeach
@@ -341,7 +341,7 @@
                       @foreach($empleado->solicitudes as $solicitud)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td> {{ $solicitud->tipo() }}</td>
+                          <td>{{ $solicitud->tipo() }}</td>
                           <td>{{ $solicitud->descripcion ?? 'N/A' }}</td>
                           <td>{!! $solicitud->status() !!}</td>
                           <td>
@@ -352,13 +352,13 @@
                             @endif
                           </td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['inventario' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
                           </td>
                         </tr>
                       @endforeach
                     </tbody>
                   </table>
-                </div>                
+                </div>
               </div>
             </div>
           </div>
@@ -390,14 +390,14 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($empleado->sueldos()->get() as $d)
+                  @foreach($empleado->sueldos as $sueldo)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->created_at }}</td>
-                      <td>{{ $d->alcanceLiquido() }}</td>
-                      <td>{{ $d->sueldoLiquido() }}</td>
+                      <td>{{ $sueldo->created_at }}</td>
+                      <td>{{ $sueldo->alcanceLiquido() }}</td>
+                      <td>{{ $sueldo->sueldoLiquido() }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -449,12 +449,12 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($empleado->reemplazos()->get() as $d)
+                  @foreach($empleado->reemplazos as $reemplazo)
                     <tr>
-                      <td>{{ $loop->index + 1 }}</td>
-                      <td>{{ $d->inicio }}</td>
-                      <td>{!! $d->nombreReemplazo() !!}</td>
-                      <td>{{ $d->valor() }}</td>
+                      <td>{{ $loop->iteration }}</td>
+                      <td>{{ $reemplazo->inicio }}</td>
+                      <td>{!! $reemplazo->nombreReemplazo() !!}</td>
+                      <td>{{ $reemplazo->valor() }}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -475,14 +475,14 @@
                   </tr>
                 </thead>
                 <tbody class="text-center">
-                  @foreach($empleado->entregas()->get() as $d)
+                  @foreach($empleado->entregas as $entrega)
                     <tr>
-                      <td>{{ $loop->index + 1 }}</td>
-                      <td><a href="{{ route('admin.inventarios.show', ['inventario' => $d->inventario_id]) }}">{{ $d->inventario->nombre }}</a></td>
-                      <td>{{ $d->realizadoPor->nombres }} {{ $d->realizadoPor->apellidos }}</td>
-                      <td>{{ $d->cantidad() }}</td>
-                      <td>{{ $d->created_at }}</td>
-                      <td>{!! $d->recibido() !!}</td>
+                      <td>{{ $loop->iteration }}</td>
+                      <td><a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario_id]) }}">{{ $entrega->inventario->nombre }}</a></td>
+                      <td>{{ $entrega->realizadoPor->nombre() }}</td>
+                      <td>{{ $entrega->cantidad() }}</td>
+                      <td>{{ $entrega->created_at }}</td>
+                      <td>{!! $entrega->recibido() !!}</td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -561,8 +561,9 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
-            {{ method_field('PATCH') }}
-            {{ csrf_field() }}
+            @method('PATCH')
+            @csrf
+
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
@@ -602,8 +603,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.empleados.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
-          {{ method_field('PATCH') }}
-          {{ csrf_field() }}
+          @method('PATCH')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -688,8 +689,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delete-file-form" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -714,8 +715,8 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.empleados.destroy', ['empleado' => $empleado->id]) }}" method="POST">
-            {{ method_field('DELETE') }}
-            {{ csrf_field() }}
+            @method_field('DELETE')
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -748,8 +749,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form id="delEventForm" action="#" method="POST">
-          {{ method_field('DELETE') }}
-          {{ csrf_field() }}
+          @method('DELETE')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -774,7 +775,7 @@
       <div class="modal-content">
         <form id="eventForm" action="{{ route('admin.eventos.store', ['empleado' => $empleado->id]) }}" method="POST">
           <input id="eventDay" type="hidden" name="inicio" value="">
-          {{ csrf_field() }}
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -816,8 +817,8 @@
               <label for="reemplazo">Reemplazo: *</label>
               <select id="reemplazo" class="form-control" name="reemplazo" required style="width: 100%">
                 <option value="">Seleccione...</option>
-                @foreach($empleados as $d)
-                  <option value="{{ $d->id }}">{{ $d->usuario->rut }} | {{ $d->usuario->nombres }} {{ $d->usuario->apellidos }}</option>
+                @foreach($empleados as $empleado)
+                  <option value="{{ $empleado->id }}">{{ $empleado->usuario->rut }} | {{ $empleado->usuario->nombre() }}</option>
                 @endforeach
               </select>
             </div>
@@ -840,7 +841,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form action="{{ route('admin.empleados.export', ['empleado' => $empleado->id]) }}" method="POST">
-          {{ csrf_field() }}
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -873,8 +874,8 @@
       <div class="modal-content">
         <form id="status-modal-form" action="#" method="POST">
           <input id="status-modal-value" type="hidden" name="status">
-          {{ method_field('PUT') }}
-          {{ csrf_field() }}
+          @method('PUT')
+          @csrf
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
