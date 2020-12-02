@@ -131,8 +131,26 @@ a.text-primary:focus, a.text-primary:hover {
   top: 10px;
 }
 
-
 /* Arreglar color de enlaces en los dropdown dentro de ibox-tools */
 .ibox-tools .dropdown-item{
   color: #212529 !important;
+}
+
+/* Titulos en los section de los formularios */
+.form-legend{
+  line-height: 3rem;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #6c757d;
+}
+
+.copy-clipboard:hover{
+  cursor: pointer;
+}
+
+.ibox.ibox-with-footer .ibox-footer{
+  border: 1px solid #e7eaec;
+  border-top: none;
 }

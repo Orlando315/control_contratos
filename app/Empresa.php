@@ -24,6 +24,27 @@ class Empresa extends Model
     ];
 
     /**
+     * Obtener el path del Logo, si no tiene un logo se carga la imagen por defecto
+     *
+     * @return string
+     */
+    public function getLogoUrlAttribute()
+    {
+      $logo = $this->logo ? 'storage/'.$this->logo : 'images/default.jpg';
+      return asset($logo);
+    }
+
+    /**
+     * Obtener el path del directorio donde se guardaran los archivos
+     * 
+     * @return string
+     */
+    public function getDirectoryAttribute()
+    {
+      return 'Empresa'.$this->id;
+    }
+
+    /**
      * Obtener el User de la Empresa
      */
     public function usuario()
@@ -144,19 +165,49 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener el path del Logo, si no tiene un logo se carga la imagen por defecto
+     * Obtener los clientes
      */
-    public function getLogoUrlAttribute()
+    public function clientes()
     {
-      $logo = $this->logo ? 'storage/'.$this->logo : 'images/default.jpg';
-      return asset($logo);
+      return $this->hasMany('App\Cliente');
     }
 
     /**
-     * Obtener el path del directorio donde se guardaran los archivos
+     * Obtener los proveedores
      */
-    public function getDirectoryAttribute()
+    public function proveedores()
     {
-      return 'Empresa'.$this->id;
+      return $this->hasMany('App\Proveedor');
+    }
+
+    /**
+     * Obtener una parte especifica del rut
+     *
+     * @param  int  $part
+     * @return string
+     */
+    public function getRutPart($part)
+    {
+      return explode('-', $this->usuario->rut)[$part];
+    }
+
+    /**
+     * Obtener solo el rut
+     * 
+     * @return string
+     */
+    public function getRut()
+    {
+      return $this->getRutPart(0);
+    }
+
+    /**
+     * Obtener el digito validador del rut
+     * 
+     * @return string
+     */
+    public function getRutDv()
+    {
+      return $this->getRutPart(1);
     }
 }

@@ -112,6 +112,28 @@
               </div>
             @endif
 
+
+            @if(Auth::user()->isEmpresa())
+              <section>
+                <legend class="form-legend">Facturación Sii</legend>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group{{ $errors->has('sii_clave') ? ' has-error' : '' }}">
+                      <label for="sii_clave">Clave Sii:</label>
+                      <input id="sii_clave" class="form-control" type="text" name="sii_clave" maxlength="120" value="{{ old('sii_clave', Auth::user()->empresa->configuracion->sii_clave) }}" placeholder="Clave SII">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group{{ $errors->has('sii_clave_certificado') ? ' has-error' : '' }}">
+                      <label for="sii_clave_certificado">Clave certificado digital:</label>
+                      <input id="sii_clave_certificado" class="form-control" type="text" name="sii_clave_certificado" maxlength="150" value="{{ old('sii_clave_certificado', Auth::user()->empresa->configuracion->sii_clave_certificado) }}" placeholder="Clave certificado digital">
+                    </div>
+                  </div>
+                </div>
+              </section>
+            @endif
+
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
                 <ul class="m-0">

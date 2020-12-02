@@ -15,7 +15,8 @@
             <li class="dropdown-divider"></li>
             <li>
               <form action="{{ route('login.logout') }}" method="POST">
-                {{ csrf_field() }}
+                @csrf
+
                 <button class="btn btn-link dropdown-item w-100" type="submit">Salir</button>
               </form>
             </li>
@@ -148,6 +149,33 @@
             @if(Auth::user()->tipo <= 2)
             <li><a href="{{ route('admin.transportes.create') }}">Agregar transporte</a></li>
             @endif
+          </ul>
+        </li>
+      @endif
+
+      @if(Auth::user()->tipo == 1)
+        <li>
+          <a href="#">
+            <i class="fa fa-user-circle"></i>
+            <span class="nav-label">Clientes</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.cliente.index') }}">Ver clientes</a></li>
+            <li><a href="{{ route('admin.cliente.create', ['type' => 'persona']) }}">Agregar persona</a></li>
+            <li><a href="{{ route('admin.cliente.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">
+            <i class="fa fa-briefcase"></i>
+            <span class="nav-label">Proveedores</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.proveedor.index') }}">Ver proveedores</a></li>
+            <li><a href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Agregar persona</a></li>
+            <li><a href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
           </ul>
         </li>
       @endif

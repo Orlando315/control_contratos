@@ -56,6 +56,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Verificar si el User es Empresa
+     * 
+     * @return boolean
+     */
+    public function isEmpresa()
+    {
+      return $this->tipo == 1;
+    }
+
+    /**
      * Verificar si el uer puede acceder al area Admin
      *
      * @return bool

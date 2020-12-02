@@ -61,6 +61,57 @@
         </div>
       </div>
     </div>
+
+    @if(Auth::user()->isEmpresa())
+      <div class="col-md-9">
+        <div class="ibox mb-3">
+          <div class="ibox-title">
+            <h5><i class="fa fa-random"></i> Integraciones (API)</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="card mb-3">
+              <div class="card-header text-center">
+                Facturación Sii
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-md-4 text-right">
+                      <strong>Clave Sii:</strong>
+                    </div>
+                    <div class="col-md-8">
+                      @if(Auth::user()->empresa->configuracion->sii_clave)
+                        <span class="copy-clipboard label" data-toggle="tooltip" title="¡Haz click para copiar!">
+                          {{ Auth::user()->empresa->configuracion->sii_clave }}
+                        </span>
+                      @else
+                        N/A
+                      @endif
+                    </div>
+                  </div>
+                </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-md-4 text-right">
+                      <strong>Clave certificado digital:</strong>
+                    </div>
+                    <div class="col-md-8">
+                      @if(Auth::user()->empresa->configuracion->sii_clave_certificado)
+                        <span class="copy-clipboard label" data-toggle="tooltip" title="¡Haz click para copiar!">
+                          {{ Auth::user()->empresa->configuracion->sii_clave_certificado }}
+                        </span>
+                      @else
+                        N/A
+                      @endif
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    @endif
   </div>
 
   <div id="passModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="passModalLabel">
@@ -107,4 +158,26 @@
       </div>
     </div>
   </div>
+@endsection
+
+@section('script')
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('.copy-clipboard').click(copyToClipboard)
+
+      $('.copy-clipboard').tooltip();
+      $('.copy-clipboard').on('hide.bs.tooltip', function() {
+        $(this).attr('data-original-title', '¡Haz click para copiar!');
+      });
+    });
+
+    function copyToClipboard() {
+      let $temp = $('<input>');
+      $('body').append($temp);
+      $temp.val($(this).text().trim()).select();
+      document.execCommand('copy');
+      $temp.remove();
+      $(this).attr('data-original-title', '¡Copiado!').tooltip('show');
+    }
+  </script>
 @endsection

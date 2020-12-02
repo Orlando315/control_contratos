@@ -18,5 +18,6 @@ class VerifyCsrfToken extends Middleware
       'inventarios/entregas/*',
       'admin/documentos/*',
       'admin/usuarios/*/get',
+      'admin/*/busqueda/sii',
     ];
 }

@@ -199,6 +199,33 @@ Route::group(['middleware' => 'auth'], function () {
       /* --- Inventarios --- */
       Route::patch('inventarios/clone/{inventario}', 'InventariosController@clone')->name('inventarios.clone');
 
+      /* --- Clientes --- */
+      Route::get('cliente/create/{type}', 'ClienteController@create')->name('cliente.create');
+      Route::post('cliente/store/{type}', 'ClienteController@store')->name('cliente.store');
+      Route::post('cliente/busqueda/sii', 'ClienteController@busquedaSii')->name('cliente.busqueda.sii');
+      Route::resource('cliente', 'ClienteController')
+            ->except(['create', 'store']);
+
+      /* --- Direcciones --- */
+      Route::get('direccion/create/{id}/{type}', 'DireccionController@create')->name('direccion.create');
+      Route::post('direccion/create/{id}/{type}', 'DireccionController@store')->name('direccion.store');
+      Route::patch('direccion/{direccion}/status', 'DireccionController@status')->name('direccion.status');
+      Route::resource('cliente/direccion', 'DireccionController')
+            ->only(['edit', 'update', 'destroy']);
+
+      /* --- Contactos --- */
+      Route::get('contacto/create/{id}/{type}', 'ContactoController@create')->name('contacto.create');
+      Route::post('contacto/create/{id}/{type}', 'ContactoController@store')->name('contacto.store');
+      Route::resource('contacto', 'ContactoController')
+            ->only(['edit', 'update', 'destroy']);
+
+      /* --- Proveedores --- */
+      Route::get('proveedor/create/{type}', 'ProveedorController@create')->name('proveedor.create');
+      Route::post('proveedor/store/{type}', 'ProveedorController@store')->name('proveedor.store');
+      Route::post('proveedor/busqueda/sii', 'ProveedorController@busquedaSii')->name('proveedor.busqueda.sii');
+      Route::resource('proveedor', 'ProveedorController')
+            ->except(['create', 'store']);
+
       /* --- Reportes --- */
       Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
       Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');
