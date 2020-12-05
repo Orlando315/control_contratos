@@ -226,6 +226,14 @@ Route::group(['middleware' => 'auth'], function () {
       Route::resource('proveedor', 'ProveedorController')
             ->except(['create', 'store']);
 
+      /* --- Cotizaciones --- */
+      Route::resource('cotizacion', 'CotizacionController');
+
+      /* --- Cotizaciones - Productos --- */
+      Route::resource('cotizacion/producto', 'CotizacionProductoController')
+            ->names('cotizacion.producto')
+            ->only(['destroy']);
+
       /* --- Reportes --- */
       Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');
       Route::post('reportes/inventarios', 'ReportesController@inventariosGet')->name('reportes.inventarios.get');

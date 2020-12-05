@@ -73,13 +73,18 @@ class ClienteController extends Controller
         'descripcion' => 'nullable|string|max:200',
         'proveedor' => 'nullable|boolean',
       ]);
+      $validator = Validator::make($request->all(), [
+         'field' => ['rule', 'another_rule'],
+      ]);
+
+      $validator->messages();
 
       if(Cliente::where('rut', $request->rut)->exists()){
-        return redirect()->back()->withInput()->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ya existe un cliente registrado con ese RUT.',
-          'flash_important' => true
-        ]);
+        if($request->ajax()){
+          return response()->json(['errors' => ['Ya existe un cliente registrado con ese RUT.']], 422);
+        }
+
+        return redirect()->back()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
       $createProveedor = $request->has('proveedor') && $request->proveedor == '1';
@@ -116,10 +121,18 @@ class ClienteController extends Controller
           }
         }
 
+        if($request->ajax()){
+          return response()->json(['response' =>  true, 'cliente' => $cliente]);
+        }
+
         return redirect()->route('admin.cliente.show', ['cliente' => $cliente->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Cliente agregado exitosamente.',
         ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' =>  false]);
       }
 
       return redirect()->back()->withInput()->with([
@@ -149,11 +162,7 @@ class ClienteController extends Controller
       ]);
 
       if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
-        return redirect()->back()->withInput()->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => '!Error! Integración incompleta.',
-          'flash_important' => true
-        ]);
+        return redirect()->back()->withErrors('!Error! Integración incompleta.');
       }
 
       $createProveedor = $request->has('proveedor') && $request->proveedor == '1';
@@ -161,21 +170,17 @@ class ClienteController extends Controller
       $proveedor = $createProveedor ? Proveedor::where('rut', $rut)->first() : null;
 
       if(Cliente::where('rut', $rut)->exists()){
-        return redirect()->back()->withInput()->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ya existe un cliente registrado con ese RUT.',
-          'flash_important' => true
-        ]);
+        if($request->ajax()){
+          return response()->json(['errors' => ['Ya existe un cliente registrado con ese RUT.']], 422);
+        }
+
+        return redirect()->back()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
       [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->digito_validador);
 
       if(!$response){
-        return redirect()->back()->withInput()->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => $data,
-          'flash_important' => true
-        ]);
+        return redirect()->back()->withErrors($data);
       }
 
       $cliente = new Cliente;
@@ -232,10 +237,19 @@ class ClienteController extends Controller
           $proveedor->direcciones()->createMany($direcciones);
         }
 
+
+        if($request->ajax()){
+          return response()->json(['response' =>  true, 'cliente' => $cliente]);
+        }
+
         return redirect()->route('admin.cliente.show', ['cliente' => $cliente->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Cliente agregado exitosamente.',
         ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' =>  false]);
       }
 
       return redirect()->back()->withInput()->with([

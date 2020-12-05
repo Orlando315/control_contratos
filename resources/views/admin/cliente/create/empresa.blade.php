@@ -53,7 +53,7 @@
               <input id="razon_social" class="form-control" type="text" readonly>
             </div>
 
-            <section>
+            <fieldset>
               <legend class="form-legend">Dirección</legend>
               
               <div class="row">
@@ -75,9 +75,9 @@
                 <label for="direccion">Dirección:</label>
                 <input id="direccion" class="form-control" type="text" readonly>
               </div>
-            </section>
+            </fieldset>
 
-            <section>
+            <fieldset>
               <legend class="form-legend">Contactos</legend>
 
               {{--
@@ -91,7 +91,7 @@
                         <i class="fa fa-times" aria-hidden="true"></i>
                       </button>
                        | Contacto #<span class="contacto-index">{{ $loop->iteration }}-{{$index}}</span>
-                     </h4>
+                    </h4>
 
                     <div class="row">
                       <div class="col-md-6">
@@ -132,7 +132,7 @@
               </div>
 
               <button class="btn btn-default btn-block text-center btn-xs add-contacto mb-3" type="button">Agregar contacto</button>
-            </section>
+            </fieldset>
 
             <div class="form-group">
               <label for="">Proveedor:</label>
@@ -221,6 +221,7 @@
       })
       .fail(function (data) {
         showAlert('Ha ocurrido un error al consultar la información.');
+        BTN_SUBMIT.prop('disabled', true);
       })
       .always(function () {
         BTN_CONSULTAR.prop('disabled', false);

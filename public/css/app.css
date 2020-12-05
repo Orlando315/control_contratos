@@ -54,11 +54,33 @@
  */
 .custom-file-label,
 .custom-file-label:after,
-.select2-container--bootstrap4 .select2-selection{
+.select2-container--bootstrap4 .select2-selection,
+.custom-select{
   border-radius: 0 !important;
 }
 .custom-select{
   line-height: 1.2;
+  border: 1px solid #e5e6e7;
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+.custom-select:focus{
+  border-color: #1ab394 !important;
+  box-shadow: none;
+  color: #495057;
+}
+
+/* Igualar apariencias de las flechas de .select2 y .custom-select */
+.select2-selection__arrow,
+.custom-select{
+  background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+}
+.select2-selection__arrow{
+  top: 40% !important;
+  height: 10px;
+}
+.select2-selection__arrow > b{
+  display: none;
 }
 
 .form-control::placeholder{

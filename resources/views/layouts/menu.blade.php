@@ -124,6 +124,16 @@
             <li><a href="{{ route('admin.gastos.create') }}">Agregar gasto</a></li>
           </ul>
         </li>
+        <li>
+          <a href="#">
+            <i class="fa fa-dollar"></i>
+            <span class="nav-label">Ventas</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.cotizacion.index') }}">ver cotizaciones</a></li>
+          </ul>
+        </li>        
       @endif
 
       @if(Auth::user()->tipo <= 3)

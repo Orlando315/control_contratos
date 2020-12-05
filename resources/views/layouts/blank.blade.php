@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - {{ config('app.name') }}</title>
     <!-- Icons -->
-    <link href="{{ asset('favicon-small.jpg') }}" rel="shortcut icon" type="image/x-icon">
+    <link href="{{ asset('favicon.ico') }}" rel="shortcut icon" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.css') }}">
     <!-- Custom css -->

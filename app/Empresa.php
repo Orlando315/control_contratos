@@ -165,7 +165,7 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener los clientes
+     * Obtener los Clientes
      */
     public function clientes()
     {
@@ -173,11 +173,19 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener los proveedores
+     * Obtener los Proveedores
      */
     public function proveedores()
     {
       return $this->hasMany('App\Proveedor');
+    }
+
+    /**
+     * Obtener los Cotizaciones
+     */
+    public function cotizaciones()
+    {
+      return $this->hasMany('App\Cotizacion');
     }
 
     /**
