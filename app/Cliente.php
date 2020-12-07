@@ -141,6 +141,26 @@ class Cliente extends Model
     }
 
     /**
+     * Obtener solo el rut
+     * 
+     * @return string
+     */
+    public function getRut()
+    {
+      return $this->getRutPart(0);
+    }
+
+    /**
+     * Obtener el digito validador del rut
+     * 
+     * @return string
+     */
+    public function getRutDv()
+    {
+      return $this->getRutPart(1);
+    }
+
+    /**
      * Obtener el atributo formateado como label
      *
      * @return string

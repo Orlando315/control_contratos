@@ -227,12 +227,18 @@ Route::group(['middleware' => 'auth'], function () {
             ->except(['create', 'store']);
 
       /* --- Cotizaciones --- */
+      Route::get('cotizacion/{cotizacion}/productos', 'CotizacionController@productos')->name('cotizacion.productos');
       Route::resource('cotizacion', 'CotizacionController');
 
       /* --- Cotizaciones - Productos --- */
       Route::resource('cotizacion/producto', 'CotizacionProductoController')
             ->names('cotizacion.producto')
             ->only(['destroy']);
+
+      /* --- Facturaciones --- */
+      Route::get('facturacion/create/{cotizacion?}', 'FacturacionController@create')->name('facturacion.create');
+      Route::resource('facturacion', 'FacturacionController')
+            ->only(['index', 'store', 'show']);
 
       /* --- Reportes --- */
       Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');

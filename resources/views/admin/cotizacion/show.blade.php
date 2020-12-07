@@ -28,6 +28,9 @@
   <div class="row mb-3">
     <div class="col-md-3">
       <div class="ibox">
+          <div class="ibox-title">
+            <h5>Información</h5>
+          </div>
         <div class="ibox-content no-padding">
           <ul class="list-group list-group-unbordered">
             <li class="list-group-item">
@@ -64,6 +67,63 @@
       </div>
     </div>
 
+    @if($cotizacion->facturacion)
+      <div class="col-md-3">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Facturación</h5>
+          </div>
+          <div class="ibox-content no-padding">
+            <ul class="list-group list-group-unbordered">
+              <li class="list-group-item">
+                <b>Factura Sii ID</b>
+                <span class="pull-right">
+                  <a href="{{ route('admin.facturacion.show', ['facturacion' => $cotizacion->facturacion->id]) }}">
+                    {{ $cotizacion->facturacion->sii_factura_id }}
+                  </a>
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>RUT</b>
+                <span class="pull-right">
+                  {{ $cotizacion->facturacion->rut }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>DV</b>
+                <span class="pull-right">
+                  {{ $cotizacion->facturacion->dv }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Firma</b>
+                <span class="pull-right">
+                  {{ $cotizacion->facturacion->firma }}
+                </span>
+              </li>
+              <li class="list-group-item text-center">
+                <small class="text-muted">{{ $cotizacion->facturacion->created_at }}</small>
+              </li>
+            </ul>
+          </div><!-- /.box-body -->
+        </div>
+      </div>
+    @else
+    <div class="col-md-9">
+        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')))
+          <div class="alert alert-danger alert-important">
+            <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder realizar una facturación. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
+          </div>
+        @else
+          <div class="w-100 text-center">
+            <a class="btn btn-primary" href="{{ route('admin.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
+          </div>
+        @endif
+      </div>
+    @endif
+  </div>
+
+  <div class="row">
     <div class="col-md-12">
       <div class="ibox">
         <div class="ibox-title">

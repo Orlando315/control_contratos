@@ -214,8 +214,9 @@
 
           BTN_SUBMIT.prop('disabled', false)
         }else{
-          BTN_SUBMIT.prop('disabled', true)
+          $('#razon_social, #direccion, #comuna, #ciudad').val('');
 
+          BTN_SUBMIT.prop('disabled', true)
           showAlert(response.data);
         }
       })

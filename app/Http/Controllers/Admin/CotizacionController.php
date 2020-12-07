@@ -92,7 +92,7 @@ class CotizacionController extends Controller
      */
     public function show(Cotizacion $cotizacion)
     {
-      $cotizacion->load('productos');
+      $cotizacion->load(['productos', 'facturacion']);
 
       return view('admin.cotizacion.show', compact('cotizacion'));
     }
@@ -180,5 +180,16 @@ class CotizacionController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Obtener los productos de una Cotizacion especificada
+     * 
+     * @param  \App\Cotizacion  $cotizacion
+     * @return \Illuminate\Http\Response
+     */
+    public function productos(Cotizacion $cotizacion)
+    {
+      return response()->json(['productos' => $cotizacion->productos]);
     }
 }

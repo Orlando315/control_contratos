@@ -189,6 +189,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener los Facturaciones
+     */
+    public function facturaciones()
+    {
+      return $this->hasMany('App\Facturacion');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part

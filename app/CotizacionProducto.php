@@ -27,7 +27,7 @@ class CotizacionProducto extends Model
       'descripcion',
       'cantidad',
       'precio',
-      'impuesto',
+      'impuesto_adicional',
       'total',
     ];
 
@@ -101,5 +101,15 @@ class CotizacionProducto extends Model
     public function total()
     {
       return number_format($this->total, 2, ',', '.');
+    }
+
+    /**
+     * Evaluar si el producto tiene descripcion
+     * 
+     * @return bool
+     */
+    public function hasDescripcion()
+    {
+      return !is_null($this->descripcion);
     }
 }

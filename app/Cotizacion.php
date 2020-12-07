@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Integrations\FacturacionSii;
 
 class Cotizacion extends Model
 {
@@ -102,6 +103,14 @@ class Cotizacion extends Model
     }
 
     /**
+     * Obtener la facturacion
+     */
+    public function facturacion()
+    {
+      return $this->hasOne('App\Facturacion');
+    }
+
+    /**
      * Codigo para identificar la cotizacion
      *
      * @return string
@@ -119,5 +128,53 @@ class Cotizacion extends Model
     public function total()
     {
       return number_format($this->total, 2, ',', '.');
+    }
+
+    /**
+     * Evaluar si la cotizacion contiene algun producto con impuestos
+     * 
+     * @return bool
+     */
+    public function hasImpuestos()
+    {
+      return $this->productos->contains(function ($producto) {
+        return $producto['impuesto_adicional'] > 0;
+      });
+    }
+
+    /**
+     * informacion de los productos para la API de Facturacion Sii
+     * 
+     * @return array
+     */
+    private function productosToFactura()
+    {
+      return $this->productos->map(function ($producto) {
+        $data = $producto->only('tipo_codigo', 'codigo', 'nombre', 'cantidad', 'precio', 'impuesto_adicional', 'descripcion');
+        $data['impuesto_adicional'] = $data['impuesto_adicional'] ?? 0;
+        $data['tiene_descripcion'] = $producto->hasDescripcion();
+
+        return $data;
+      })
+      ->toArray();
+    }
+
+    /**
+     * Facturar Cotizacion en la Api de Facturacion Sii
+     * 
+     * @param  string  $rut
+     * @param  string  $dv
+     * @param  string  $firma
+     * @return array
+     */
+    public function facturar($rut, $dv, $firma)
+    {
+      $data = [
+        'tiene_impuestos_adicionales' => $this->hasImpuestos(),
+        'productos' => $this->productosToFactura(),
+        'firma' => $firma,
+      ];
+
+      return (new FacturacionSii)->facturar($rut, $dv, $data);
     }
 }

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{Auth, Log, Http};
+use App\Integrations\FacturacionSii;
 
 class ConfiguracionEmpresa extends Model
 {
@@ -88,51 +89,6 @@ class ConfiguracionEmpresa extends Model
     }
 
     /**
-     * Obtener token de autenticacion de Facturacion Sii
-     * 
-     * @return mixed
-     */
-    public function getSiiToken()
-    {
-      if($this->isIntegrationIncomplete('sii')){
-        return false;
-      }
-
-      $baseUrl = config('integraciones.sii.sandbox') ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
-      $endpoint = 'login';
-      $url = $baseUrl.$endpoint;
-
-      $rut = $this->empresa->getRut();
-      $dv = $this->empresa->getRutDv();
-
-      try{
-        $response = Http::WithHeaders([
-          'api-key' => $this->sii_clave_certificado,
-        ])
-        ->post($url, [
-          'rut' => $rut,
-          'dv' => $dv,
-          'clave' => $this->sii_clave,
-        ]);
-      }catch(\Exception $e){
-        Log::channel('integrations')
-          ->info('Error de autenticación con SII', [
-            'user' => Auth::id(),
-            'rut' => $rut,
-            'dv' => $dv,
-            'error' => $e->getMessage(),
-            'sii' => [
-              'sandbox' => config('integraciones.sii.sandbox'),
-              'url' => $baseUrl,
-            ]
-          ]);
-        abort(500, 'Ha ocurrido un error inesperado al realizar la petición.');
-      }
-
-      return $response->successful() ? $response['token'] : false;
-    }
-
-    /**
      * Obtener informacion de la empresa de la API de Facturacion Sii
      * con el rut y digito validador (dv) especificado
      * 
@@ -142,45 +98,10 @@ class ConfiguracionEmpresa extends Model
      */
     public function getEmpresaFromSii($rut, $dv)
     {
-      $token = $this->getSiiToken();
-      if(!$token){
-        return [false, 'Error de autenticación con Facturación Sii.'];
+      if($this->isIntegrationIncomplete('sii')){
+        return [false, 'Debe completar los datos para la integración con Facturación Sii.'];
       }
 
-      $baseUrl = config('integraciones.sii.sandbox') ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
-      $endpoint = 'receptor/buscar/';
-      $url = $baseUrl.$endpoint.$rut.'/'.$dv;
-
-      try{
-        $response = Http::withHeaders([
-          'api-key' => $this->sii_clave_certificado,
-        ])
-        ->withToken($token)
-        ->get($url);
-      }catch(\Exception $e){
-        Log::channel('integrations')
-          ->info('Error de autenticación con SII', [
-            'user' => Auth::id(),
-            'rut' => $rut,
-            'dv' => $dv,
-            'error' => $e->getMessage(),
-            'sii' => [
-              'sandbox' => config('integraciones.sii.sandbox'),
-              'url' => $baseUrl,
-            ]
-          ]);
-        abort(500, 'Ha ocurrido un error inesperado al realizar la petición.');
-      }
-
-      if($response->successful()){
-        return [true, $response['receptor']];
-      }
-
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error al consultar la información de la Empresa'];
+      return (new FacturacionSii)->busquedaReceptor($rut, $dv);
     }
 }
