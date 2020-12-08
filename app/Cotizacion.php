@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
 use App\Integrations\FacturacionSii;
 
@@ -58,6 +59,24 @@ class Cotizacion extends Model
     {
       parent::boot();
       static::addGlobalScope(new EmpresaScope);
+      /**
+       * Eliminar toda la informacion relacionada
+       */
+      static::deleting(function ($model) {
+        if(Storage::exists($model->directory)){
+          Storage::deleteDirectory($model->directory);
+        }
+      });
+    }
+
+    /**
+     * Obtener el path del directorio donde se guardaran los archivos
+     * 
+     * @return string
+     */
+    public function getDirectoryAttribute()
+    {
+      return $this->empresa->directory.'/Cotizacion/'.$this->id;
     }
 
     /**

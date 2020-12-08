@@ -189,11 +189,19 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener los Facturaciones
+     * Obtener las Facturaciones
      */
     public function facturaciones()
     {
       return $this->hasMany('App\Facturacion');
+    }
+
+    /**
+     * Obtener los Pagos
+     */
+    public function pagos()
+    {
+      return $this->hasMany('App\Pago');
     }
 
     /**

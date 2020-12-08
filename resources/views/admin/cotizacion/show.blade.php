@@ -101,6 +101,12 @@
                   {{ $cotizacion->facturacion->firma }}
                 </span>
               </li>
+              <li class="list-group-item">
+                <b>Estatus</b>
+                <span class="pull-right">
+                  {!! $cotizacion->facturacion->status() !!}
+                </span>
+              </li>
               <li class="list-group-item text-center">
                 <small class="text-muted">{{ $cotizacion->facturacion->created_at }}</small>
               </li>

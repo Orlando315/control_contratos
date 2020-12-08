@@ -46,6 +46,7 @@
                 <th class="text-center">Cotización</th>
                 <th class="text-center">Cliente</th>
                 <th class="text-center">Total</th>
+                <th class="text-center">Estatus</th>
                 <th class="text-center">Creado</th>
                 <th class="text-center">Acción</th>
               </tr>
@@ -58,6 +59,7 @@
                   <td>{{ $facturacion->cotizacion->codigo() }}</td>
                   <td>{{ $facturacion->cotizacion->cliente->nombre }}</td>
                   <td class="text-right">{{ $facturacion->cotizacion->total() }}</td>
+                  <td class="text-center"><small>{!! $facturacion->status() !!}</small></td>
                   <td class="text-center">{{ $facturacion->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
                     <a class="btn btn-success btn-xs" href="{{ route('admin.facturacion.show', ['facturacion' => $facturacion->id]) }}"><i class="fa fa-search"></i></a>
