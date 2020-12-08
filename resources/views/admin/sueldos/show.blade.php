@@ -66,7 +66,7 @@
                 @if($sueldo->adjunto)
                   <a href="{{ $sueldo->download }}">Descargar</a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>

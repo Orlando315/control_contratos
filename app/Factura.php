@@ -145,14 +145,13 @@ class Factura extends Model
     }
 
     /**
-     * Obtener el enlace de descarga del Adjunto
+     * Evaluar si el adjunto proporcionado, existe
      *
-     * @param  string  $adjunto
-     * @return string
+     * @param  int  $adjunto
+     * @return bool
      */
-    public function adjunto($adjunto)
+    public function adjuntoExist($adjunto)
     {
-      $link = route('admin.facturas.download', ['factura' => $this->id, 'adjunto' => $adjunto]);
-      return $this->{"adjunto{$adjunto}"} ? '<a href="' . $link . '">Descargar</a>' : 'N/A';
+      return !is_null($this->{"adjunto{$adjunto}"});
     }
 }

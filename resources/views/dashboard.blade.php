@@ -264,7 +264,7 @@
                           @if($anticipo->adjunto)
                             <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
                           @else
-                            N/A
+                            @nullablestring(null)
                           @endif
                         </td>
                         <td>{!! $anticipo->status() !!}</td>
@@ -315,7 +315,7 @@
                           <td>{{ $loop->iteration }}</td>
                           <td>{{ $evento->tipo() }}</td>
                           <td>{{ $evento->inicio }}</td>
-                          <td>{{ $evento->fin ?? 'N/A' }}</td>
+                          <td>@nullablestring($evento->fin)</td>
                           <td>{!! $evento->status() !!}</td>
                           <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
                         </tr>

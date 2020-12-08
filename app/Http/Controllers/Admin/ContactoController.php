@@ -55,7 +55,7 @@ class ContactoController extends Controller
         'telefono' => 'required|string|max:20',
         'email' => 'nullable|email|max:50',
         'cargo' => 'nullable|string|max:50',
-        'descripcion' => 'required|string|max:200',
+        'descripcion' => 'nullable|string|max:200',
       ]);
 
       $contacto = new Contacto($request->only('nombre', 'telefono', 'email', 'cargo', 'descripcion'));
@@ -110,7 +110,7 @@ class ContactoController extends Controller
         'telefono' => 'required|string|max:20',
         'email' => 'nullable|email|max:50',
         'cargo' => 'nullable|string|max:50',
-        'descripcion' => 'required|string|max:200',
+        'descripcion' => 'nullable|string|max:200',
       ]);
 
       $contacto->fill($request->only('nombre', 'telefono', 'email', 'cargo', 'descripcion'));

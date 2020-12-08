@@ -51,13 +51,13 @@
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $solicitud->tipo() }}</td>
-                  <td>{{ $solicitud->descripcion ?? 'N/A' }}</td>
+                  <td>@nullablestring($solicitud->descripcion)</td>
                   <td>{!! $solicitud->status() !!}</td>
                   <td>
                     @if($solicitud->adjunto)
                       <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
                     @else
-                      N/A
+                      @nullablestring(null)
                     @endif
                   </td>
                   <td>

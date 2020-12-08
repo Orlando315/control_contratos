@@ -38,20 +38,20 @@
             </li>
             <li class="list-group-item">
               <b>RUT</b>
-              <span class="pull-right">{{ $cliente->rut ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($cliente->rut)</span>
             </li>
             @if($cliente->isPersona())
               <li class="list-group-item">
                 <b>Teléfono</b>
-                <span class="pull-right">{{ $cliente->telefono ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($cliente->telefono)</span>
               </li>
               <li class="list-group-item">
                 <b>Email</b>
-                <span class="pull-right">{{ $cliente->email ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($cliente->email)</span>
               </li>
               <li class="list-group-item">
                 <b>Descripción</b>
-                <span class="pull-right">{{ $cliente->descripcion ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($cliente->descripcion)</span>
               </li>
             @endif
             <li class="list-group-item">
@@ -108,9 +108,9 @@
                   @foreach($cliente->direcciones as $direccion)
                     <tr>
                       <td class="text-center">{{ $loop->iteration }}</td>
-                      <td>{{ $direccion->ciudad ?? 'N/A' }}</td>
-                      <td>{{ $direccion->comuna ?? 'N/A' }}</td>
-                      <td>{{ $direccion->direccion ?? 'N/A' }}</td>
+                      <td>@nullablestring($direccion->ciudad)</td>
+                      <td>@nullablestring($direccion->comuna)</td>
+                      <td>{{ $direccion->direccion }}</td>
                       <td class="text-center">
                         <small>
                           {!! $direccion->status() !!}
@@ -172,9 +172,9 @@
                       <td class="text-center">{{ $loop->iteration }}</td>
                       <td>{{ $contacto->nombre }}</td>
                       <td>{{ $contacto->telefono }}</td>
-                      <td>{{ $contacto->email ?? 'N/A' }}</td>
-                      <td>{{ $contacto->cargo ?? 'N/A' }}</td>
-                      <td>{{ $contacto->descripcion ?? 'N/A' }}</td>
+                      <td>@nullablestring($contacto->email)</td>
+                      <td>@nullablestring($contacto->cargo)</td>
+                      <td>@nullablestring($contacto->descripcion)</td>
                       <td class="text-center">
                         <div class="btn-group">
                           <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>

@@ -63,7 +63,7 @@
                       <td>{{ $documento->nombre }}</td>
                       <td>{{ $documento->contrato->nombre }}</td>
                       <td>{{ $documento->empleado->nombre() }}</td>
-                      <td>{{ $documento->padre ? $documento->padre->nombre : 'N/A' }}</td>
+                      <td>@nullablestring(optional($documento->padre)->nombre)</td>
                       <td>
                         <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $documento->id] )}}"><i class="fa fa-search"></i></a>
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id] )}}"><i class="fa fa-pencil"></i></a>

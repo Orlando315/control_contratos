@@ -152,12 +152,12 @@
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $pago->metodo() }}</td>
                   <td class="text-right">{{ $pago->monto() }}</td>
-                  <td>{{ $pago->descripcion ?? 'N/A' }}</td>
+                  <td>@nullablestring($pago->descripcion)</td>
                   <td>
                     @if($pago->adjunto)
                       <a href="{{ $pago->download }}">Descargar</a>
                     @else
-                      N/A
+                      @nullablestring(null)
                     @endif
                   </td>
                   <td>

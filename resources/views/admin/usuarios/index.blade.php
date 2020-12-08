@@ -59,7 +59,7 @@
                   <td>{{ $usuario->nombres }}</td>
                   <td>{{ $usuario->apellidos }}</td>
                   <td>{{ $usuario->rut }}</td>
-                  <td>{{ $usuario->telefono ?? 'N/A' }}</td>
+                  <td>@nullablestring($usuario->telefono)</td>
                   <td>
                     <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
                     <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>

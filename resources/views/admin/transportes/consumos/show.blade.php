@@ -62,7 +62,7 @@
             </li>
             <li class="list-group-item">
               <b>Observación</b>
-              <span class="pull-right">{{ $consumo->observacion ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($consumo->observacion)</span>
             </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $consumo->created_at }}</small>

@@ -51,7 +51,7 @@
       @foreach($plantilla->secciones as $seccion)
         <div class="ibox">
           <div class="ibox-title">
-            <h5>Sección #{{ $loop->iteration }}: {!! $seccion->nombre ?? '<span class="text-muted">N/A</span>' !!}</h5>
+            <h5>Sección #{{ $loop->iteration }}: @nullablestring($seccion->nombre)</h5>
           </div>
           <div class="ibox-content">
             {!! $seccion->contenido !!}

@@ -85,11 +85,27 @@
             </li>
             <li class="list-group-item">
               <b>Adjunto #1</b>
-              <span class="pull-right">{!! $factura->adjunto(1) !!}</span>
+              <span class="pull-right">
+                @if($factura->adjuntoExist(1))
+                  <a href="{{ route('admin.facturas.download', ['factura' => $factura->id, 'adjunto' => 1]) }}">
+                    Descargar
+                  </a>
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
             </li>
             <li class="list-group-item">
               <b>Adjunto #2</b>
-              <span class="pull-right">{!! $factura->adjunto(2) !!}</span>
+              <span class="pull-right">
+                @if($factura->adjuntoExist(2))
+                  <a href="{{ route('admin.facturas.download', ['factura' => $factura->id, 'adjunto' => 2]) }}">
+                    Descargar
+                  </a>
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
             </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $factura->created_at }}</small>

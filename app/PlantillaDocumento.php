@@ -104,7 +104,7 @@ class PlantillaDocumento extends Model
      */
     public function setCaducidadAttribute($date)
     {
-      $this->attributes['caducidad'] = date('Y-m-d', strtotime($date));
+      $this->attributes['caducidad'] = $date ? date('Y-m-d', strtotime($date)) : null;
     }
 
     /**

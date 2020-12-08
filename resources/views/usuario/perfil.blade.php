@@ -37,11 +37,11 @@
             </li>
             <li class="list-group-item">
               <b>Email</b>
-              <span class="pull-right">{{ Auth::user()->email ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring(Auth::user()->email)</span>
             </li>
             <li class="list-group-item">
               <b>Teléfono</b>
-              <span class="pull-right"> {{ Auth::user()->telefono ?? 'N/A' }} </span>
+              <span class="pull-right">@nullablestring(Auth::user()->telefono)</span>
             </li>
             @if(Auth::user()->tipo == 1)
               <li class="list-group-item">
@@ -85,7 +85,7 @@
                           {{ Auth::user()->empresa->configuracion->sii_clave }}
                         </span>
                       @else
-                        N/A
+                        @nullablestring(null)
                       @endif
                     </div>
                   </div>
@@ -101,7 +101,7 @@
                           {{ Auth::user()->empresa->configuracion->sii_clave_certificado }}
                         </span>
                       @else
-                        N/A
+                        @nullablestring(null)
                       @endif
                     </div>
                   </div>

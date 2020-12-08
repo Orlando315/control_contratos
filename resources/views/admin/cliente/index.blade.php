@@ -63,9 +63,9 @@
                 <tr>
                   <td class="text-center">{{ $loop->iteration }}</td>
                   <td>{{ $cliente->nombre }}</td>
-                  <td>{{ $cliente->telefono ?? 'N/A' }}</td>
+                  <td>@nullablestring($cliente->telefono)</td>
                   <td>{{ $cliente->rut }}</td>
-                  <td>{{ $cliente->email ?? 'N/A' }}</td>
+                  <td>@nullablestring($cliente->email)</td>
                   <td class="text-center">
                     <small>
                       {!! $cliente->tipo() !!}

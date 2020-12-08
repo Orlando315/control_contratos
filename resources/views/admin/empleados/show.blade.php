@@ -90,27 +90,27 @@
             </li>
             <li class="list-group-item">
               <b>Teléfono</b>
-              <span class="pull-right"> {{ $empleado->usuario->telefono ?? 'N/A' }} </span>
+              <span class="pull-right">@nullablestring($empleado->usuario->telefono)</span>
             </li>
             <li class="list-group-item">
               <b>Email</b>
-              <span class="pull-right">{{ $empleado->usuario->email ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($empleado->usuario->email)</span>
             </li>
             <li class="list-group-item">
               <b>Profesión</b>
-              <span class="pull-right">{{ $empleado->profesion ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($empleado->profesion)</span>
             </li>
             <li class="list-group-item">
               <b>Talla de camisa</b>
-              <span class="pull-right">{{ $empleado->talla_camisa ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($empleado->talla_camisa)</span>
             </li>
             <li class="list-group-item">
               <b>Talla de zapato</b>
-              <span class="pull-right">{{ $empleado->talla_zapato ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($empleado->talla_zapato)</span>
             </li>
             <li class="list-group-item">
               <b>Talla de pantalon</b>
-              <span class="pull-right">{{ $empleado->talla_pantalon ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($empleado->talla_pantalon)</span>
             </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ optional($empleado->created_at)->format('d-m-Y H:i:s') }}</small>
@@ -154,7 +154,7 @@
                 </li>
                 <li class="list-group-item">
                   <b>Descripción</b>
-                  <span class="pull-right"> {!! $empleado->lastContrato->descripcion ?? 'N/A' !!} </span>
+                  <span class="pull-right">@nullablestring($empleado->lastContrato->descripcion)</span>
                 </li>
               </ul>
             </div><!-- /.ibox-content -->
@@ -192,11 +192,11 @@
               <ul class="list-group">
                 <li class="list-group-item">
                   <b>Nombre</b>
-                  <span class="pull-right">{{ $empleado->nombre_emergencia ?? 'N/A' }}</span>
+                  <span class="pull-right">@nullablestring($empleado->nombre_emergencia)</span>
                 </li>
                 <li class="list-group-item">
                   <b>Teléfono</b>
-                  <span class="pull-right">{{ $empleado->telefono_emergencia ?? 'N/A' }}</span>
+                  <span class="pull-right">@nullablestring($empleado->telefono_emergencia)</span>
                 </li>
               </ul>
             </div><!-- /.ibox-content -->
@@ -311,9 +311,9 @@
                       @foreach($empleado->plantillaDocumentos as $plantillaDocumento)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td>{{ $plantillaDocumento->nombre }}</td>
-                          <td>{{ optional($plantillaDocumento->padre)->nombre ?? 'N/A' }}</td>
-                          <td>{{ $documento->caducidad ? $documento->caducidad->format('d-m-Y') : 'N/A' }}</td>
+                          <td>@nullablestring($plantillaDocumento->nombre)</td>
+                          <td>@nullablestring(optional($plantillaDocumento->padre)->nombre)</td>
+                          <td>@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
                           <td>
                             <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
                             <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
@@ -342,13 +342,13 @@
                         <tr>
                           <td>{{ $loop->iteration }}</td>
                           <td>{{ $solicitud->tipo() }}</td>
-                          <td>{{ $solicitud->descripcion ?? 'N/A' }}</td>
+                          <td>@nullablestring($solicitud->descripcion)</td>
                           <td>{!! $solicitud->status() !!}</td>
                           <td>
                             @if($solicitud->adjunto)
                               <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
                             @else
-                              N/A
+                              @nullablestring(null)
                             @endif
                           </td>
                           <td>
@@ -423,7 +423,7 @@
                   @foreach($empleado->anticipos as $anticipo)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $anticipo->serie ?? 'N/A' }}</td>
+                      <td>@nullablestring($anticipo->serie)</td>
                       <td>{{ $anticipo->fecha }}</td>
                       <td class="text-right">{{ $anticipo->anticipo() }}</td>
                       <td class="text-right">{{ $anticipo->bono() }}</td>
@@ -530,9 +530,9 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $evento->tipo() }}</td>
                       <td>{{ $evento->inicio }}</td>
-                      <td>{{ $evento->fin ?? 'N/A' }}</td>
+                      <td>@nullablestring($evento->fin)</td>
                       <td>{!! $evento->status() !!}</td>
-                      <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
+                      <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s') }}</td>
                       <td>
                         <div class="btn-group">
                           <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
@@ -647,36 +647,40 @@
           <div class="row">
             @foreach($empleado->contratos as $contrato)
               <div class="col-md-4">
-                <ul class="list-group mb-3">
-                  <li class="list-group-item">
-                    <b>Creado</b>
-                    <span class="pull-right">{{ optional($contrato->created_at)->format('d-m-Y H:i:s') }}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Jornada</b>
-                    <span class="pull-right">{{ $contrato->jornada }}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Sueldo</b>
-                    <span class="pull-right">{{ number_format($contrato->sueldo, 0, ',', '.') }}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Inicio</b>
-                    <span class="pull-right">{{ $contrato->inicio }}</span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Inicio de Jornada</b>
-                    <span class="pull-right"> {{$contrato->inicio_jornada}} </span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Fin</b>
-                    <span class="pull-right"> {!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
-                  </li>
-                  <li class="list-group-item">
-                    <b>Descripción</b>
-                    <span class="pull-right"> {{ $contrato->descripcion ?? 'N/A' }}</span>
-                  </li>
-                </ul>
+                <div class="ibox">
+                  <div class="ibox-content no-padding">
+                    <ul class="list-group mb-3">
+                      <li class="list-group-item">
+                        <b>Creado</b>
+                        <span class="pull-right">{{ optional($contrato->created_at)->format('d-m-Y H:i:s') }}</span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Jornada</b>
+                        <span class="pull-right">{{ $contrato->jornada }}</span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Sueldo</b>
+                        <span class="pull-right">{{ number_format($contrato->sueldo, 0, ',', '.') }}</span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Inicio</b>
+                        <span class="pull-right">{{ $contrato->inicio }}</span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Inicio de Jornada</b>
+                        <span class="pull-right"> {{$contrato->inicio_jornada}} </span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Fin</b>
+                        <span class="pull-right"> {!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                      </li>
+                      <li class="list-group-item">
+                        <b>Descripción</b>
+                        <span class="pull-right">@nullablestring($contrato->descripcion)</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             @endforeach
           </div>

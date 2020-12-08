@@ -37,7 +37,7 @@
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
-              <span class="pull-right">{{ $solicitud->descripcion ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($solicitud->descripcion)</span>
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
@@ -45,13 +45,13 @@
                 @if($solicitud->adjunto)
                   <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>
             <li class="list-group-item">
               <b>Observación</b>
-              <span class="pull-right">{{ $solicitud->observacion ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($solicitud->observacion)</span>
             </li>
             <li class="list-group-item">
               <b>Estatus</b>

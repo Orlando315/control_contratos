@@ -53,9 +53,9 @@
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $empleado->contrato->nombre }}</td>
                   <td>{{ $empleado->usuario->nombres }}</td>
-                  <td>{{ $empleado->usuario->apellidos }}</td>
+                  <td>@nullablestring($empleado->usuario->apellidos)</td>
                   <td>{{ $empleado->usuario->rut }}</td>
-                  <td>{{ $empleado->usuario->telefono ?? 'N/A' }}</td>
+                  <td>@nullablestring($empleado->usuario->telefono)</td>
                   <td>
                     <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id] )}}"><i class="fa fa-search"></i></a>
                     <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id] )}}"><i class="fa fa-pencil"></i></a>

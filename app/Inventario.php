@@ -181,7 +181,7 @@ class Inventario extends model
      */
     public function lowStock()
     {
-      return $this->low_stock ? number_format($this->low_stock, 0, ',', '.') : 'N/A';
+      return number_format($this->low_stock, 0, ',', '.');
     }
 
     /**

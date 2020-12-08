@@ -55,7 +55,7 @@
                     {{ $contrato->faena->nombre }}
                   </a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>
@@ -270,7 +270,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $d->nombre }}</td>
                       <td>{{ $d->empleado->nombre() }}</td>
-                      <td>{{ $d->padre ? $d->padre->nombre : 'N/A' }}</td>
+                      <td>@nullablestring(optional($d->padre)->nombre)</td>
                       <td>
                         <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $d->id] )}}"><i class="fa fa-search"></i></a>
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $d->id] )}}"><i class="fa fa-pencil"></i></a>
@@ -331,9 +331,9 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $empleado->usuario->nombres }}</td>
-                      <td>{{ $empleado->usuario->apellidos ?? 'N/A' }}</td>
+                      <td>@nullablestring($empleado->usuario->apellidos)</td>
                       <td>{{ $empleado->usuario->rut }}</td>
-                      <td>{{ $empleado->usuario->telefono ?? 'N/A' }}</td>
+                      <td>@nullablestring($empleado->usuario->telefono)</td>
                       <td>
                         <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-search"></i></a>
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil"></i></a>

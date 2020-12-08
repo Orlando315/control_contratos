@@ -60,15 +60,21 @@
             </li>
             <li class="list-group-item">
               <b>Stock crítico</b>
-              <span class="pull-right"> {{ $inventario->lowStock() }} </span>
+              <span class="pull-right">
+                @if($inventario->low_stock)
+                  {{ $inventario->lowStock() }}
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
-              <span class="pull-right"> {{ $inventario->descripcion ?? 'N/A' }} </span>
+              <span class="pull-right">@nullablestring($inventario->descripcion)</span>
             </li>
             <li class="list-group-item">
               <b>Observación</b>
-              <span class="pull-right"> {{ $inventario->observacion ?? 'N/A' }} </span>
+              <span class="pull-right">@nullablestring($inventario->observacion)</span>
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
@@ -76,7 +82,7 @@
                 @if($inventario->adjunto)
                   <a href="{{ $inventario->download }}">Descargar</a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>

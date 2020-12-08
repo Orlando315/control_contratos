@@ -33,7 +33,7 @@
           <ul class="list-group">
             <li class="list-group-item">
               <b>Nombre</b>
-              <span class="pull-right">{{ $documento->nombre }}</span>
+              <span class="pull-right">@nullablestring($documento->nombre)</span>
             </li>
             <li class="list-group-item">
               <b>Contrato</b>
@@ -67,13 +67,13 @@
                     {{ $documento->padre->nombre }}
                   </a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>
             <li class="list-group-item">
               <b>Caducidad</b>
-              <span class="pull-right">{{ $documento->caducidad ? $documento->caducidad->format('d-m-Y') : 'N/A' }}</span>
+              <span class="pull-right">@nullablestring(optional($documento->caducidad)->format('d-m-Y'))</span>
             </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $documento->created_at->format('d-m-Y H:i:s') }}</small>
@@ -86,7 +86,7 @@
       @foreach($documento->plantilla->secciones as $seccion)
         <div class="ibox">
           <div class="ibox-title">
-            <h5>Sección #{{ $loop->iteration }}: {!! $seccion->nombre ?? '<span class="text-muted">N/A</span>' !!}</h5>
+            <h5>Sección #{{ $loop->iteration }}: @nullablestring($seccion->nombre)</h5>
           </div>
           <div class="ibox-content">
             {!! $documento->fillSeccionVariables($seccion) !!}

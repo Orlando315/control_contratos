@@ -63,27 +63,27 @@
               </li>
               <li class="list-group-item">
                 <b>Teléfono</b>
-                <span class="pull-right"> {{ $empleado->usuario->telefono ?? 'N/A' }} </span>
+                <span class="pull-right">@nullablestring($empleado->usuario->telefono)</span>
               </li>
               <li class="list-group-item">
                 <b>Email</b>
-                <span class="pull-right">{{ $empleado->usuario->email ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($empleado->usuario->email)</span>
               </li>
               <li class="list-group-item">
                 <b>Profesión</b>
-                <span class="pull-right">{{ $empleado->profesion ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($empleado->profesion)</span>
               </li>
               <li class="list-group-item">
                 <b>Talla de camisa</b>
-                <span class="pull-right">{{ $empleado->talla_camisa ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($empleado->talla_camisa)</span>
               </li>
               <li class="list-group-item">
                 <b>Talla de zapato</b>
-                <span class="pull-right">{{ $empleado->talla_zapato ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($empleado->talla_zapato)</span>
               </li>
               <li class="list-group-item">
                 <b>Talla de pantalon</b>
-                <span class="pull-right">{{ $empleado->talla_pantalon ?? 'N/A' }}</span>
+                <span class="pull-right">@nullablestring($empleado->talla_pantalon)</span>
               </li>
               <li class="list-group-item text-center">
                 <small class="text-muted">{{ optional($empleado->created_at)->format('d-m-Y H:i:s') }}</small>
@@ -123,7 +123,7 @@
                   </li>
                   <li class="list-group-item">
                     <b>Descripción</b>
-                    <span class="pull-right"> {!! $empleado->lastContrato->descripcion ?? 'N/A' !!} </span>
+                    <span class="pull-right">@nullablestring($empleado->lastContrato->descripcion)</span>
                   </li>
                 </ul>
               </div><!-- /.ibox-content -->
@@ -161,11 +161,11 @@
                 <ul class="list-group">
                   <li class="list-group-item">
                     <b>Nombre</b>
-                    <span class="pull-right">{{ $empleado->nombre_emergencia ?? 'N/A' }}</span>
+                    <span class="pull-right">@nullablestring($empleado->nombre_emergencia)</span>
                   </li>
                   <li class="list-group-item">
                     <b>Teléfono</b>
-                    <span class="pull-right">{{ $empleado->telefono_emergencia ?? 'N/A' }}</span>
+                    <span class="pull-right">@nullablestring($empleado->telefono_emergencia)</span>
                   </li>
                 </ul>
               </div><!-- /.ibox-content -->

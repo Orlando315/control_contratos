@@ -71,7 +71,7 @@
                     {{ $anticipo->serie }}
                   </a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>
@@ -89,7 +89,7 @@
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
-              <span class="pull-right"> {{ $anticipo->descripcion ?? 'N/A' }}</span>
+              <span class="pull-right">@nullablestring($anticipo->descripcion)</span>
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
@@ -97,7 +97,7 @@
                 @if($anticipo->adjunto)
                   <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
                 @else
-                  N/A
+                  @nullablestring(null)
                 @endif
               </span>
             </li>

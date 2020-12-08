@@ -52,7 +52,13 @@
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>
-              <span class="pull-right">{!! $sueldo->adjunto() !!}</span>
+              <span class="pull-right">
+                @if($sueldo->adjunto)
+                  <a href="{{ $sueldo->download }}">Descargar</a>
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
             </li>
             <li class="list-group-item">
               <b>Recibido</b>

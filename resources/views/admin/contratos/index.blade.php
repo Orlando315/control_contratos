@@ -63,7 +63,7 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $contrato->nombre }}</td>
-                      <td>{{ $contrato->descripcion ?? 'N/A' }}</td>
+                      <td>@nullablestring($contrato->descripcion)</td>
                       <td>{{ $contrato->inicio }}</td>
                       <td>{{ $contrato->fin }}</td>
                       <td>{{ $contrato->valor() }}</td>
