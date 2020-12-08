@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{Auth, Blade};
 use App\{Anticipo, Solicitud, EmpleadosEvento};
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +16,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
       setlocale(LC_ALL, config('app.locale'));
+
+      //
+      Blade::directive('nullablestring', function ($expression) {
+        return "<?php echo ($expression ? e($expression) : '<span class=\"text-muted\">N/A</span>'); ?>";
+      });
     }
 
     /**

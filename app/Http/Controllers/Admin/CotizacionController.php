@@ -47,8 +47,8 @@ class CotizacionController extends Controller
       $this->validate($request, [
         'cliente' => 'required',
         'productos' => 'required|min:1',
-        'productos.*.tipo_codigo' => 'required|string|max:20',
-        'productos.*.codigo' => 'required|string|max:50',
+        'productos.*.tipo_codigo' => 'nullable|string|max:20',
+        'productos.*.codigo' => 'nullable|string|max:50',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
         'productos.*.precio' => 'required|numeric|min:1|max:99999999',
@@ -126,8 +126,8 @@ class CotizacionController extends Controller
       $this->validate($request, [
         'cliente' => 'required',
         'productos' => 'required|min:1',
-        'productos.*.tipo_codigo' => 'required|string|max:20',
-        'productos.*.codigo' => 'required|string|max:50',
+        'productos.*.tipo_codigo' => 'nullable|string|max:20',
+        'productos.*.codigo' => 'nullable|string|max:50',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
         'productos.*.precio' => 'required|numeric|min:1|max:99999999',

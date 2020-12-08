@@ -67,13 +67,13 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="tipo_codigo">Tipo código: *</label>
-                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo código" required>
+                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo código">
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group">
                     <label for="codigo">Código: *</label>
-                    <input id="codigo" class="form-control" type="text" maxlength="50" placeholder="Código" required>
+                    <input id="codigo" class="form-control" type="text" maxlength="50" placeholder="Código">
                   </div>
                 </div>
               </div>

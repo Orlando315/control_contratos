@@ -154,8 +154,8 @@
               @foreach($cotizacion->productos as $producto)
                 <tr>
                   <td class="text-center">{{ $loop->iteration }}</td>
-                  <td>{{ $producto->tipo_codigo }}</td>
-                  <td>{{ $producto->codigo }}</td>
+                  <td>@nullablestring($producto->tipo_codigo)</td>
+                  <td>@nullablestring($producto->codigo)</td>
                   <td>
                     @if($producto->inventario)
                       <a href="{{ route('admin.inventarios.show', ['inventario' => $producto->inventario_id]) }}">
