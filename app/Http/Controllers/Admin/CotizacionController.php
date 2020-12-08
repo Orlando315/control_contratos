@@ -24,14 +24,16 @@ class CotizacionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Cliente $cliente = null)
     {
       $clientes = Cliente::all();
       $inventarios = Inventario::all();
+      $selectedCliente = $cliente;
 
-      return view('admin.cotizacion.create', compact('clientes', 'inventarios'));
+      return view('admin.cotizacion.create', compact('clientes', 'inventarios', 'selectedCliente'));
     }
 
     /**

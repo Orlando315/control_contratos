@@ -130,6 +130,14 @@ class Cotizacion extends Model
     }
 
     /**
+     * Obtener los Pagos de las Facturaciones
+     */
+    public function pagos()
+    {
+      return $this->hasManyThrough('App\Pago', 'App\Facturacion');
+    }
+
+    /**
      * Codigo para identificar la cotizacion
      *
      * @return string
@@ -159,6 +167,26 @@ class Cotizacion extends Model
       return $this->productos->contains(function ($producto) {
         return $producto['impuesto_adicional'] > 0;
       });
+    }
+
+    /**
+     * Evaluar si la Cotizacion tiene una Facturacion
+     * 
+     * @return bool
+     */
+    public function hasFacturacion()
+    {
+      return !is_null($this->facturacion);
+    }
+
+    /**
+     * Obtener el atributo formateado como label
+     *
+     * @return string
+     */
+    public function facturacionStatus()
+    {
+      return $this->hasFacturacion() ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
     }
 
     /**

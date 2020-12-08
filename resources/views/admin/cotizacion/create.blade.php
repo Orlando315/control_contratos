@@ -36,7 +36,7 @@
                 <select id="cliente" class="form-control">
                   <option value="">Seleccione...</option>
                   @foreach($clientes as $cliente)
-                    <option value="{{ $cliente->id }}"{{ old('cliente') == $cliente->id ? ' selected' : '' }}>{{ $cliente->nombre }}</option>
+                    <option value="{{ $cliente->id }}"{{ old('cliente', optional($selectedCliente)->id) == $cliente->id ? ' selected' : '' }}>{{ $cliente->nombre }}</option>
                   @endforeach
                 </select>
 
@@ -214,7 +214,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ $selectedCliente ? route('admin.cliente.show', ['cliente' => $selectedCliente->id]) : route('admin.cotizacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

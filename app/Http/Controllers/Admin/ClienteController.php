@@ -267,7 +267,7 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
-      $cliente->load(['direcciones', 'contactos']);
+      $cliente->load(['direcciones', 'contactos', 'cotizaciones', 'facturaciones']);
 
       return view('admin.cliente.show', compact('cliente'));
     }

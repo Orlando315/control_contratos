@@ -18,8 +18,10 @@ class EmpresaScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-      $builder->when(Auth::check(), function($query){
-        $query->where('empresa_id', Auth::user()->empresa_id);
+      $tableColumn = $model->getTable().'.empresa_id';
+
+      $builder->when(Auth::check(), function($query) use ($tableColumn){
+        $query->where($tableColumn, Auth::user()->empresa_id);
       });
     }
 }

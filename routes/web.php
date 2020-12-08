@@ -227,8 +227,10 @@ Route::group(['middleware' => 'auth'], function () {
             ->except(['create', 'store']);
 
       /* --- Cotizaciones --- */
+      Route::get('cotizacion/create/{cliente?}', 'CotizacionController@create')->name('cotizacion.create');
       Route::get('cotizacion/{cotizacion}/productos', 'CotizacionController@productos')->name('cotizacion.productos');
-      Route::resource('cotizacion', 'CotizacionController');
+      Route::resource('cotizacion', 'CotizacionController')
+            ->except('create');
 
       /* --- Cotizaciones - Productos --- */
       Route::resource('cotizacion/producto', 'CotizacionProductoController')

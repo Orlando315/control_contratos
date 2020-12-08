@@ -203,6 +203,124 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-12">
+      <div class="tabs-container">
+        <ul class="nav nav-tabs">
+          <li><a class="nav-link active" href="#tab-11" data-toggle="tab"><i class="fa fa-calculator" aria-hidden="true"></i> Cotizaciones</a></li>
+          <li><a class="nav-link" href="#tab-22" data-toggle="tab"><i class="fa fa-tasks" aria-hidden="false"></i> Facturaciones</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="tab-11" class="tab-pane active">
+            <div class="panel-body">
+              <div class="mb-3 text-right">
+                <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.create', ['cliente' => $cliente->id]) }}">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Nueva cotización
+                </a>
+              </div>
+
+              <table class="table data-table table-bordered table-hover w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Código</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Facturada</th>
+                    <th class="text-center">Creado</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($cliente->cotizaciones as $cotizacion)
+                    <tr>
+                      <td class="text-center">{{ $loop->iteration }}</td>
+                      <td class="text-center">{{ $cotizacion->codigo() }}</td>
+                      <td class="text-right">{{ $cotizacion->total() }}</td>
+                      <td class="text-center"><small>{!! $cotizacion->facturacionStatus() !!}</small></td>
+                      <td class="text-center">{{ $cotizacion->created_at->format('d-m-Y H:i:s') }}</td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.cotizacion.show', ['cotizacion' => $cotizacion->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.cotizacion.edit', ['cotizacion' => $cotizacion->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                            @if(!$cotizacion->hasFacturacion())
+                              <li>
+                                <a class="dropdown-item" href="{{ route('admin.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">
+                                  <i class="fa fa-plus"></i> Facturar
+                                </a>
+                              </li>
+                            @endif
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /.tab-pane -->
+          <div id="tab-22" class="tab-pane">
+            <div class="panel-body">
+              <table class="table data-table table-bordered table-hover w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Factura ID</th>
+                    <th class="text-center">Cotización</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Estatus</th>
+                    <th class="text-center">Creado</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($cliente->facturaciones as $facturacion)
+                    <tr>
+                      <td class="text-center">{{ $loop->iteration }}</td>
+                      <td>{{ $facturacion->sii_factura_id }}</td>
+                      <td>{{ $facturacion->cotizacion->codigo() }}</td>
+                      <td class="text-right">{{ $facturacion->total() }}</td>
+                      <td class="text-center"><small>{!! $facturacion->status() !!}</small></td>
+                      <td class="text-center">{{ $facturacion->created_at->format('d-m-Y H:i:s') }}</td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.facturacion.show', ['facturacion' => $facturacion->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                            @if(!$facturacion->isPaga())
+                              <li>
+                                <a class="dropdown-item" href="{{ route('admin.pago.create', ['facturacion' => $facturacion->id]) }}">
+                                  <i class="fa fa-plus"></i> Agregar pago
+                                </a>
+                              </li>
+                            @endif
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /.tab-pane -->
+        </div><!-- /.tab-content -->
+      </div>
+    </div>
+  </div>
+
   <div id="delDataModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delDataModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

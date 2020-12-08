@@ -100,6 +100,22 @@ class Cliente extends Model
     }
 
     /**
+     * Obtener Cotizaciones
+     */
+    public function cotizaciones()
+    {
+      return $this->hasMany('App\Cotizacion');
+    }
+
+    /**
+     * Obtener las Facturaciones de las Cotizaciones
+     */
+    public function facturaciones()
+    {
+      return $this->hasManyThrough('App\Facturacion', 'App\Cotizacion');
+    }
+
+    /**
      * Evaluar si el Cliente es Empresa
      * 
      * @return bool
