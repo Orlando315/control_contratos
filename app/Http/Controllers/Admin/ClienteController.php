@@ -73,18 +73,13 @@ class ClienteController extends Controller
         'descripcion' => 'nullable|string|max:200',
         'proveedor' => 'nullable|boolean',
       ]);
-      $validator = Validator::make($request->all(), [
-         'field' => ['rule', 'another_rule'],
-      ]);
-
-      $validator->messages();
 
       if(Cliente::where('rut', $request->rut)->exists()){
         if($request->ajax()){
           return response()->json(['errors' => ['Ya existe un cliente registrado con ese RUT.']], 422);
         }
 
-        return redirect()->back()->withErrors('Ya existe un cliente registrado con ese RUT.');
+        return redirect()->back()->withInput()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
       $createProveedor = $request->has('proveedor') && $request->proveedor == '1';
@@ -106,7 +101,7 @@ class ClienteController extends Controller
           $cliente->save();
         }
 
-        if($request->has('direccion')){
+        if($request->has('direccion') && $request->direccion){
           $direccion = [
             'ciudad' => $request->ciudad,
             'comuna' => $request->comuna,
@@ -162,7 +157,7 @@ class ClienteController extends Controller
       ]);
 
       if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
-        return redirect()->back()->withErrors('!Error! Integración incompleta.');
+        return redirect()->back()->withInput()->withErrors('!Error! Integración incompleta.');
       }
 
       $createProveedor = $request->has('proveedor') && $request->proveedor == '1';
@@ -174,13 +169,13 @@ class ClienteController extends Controller
           return response()->json(['errors' => ['Ya existe un cliente registrado con ese RUT.']], 422);
         }
 
-        return redirect()->back()->withErrors('Ya existe un cliente registrado con ese RUT.');
+        return redirect()->back()->withInput()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
       [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->digito_validador);
 
       if(!$response){
-        return redirect()->back()->withErrors($data);
+        return redirect()->back()->withInput()->withErrors($data);
       }
 
       $cliente = new Cliente;

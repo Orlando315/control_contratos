@@ -101,7 +101,7 @@ class ProveedorController extends Controller
           $proveedor->save();
         }
 
-        if($request->has('direccion')){
+        if($request->has('direccion') && $request->direccion){
           $direccion = [
             'ciudad' => $request->ciudad,
             'comuna' => $request->comuna,
