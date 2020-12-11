@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\{Cotizacion, Cliente, Inventario};
+use App\{Cotizacion, Cliente, Inventario, Direccion, Contacto};
 
 class CotizacionController extends Controller
 {
@@ -46,6 +46,8 @@ class CotizacionController extends Controller
     {
       $this->validate($request, [
         'cliente' => 'required',
+        'direccion' => 'required',
+        'notas' => 'nullable|string|max:350',
         'productos' => 'required|min:1',
         'productos.*.tipo_codigo' => 'nullable|string|max:20',
         'productos.*.codigo' => 'nullable|string|max:50',
@@ -56,9 +58,31 @@ class CotizacionController extends Controller
         'productos.*.descripcion' => 'nullable|string|max:200',
       ]);
 
+      $cliente = Cliente::findOrFail($request->cliente);
+
+      if($cliente->isEmpresa()){
+        $this->validate($request, [
+          'contacto' => 'required',
+        ]);
+
+        $contacto = Contacto::findOrFail($request->contacto)->only('id', 'nombre', 'telefono', 'email', 'cargo', 'descripcion');
+      }else{
+        $this->validate($request, [
+          'nombre' => 'required|string|max:100',
+          'telefono' => 'required|string|max:20',
+          'email' => 'nullable|email|max:50',
+        ]);
+        $contacto = $request->only('nombre', 'telefono', 'email');
+      }
+
+      $direccion = Direccion::findOrFail($request->direccion);
+
       $cotizacion = new Cotizacion([
         'user_id' => Auth::id(),
-        'cliente_id' => $request->cliente,
+        'cliente_id' => $cliente->id,
+        'direccion' => $direccion->only('id', 'ciudad', 'comuna', 'direccion'),
+        'contacto' => $contacto,
+        'notas' => $request->notas,
       ]);
       $productos = [];
 
@@ -125,7 +149,8 @@ class CotizacionController extends Controller
     {
       $this->validate($request, [
         'cliente' => 'required',
-        'productos' => 'required|min:1',
+        'notas' => 'nullable|string|max:350',
+        'productos' => 'nullable',
         'productos.*.tipo_codigo' => 'nullable|string|max:20',
         'productos.*.codigo' => 'nullable|string|max:50',
         'productos.*.nombre' => 'required|max:100',
@@ -135,19 +160,46 @@ class CotizacionController extends Controller
         'productos.*.descripcion' => 'nullable|string|max:200',
       ]);
 
+
+      $cliente = Cliente::findOrFail($request->cliente);
+
+      if($cliente->isEmpresa()){
+        $this->validate($request, [
+          'contacto' => 'required',
+        ]);
+
+        $contacto = Contacto::findOrFail($request->contacto)->only('id', 'nombre', 'telefono', 'email', 'cargo', 'descripcion');
+      }else{
+        $this->validate($request, [
+          'nombre' => 'required|string|max:100',
+          'telefono' => 'required|string|max:20',
+          'email' => 'nullable|email|max:50',
+        ]);
+        $contacto = $request->only('nombre', 'telefono', 'email');
+      }
+
+      $direccion = Direccion::findOrFail($request->direccion);
+
       $cotizacion->cliente_id = $request->cliente;
+      $cotizacion->direccion = $direccion->only('id', 'ciudad', 'comuna', 'direccion');
+      $cotizacion->contacto = $contacto;
+      $cotizacion->notas = $request->notas;
       $productos = [];
 
-      foreach ($request->productos as $producto){
-        $data = collect($producto)->except('inventario', 'impuesto', 'total')->toArray();
-        $data['impuesto_adicional'] = $producto['impuesto'];
-        $data['total'] = ($producto['cantidad'] * $producto['precio']) + $producto['impuesto'];
-        $data['inventario_id'] = $producto['inventario'];
-        $productos[] = $data;
+      if($request->has('productos')){
+        foreach ($request->productos as $producto){
+          $data = collect($producto)->except('inventario', 'impuesto', 'total')->toArray();
+          $data['impuesto_adicional'] = $producto['impuesto'];
+          $data['total'] = ($producto['cantidad'] * $producto['precio']) + $producto['impuesto'];
+          $data['inventario_id'] = $producto['inventario'];
+          $productos[] = $data;
+        }
       }
 
       if($cotizacion->save()){
-        $cotizacion->productos()->createMany($productos);
+        if(count($productos) > 0){
+          $cotizacion->productos()->createMany($productos);
+        }
 
         return redirect()->route('admin.cotizacion.show', ['cotizacion' => $cotizacion->id])->with([
             'flash_message' => 'Cotización modificada exitosamente.',

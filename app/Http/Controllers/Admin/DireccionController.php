@@ -59,10 +59,18 @@ class DireccionController extends Controller
       $direccion = new Direccion($request->only('ciudad', 'comuna', 'direccion'));
 
       if($model->direcciones()->save($direccion)){
+        if($request->ajax()){
+          return response()->json(['response' => true, 'direccion' => $direccion]);
+        }
+
         return redirect()->route('admin.'.$type.'.show', [$type => $model->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Dirección agregada exitosamente.',
         ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' => false]);
       }
 
       return redirect()->back()->withInput()->with([

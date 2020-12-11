@@ -28,9 +28,9 @@
   <div class="row mb-3">
     <div class="col-md-3">
       <div class="ibox">
-          <div class="ibox-title">
-            <h5>Información</h5>
-          </div>
+        <div class="ibox-title">
+          <h5>Información</h5>
+        </div>
         <div class="ibox-content no-padding">
           <ul class="list-group list-group-unbordered">
             <li class="list-group-item">
@@ -59,6 +59,10 @@
               <b>Total</b>
               <span class="pull-right">{{ $cotizacion->total() }}</span>
             </li>
+            <li class="list-group-item">
+              <b>Notas</b>
+              <span class="pull-right">@nullablestring($cotizacion->notas)</span>
+            </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $cotizacion->created_at }}</small>
             </li>
@@ -67,8 +71,82 @@
       </div>
     </div>
 
-    @if($cotizacion->facturacion)
-      <div class="col-md-3">
+    <div class="col-md-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Contacto</h5>
+        </div>
+        <div class="ibox-content no-padding">
+          <ul class="list-group list-group-unbordered">
+            <li class="list-group-item">
+              <b>Nombre</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->contacto)->nombre)
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Teléfono</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->contacto)->telefono)
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Email</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->contacto)->email)
+              </span>
+            </li>
+            @if($cotizacion->cliente->isEmpresa())
+              <li class="list-group-item">
+                <b>Cargo</b>
+                <span class="pull-right">
+                  @nullablestring(optional($cotizacion->contacto)->cargo)
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Descripción</b>
+                <span class="pull-right">
+                  @nullablestring(optional($cotizacion->contacto)->descripcion)
+                </span>
+              </li>
+            @endif
+          </ul>
+        </div><!-- /.box-body -->
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Despacho</h5>
+        </div>
+        <div class="ibox-content no-padding">
+          <ul class="list-group list-group-unbordered">
+            <li class="list-group-item">
+              <b>Ciudad</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->direccion)->ciudad)
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Comuna</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->direccion)->comuna)
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Dirección</b>
+              <span class="pull-right">
+                @nullablestring(optional($cotizacion->direccion)->direccion)
+              </span>
+            </li>
+          </ul>
+        </div><!-- /.box-body -->
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      @if($cotizacion->facturacion)
         <div class="ibox">
           <div class="ibox-title">
             <h5>Facturación</h5>
@@ -113,10 +191,8 @@
             </ul>
           </div><!-- /.box-body -->
         </div>
-      </div>
-    @else
-    <div class="col-md-9">
-        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')))
+      @else
+        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii'))
           <div class="alert alert-danger alert-important">
             <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder realizar una facturación. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
           </div>
@@ -125,8 +201,8 @@
             <a class="btn btn-primary" href="{{ route('admin.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
           </div>
         @endif
-      </div>
-    @endif
+      @endif
+    </div>
   </div>
 
   <div class="row">

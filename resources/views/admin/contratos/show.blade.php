@@ -108,7 +108,7 @@
                           <div class="col-9">
                             <i class="fa {{ $requisitoContrato->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                             @if($requisitoContrato->documento)
-                              <a href="{{ route('admin.documentos.download', ['adjunto' => $requisitoContrato->documento->id]) }}">
+                              <a href="{{ route('admin.documentos.download', ['documento' => $requisitoContrato->documento->id]) }}">
                                 {{ $requisitoContrato->nombre }}
                                 @if($requisitoContrato->documento->vencimiento)
                                   <small class="text-muted">- {{ $requisitoContrato->documento->vencimiento }}</small>

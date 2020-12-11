@@ -203,6 +203,8 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('cliente/create/{type}', 'ClienteController@create')->name('cliente.create');
       Route::post('cliente/store/{type}', 'ClienteController@store')->name('cliente.store');
       Route::post('cliente/busqueda/sii', 'ClienteController@busquedaSii')->name('cliente.busqueda.sii');
+      Route::get('cliente/{cliente}/contactos', 'ClienteController@contactos')->name('cliente.contactos');
+      Route::get('cliente/{cliente}/direcciones', 'ClienteController@direcciones')->name('cliente.direcciones');
       Route::resource('cliente', 'ClienteController')
             ->except(['create', 'store']);
 

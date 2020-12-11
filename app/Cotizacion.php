@@ -24,7 +24,20 @@ class Cotizacion extends Model
     protected $fillable = [
       'user_id',
       'cliente_id',
+      'direccion',
+      'contacto',
+      'notas',
       'status',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'direccion' => 'object',
+      'contacto' => 'object',
     ];
 
     /**
@@ -67,6 +80,24 @@ class Cotizacion extends Model
           Storage::deleteDirectory($model->directory);
         }
       });
+    }
+
+    /**
+     * Set the user's first name.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setContactoAttribute($value)
+    {
+      $this->attributes['contacto'] = json_encode([
+        'id' => $value['id'] ?? null,
+        'nombre' => $value['nombre'] ?? null,
+        'telefono' => $value['telefono'] ?? null,
+        'email' => $value['email'] ?? null,
+        'cargo' => $value['cargo'] ?? null,
+        'descripcion' => $value['descripcion'] ?? null,
+      ]);
     }
 
     /**

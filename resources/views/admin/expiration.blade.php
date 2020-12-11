@@ -209,7 +209,7 @@
                       @foreach($contratosVencidos as $contratoVencido)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td>{{ $contratoVencido->empleado->nombres() }}</td>
+                          <td>{{ $contratoVencido->empleado->nombre() }}</td>
                           <td>{{ $contratoVencido->inicio }}</td>
                           <td>{{ $contratoVencido->fin }}</td>
                           <td>{{ $contratoVencido->jornada }}</td>

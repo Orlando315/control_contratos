@@ -61,10 +61,18 @@ class ContactoController extends Controller
       $contacto = new Contacto($request->only('nombre', 'telefono', 'email', 'cargo', 'descripcion'));
 
       if($model->contactos()->save($contacto)){
+        if($request->ajax()){
+          return response()->json(['response' => true, 'contacto' => $contacto]);
+        }
+
         return redirect()->route('admin.'.$type.'.show', [$type => $model->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contacto agregado exitosamente.',
         ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' => false]);
       }
 
       return redirect()->back()->withInput()->with([

@@ -54,7 +54,7 @@
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                   <label for="email">Email:</label>
-                  <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email', $cliente->email) }}" placeholder="Email">
+                  <input id="email" class="form-control" type="email" name="email" maxlength="50" value="{{ old('email', $cliente->email) }}" placeholder="Email">
                 </div>
               </div>
             </div>

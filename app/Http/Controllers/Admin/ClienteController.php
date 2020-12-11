@@ -389,4 +389,26 @@ class ClienteController extends Controller
         ]
       ]);
     }
+
+    /**
+     * Obtener los contactos de un Cliente especificado
+     * 
+     * @param  \App\Cliente  $cliente
+     * @return \Illuminate\Http\Response
+     */
+    public function contactos(Cliente $cliente)
+    {
+      return response()->json(['contactos' => $cliente->contactos]);
+    }
+
+    /**
+     * Obtener las direcciones de un Cliente especificado
+     * 
+     * @param  \App\Cliente  $cliente
+     * @return \Illuminate\Http\Response
+     */
+    public function direcciones(Cliente $cliente)
+    {
+      return response()->json(['direcciones' => $cliente->direcciones]);
+    }
 }
