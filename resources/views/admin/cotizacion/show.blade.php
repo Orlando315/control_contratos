@@ -174,12 +174,6 @@
                 </span>
               </li>
               <li class="list-group-item">
-                <b>Firma</b>
-                <span class="pull-right">
-                  {{ $cotizacion->facturacion->firma }}
-                </span>
-              </li>
-              <li class="list-group-item">
                 <b>Estatus</b>
                 <span class="pull-right">
                   {!! $cotizacion->facturacion->status() !!}

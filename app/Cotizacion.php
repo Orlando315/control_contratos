@@ -242,15 +242,13 @@ class Cotizacion extends Model
      * 
      * @param  string  $rut
      * @param  string  $dv
-     * @param  string  $firma
      * @return array
      */
-    public function facturar($rut, $dv, $firma)
+    public function facturar($rut, $dv)
     {
       $data = [
         'tiene_impuestos_adicionales' => $this->hasImpuestos(),
         'productos' => $this->productosToFactura(),
-        'firma' => $firma,
       ];
 
       return (new FacturacionSii)->facturar($rut, $dv, $data);

@@ -70,15 +70,6 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="firma">Firma: *</label>
-                  <input id="firma" class="form-control" type="text" name="firma" maxlength="50" value="{{ old('firma') }}" placeholder="Firma" required>
-                </div>
-              </div>
-            </div>
-
             <fieldset>
               <legend class="form-legend">Productos</legend>
               

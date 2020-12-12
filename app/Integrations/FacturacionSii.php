@@ -18,6 +18,7 @@ class FacturacionSii
     private $rut;
     private $dv;
     private $token = null;
+    private $firma = null;
 
     public function __construct()
     {
@@ -28,6 +29,7 @@ class FacturacionSii
       $this->url = $this->sandbox ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
       $this->sii_clave = $empresa->configuracion->sii_clave;
       $this->sii_clave_certificado = $empresa->configuracion->sii_clave_certificado;
+      $this->firma = $empresa->configuracion->firma;
       $this->setApiToken();
     }
 
@@ -90,6 +92,16 @@ class FacturacionSii
     private function getToken()
     {
       return $this->token;
+    }
+
+    /**
+     * Obtener la firma
+     * 
+     * @return string
+     */
+    private function getFirma()
+    {
+      return $this->firma;
     }
 
     /**
@@ -218,6 +230,7 @@ class FacturacionSii
       }
 
       $endpoint = $this->buildEndpoint('factura/'.$data.'/validar');
+      $dataFactura['firma'] = $this->getFirma();
 
       $response = Http::withHeaders([
         'api-key' => $this->getSiiClave(),

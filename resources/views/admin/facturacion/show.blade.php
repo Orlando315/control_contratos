@@ -56,12 +56,6 @@
               </span>
             </li>
             <li class="list-group-item">
-              <b>Firma</b>
-              <span class="pull-right">
-                {{ $facturacion->firma }}
-              </span>
-            </li>
-            <li class="list-group-item">
               <b>Total pagado</b>
               <span class="pull-right">
                 {{ $facturacion->pagado() }}

@@ -26,7 +26,6 @@ class Facturacion extends Model
       'sii_factura_id',
       'rut',
       'dv',
-      'firma',
     ];
 
     /**

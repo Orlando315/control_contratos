@@ -54,7 +54,7 @@ class FacturacionController extends Controller
       }
 
       $cotizacion = cotizacion::findOrFail($request->cotizacion);
-      [$response, $data] = $cotizacion->facturar($request->rut, $request->digito_validador, $request->firma);
+      [$response, $data] = $cotizacion->facturar($request->rut, $request->digito_validador);
 
       if(!$response){
         return redirect()->back()->withInput()->with([
@@ -69,7 +69,6 @@ class FacturacionController extends Controller
         'sii_factura_id' => $data,
         'rut' => $request->rut,
         'dv' => $request->digito_validador,
-        'firma' => $request->firma,
       ]);
 
       if(Auth::user()->empresa->facturaciones()->save($facturacion)){

@@ -131,6 +131,15 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group{{ $errors->has('firma') ? ' has-error' : '' }}">
+                      <label for="firma">Firma:</label>
+                      <input id="firma" class="form-control" type="text" name="firma" maxlength="120" value="{{ old('firma', Auth::user()->empresa->configuracion->firma) }}" placeholder="Firma">
+                    </div>
+                  </div>
+                </div>
               </section>
             @endif
 

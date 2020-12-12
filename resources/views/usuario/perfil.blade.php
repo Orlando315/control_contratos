@@ -106,6 +106,22 @@
                     </div>
                   </div>
                 </li>
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-md-4 text-right">
+                      <strong>Firma:</strong>
+                    </div>
+                    <div class="col-md-8">
+                      @if(Auth::user()->empresa->configuracion->firma)
+                        <span class="copy-clipboard label" data-toggle="tooltip" title="¡Haz click para copiar!">
+                          {{ Auth::user()->empresa->configuracion->firma }}
+                        </span>
+                      @else
+                        @nullablestring(null)
+                      @endif
+                    </div>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>

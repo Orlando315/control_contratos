@@ -32,6 +32,8 @@ class ConfiguracionEmpresa extends Model
       'dias_vencimiento',
       'clave_sii',
       'sii_clave_certificado',
+      'configuracion_empresas',
+      'firma',
     ];
 
     /**
@@ -42,6 +44,7 @@ class ConfiguracionEmpresa extends Model
     protected $hidden = [
       'sii_clave',
       'sii_clave_certificado',
+      'firma',
     ];
 
     /**

@@ -116,18 +116,21 @@ class UsuariosController extends Controller
         Auth::user()->empresa->fill($request->only('nombres', 'representante'));
         Auth::user()->empresa->configuracion->jornada = $request->jornada;
         Auth::user()->empresa->configuracion->dias_vencimiento = $request->dias_vencimiento;
-        Auth::user()->empresa->usuario->usuario = $request->rut;
+        Auth::user()->usuario = $request->rut;
+        Auth::user()->rut = $request->rut;
       }
 
       // Solo Empresas
       if(Auth::user()->isEmpresa()){
         $this->validate($request, [
-          'sii_clave' => 'nullable|string|max:120', 
+          'sii_clave' => 'nullable|string|max:120',
           'sii_clave_certificado' => 'nullable|string|max:150',
+          'firma' => 'nullable|string|max:120',
         ]);
 
         Auth::user()->empresa->configuracion->sii_clave = $request->sii_clave;
         Auth::user()->empresa->configuracion->sii_clave_certificado = $request->sii_clave_certificado;
+        Auth::user()->empresa->configuracion->firma = $request->firma;
       }
 
       Auth::user()->nombres = $request->nombres;
