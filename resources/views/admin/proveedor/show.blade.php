@@ -203,6 +203,66 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-12">
+      <div class="tabs-container">
+        <ul class="nav nav-tabs">
+          <li><a class="nav-link active" href="#tab-11" data-toggle="tab"><i class="fa fa-plus-square" aria-hidden="true"></i> Ordenes de compra</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="tab-11" class="tab-pane active">
+            <div class="panel-body">
+              <div class="mb-3 text-right">
+                <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.create', ['proveedor' => $proveedor->id]) }}">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Nueva orden de compra
+                </a>
+              </div>
+
+              <table class="table data-table table-bordered table-hover w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Código</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Creado</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($proveedor->compras as $compra)
+                    <tr>
+                      <td class="text-center">{{ $loop->iteration }}</td>
+                      <td class="text-center">{{ $compra->codigo() }}</td>
+                      <td class="text-right">{{ $compra->total() }}</td>
+                      <td class="text-center">{{ $compra->created_at->format('d-m-Y H:i:s') }}</td>
+                      <td class="text-center">
+                        <div class="btn-group">
+                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /.tab-pane -->
+        </div><!-- /.tab-content -->
+      </div>
+    </div>
+  </div>
+
   <div id="delDataModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delDataModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

@@ -1095,7 +1095,7 @@
             data-telefono="${response.cliente.telefono}"
             data-email="${response.cliente.email}"
           >
-            ${response.cliente.nombre}
+            ${response.cliente.rut} | ${response.cliente.nombre}
           </option>`;
 
           $('#cliente').append(option);

@@ -225,6 +225,7 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('proveedor/create/{type}', 'ProveedorController@create')->name('proveedor.create');
       Route::post('proveedor/store/{type}', 'ProveedorController@store')->name('proveedor.store');
       Route::post('proveedor/busqueda/sii', 'ProveedorController@busquedaSii')->name('proveedor.busqueda.sii');
+      Route::get('proveedor/{proveedor}/contactos', 'ProveedorController@contactos')->name('proveedor.contactos');
       Route::resource('proveedor', 'ProveedorController')
             ->except(['create', 'store']);
 
@@ -244,12 +245,23 @@ Route::group(['middleware' => 'auth'], function () {
       Route::resource('facturacion', 'FacturacionController')
             ->only(['index', 'store', 'show']);
 
-      /* --- Facturaciones --- */
+      /* --- Pagos --- */
       Route::get('pago/create/{facturacion}', 'PagoController@create')->name('pago.create');
       Route::post('pago/create/{facturacion}', 'PagoController@store')->name('pago.store');
       Route::get('pago/{pago}/download', 'PagoController@download')->name('pago.download');
       Route::resource('pago', 'PagoController')
             ->only(['edit', 'update', 'destroy']);
+
+      /* --- Ordenes de compra --- */
+      Route::get('compra/create/{proveedor?}', 'OrdenCompraController@create')->name('compra.create');
+      Route::get('compra/{compra}/productos', 'OrdenCompraController@productos')->name('compra.productos');
+      Route::resource('compra', 'OrdenCompraController')
+            ->except('create');
+
+      /* --- Ordenes de compra - Productos --- */
+      Route::resource('compra/producto', 'OrdenCompraProductoController')
+            ->names('compra.producto')
+            ->only(['destroy']);
 
       /* --- Reportes --- */
       Route::get('reportes/inventarios', 'ReportesController@inventariosIndex')->name('reportes.inventarios.index');

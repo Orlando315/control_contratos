@@ -205,6 +205,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener los Ordenes de compra
+     */
+    public function compras()
+    {
+      return $this->hasMany('App\OrdenCompra');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part

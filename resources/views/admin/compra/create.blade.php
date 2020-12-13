@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Cotizaciones')
+@section('title', 'Ordenes de compra')
 
 @section('head')
   <!-- Select2 -->
@@ -11,10 +11,10 @@
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-      <h2>Cotizaciones</h2>
+      <h2>Ordenes de compra</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.cotizacion.index') }}">Cotizaciones</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.compra.index') }}">Ordenes de compra</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -26,7 +26,7 @@
     <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Agregar cotización</h5>
+          <h5>Agregar orden de compra</h5>
         </div>
         <div class="ibox-content">
           <div class="sk-spinner sk-spinner-double-bounce">
@@ -36,23 +36,23 @@
 
           <div class="row">
             <div class="col-md-6">
-              <div class="form-group{{ $errors->has('cliente') ? ' has-error' : '' }}">
-                <label for="cliente">Cliente: *</label>
-                <select id="cliente" class="form-control">
+              <div class="form-group{{ $errors->has('proveedor') ? ' has-error' : '' }}">
+                <label for="proveedor">Proveedor: *</label>
+                <select id="proveedor" class="form-control">
                   <option value="">Seleccione...</option>
-                  @foreach($clientes as $cliente)
-                    <option value="{{ $cliente->id }}"{{ old('cliente', optional($selectedCliente)->id) == $cliente->id ? ' selected' : '' }}
-                      data-type="{{ $cliente->type }}"
-                      data-nombre="{{ $cliente->nombre }}"
-                      data-telefono="{{ $cliente->telefono }}"
-                      data-email="{{ $cliente->email }}"
+                  @foreach($proveedores as $proveedor)
+                    <option value="{{ $proveedor->id }}"{{ old('proveedor', optional($selectedProveedor)->id) == $proveedor->id ? ' selected' : '' }}
+                      data-type="{{ $proveedor->type }}"
+                      data-nombre="{{ $proveedor->nombre }}"
+                      data-telefono="{{ $proveedor->telefono }}"
+                      data-email="{{ $proveedor->email }}"
                     >
-                      {{ $cliente->rut }} | {{ $cliente->nombre }}
+                      {{ $proveedor->rut }} | {{ $proveedor->nombre }}
                     </option>
                   @endforeach
                 </select>
 
-                <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Cliente</button>
+                <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Proveedor</button>
               </div>
             </div>
           </div>
@@ -70,19 +70,19 @@
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
                     <label for="nombre">Nombre: *</label>
-                    <input id="nombre" class="form-control" type="text" maxlength="100" value="{{ old('nombre', optional($selectedCliente)->nombre) }}" placeholder="Nombre">
+                    <input id="nombre" class="form-control" type="text" maxlength="100" value="{{ old('nombre', optional($selectedProveedor)->nombre) }}" placeholder="Nombre">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
                     <label for="telefono">Teléfono: *</label>
-                    <input id="telefono" class="form-control" type="text" maxlength="20" value="{{ old('telefono', optional($selectedCliente)->telefono) }}" placeholder="Teléfono">
+                    <input id="telefono" class="form-control" type="text" maxlength="20" value="{{ old('telefono', optional($selectedProveedor)->telefono) }}" placeholder="Teléfono">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <label for="email">Email:</label>
-                    <input id="email" class="form-control" type="email" maxlength="50" value="{{ old('email', optional($selectedCliente)->email) }}" placeholder="Email">
+                    <input id="email" class="form-control" type="email" maxlength="50" value="{{ old('email', optional($selectedProveedor)->email) }}" placeholder="Email">
                   </div>
                 </div>
               </div>
@@ -93,25 +93,6 @@
             <div class="alert alert-danger"{!! $errors->has('contacto') ? '' : ' style="display:none;"' !!}>
               <ul class="m-0 box-errors-contactos">
                 @error('contacto')
-                  <li>{{ $message }}</li>
-                @enderror
-              </ul>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend class="form-legend">Información de despacho</legend>
-            <div id="box-direcciones" class="row mb-3">
-              <div class="col-12">
-                <h5 class="text-center text-muted">No hay direcciones agregadas.</h5>
-              </div>
-            </div>
-
-            <button class="btn btn-simple btn-link btn-sm btn-direccion" type="button" data-toggle="modal" data-target="#direccionModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Dirección</button>
-
-            <div class="alert alert-danger"{!! $errors->has('direccion') ? '' : ' style="display:none;"' !!}>
-              <ul class="m-0 box-errors-direcciones">
-                @error('direccion')
                   <li>{{ $message }}</li>
                 @enderror
               </ul>
@@ -205,11 +186,10 @@
             </div>
           </form>
 
-          <form action="{{ route('admin.cotizacion.store') }}" method="POST">
+          <form action="{{ route('admin.compra.store') }}" method="POST">
             @csrf
-            <input id="form-cliente" type="hidden" name="cliente" value="{{ old('cliente') }}">
+            <input id="form-proveedor" type="hidden" name="proveedor" value="{{ old('proveedor') }}">
             <input id="form-contacto" type="hidden" name="contacto" value="{{ old('contacto') }}">
-            <input id="form-direccion" type="hidden" name="direccion" value="{{ old('direccion') }}">
             <input id="form-notas" type="hidden" name="notas" value="{{ old('notas') }}">
             <input id="form-nombre" type="hidden" name="nombre" value="{{ old('nombre') }}">
             <input id="form-telefono" type="hidden" name="telefono" value="{{ old('telefono') }}">
@@ -301,7 +281,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ $selectedCliente ? route('admin.cliente.show', ['cliente' => $selectedCliente->id]) : route('admin.cotizacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ $selectedProveedor ? route('admin.proveedor.show', ['proveedor' => $selectedProveedor->id]) : route('admin.compra.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -373,58 +353,10 @@
     </div>
   </div>
 
-  <div id="direccionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="direccionModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="add-form-direccion" action="#" method="POST">
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-
-            <h4 class="modal-title" id="direccionModalLabel">Agregar Dirección</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="ciudad">Ciudad:</label>
-                  <input id="ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="comuna">Comuna:</label>
-                  <input id="comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="direccion">Dirección: *</label>
-              <input id="direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección" required>
-            </div>
-
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-direcciones">
-              </ul>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-direccion" type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
-        <form id="add-form-cliente" action="#" method="POST">
+        <form id="add-form-proveedor" action="#" method="POST">
           @csrf
 
           <div class="modal-header">
@@ -432,15 +364,15 @@
               <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
             </button>
 
-            <h4 class="modal-title" id="optionModalLabel">Agregar Cliente</h4>
+            <h4 class="modal-title" id="optionModalLabel">Agregar Proveedor</h4>
           </div>
           <div class="modal-body">
 
             <div class="row justify-content-center">
               <div class="col-md-4">
                 <div class="form-group">
-                  <label for="cliente-type">Tipo:</label>
-                  <select id="cliente-type" class="custom-select">
+                  <label for="proveedor-type">Tipo:</label>
+                  <select id="proveedor-type" class="custom-select">
                     <option value="persona">Persona</option>
                     <option value="empresa">Empresa</option>
                   </select>
@@ -448,7 +380,7 @@
               </div>
             </div>
 
-            <fieldset id="cliente-type-persona">
+            <fieldset id="proveedor-type-persona">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -506,7 +438,7 @@
               </div>
             </fieldset>
 
-            <fieldset id="cliente-type-empresa" disabled>
+            <fieldset id="proveedor-type-empresa" disabled>
               <div class="row justify-content-center">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -594,27 +526,27 @@
                   </div>
                 </div>
               </fieldset><!-- contactos -->
-            </fieldset><!-- #cliente-persona -->
+            </fieldset><!-- #proveedor-persona -->
 
             <div class="form-group">
-              <label>Proveedor:</label>
+              <label>Cliente:</label>
               <div class="custom-control custom-checkbox">
-                <input id="proveedor" class="custom-control-input" type="checkbox" name="proveedor" value="1">
-                <label class="custom-control-label" for="proveedor">
-                  Es proveedor
+                <input id="cliente" class="custom-control-input" type="checkbox" name="cliente" value="1">
+                <label class="custom-control-label" for="cliente">
+                  Es cliente
                 </label>
               </div>
-              <small class="form-text text-muted">Se creará un registro de Proveedor usando la misma información</small>
+              <small class="form-text text-muted">Se creará un registro de Cliente usando la misma información</small>
             </div>
 
             <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-cliente">
+              <ul class="m-0 form-errors-proveedor">
               </ul>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-cliente" type="submit">Guardar</button>
+            <button class="btn btn-primary btn-sm btn-add-proveedor" type="submit">Guardar</button>
           </div>
         </form>
       </div>
@@ -634,16 +566,13 @@
     const BOX_CONTACTOS = $('#box-contactos');
     const FIELDS_CONTACTO = $('#fields-contacto');
     const BTN_ADD_CONTACTO = $('.btn-add-contacto');
-
-    const BOX_DIRECCIONES = $('#box-direcciones');
-    const BTN_ADD_DIRECCION = $('.btn-add-direccion');
     
-    const BTN_ADD_CLIENTE = $('.btn-add-cliente');
+    const BTN_ADD_PROVEEDOR = $('.btn-add-proveedor');
     const BTN_CONSULTAR_EMPRESA = $('.btn-consultar');
     const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'));
 
     $(document).ready(function () {
-      $('#cliente').select2({
+      $('#proveedor').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
@@ -657,8 +586,8 @@
         allowClear: true,
       });
 
-      $('#cliente').change(loadCliente);
-      $('#cliente').change();
+      $('#proveedor').change(loadProveedor);
+      $('#proveedor').change();
 
       $('#nombre, #telefono, #email').change(function () {
         let field = $(this).attr('id');
@@ -673,15 +602,15 @@
       $('#add-product-form').submit(addProduct);
       TBODY_PRODUCTOS.on('click', '.btn-delete', deleteProduct);
 
-      $('#add-form-cliente').submit(addCliente);
-      $('#cliente-type').change(selectClienteType);
-      $('#cliente-type').change();
-      BTN_CONSULTAR_EMPRESA.click(consultarClienteEmpresa);
+      $('#add-form-proveedor').submit(addProveedor);
+      $('#proveedor-type').change(selectProveedorType);
+      $('#proveedor-type').change();
+      BTN_CONSULTAR_EMPRESA.click(consultarProveedorEmpresa);
 
       $('#add-form-contacto').submit(addContacto);
       $('#contactoModal').on('show.bs.modal', function (e) {
-        let cliente = $(e.relatedTarget).data('cliente');
-        let action = '{{ route("admin.contacto.store", ["id" => ":id", "type" => "cliente"]) }}'.replace(':id', cliente);
+        let proveedor = $(e.relatedTarget).data('proveedor');
+        let action = '{{ route("admin.contacto.store", ["id" => ":id", "type" => "proveedor"]) }}'.replace(':id', proveedor);
 
         $('#add-form-contacto').attr('action', action);
       });
@@ -692,42 +621,28 @@
         $('#form-contacto').val($(this).val());
       });
 
-      $('#add-form-direccion').submit(addDireccion);
-      $('#direccionModal').on('show.bs.modal', function (e) {
-        let cliente = $(e.relatedTarget).data('cliente');
-        let action = '{{ route("admin.direccion.store", ["id" => ":id", "type" => "cliente"]) }}'.replace(':id', cliente);
-
-        $('#add-form-direccion').attr('action', action);
-      });
-      BOX_DIRECCIONES.on('change', 'input[name="radio_direccion"]', function () {
-        let checked = $('input[name="radio_direccion"]:checked').val();
-        let val = $(this).val();
-
-        $('#form-direccion').val($(this).val());
-      });
-
       calculateTotal();
     });
 
-    function loadCliente(){
-      let cliente = $(this).val();
-      let option = $(this).find(`option[value="${cliente}"]`);
+    function loadProveedor(){
+      let proveedor = $(this).val();
+      let option = $(this).find(`option[value="${proveedor}"]`);
       let type = option.data('type');
 
-      $('#form-cliente').val(cliente);
+      $('#form-proveedor').val(proveedor);
 
-      $('.btn-contacto, .btn-direccion').data('cliente', cliente).prop('disabled', !cliente);
+      $('.btn-contacto').data('proveedor', proveedor).prop('disabled', !proveedor);
       $('.btn-contacto').toggle(type == 'empresa');
       FIELDS_CONTACTO.toggle(type == 'persona').prop('disabled', !(type == 'persona'));
       BOX_CONTACTOS.toggle(type == 'empresa');
       BTN_ADD_CONTACTO.prop('disabled', type == 'persona');
 
-      if(!cliente){
+      if(!proveedor){
         return;
       }
 
       if(type == 'empresa'){
-        loadClienteContactos(cliente); 
+        loadProveedorContactos(proveedor); 
         $('#nombre, #telefono, #email').val('');
       }else{
         BOX_CONTACTOS.empty();
@@ -735,8 +650,6 @@
         $('#telefono, #form-telefono').val(option.data('telefono'));
         $('#email, #form-email').val(option.data('email'));
       }
-
-      loadClienteDirecciones(cliente);
     }
 
     function addContacto(e){
@@ -770,8 +683,8 @@
       });
     }
 
-    function loadClienteContactos(cliente){
-      let action = '{{ route("admin.cliente.contactos", ["cliente" => ":id"]) }}'.replace(':id', cliente);
+    function loadProveedorContactos(proveedor){
+      let action = '{{ route("admin.proveedor.contactos", ["proveedor" => ":id"]) }}'.replace(':id', proveedor);
 
       IBOX.toggleClass('sk-loading', true);
       
@@ -819,89 +732,6 @@
                     <div class="custom-control custom-radio">
                       <input id="contacto-${index}" class="custom-control-input" type="radio" name="radio_contacto" value="${contacto.id}"${checked ? ' checked' : ''}>
                       <label class="custom-control-label" for="contacto-${index}"></label>
-                    </div>
-                  </div>
-                </label>
-              </div>`;
-    }
-
-    function loadClienteDirecciones(cliente){
-      let action = '{{ route("admin.cliente.direcciones", ["cliente" => ":id"]) }}'.replace(':id', cliente);
-
-      IBOX.toggleClass('sk-loading', true);
-      
-      $.ajax({
-        type: 'GET',
-        url: action,
-        dataType: 'json',
-      })
-      .done(function (response) {
-        BOX_DIRECCIONES.empty();
-
-        if(response.direcciones.length > 0){
-          $.each(response.direcciones, function (k, direccion) {
-            BOX_DIRECCIONES.append(templateDireccion(k, direccion));
-          });
-
-          $('input[name="radio_direccion"]:checked').change();
-        }else{
-          BOX_DIRECCIONES.append('<div class="col-md-12"><h5 class="text-center text-muted">No hay direcciones agregadas.</h5></div>');
-        }
-      })
-      .fail(function (response) {
-        showErrors(['Ha ocurrido un error al consultar las direcciones'], '.box-errors-direcciones');
-      })
-      .always(function () {
-        IBOX.toggleClass('sk-loading', false);
-      });
-    }
-
-    function addDireccion(e){
-      e.preventDefault();
-
-      BTN_ADD_DIRECCION.prop('disabled', true);
-
-      let form = $(this);
-      let action = form.attr('action');
-
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function (response) {
-        if(response.response){
-          BOX_DIRECCIONES.append(templateDireccion(BOX_DIRECCIONES.children().length, response.direccion));
-          form[0].reset();
-          $('#direccionModal').modal('hide');
-        }else{
-          showErrors(['Ha ocurrido un error.'], '.form-errors-direcciones');
-        }
-      })
-      .fail(function (response) {
-        showErrors(response.responseJSON.errors, '.form-errors-direcciones');
-      })
-      .always(function () {
-        BTN_ADD_DIRECCION.prop('disabled', false);
-      });
-    }
-
-    let templateDireccion = function (index, direccion) {
-      let checked = @json(old('direccion')) == direccion.id ? true : direccion.status;
-      return `<div class="col-md-3">
-                <label for="direccion-${index}" class="border w-100 hover-pointer">
-                  <div class="p-3 text-center">
-                    <p class="m-0">
-                      ${direccion.ciudad ? (direccion.ciudad+', ') : ''}
-                      ${direccion.ciudad ? direccion.comuna : ''}
-                    </p>
-                    <p class="m-0">${direccion.direccion}</p>
-                  </div>
-                  <div class="border-top text-center">
-                    <div class="custom-control custom-radio">
-                      <input id="direccion-${index}" class="custom-control-input" type="radio" name="radio_direccion" value="${direccion.id}"${checked ? ' checked' : ''}>
-                      <label class="custom-control-label" for="direccion-${index}"></label>
                     </div>
                   </div>
                 </label>
@@ -1031,25 +861,25 @@
               </tr>`;
     }
 
-    function selectClienteType(){
+    function selectProveedorType(){
       let type = $(this).val();
 
-      $('#cliente-type-empresa, #cliente-type-persona').prop('disabled', true).toggle(false);
-      $(`#cliente-type-${type}`).prop('disabled', false).toggle(true);
+      $('#proveedor-type-empresa, #proveedor-type-persona').prop('disabled', true).toggle(false);
+      $(`#proveedor-type-${type}`).prop('disabled', false).toggle(true);
 
-      BTN_ADD_CLIENTE.prop('disabled', type != 'persona');
+      BTN_ADD_PROVEEDOR.prop('disabled', type != 'persona');
     }
 
-    function addCliente(e){
+    function addProveedor(e){
       e.preventDefault();
 
-      BTN_ADD_CLIENTE.prop('disabled', true);
+      BTN_ADD_PROVEEDOR.prop('disabled', true);
 
       let form = $(this);
-      let type = $('#cliente-type').val();
+      let type = $('#proveedor-type').val();
       let action = type == 'persona'
-        ? '{{ route("admin.cliente.store", ["type" => "persona"]) }}'
-        : '{{ route("admin.cliente.store", ["type" => "empresa"]) }}';
+        ? '{{ route("admin.proveedor.store", ["type" => "persona"]) }}'
+        : '{{ route("admin.proveedor.store", ["type" => "empresa"]) }}';
 
       $.ajax({
         type: 'POST',
@@ -1060,30 +890,30 @@
       .done(function (response) {
         if(response.response){
           let option = `
-          <option value="${response.cliente.id}"
-            data-type="${response.cliente.type}"
-            data-nombre="${response.cliente.nombre}"
-            data-telefono="${response.cliente.telefono}"
-            data-email="${response.cliente.email}"
+          <option value="${response.proveedor.id}"
+            data-type="${response.proveedor.type}"
+            data-nombre="${response.proveedor.nombre}"
+            data-telefono="${response.proveedor.telefono}"
+            data-email="${response.proveedor.email}"
           >
-            ${response.cliente.rut} | ${response.cliente.nombre}
+            ${response.proveedor.rut} | ${response.proveedor.nombre}
           </option>`;
 
-          $('#cliente').append(option);
-          $('#cliente').val(response.cliente.id);
-          $('#cliente').trigger('change');
+          $('#proveedor').append(option);
+          $('#proveedor').val(response.proveedor.id);
+          $('#proveedor').trigger('change');
           form[0].reset();
-          $('#cliente-type').trigger('change');
+          $('#proveedor-type').trigger('change');
           $('#optionModal').modal('hide');
         }else{
-          showErrors(['Ha ocurrido un error.'], '.form-errors-cliente');
+          showErrors(['Ha ocurrido un error.'], '.form-errors-proveedor');
         }
       })
       .fail(function (response) {
-        showErrors(response.responseJSON.errors, '.form-errors-cliente');
+        showErrors(response.responseJSON.errors, '.form-errors-proveedor');
       })
       .always(function () {
-        BTN_ADD_CLIENTE.prop('disabled', false);
+        BTN_ADD_PROVEEDOR.prop('disabled', false);
       });
     }
 
@@ -1103,11 +933,11 @@
       $(ul).parent().show().delay(7000).hide('slow');
     }
 
-    function consultarClienteEmpresa(){
+    function consultarProveedorEmpresa(){
       BTN_CONSULTAR_EMPRESA.prop('disabled', true);
 
       if(!INTEGRATION_COMPLETE){
-        showErrors(['Debe completar los datos de su integración con Facturación Sii.'], '.form-errors-cliente');
+        showErrors(['Debe completar los datos de su integración con Facturación Sii.'], '.form-errors-proveedor');
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);
       }
 
@@ -1124,7 +954,7 @@
     function getDataEmpresa(rut, dv){
       $.ajax({
         type: 'POST',
-        url: '{{ route("admin.cliente.busqueda.sii") }}',
+        url: '{{ route("admin.proveedor.busqueda.sii") }}',
         data: {
           rut: rut,
           dv: dv,
@@ -1138,15 +968,15 @@
           $('#empresa-comuna').val(response.data.comuna);
           $('#empresa-ciudad').val(response.data.ciudad);
 
-          BTN_ADD_CLIENTE.prop('disabled', false);
+          BTN_ADD_PROVEEDOR.prop('disabled', false);
         }else{
-          BTN_ADD_CLIENTE.prop('disabled', true);
-          showErrors([response.data], '.form-errors-cliente');
+          BTN_ADD_PROVEEDOR.prop('disabled', true);
+          showErrors([response.data], '.form-errors-proveedor');
         }
       })
       .fail(function (data) {
-        showErrors(['Ha ocurrido un error al consultar la información.'], '.form-errors-cliente');
-        BTN_ADD_CLIENTE.prop('disabled', true);
+        showErrors(['Ha ocurrido un error al consultar la información.'], '.form-errors-proveedor');
+        BTN_ADD_PROVEEDOR.prop('disabled', true);
       })
       .always(function () {
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);

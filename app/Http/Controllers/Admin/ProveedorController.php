@@ -116,10 +116,18 @@ class ProveedorController extends Controller
           }
         }
 
+        if($request->ajax()){
+          return response()->json(['response' =>  true, 'proveedor' => $proveedor]);
+        }
+
         return redirect()->route('admin.proveedor.show', ['proveedor' => $proveedor->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Proveedor agregado exitosamente.',
         ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' =>  false]);
       }
 
       return redirect()->back()->withInput()->with([
@@ -251,7 +259,7 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
-      $proveedor->load(['direcciones', 'contactos']);
+      $proveedor->load(['direcciones', 'contactos', 'compras']);
 
       return view('admin.proveedor.show', compact('proveedor'));
     }
@@ -377,5 +385,16 @@ class ProveedorController extends Controller
           'ciudad' => $data['ciudad_seleccionada'],
         ]
       ]);
+    }
+
+    /**
+     * Obtener los contactos de un Proveedor especificado
+     * 
+     * @param  \App\Proveedor  $proveedor
+     * @return \Illuminate\Http\Response
+     */
+    public function contactos(Proveedor $proveedor)
+    {
+      return response()->json(['contactos' => $proveedor->contactos]);
     }
 }

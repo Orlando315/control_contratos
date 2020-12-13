@@ -108,6 +108,14 @@ class Proveedor extends Model
     }
 
     /**
+     * Obtener las Ordenes de compra
+     */
+    public function compras()
+    {
+      return $this->hasMany('App\OrdenCompra');
+    }
+
+    /**
      * Evaluar si el proveedor es Empresa
      * 
      * @return bool

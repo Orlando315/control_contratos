@@ -4,15 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CotizacionProducto extends Model
+class OrdenCompraProducto extends Model
 {
-
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'cotizaciones_productos';
+    protected $table = 'ordenes_compras_productos';
 
     /**
      * The attributes that are mass assignable.
@@ -56,11 +55,11 @@ class CotizacionProducto extends Model
     }
 
     /**
-     * Obtener la Cotizacion
+     * Obtener la Orden de compra
      */
-    public function cotizacion()
+    public function ordenCompra()
     {
-      return $this->belongsTo('App\Cotizacion');
+      return $this->belongsTo('App\OrdenCompra');
     }
 
     /**

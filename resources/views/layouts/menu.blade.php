@@ -134,7 +134,17 @@
             <li><a href="{{ route('admin.cotizacion.index') }}">Ver cotizaciones</a></li>
             <li><a href="{{ route('admin.facturacion.index') }}">Ver facturaciones</a></li>
           </ul>
-        </li>        
+        </li>
+        <li>
+          <a href="#">
+            <i class="fa fa-plus-square"></i>
+            <span class="nav-label">Compras</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.compra.index') }}">Ver ordenes de compra</a></li>
+          </ul>
+        </li>
       @endif
 
       @if(Auth::user()->tipo <= 3)
