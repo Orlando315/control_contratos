@@ -254,7 +254,7 @@
                             </li>
                             @if(!$cotizacion->hasFacturacion())
                               <li>
-                                <a class="dropdown-item" href="{{ route('admin.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">
+                                <a class="dropdown-item" href="{{ route('admin.cotizacion.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">
                                   <i class="fa fa-plus"></i> Facturar
                                 </a>
                               </li>
@@ -296,7 +296,7 @@
                           <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                           <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                             <li>
-                              <a class="dropdown-item" href="{{ route('admin.facturacion.show', ['facturacion' => $facturacion->id]) }}">
+                              <a class="dropdown-item" href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $facturacion->id]) }}">
                                 <i class="fa fa-search"></i> Ver
                               </a>
                             </li>

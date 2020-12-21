@@ -71,7 +71,7 @@ class PagoController extends Controller
           $pago->save();
         }
 
-        return redirect()->route('admin.facturacion.show', ['facturacion' => $facturacion->id])->with([
+        return redirect()->route('admin.cotizacion.facturacion.show', ['facturacion' => $facturacion->id])->with([
             'flash_message' => 'Pago agregado exitosamente.',
             'flash_class' => 'alert-success'
           ]);
@@ -142,7 +142,7 @@ class PagoController extends Controller
           $pago->save();
         }
 
-        return redirect()->route('admin.facturacion.show', ['facturacion' => $pago->facturacion_id])->with([
+        return redirect()->route('admin.cotizacion.facturacion.show', ['facturacion' => $pago->facturacion_id])->with([
             'flash_message' => 'Pago modificado exitosamente.',
             'flash_class' => 'alert-success'
           ]);

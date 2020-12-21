@@ -8,7 +8,6 @@ use App\Pago;
 
 class Facturacion extends Model
 {
-
     /**
      * The table associated with the model.
      *
@@ -210,5 +209,5 @@ class Facturacion extends Model
       $pendiente = $this->pendiente + $pago->monto;
 
       return $withFormat ? number_format($pendiente, 2, ',', '.') : $pendiente;
-    }    
+    }
 }

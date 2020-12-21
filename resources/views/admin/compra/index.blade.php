@@ -45,6 +45,7 @@
                 <th class="text-center">Código</th>
                 <th class="text-center">Proveedor</th>
                 <th class="text-center">Total</th>
+                <th class="text-center">Facturada</th>
                 <th class="text-center">Creado</th>
                 <th class="text-center">Acción</th>
               </tr>
@@ -56,6 +57,7 @@
                   <td class="text-center">{{ $compra->codigo() }}</td>
                   <td>{{ $compra->proveedor->nombre }}</td>
                   <td class="text-right">{{ $compra->total() }}</td>
+                  <td class="text-center"><small>{!! $compra->facturacionStatus() !!}</small></td>
                   <td class="text-center">{{ $compra->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
                     <a class="btn btn-success btn-xs" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-search"></i></a>

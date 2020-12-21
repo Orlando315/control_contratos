@@ -113,6 +113,91 @@
         </div><!-- /.box-body -->
       </div>
     </div>
+
+    <div class="col-md-3">
+      @if($compra->facturacion)
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Facturación</h5>
+            <div class="ibox-tools">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                <i class="fa fa-cogs"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-user dropdown-menu-right" x-placement="bottom-start">
+                @if(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'))
+                  <li>
+                    <a class="dropdown-item" type="button" data-toggle="modal" data-target="#syncModal">
+                      <i class="fa fa-refresh"></i> Sincronizar
+                    </a>
+                  </li>
+                @endif
+                <li>
+                  <a class="dropdown-item text-danger" type="button" data-toggle="modal" data-target="#delFacturacionModal">
+                    <i class="fa fa-times"></i> Eliminar
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="ibox-content no-padding">
+            <ul class="list-group list-group-unbordered">
+              <li class="list-group-item">
+                <b>Código</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->codigo }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Emisor</b>
+                <span class="pull-right">
+                  @nullablestring($compra->facturacion->emisor)
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Razón social</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->razon_social }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Documento</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->documento }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Folio</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->folio }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Fecha</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->fecha }}
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Monto</b>
+                <span class="pull-right">
+                  {{ $compra->facturacion->monto }}
+                </span>
+              </li>
+            </ul>
+          </div><!-- /.box-body -->
+        </div>
+      @else
+        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii'))
+          <div class="alert alert-danger alert-important">
+            <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder asociar a una factura. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
+          </div>
+        @else
+          <div class="w-100 text-center">
+            <a class="btn btn-primary" href="{{ route('admin.compra.facturacion.create', ['compra' => $compra->id]) }}">Asociar factura</a>
+          </div>
+        @endif
+      @endif
+    </div>
   </div>
 
   <div class="row">
@@ -224,6 +309,61 @@
       </div>
     </div>
   </div>
+
+  @if($compra->facturacion)
+    <div id="syncModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="syncModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.compra.facturacion.sync', ['facturacion' => $compra->facturacion->id]) }}" method="POST">
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+
+              <h4 class="modal-title" id="syncModalLabel">Sincronizar Facturación</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de sincronizar esta Facturación?</h4>
+              <p class="text-center">Toda la informacón será actualizada con la API de Facturación SII</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="delFacturacionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFacturacionModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.compra.facturacion.destroy', ['facturacion' => $compra->facturacion->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+
+              <h4 class="modal-title" id="delFacturacionModalLabel">Eliminar Facturación</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Facturación?</h4>
+              <p class="text-center">La orden de compra ya no estará asociada a esta factura.</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endif
 @endsection
 
 @section('script')

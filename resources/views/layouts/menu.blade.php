@@ -132,7 +132,7 @@
           </a>
           <ul class="nav nav-second-level">
             <li><a href="{{ route('admin.cotizacion.index') }}">Ver cotizaciones</a></li>
-            <li><a href="{{ route('admin.facturacion.index') }}">Ver facturaciones</a></li>
+            <li><a href="{{ route('admin.cotizacion.facturacion.index') }}">Ver facturaciones</a></li>
           </ul>
         </li>
         <li>

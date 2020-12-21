@@ -8,6 +8,7 @@ namespace App\Integrations;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{Auth, Log, Http};
+use App\Empresa;
 
 class FacturacionSii
 {
@@ -20,9 +21,9 @@ class FacturacionSii
     private $token = null;
     private $firma = null;
 
-    public function __construct()
+    public function __construct(Empresa $empresa = null)
     {
-      $empresa = Auth::user()->empresa;
+      $empresa = $empresa ?? Auth::user()->empresa;
       $this->rut = $empresa->getRut();
       $this->dv = $empresa->getRutDv();
       $this->sandbox = config('integraciones.sii.sandbox');
@@ -248,5 +249,56 @@ class FacturacionSii
       }
 
       return [false, 'Ha ocurrido un error con la API'];
+    }
+
+    /**
+     * Obtener la "facturas recibidas" en la Api
+     *
+     * @param  int  $page
+     * @return array
+     */
+    public function facturasRecibidas($page = 1)
+    {
+      $endpoint = $this->buildEndpoint('facturas/recibidas/'.$page);
+
+      $response = Http::withHeaders([
+        'api-key' => $this->getSiiClave(),
+      ])
+      ->withToken($this->getToken())
+      ->get($endpoint);
+
+      if($response->successful() && isset($response['recibidas'])){
+        return [true, $response['recibidas']];
+      }
+
+      // devolver error de la api
+      if(!$response->successful() && isset($response['message'])){
+        return [false, $response['message']];
+      }
+
+      return [false, 'Ha ocurrido un error con la API'];
+    }
+
+    /**
+     * Obtener la informacion de una factura por el codigo proporcionado
+     * 
+     * @param  string  $codigo
+     * @return array
+     */
+    public function consultaFactura($codigo)
+    {
+      $endpoint = $this->buildEndpoint('facturas/recibidas/ver/'.$codigo);
+
+      $response = Http::withHeaders([
+        'api-key' => $this->getSiiClave(),
+      ])
+      ->withToken($this->getToken())
+      ->get($endpoint);
+
+      if($response->successful() && isset($response['productos'])){
+        return $response->json();
+      }
+
+      return [];
     }
 }

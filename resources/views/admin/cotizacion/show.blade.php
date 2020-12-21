@@ -156,7 +156,7 @@
               <li class="list-group-item">
                 <b>Factura Sii ID</b>
                 <span class="pull-right">
-                  <a href="{{ route('admin.facturacion.show', ['facturacion' => $cotizacion->facturacion->id]) }}">
+                  <a href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $cotizacion->facturacion->id]) }}">
                     {{ $cotizacion->facturacion->sii_factura_id }}
                   </a>
                 </span>
@@ -192,7 +192,7 @@
           </div>
         @else
           <div class="w-100 text-center">
-            <a class="btn btn-primary" href="{{ route('admin.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
+            <a class="btn btn-primary" href="{{ route('admin.cotizacion.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
           </div>
         @endif
       @endif

@@ -241,8 +241,9 @@ Route::group(['middleware' => 'auth'], function () {
             ->only(['destroy']);
 
       /* --- Facturaciones --- */
-      Route::get('facturacion/create/{cotizacion?}', 'FacturacionController@create')->name('facturacion.create');
+      Route::get('facturacion/create/{cotizacion?}', 'FacturacionController@create')->name('cotizacion.facturacion.create');
       Route::resource('facturacion', 'FacturacionController')
+            ->names('cotizacion.facturacion')
             ->only(['index', 'store', 'show']);
 
       /* --- Pagos --- */
@@ -261,6 +262,15 @@ Route::group(['middleware' => 'auth'], function () {
       /* --- Ordenes de compra - Productos --- */
       Route::resource('compra/producto', 'OrdenCompraProductoController')
             ->names('compra.producto')
+            ->only(['destroy']);
+
+      /* --- Ordenes de compra - Facturaciones --- */
+      Route::get('compra/facturacion/create/{compra}', 'OrdenCompraFacturacionController@create')->name('compra.facturacion.create');
+      Route::post('compra/facturacion/create/{compra}', 'OrdenCompraFacturacionController@store')->name('compra.facturacion.store');
+      Route::get('compra/facturacion/{codigo}/productos', 'OrdenCompraFacturacionController@getProductos')->name('compra.facturacion.productos');
+      Route::post('compra/facturacion/{facturacion}/sync', 'OrdenCompraFacturacionController@sync')->name('compra.facturacion.sync');
+      Route::resource('compra/facturacion', 'OrdenCompraFacturacionController')
+            ->names('compra.facturacion')
             ->only(['destroy']);
 
       /* --- Reportes --- */

@@ -8,7 +8,7 @@
       <h2>Pagos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.facturacion.show', ['facturacion' => $pago->facturacion_id]) }}">Facturación</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $pago->facturacion_id]) }}">Facturación</a></li>
         <li class="breadcrumb-item">Pagos</li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
@@ -85,7 +85,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.facturacion.show', ['facturacion' => $pago->facturacion_id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $pago->facturacion_id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

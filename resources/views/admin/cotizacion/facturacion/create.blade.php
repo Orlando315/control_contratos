@@ -14,7 +14,7 @@
       <h2>Facturaciones</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.facturacion.index') }}">Facturaciones</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.cotizacion.facturacion.index') }}">Facturaciones</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -34,7 +34,7 @@
             <div class="sk-double-bounce2"></div>
           </div>
 
-          <form action="{{ route('admin.facturacion.store') }}" method="POST">
+          <form action="{{ route('admin.cotizacion.facturacion.store') }}" method="POST">
             @csrf
 
             <div class="row">
@@ -154,7 +154,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ $selectedCotizacion ? route('admin.cotizacion.show', ['cotizacion' => $selectedCotizacion->id]) : route('admin.facturacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ $selectedCotizacion ? route('admin.cotizacion.show', ['cotizacion' => $selectedCotizacion->id]) : route('admin.cotizacion.facturacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"{{ Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii') ? ' disabled' : '' }}><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

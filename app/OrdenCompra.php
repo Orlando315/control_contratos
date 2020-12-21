@@ -149,6 +149,14 @@ class OrdenCompra extends Model
     }
 
     /**
+     * Obtener la facturacion
+     */
+    public function facturacion()
+    {
+      return $this->hasOne('App\FacturacionCompra');
+    }
+
+    /**
      * Codigo para identificar la orden de compra
      *
      * @return string
@@ -166,5 +174,25 @@ class OrdenCompra extends Model
     public function total()
     {
       return number_format($this->total, 2, ',', '.');
+    }
+
+    /**
+     * Evaluar si la OrdenCompra tiene una Facturacion
+     * 
+     * @return bool
+     */
+    public function hasFacturacion()
+    {
+      return !is_null($this->facturacion);
+    }
+
+    /**
+     * Obtener el atributo formateado como label
+     *
+     * @return string
+     */
+    public function facturacionStatus()
+    {
+      return $this->hasFacturacion() ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
     }
 }

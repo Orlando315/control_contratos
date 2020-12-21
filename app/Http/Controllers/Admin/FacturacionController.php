@@ -18,7 +18,7 @@ class FacturacionController extends Controller
     {
       $facturaciones = Facturacion::all();
 
-      return view('admin.facturacion.index', compact('facturaciones'));
+      return view('admin.cotizacion.facturacion.index', compact('facturaciones'));
     }
 
     /**
@@ -31,7 +31,7 @@ class FacturacionController extends Controller
     {
       $cotizaciones = cotizacion::doesntHave('facturacion')->get();
 
-      return view('admin.facturacion.create', ['cotizaciones' => $cotizaciones, 'selectedCotizacion' => $cotizacion]);
+      return view('admin.cotizacion.facturacion.create', ['cotizaciones' => $cotizaciones, 'selectedCotizacion' => $cotizacion]);
     }
 
     /**
@@ -72,7 +72,7 @@ class FacturacionController extends Controller
       ]);
 
       if(Auth::user()->empresa->facturaciones()->save($facturacion)){
-        return redirect()->route('admin.facturacion.show', ['facturacion' => $facturacion->id])->with([
+        return redirect()->route('admin.cotizacion.facturacion.show', ['facturacion' => $facturacion->id])->with([
             'flash_message' => 'Facturación agregada exitosamente.',
             'flash_class' => 'alert-success'
           ]);
@@ -93,7 +93,7 @@ class FacturacionController extends Controller
      */
     public function show(Facturacion $facturacion)
     {
-      return view('admin.facturacion.show', compact('facturacion'));
+      return view('admin.cotizacion.facturacion.show', compact('facturacion'));
     }
 
     /**
