@@ -26,6 +26,8 @@ class FaenaController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Faena::class);
+
       return view('admin.faena.create');
     }
 
@@ -37,6 +39,7 @@ class FaenaController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Faena::class);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
@@ -75,6 +78,7 @@ class FaenaController extends Controller
      */
     public function show(Faena $faena)
     {
+      $this->authorize('view', $faena);
       $faena->load('contratos');
 
       return view('admin.faena.show', compact('faena'));
@@ -88,6 +92,8 @@ class FaenaController extends Controller
      */
     public function edit(Faena $faena)
     {
+      $this->authorize('update', $faena);
+
       return view('admin.faena.edit', compact('faena'));
     }
 
@@ -100,6 +106,7 @@ class FaenaController extends Controller
      */
     public function update(Request $request, Faena $faena)
     {
+      $this->authorize('update', $faena);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
@@ -128,6 +135,8 @@ class FaenaController extends Controller
      */
     public function destroy(Faena $faena)
     {
+      $this->authorize('delete', $faena);
+
       if($faena->delete()){
         return redirect()->route('admin.contratos.index')->with([
           'flash_message' => 'Faena eliminada exitosamente.',

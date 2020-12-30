@@ -16,6 +16,7 @@
       <h2>Anticipos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>

@@ -26,6 +26,8 @@ class PlantillaVariableController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', PlantillaVariable::class);
+
       return view('admin.plantilla.variable.create');
     }
 
@@ -37,6 +39,7 @@ class PlantillaVariableController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', PlantillaVariable::class);
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
         'tipo' => 'required|in:text,number,date,email,rut,firma'
@@ -142,6 +145,7 @@ class PlantillaVariableController extends Controller
      */
     public function generateStatic()
     {
+      $this->authorize('create', PlantillaVariable::class);
       $vars = [
         ['variable' => '{{e_nombres}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombres'],
         ['variable' => '{{e_apellidos}}', 'tipo' => 'empleado', 'nombre' => 'E - Apellidos'],

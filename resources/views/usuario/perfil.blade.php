@@ -15,7 +15,7 @@
     <div class="col-md-3">
       <div class="ibox">
         <div class="ibox-content no-padding">
-          @if(Auth::user()->tipo == 1)
+          @if(Auth::user()->isEmpresa())
             <div class="text-center py-2">
               <img class="img-responsive" src="{{ Auth::user()->empresa->logo_url }}" alt="Logo" style="max-height: 180px;margin: 0 auto;">
             </div>
@@ -25,7 +25,7 @@
               <b>Nombres</b>
               <span class="pull-right">{{ Auth::user()->nombres }}</span>
             </li>
-            @if(Auth::user()->tipo != 1)
+            @if(!Auth::user()->isEmpresa())
             <li class="list-group-item">
               <b>Apellidos</b>
               <span class="pull-right">{{ Auth::user()->apellidos }}</span>
@@ -43,7 +43,7 @@
               <b>Teléfono</b>
               <span class="pull-right">@nullablestring(Auth::user()->telefono)</span>
             </li>
-            @if(Auth::user()->tipo == 1)
+            @if(Auth::user()->isEmpresa())
               <li class="list-group-item">
                 <b>Representante</b>
                 <span class="pull-right"> {{ Auth::user()->empresa->representante }} </span>
@@ -177,23 +177,25 @@
 @endsection
 
 @section('script')
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('.copy-clipboard').click(copyToClipboard)
+  @if(Auth::user()->isEmpresa())
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('.copy-clipboard').click(copyToClipboard)
 
-      $('.copy-clipboard').tooltip();
-      $('.copy-clipboard').on('hide.bs.tooltip', function() {
-        $(this).attr('data-original-title', '¡Haz click para copiar!');
+        $('.copy-clipboard').tooltip();
+        $('.copy-clipboard').on('hide.bs.tooltip', function() {
+          $(this).attr('data-original-title', '¡Haz click para copiar!');
+        });
       });
-    });
 
-    function copyToClipboard() {
-      let $temp = $('<input>');
-      $('body').append($temp);
-      $temp.val($(this).text().trim()).select();
-      document.execCommand('copy');
-      $temp.remove();
-      $(this).attr('data-original-title', '¡Copiado!').tooltip('show');
-    }
-  </script>
+      function copyToClipboard() {
+        let $temp = $('<input>');
+        $('body').append($temp);
+        $temp.val($(this).text().trim()).select();
+        document.execCommand('copy');
+        $temp.remove();
+        $(this).attr('data-original-title', '¡Copiado!').tooltip('show');
+      }
+    </script>
+  @endif
 @endsection

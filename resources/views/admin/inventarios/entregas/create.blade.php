@@ -14,8 +14,9 @@
       <h2>Entregas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id]) }}">Inventarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id]) }}">Inventario</a></li>
         <li class="breadcrumb-item">Entregas</li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>

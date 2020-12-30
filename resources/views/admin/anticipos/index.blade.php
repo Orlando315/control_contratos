@@ -8,6 +8,7 @@
       <h2>Anticipos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Anticipos</strong></li>
       </ol>
     </div>
@@ -45,7 +46,9 @@
           <div class="tab-pane active" id="tab-1">
             <div class="panel-body">
               <div class="mb-3 text-right">
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
+                @permission('anticipo-create')
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
+                @endpermission
               </div>
 
               <div class="accordion" id="accordion-anticipos-series">
@@ -80,7 +83,9 @@
                                 <td class="text-right">{{ $serie->anticipo() }}</td>
                                 <td class="text-right">{{ $serie->bono() }}</td>
                                 <td>
-                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
+                                  @permission('anticipo-index')
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
+                                  @endpermission
                                 </td>
                               </tr>
                             @endforeach
@@ -98,7 +103,9 @@
           <div class="tab-pane" id="tab-2">
             <div class="panel-body">
               <div class="mb-3 text-right">
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
+                @permission('anticipo-create')
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
+                @endpermission
               </div>
 
               <div class="accordion" id="accordion-anticipos-aprobados">
@@ -129,22 +136,34 @@
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                  <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">
+                                  @permission('contrato-view')
+                                    <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">
+                                      {{ $aprobado->contrato->nombre }}
+                                    </a>
+                                  @else
                                     {{ $aprobado->contrato->nombre }}
-                                  </a>
+                                  @endpermission
                                 </td>
                                 <td>
-                                  <a href="{{ route('admin.empleados.show', ['empleado' => $aprobado->empleado->id]) }}">
+                                  @permission('empleado-view')
+                                    <a href="{{ route('admin.empleados.show', ['empleado' => $aprobado->empleado->id]) }}">
+                                      {{ $aprobado->empleado->usuario->nombre() }}
+                                    </a>
+                                  @else
                                     {{ $aprobado->empleado->usuario->nombre() }}
-                                  </a>
+                                  @endpermission
                                 </td>
                                 <td>{{ $aprobado->fecha }}</td>
                                 <td class="text-right">{{ $aprobado->anticipo() }}</td>
                                 <td class="text-right">{{ $aprobado->bono() }}</td>
                                 <td>{{ optional($aprobado->created_at)->format('d-m-Y H:i:s') }}</td>
                                 <td>
-                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
-                                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.edit', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-pencil"></i></a>
+                                  @permission('anticipo-view')
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
+                                  @endpermission
+                                  @permission('anticipo-edit')
+                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.edit', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-pencil"></i></a>
+                                  @endpermission
                                 </td>
                               </tr>
                             @endforeach
@@ -184,24 +203,34 @@
                             </tr>
                           </thead>
                           <tbody class="text-center">
-                            @foreach($month->anticipos as $rechazado)
+                            @foreach($month->anticipos as $pendiente)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                  <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
-                                    {{ $rechazado->contrato->nombre }}
-                                  </a>
+                                  @permission('contrato-view')
+                                    <a href="{{ route('admin.contratos.show', ['contrato' => $pendiente->contrato->id]) }}">
+                                      {{ $pendiente->contrato->nombre }}
+                                    </a>
+                                  @else
+                                    {{ $pendiente->contrato->nombre }}
+                                  @endpermission
                                 </td>
                                 <td>
-                                  <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
-                                    {{ $rechazado->empleado->usuario->nombre() }}
-                                  </a>
+                                  @permission('empleado-view')
+                                    <a href="{{ route('admin.empleados.show', ['empleado' => $pendiente->empleado->id]) }}">
+                                      {{ $pendiente->empleado->usuario->nombre() }}
+                                    </a>
+                                  @else
+                                    {{ $pendiente->empleado->usuario->nombre() }}
+                                  @endpermission
                                 </td>
-                                <td>{{ $rechazado->fecha }}</td>
-                                <td class="text-right">{{ $rechazado->anticipo() }}</td>
-                                <td class="text-right">{{ $rechazado->bono() }}</td>
+                                <td>{{ $pendiente->fecha }}</td>
+                                <td class="text-right">{{ $pendiente->anticipo() }}</td>
+                                <td class="text-right">{{ $pendiente->bono() }}</td>
                                 <td>
-                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                  @permission('anticipo-view')
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $pendiente->id]) }}"><i class="fa fa-search"></i></a>
+                                  @endpermission
                                 </td>
                               </tr>
                             @endforeach
@@ -245,20 +274,30 @@
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
-                                  <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
+                                  @permission('contrato-view')
+                                    <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
+                                      {{ $rechazado->contrato->nombre }}
+                                    </a>
+                                  @else
                                     {{ $rechazado->contrato->nombre }}
-                                  </a>
+                                  @endpermission
                                 </td>
                                 <td>
-                                  <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
+                                  @permission('empleado-view')
+                                    <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
+                                      {{ $rechazado->empleado->usuario->nombre() }}
+                                    </a>
+                                  @else
                                     {{ $rechazado->empleado->usuario->nombre() }}
-                                  </a>
+                                  @endpermission
                                 </td>
                                 <td>{{ $rechazado->fecha }}</td>
                                 <td class="text-right">{{ $rechazado->anticipo() }}</td>
                                 <td class="text-right">{{ $rechazado->bono() }}</td>
                                 <td>
-                                  <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                  @permission('anticipo-view')
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                  @endpermission
                                 </td>
                               </tr>
                             @endforeach
@@ -277,50 +316,4 @@
       </div>
     </div>
   </div>
-
-  <div id="statusAnticipoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusAnticipoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="status-modal-form" action="#" method="POST">
-          <input id="status-modal-value" type="hidden" name="status">
-          @method('PUT')
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="statusAnticipoModalLabel">Cambiar estatus</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de <span id="status-modal-label"></span> este Anticipo?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm" type="submit" disabled>Enviar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-@endsection
-
-@section('script')
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#statusAnticipoModal').on('show.bs.modal', function (e) {
-        let type = +$(e.relatedTarget).data('type'),
-            url = $(e.relatedTarget).data('url');
-
-        title = type == 1 ? 'aprobar' : 'rechazar';
-
-        $('#status-modal-form button[type="submit"]').prop('disabled', !url)
-        $('#status-modal-form').attr('action', url)
-        $('#status-modal-value').val(type)
-        $('#status-modal-label').text(title)
-      });
-
-      $('#select-years').change(function () {
-        $('#form-years').submit();
-      })
-    })
-  </script>
 @endsection

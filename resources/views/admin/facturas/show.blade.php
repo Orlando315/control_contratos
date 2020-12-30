@@ -8,6 +8,7 @@
       <h2>Facturas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.facturas.index') }}">Facturas</a></li>
         <li class="breadcrumb-item active"><strong>Factura</strong></li>
       </ol>
@@ -18,9 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('factura-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('factura-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('factura-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -32,22 +39,26 @@
             <li class="list-group-item">
               <b>Contrato</b>
               <span class="pull-right">
-                <a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato->id]) }}">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato->id]) }}">
+                    {{ $factura->contrato->nombre }}
+                  </a>
+                @else
                   {{ $factura->contrato->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             @if($factura->etiqueta)
               <li class="list-group-item">
                 <b>Etiqueta</b>
                 <span class="pull-right">
-                  @if(Auth::user()->tipo <= 2)
+                  @permission('etiqueta-view')
                     <a href="{{ route('admin.etiquetas.show', ['etiqueta' => $factura->etiqueta_id]) }}">
                       {{ $factura->etiqueta->etiqueta }}
                     </a>
                   @else
                     {{ $factura->etiqueta->etiqueta }}
-                  @endif
+                  @endpermission
                 </span>
               </li>
             @endif
@@ -69,7 +80,7 @@
             </li>
             <li class="list-group-item">
               <b>Fecha</b>
-              <span class="pull-right"> {{ $factura->fecha }} </span>
+              <span class="pull-right">{{ $factura->fecha }}</span>
             </li>
             <li class="list-group-item">
               <b>Valor</b>
@@ -77,11 +88,11 @@
             </li>
             <li class="list-group-item">
               <b>Fecha</b>
-              <span class="pull-right"> {{ $factura->pago_fecha }} </span>
+              <span class="pull-right">{{ $factura->pago_fecha }}</span>
             </li>
             <li class="list-group-item">
               <b>Pago</b>
-              <span class="pull-right"> {!! $factura->pago() !!} </span>
+              <span class="pull-right">{!! $factura->pago() !!}</span>
             </li>
             <li class="list-group-item">
               <b>Adjunto #1</b>
@@ -116,28 +127,30 @@
     </div>
   </div>
 
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.facturas.destroy', ['factura' => $factura->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('factura-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.facturas.destroy', ['factura' => $factura->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delModalLabel">Eliminar Factura</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Factura?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Factura</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Factura?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection

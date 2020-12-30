@@ -19,6 +19,7 @@
       <h2>Empleados</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}">Contrato</a></li>
         <li class="breadcrumb-item active"><strong>Empleado</strong></li>
@@ -30,17 +31,19 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
-      @if($empleado->usuario->tipo > 1)
+      @permission('contrato-view')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('empleado-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar rol</button>
-      @endif
-      <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato</button>
+        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato</button>
+      @endpermission
       <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.print', ['empleado' => $empleado->id]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
-      @if($empleado->usuario->tipo > 2 || ($empleado->usuario->tipo <= 2 && Auth::user()->tipo <= 2))
+      @permission('empleado-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-      @endif
+      @endpermission
     </div>
   </div>
 
@@ -54,15 +57,31 @@
           <ul class="list-group">
             <li class="list-group-item">
               <b>Contrato</b>
-              <span class="pull-right"><a href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}">{{ $empleado->contrato->nombre }}</a></span>
+              <span class="pull-right">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}">
+                    {{ $empleado->contrato->nombre }}
+                  </a>
+                @else
+                  {{ $empleado->contrato->nombre }}
+                @endpermission
+                </span>
             </li>
             <li class="list-group-item">
               <b>Usuario</b>
               <span class="pull-right">
-                <a href="{{ route('admin.usuarios.show', ['usuario' => $empleado->usuario->id]) }}">
+                @permission('user-view')
+                  <a href="{{ route('admin.usuarios.show', ['usuario' => $empleado->usuario->id]) }}">
+                    {{ $empleado->usuario->usuario }}
+                  </a>
+                @else
                   {{ $empleado->usuario->usuario }}
-                </a>
+                @endpermission
               </span>
+            </li>
+            <li class="list-group-item">
+              <b>Role</b>
+              <span class="pull-right">{{ $empleado->usuario->tipo() }}</span>
             </li>
             <li class="list-group-item">
               <b>Nombres</b>
@@ -82,11 +101,11 @@
             </li>
             <li class="list-group-item">
               <b>RUT</b>
-              <span class="pull-right"> {{ $empleado->usuario->rut }} </span>
+              <span class="pull-right">{{ $empleado->usuario->rut }}</span>
             </li>
             <li class="list-group-item">
               <b>Dirección</b>
-              <span class="pull-right"> {{ $empleado->direccion }} </span>
+              <span class="pull-right">{{ $empleado->direccion }}</span>
             </li>
             <li class="list-group-item">
               <b>Teléfono</b>
@@ -126,7 +145,9 @@
             <div class="ibox-title px-3">
               <h5>Contrato</h5>
               <div class="ibox-tools">
-                <a class="btn btn-default btn-xs" href="{{ route('admin.empleados.contrato.edit', ['empleado' => $empleado->id]) }}" title="Editar contrato"><i class="fa fa-pencil"></i></a>
+                @permission('empleado-edit')
+                  <a class="btn btn-default btn-xs" href="{{ route('admin.empleados.contrato.edit', ['empleado' => $empleado->id]) }}" title="Editar contrato"><i class="fa fa-pencil"></i></a>
+                @endpermission
                 <button class="btn btn-default btn-xs" title="Ver historial" data-toggle="modal" data-target="#historyModal"><i class="fa fa-list"></i></button>
               </div>
             </div>
@@ -146,11 +167,11 @@
                 </li>
                 <li class="list-group-item">
                   <b>Inicio de Jornada</b>
-                  <span class="pull-right"> {{$empleado->lastContrato->inicio_jornada}} </span>
+                  <span class="pull-right">{{$empleado->lastContrato->inicio_jornada}}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Fin</b>
-                  <span class="pull-right"> {!! $empleado->lastContrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                  <span class="pull-right">{!! $empleado->lastContrato->fin ?? '<span class="text-muted">Indefinido</span>' !!}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Descripción</b>
@@ -177,7 +198,7 @@
                 </li>
                 <li class="list-group-item">
                   <b>Cuenta</b>
-                  <span class="pull-right"> {{ $empleado->banco->cuenta }} </span>
+                  <span class="pull-right">{{ $empleado->banco->cuenta }}</span>
                 </li>
               </ul>
             </div><!-- /.ibox-content -->
@@ -236,17 +257,19 @@
                                 @endif
                               </div>
                               <div class="col-3">
-                                <div class="btn-group">
-                                  <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                                  <ul class="dropdown-menu" x-placement="bottom-start">
-                                    @if($requisito->documento)
-                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                                      <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
-                                    @else
-                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
-                                    @endif
-                                  </ul>
-                                </div>
+                                @permission('empleado-edit')
+                                  <div class="btn-group">
+                                    <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                    <ul class="dropdown-menu" x-placement="bottom-start">
+                                      @if($requisito->documento)
+                                        <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                        <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                      @else
+                                        <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                      @endif
+                                    </ul>
+                                  </div>
+                                @endpermission
                               </div>
                             </div>
                           </div>
@@ -262,12 +285,14 @@
               </div>
               <div class="tab-pane" id="tab-11">
                 <div class="panel-body">
-                  <div class="mb-3">
-                    <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-                    @if($empleado->documentos->count() < 10)
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-                    @endif
-                  </div>
+                  @permission('empleado-edit')
+                    <div class="mb-3">
+                      @if($empleado->documentos->count() < 10)
+                        <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                      @endif
+                    </div>
+                  @endpermission
                   <div class="row icons-box icons-folder">
                     @foreach($empleado->carpetas()->main()->get() as $carpeta)
                       <div class="col-md-3 col-xs-4 infont mb-3">
@@ -295,7 +320,9 @@
               <div class="tab-pane" id="tab-12">
                 <div class="panel-body">
                   <div class="mb-3">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
+                    @permission('plantilla-documento-create')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
+                    @endpermission
                   </div>
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
@@ -315,8 +342,12 @@
                           <td>@nullablestring(optional($plantillaDocumento->padre)->nombre)</td>
                           <td>@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
-                            <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
+                            @permission('plantilla-documento-view')
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
+                            @endpermission
+                            @permission('plantilla-documento-edit')
+                              <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
+                            @endpermission
                           </td>
                         </tr>
                       @endforeach
@@ -352,7 +383,9 @@
                             @endif
                           </td>
                           <td>
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                            @permission('solicitud-view')
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                            @endpermission
                           </td>
                         </tr>
                       @endforeach
@@ -397,7 +430,9 @@
                       <td>{{ $sueldo->alcanceLiquido() }}</td>
                       <td>{{ $sueldo->sueldoLiquido() }}</td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                        @permission('sueldo-view')
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                        @endpermission
                       </td>
                     </tr>
                   @endforeach
@@ -429,7 +464,9 @@
                       <td class="text-right">{{ $anticipo->bono() }}</td>
                       <td><small>{!! $anticipo->status() !!}</small></td>
                       <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                        @permission('anticipo-view')
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                        @endpermission
                       </td>
                     </tr>
                   @endforeach
@@ -478,11 +515,19 @@
                   @foreach($empleado->entregas as $entrega)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td><a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario_id]) }}">{{ $entrega->inventario->nombre }}</a></td>
+                      <td>
+                        @permission('inventario-view')
+                          <a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario_id]) }}">
+                            {{ $entrega->inventario->nombre }}
+                          </a>
+                        @else
+                          {{ $entrega->inventario->nombre }}
+                        @endpermission
+                      </td>
                       <td>{{ $entrega->realizadoPor->nombre() }}</td>
                       <td>{{ $entrega->cantidad() }}</td>
                       <td>{{ $entrega->created_at }}</td>
-                      <td>{!! $entrega->recibido() !!}</td>
+                      <td><small>{!! $entrega->recibido() !!}</small></td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -534,16 +579,18 @@
                       <td>{!! $evento->status() !!}</td>
                       <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s') }}</td>
                       <td>
-                        <div class="btn-group">
-                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                            @if($evento->isPendiente())
-                              <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-check"></i> Aprobar</a></li>
-                              <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
-                            @endif
-                            <li><a class="dropdown-item" type="button" data-toggle="modal" data-target="#delEventModal" data-url="{{ route('admin.eventos.destroy', ['evento' => $evento->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
-                          </ul>
-                        </div>
+                        @permission('empleado-edit')
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              @if($evento->isPendiente())
+                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-check"></i> Aprobar</a></li>
+                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
+                              @endif
+                              <li><a class="dropdown-item" type="button" data-toggle="modal" data-target="#delEventModal" data-url="{{ route('admin.eventos.destroy', ['evento' => $evento->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                            </ul>
+                          </div>
+                        @endpermission
                       </td>
                     </tr>
                   @endforeach
@@ -556,11 +603,11 @@
     </div>
   </div>
   
-  @if($empleado->usuario->tipo > 1)
+  @if(!$empleado->usuario->isEmpresa())
     <div id="toggleModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="toggleModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.empleados.toggleTipo', ['empleado' => $empleado->id]) }}" method="POST">
+          <form action="{{ route('admin.empleados.changeRole', ['empleado' => $empleado->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -573,18 +620,18 @@
             <div class="modal-body">
               <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
                 <label>Seleccionar role:</label>
-                @if(Auth::user()->tipo <= 2)
+                @if(Auth::user()->isAdmin())
                   <div class="custom-control custom-radio m-0">
-                    <input id="role-admin" class="custom-control-input" type="radio" name="role" value="2"{{ $empleado->usuario->tipo == 2 ? ' checked' : '' }}>
+                    <input id="role-admin" class="custom-control-input" type="radio" name="role" value="administrador"{{ $empleado->usuario->isAdministrador() ? ' checked' : '' }}>
                     <label for="role-admin" class="custom-control-label">Administrador</label>
                   </div>
                 @endif
                 <div class="custom-control custom-radio">
-                  <input id="role-supervisor" class="custom-control-input" type="radio" name="role" value="3"{{ $empleado->usuario->tipo == 3 ? ' checked' : '' }}>
+                  <input id="role-supervisor" class="custom-control-input" type="radio" name="role" value="supervisor"{{ $empleado->usuario->hasRole('supervisor') ? ' checked' : '' }}>
                   <label for="role-supervisor" class="custom-control-label">Supervisor</label>
                 </div>
                 <div class="custom-control custom-radio">
-                  <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="4"{{ ($empleado->usuario->tipo == 4 || $empleado->usuario->tipo == 5) ? ' checked' : '' }}>
+                  <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="empleado"{{ $empleado->usuario->hasRole('empleado') ? ' checked' : '' }}>
                   <label for="role-empleado" class="custom-control-label">Empleado</label>
                 </div>
               </div>
@@ -599,40 +646,181 @@
     </div>
   @endif
 
-  <div id="contratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.empleados.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
-          @method('PATCH')
-          @csrf
+  @permission('empleado-edit')
+    <div id="contratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.empleados.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
+            @method('PATCH')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="contratoModalLabel">Cambiar de contrato</h4>
-          </div>
-          <div id="contrato-modal-body" class="modal-body">
-            <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
-              <label class="control-label" for="contrato">Contrato: *</label>
-              <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
-                <option value="">Seleccione...</option>
-                  @foreach($contratos as $contrato)
-                    @if($contrato->id != $empleado->contrato->id)
-                      <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
-                    @endif
-                  @endforeach
-              </select>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="contratoModalLabel">Cambiar de contrato</h4>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-success btn-sm" type="submit">Guardar</button>
-          </div>
-        </form>
+            <div id="contrato-modal-body" class="modal-body">
+              <div class="form-group {{ $errors->has('contrato') ? 'has-error' : '' }}">
+                <label class="control-label" for="contrato">Contrato: *</label>
+                <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                    @foreach($contratos as $contrato)
+                      <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+                    @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-success btn-sm" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delete-file-form" action="#" method="POST">
+            @method('DELETE')
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delFileModalLabel">Eliminar documento</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Documento?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="delEventModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delEventModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delEventForm" action="#" method="POST">
+            @method('DELETE')
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delEventModalLabel">Eliminar Evento</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Desea eliminar este evento?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="eventsModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="eventForm" action="{{ route('admin.eventos.store', ['empleado' => $empleado->id]) }}" method="POST">
+            <input id="eventDay" type="hidden" name="inicio" value="">
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="eventsModalLabel">Agregar evento</h4>
+            </div>
+            <div id="events-modal-body" class="modal-body">
+              <div class="alert alert-danger" style="display: none">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong class="text-center">Ha ocurrido un error.</strong> 
+              </div>
+
+              <h4 class="text-center" id="eventTitle"></h4>
+
+              <div class="form-group">
+                <label for="tipo">Evento: *</label>
+                <select id="tipo" class="form-control" name="tipo" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                  <option value="2">Licencia médica</option>
+                  <option value="3">Vacaciones</option>
+                  <option value="4">Permiso</option>
+                  <option value="5">Permiso no remunerable</option>
+                  @if(!$empleado->despidoORenuncia())
+                    <option value="6">Despido</option>
+                    <option value="7">Renuncia</option>
+                  @endif
+                  <option value="8">Inasistencia</option>
+                  <option value="9">Reemplazo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="fin">Fin: <small>(Opcional)</small></label>
+                <input id="fin" class="form-control" type="text" name="fin" placeholder="yyyy-mm-dd">
+              </div>
+
+              <div class="form-group{{ $errors->has('reemplazo') ? ' has-error' : '' }}" hidden>
+                <label for="reemplazo">Reemplazo: *</label>
+                <select id="reemplazo" class="form-control" name="reemplazo" required style="width: 100%">
+                  <option value="">Seleccione...</option>
+                  @foreach($empleados as $otherEmpleado)
+                    <option value="{{ $otherEmpleado->id }}">{{ $otherEmpleado->usuario->rut }} | {{ $otherEmpleado->usuario->nombre() }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              <div class="form-group" hidden>
+                <label for="valor">Valor: *</label>
+                <input id="valor" class="form-control" type="number" step="1" min="1" max="999999999" name="valor" placeholder="Valor" rqeuired>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusEventoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusEventoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="status-modal-form" action="#" method="POST">
+            <input id="status-modal-value" type="hidden" name="status">
+            @method('PUT')
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="statusEventoModalLabel">Cambiar estatus</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de <span id="status-modal-label"></span> este Evento?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm" type="submit" disabled>Enviar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endpermission
 
   <div id="historyModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -689,37 +877,12 @@
     </div>
   </div>
 
-  <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="delete-file-form" action="#" method="POST">
-          @method('DELETE')
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delFileModalLabel">Eliminar documento</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Documento?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  @if($empleado->usuario->tipo > 2 || ($empleado->usuario->tipo <= 2 && Auth::user()->tipo <= 2))
+  @permission('empleado-delete')
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form action="{{ route('admin.empleados.destroy', ['empleado' => $empleado->id]) }}" method="POST">
-            @method_field('DELETE')
+            @method('DELETE')
             @csrf
 
             <div class="modal-header">
@@ -730,7 +893,7 @@
             </div>
             <div class="modal-body">
               <h4 class="text-center">¿Esta seguro de eliminar este Empleado?</h4>
-              @if($empleado->usuario->tipo == 2)
+              @if($empleado->usuario->isAdmin())
                 <p class="text-center">El empleado tambien cuenta con perfil de Administrador. Si marca esta opción tamien se eliminará el Usuario Administrador relacionado al Empleado</p>
                 <div class="custom-control custom-checkbox">
                   <input id="customCheck1" class="custom-control-input" type="checkbox" name="eliminar_admin" value="1">
@@ -747,99 +910,7 @@
         </div>
       </div>
     </div>
-  @endif
-
-  <div id="delEventModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delEventModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="delEventForm" action="#" method="POST">
-          @method('DELETE')
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delEventModalLabel">Eliminar Evento</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Desea eliminar este evento?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="eventForm" action="{{ route('admin.eventos.store', ['empleado' => $empleado->id]) }}" method="POST">
-          <input id="eventDay" type="hidden" name="inicio" value="">
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delModalLabel">Agregar evento</h4>
-          </div>
-          <div id="events-modal-body" class="modal-body">
-            <div class="alert alert-danger" style="display: none">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-              <strong class="text-center">Ha ocurrido un error.</strong> 
-            </div>
-
-            <h4 class="text-center" id="eventTitle"></h4>
-
-            <div class="form-group">
-              <label for="tipo">Evento: *</label>
-              <select id="tipo" class="form-control" name="tipo" required style="width: 100%">
-                <option value="">Seleccione...</option>
-                <option value="2">Licencia médica</option>
-                <option value="3">Vacaciones</option>
-                <option value="4">Permiso</option>
-                <option value="5">Permiso no remunerable</option>
-                @if(!$empleado->despidoORenuncia())
-                  <option value="6">Despido</option>
-                  <option value="7">Renuncia</option>
-                @endif
-                <option value="8">Inasistencia</option>
-                <option value="9">Reemplazo</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="fin">Fin: <small>(Opcional)</small></label>
-              <input id="fin" class="form-control" type="text" name="fin" placeholder="yyyy-mm-dd">
-            </div>
-
-            <div class="form-group{{ $errors->has('reemplazo') ? ' has-error' : '' }}" hidden>
-              <label for="reemplazo">Reemplazo: *</label>
-              <select id="reemplazo" class="form-control" name="reemplazo" required style="width: 100%">
-                <option value="">Seleccione...</option>
-                @foreach($empleados as $empleado)
-                  <option value="{{ $empleado->id }}">{{ $empleado->usuario->rut }} | {{ $empleado->usuario->nombre() }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="form-group" hidden>
-              <label for="valor">Valor: *</label>
-              <input id="valor" class="form-control" type="number" step="1" min="1" max="999999999" name="valor" placeholder="Valor" rqeuired>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm" type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  @endpermission
 
   <div id="exportModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel">
     <div class="modal-dialog" role="document">
@@ -867,30 +938,6 @@
           <div class="modal-footer">
             <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
             <button class="btn btn-success btn-sm" type="submit">Enviar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div id="statusEventoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusEventoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="status-modal-form" action="#" method="POST">
-          <input id="status-modal-value" type="hidden" name="status">
-          @method('PUT')
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="statusEventoModalLabel">Cambiar estatus</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de <span id="status-modal-label"></span> este Evento?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm" type="submit" disabled>Enviar</button>
           </div>
         </form>
       </div>
@@ -939,20 +986,74 @@
         feriados = @json($empleado->getFeriados());
    	
     $(document).ready(function(){
-      $('#delFileModal').on('show.bs.modal', function(e){
-        let button = $(e.relatedTarget),
-            action = button.data('url');
+      @permission('empleado-edit')
+        $('#delFileModal').on('show.bs.modal', function(e){
+          let button = $(e.relatedTarget),
+              action = button.data('url');
 
-        $('#delete-file-form').attr('action', action);
-      });
+          $('#delete-file-form').attr('action', action);
+        });
 
-      $('#fin').datepicker({
-        format: 'yyyy-mm-dd',
-        startDate: 'today',
-        language: 'es',
-        keyboardNavigation: false,
-        autoclose: true
-      });
+        $('#fin').datepicker({
+          format: 'yyyy-mm-dd',
+          startDate: 'today',
+          language: 'es',
+          keyboardNavigation: false,
+          autoclose: true
+        });
+
+        $('#contrato').select2({
+          dropdownParent: $('#contrato-modal-body'),
+          theme: 'bootstrap4',
+          placeholder: 'Seleccione...',
+        });
+
+        $('#reemplazo, #tipo').select2({
+          dropdownParent: $('#events-modal-body'),
+          theme: 'bootstrap4',
+          placeholder: 'Seleccione...',
+        });
+
+        $('#reemplazo').trigger('change');
+        $('#eventForm').submit(storeEvent);
+        $('#delEventForm').submit(delEvent);
+
+        $('#tipo').change(function(){
+          let tipo = $(this).val();
+          let isReemplazo = tipo == 9;
+          let isDespidoRenuncia = (tipo == 6 || tipo == 7);
+
+          $('#fin')
+            .closest('.form-group')
+            .attr('hidden', (isReemplazo || isDespidoRenuncia));
+
+          $('#reemplazo, #valor')
+            .prop('required', isReemplazo)
+            .closest('.form-group')
+            .attr('hidden', !isReemplazo);
+        });
+
+        $('#delEventModal').on('show.bs.modal', function (e) {
+          let url = $(e.relatedTarget).data('url');
+
+          if(url){
+            $('#delEventForm').attr('action', url);
+          }
+          $('#delEventForm button[type="submit"]').prop('disabled', !url);
+        });
+
+        $('#statusEventoModal').on('show.bs.modal', function (e) {
+          let type = +$(e.relatedTarget).data('type'),
+              url = $(e.relatedTarget).data('url');
+
+          title = type == 1 ? 'aprobar' : 'rechazar';
+
+          $('#status-modal-form button[type="submit"]').prop('disabled', !url);
+          $('#status-modal-form').attr('action', url);
+          $('#status-modal-value').val(type);
+          $('#status-modal-label').text(title);
+        });
+      @endpermission
 
       $('#inicioExport, #finExport').datepicker({
         format: 'yyyy-mm-dd',
@@ -964,9 +1065,9 @@
             fin = new Date($('#finExport').val());
 
         if(inicio > fin){
-          inicio.setDate(inicio.getDate() + 1)
-          let newDate = inicio.getFullYear()+'-'+(inicio.getMonth()+1)+'-'+inicio.getDate()
-          $('#finExport').datepicker('setDate', newDate)
+          inicio.setDate(inicio.getDate() + 1);
+          let newDate = inicio.getFullYear()+'-'+(inicio.getMonth()+1)+'-'+inicio.getDate();
+          $('#finExport').datepicker('setDate', newDate);
         }
       });
 
@@ -979,23 +1080,6 @@
         calendar.fullCalendar('gotoDate', moment($('#gotoDate').val()));
         $('#gotoModal').modal('hide');
       });
-
-      $('#contrato').select2({
-        dropdownParent: $('#contrato-modal-body'),
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione...',
-      })
-
-      $('#reemplazo, #tipo').select2({
-        dropdownParent: $('#events-modal-body'),
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione...',
-      })
-
-      $('#reemplazo').trigger('change')
-
-      $('#eventForm').submit(storeEvent)
-      $('#delEventForm').submit(delEvent)
 
       calendar = $('#calendar').fullCalendar({
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -1036,141 +1120,109 @@
           events: eventos,
         }],
         dayClick: function(date){
-          $('#eventTitle').text(date.format())
-          $('#eventDay').val(date.format())
-          $('#eventsModal').modal('show')
+          $('#eventTitle').text(date.format());
+          $('#eventDay').val(date.format());
+          @permission('empleado-edit')
+            $('#eventsModal').modal('show');
+          @endpermission
         },
         eventClick: function(event){
-          if(event.id){
-            $('#delEventModal').modal('show');
-            $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
-          }else{
-            $('#delEventForm').attr('action', '#');
-          }
+          @permission('empleado-edit')
+            if(event.id){
+              $('#delEventModal').modal('show');
+              $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
+            }else{
+              $('#delEventForm').attr('action', '#');
+            }
 
-          $('#delEventForm button[type="submit"]').prop('disabled', !event.id)
+            $('#delEventForm button[type="submit"]').prop('disabled', !event.id);
+          @endpermission
         }
-      })
-
-      $('#tipo').change(function(){
-        let tipo = $(this).val()
-
-        let isReemplazo = tipo == 9
-        let isDespidoRenuncia = (tipo == 6 || tipo == 7)
-
-        $('#fin')
-          .closest('.form-group')
-          .attr('hidden', (isReemplazo || isDespidoRenuncia))
-
-        $('#reemplazo, #valor')
-          .prop('required', isReemplazo)
-          .closest('.form-group')
-          .attr('hidden', !isReemplazo)
-      })
-
-      $('#delEventModal').on('show.bs.modal', function (e) {
-        let url = $(e.relatedTarget).data('url');
-
-        if(url){
-          $('#delEventForm').attr('action', url);
-        }
-        $('#delEventForm button[type="submit"]').prop('disabled', !url)
-      })
-
-      $('#statusEventoModal').on('show.bs.modal', function (e) {
-        let type = +$(e.relatedTarget).data('type'),
-            url = $(e.relatedTarget).data('url');
-
-        title = type == 1 ? 'aprobar' : 'rechazar';
-
-        $('#status-modal-form button[type="submit"]').prop('disabled', !url)
-        $('#status-modal-form').attr('action', url)
-        $('#status-modal-value').val(type)
-        $('#status-modal-label').text(title)
-      })
+      });
    	});//Ready
+    
+    @permission('empleado-edit')
+      function storeEvent(e){
+        e.preventDefault();
 
-    function storeEvent(e){
-      e.preventDefault();
+        let form = $(this),
+            action = form.attr('action'),
+            alert  = $('#eventsModal .alert'),
+            button = form.find('button[type="submit"]');
 
-      let form = $(this),
-          action = form.attr('action'),
-          alert  = $('#eventsModal .alert');
-          button = form.find('button[type="submit"]');
+        button.prop('disabled', true);
+        alert.hide();
 
-      button.prop('disabled', true);
-      alert.hide();
+        $.ajax({
+          type: 'POST',
+          url: action,
+          data: form.serialize(),
+          dataType: 'json',
+        })
+        .done(function(r){
+          if(r.response){
+            if(r.evento.tipo == 6 || r.evento.tipo == 7 || r.evento.tipo == 9){
+              location.reload();
+            }
 
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function(r){
-        if(r.response){
-
-          if(r.evento.tipo == 6 || r.evento.tipo == 7 || r.evento.tipo == 9){
-            location.reload()
+            $('#calendar').fullCalendar('renderEvent', {
+              id: r.evento.id,
+              className: 'clickableEvent',
+              title: r.data.titulo,
+              start: r.evento.inicio,
+              end: r.evento.fin,
+              allDay: true,
+              color: r.data.color
+            });
+            form[0].reset();
+            $('#eventsModal').modal('hide');
+          }else{
+            alert.show().delay(7000).hide('slow');
+            alert.find('strong').text(r.message || 'Ha ocurrido un error.');
           }
-
-          $('#calendar').fullCalendar('renderEvent', {
-            id: r.evento.id,
-            className: 'clickableEvent',
-            title: r.data.titulo,
-            start: r.evento.inicio,
-            end: r.evento.fin,
-            allDay: true,
-            color: r.data.color
-          });
-          form[0].reset()
-          $('#eventsModal').modal('hide');
-        }else{
+        })
+        .fail(function(){
           alert.show().delay(7000).hide('slow');
-          alert.find('strong').text(r.message || 'Ha ocurrido un error.')
-        }
-      })
-      .fail(function(){
-        alert.show().delay(7000).hide('slow');
-        alert.find('strong').text('Ha ocurrido un error')
-      })
-      .always(function(){
-        button.prop('disabled', false);
-      })
-    }
+          alert.find('strong').text('Ha ocurrido un error');
+        })
+        .always(function(){
+          button.prop('disabled', false);
+        });
+      }
 
-    function delEvent(e){
-      e.preventDefault();
+      function delEvent(e){
+        e.preventDefault();
 
-      let form = $(this),
-          action = form.attr('action'),
-          alert  = form.find('.alert');
-          button = form.find('button[type="submit"]');
+        let form = $(this),
+            action = form.attr('action'),
+            alert  = form.find('.alert'),
+            button = form.find('button[type="submit"]');
 
-      button.prop('disabled', true);
-      alert.hide();
+        button.prop('disabled', true);
+        alert.hide();
 
-      $.ajax({
-        type: 'POST',
-        url: action,
-        data: form.serialize(),
-        dataType: 'json',
-      })
-      .done(function(r){
-        if(r.response){
-          $('#calendar').fullCalendar('removeEvents', r.evento.id);
-          $(`#evento-${r.evento.id}`)
-          $('#delEventModal').modal('hide');
-        }else{
+        $.ajax({
+          type: 'POST',
+          url: action,
+          data: form.serialize(),
+          dataType: 'json',
+        })
+        .done(function(r){
+          if(r.response){
+            $('#calendar').fullCalendar('removeEvents', r.evento.id);
+            $(`#evento-${r.evento.id}`);
+            $('#delEventModal').modal('hide');
+          }else{
+            alert.show().delay(7000).hide('slow');
+          }
+        })
+        .fail(function(){
           alert.show().delay(7000).hide('slow');
-        }
-      })
-      .fail(function(){
-        alert.show().delay(7000).hide('slow');
-      })
-      .always(function(){
-        button.prop('disabled', false);
-      })
-    }
+        })
+        .always(function(){
+          button.prop('disabled', false);
+        });
+      }
+    @endpermission
  	</script>
 @endsection

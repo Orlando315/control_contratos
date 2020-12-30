@@ -20,7 +20,8 @@ class Empresa extends Model
      */
     protected $fillable = [
       'nombres',
-      'representante'
+      'representante',
+      'logo',
     ];
 
     /**
@@ -49,7 +50,15 @@ class Empresa extends Model
      */
     public function usuario()
     {
-      return $this->hasOne('App\Usuario');
+      return $this->hasOne('App\User');
+    }
+
+    /**
+     * Obtener los User de la Empresa
+     */
+    public function users()
+    {
+      return $this->hasMany('App\User');
     }
 
     /**

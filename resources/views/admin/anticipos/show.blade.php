@@ -8,6 +8,7 @@
       <h2>Anticipos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Anticipo</strong></li>
       </ol>
@@ -16,7 +17,7 @@
 @endsection
 
 @section('content')
-  @if($anticipo->isPendiente())
+  @if($anticipo->isPendiente() && Auth::user()->hasPermission('anticipo-edit'))
     <div class="row justify-content-center">
       <div class="col-md-8">
           <div class="alert alert-info alert-important text-center" role="alert">
@@ -32,13 +33,18 @@
       </div>
     </div>
   @endif
+
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @if(!$anticipo->isRechazado())
+      @permission('anticipo-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @if(!$anticipo->isRechazado() && Auth::user()->hasPermission('anticipo-edit'))
         <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.edit', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endif
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('anticipo-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -50,26 +56,38 @@
             <li class="list-group-item">
               <b>Contrato</b>
               <span class="pull-right">
-                <a href="{{ route('admin.contratos.show', ['contrato' => $anticipo->contrato->id]) }}">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.contratos.show', ['contrato' => $anticipo->contrato->id]) }}">
+                    {{ $anticipo->contrato->nombre }}
+                  </a>
+                @else
                   {{ $anticipo->contrato->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Empleado</b>
               <span class="pull-right">
-                <a href="{{ route('admin.empleados.show', ['empleado' => $anticipo->empleado_id]) }}">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.empleados.show', ['empleado' => $anticipo->empleado_id]) }}">
+                    {{ $anticipo->empleado->nombre() }}
+                  </a>
+                @else
                   {{ $anticipo->empleado->nombre() }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Serie</b>
               <span class="pull-right">
                 @if($anticipo->hasSerie())
-                  <a href="{{ route('admin.anticipos.show.serie', ['serie' => $anticipo->serie]) }}">
+                  @permission('anticipo-index')
+                    <a href="{{ route('admin.anticipos.show.serie', ['serie' => $anticipo->serie]) }}">
+                      {{ $anticipo->serie }}
+                    </a>
+                  @else
                     {{ $anticipo->serie }}
-                  </a>
+                  @endpermission
                 @else
                   @nullablestring(null)
                 @endif
@@ -81,11 +99,11 @@
             </li>
             <li class="list-group-item">
               <b>Anticipo</b>
-              <span class="pull-right"> {{ $anticipo->anticipo() }}</span>
+              <span class="pull-right">{{ $anticipo->anticipo() }}</span>
             </li>
             <li class="list-group-item">
               <b>Bono</b>
-              <span class="pull-right"> {{ $anticipo->bono() }}</span>
+              <span class="pull-right">{{ $anticipo->bono() }}</span>
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
@@ -116,30 +134,32 @@
     </div>
   </div>
   
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.anticipos.destroy', ['anticipo' => $anticipo->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('anticipo-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.anticipos.destroy', ['anticipo' => $anticipo->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="delModalLabel">Eliminar Anticipo</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Anticipo?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Anticipo</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Anticipo?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
   
-  @if($anticipo->isPendiente())
+  @if($anticipo->isPendiente() && Auth::user()->hasPermission('anticipo-edit'))
     <div id="statusAnticipoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusAnticipoModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -167,16 +187,18 @@
 @endsection
 
 @section('script')
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#statusAnticipoModal').on('show.bs.modal', function (e) {
-        let type = +$(e.relatedTarget).data('type');
+  @if($anticipo->isPendiente() && Auth::user()->hasPermission('anticipo-edit'))
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#statusAnticipoModal').on('show.bs.modal', function (e) {
+          let type = +$(e.relatedTarget).data('type');
 
-        title = type == 1 ? 'aprobar' : 'rechazar';
+          title = type == 1 ? 'aprobar' : 'rechazar';
 
-        $('#status-modal-value').val(type)
-        $('#status-modal-label').text(title)
+          $('#status-modal-value').val(type)
+          $('#status-modal-label').text(title)
+        })
       })
-    })
-  </script>
+    </script>
+  @endif
 @endsection

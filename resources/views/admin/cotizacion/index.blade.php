@@ -8,6 +8,7 @@
       <h2>Cotizaciones</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Cotizaciones</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-calculator" aria-hidden="true"></i> Cotizaciones</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Cotización</a>
+            @permission('cotizacion-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Cotización</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -60,8 +63,12 @@
                   <td class="text-center"><small>{!! $cotizacion->facturacionStatus() !!}</small></td>
                   <td class="text-center">{{ $cotizacion->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.cotizacion.show', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.edit', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('cotizacion-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.cotizacion.show', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('cotizacion-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.edit', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

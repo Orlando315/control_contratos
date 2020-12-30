@@ -8,6 +8,7 @@
       <h2>Clientes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Clientes</strong></li>
       </ol>
     </div>
@@ -34,15 +35,17 @@
         <div class="ibox-title">
           <h5><i class="fa fa-user-circle-o" aria-hidden="true"></i> Clientes</h5>
           <div class="ibox-tools">
-            <div class="btn-group">
-              <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                <i class="fa fa-plus" aria-hidden="true"></i> Nuevo Cliente
-              </button>
-              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                <li><a class="dropdown-item" href="{{ route('admin.cliente.create', ['type' => 'persona']) }}">Persona</a></li>
-                <li><a class="dropdown-item" href="{{ route('admin.cliente.create', ['type' => 'empresa']) }}">Empresa</a></li>
-              </ul>
-            </div>
+            @permission('cliente-create')
+              <div class="btn-group">
+                <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Nuevo Cliente
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                  <li><a class="dropdown-item" href="{{ route('admin.cliente.create', ['type' => 'persona']) }}">Persona</a></li>
+                  <li><a class="dropdown-item" href="{{ route('admin.cliente.create', ['type' => 'empresa']) }}">Empresa</a></li>
+                </ul>
+              </div>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -72,8 +75,14 @@
                     </small>
                   </td>
                   <td class="text-center">
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.cliente.show', ['cliente' => $cliente->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.cliente.edit', ['cliente' => $cliente->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('cliente-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.cliente.show', ['cliente' => $cliente->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('cliente-edit')
+                      @if($cliente->isPersona())
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.cliente.edit', ['cliente' => $cliente->id]) }}"><i class="fa fa-pencil"></i></a>
+                      @endif
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

@@ -16,6 +16,8 @@ class PlantillaDocumentoController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Documento::class);
+
       $documentos = Documento::all();
       $plantillas = Plantilla::withCount(['secciones', 'documentos'])->get();
       $variables = PlantillaVariable::all();
@@ -32,6 +34,14 @@ class PlantillaDocumentoController extends Controller
      */
     public function create(Contrato $contrato = null, Empleado $empleado = null)
     {
+      if($contrato){
+        $this->authorize('view', $contrato);
+      }
+
+      if($contrato){
+        $this->authorize('view', $empleado);
+      }
+
       $selected = $contrato;
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
@@ -48,6 +58,7 @@ class PlantillaDocumentoController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Documento::class);
       $this->validate($request, [
         'nombre' => 'nullable|string|max:50',
         'contrato' => 'required',
@@ -88,6 +99,8 @@ class PlantillaDocumentoController extends Controller
      */
     public function show(Documento $documento)
     {
+      $this->authorize('view', $documento);
+
       $documento->load('plantilla.secciones');
 
       return view('admin.plantilla-documento.show', compact('documento'));
@@ -101,6 +114,8 @@ class PlantillaDocumentoController extends Controller
      */
     public function edit(Documento $documento)
     {
+      $this->authorize('update', $documento);
+
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
       $padres = Documento::all();
@@ -117,6 +132,7 @@ class PlantillaDocumentoController extends Controller
      */
     public function update(Request $request, Documento $documento)
     {
+      $this->authorize('update', $documento);
       $this->validate($request, [
         'nombre' => 'nullable|string|max:50',
         'contrato' => 'required',
@@ -164,6 +180,8 @@ class PlantillaDocumentoController extends Controller
      */
     public function destroy(Documento $documento)
     {
+      $this->authorize('delete', $documento);
+
       if($documento->delete()){
         return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Documento eliminado exitosamente.',

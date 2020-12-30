@@ -11,7 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-      
       App\Empresa::create([
         'nombres' => 'Empresa',
         'representante' => 'Representante',
@@ -97,6 +96,9 @@ class DatabaseSeeder extends Seeder
 
       $this->call([
         PlantillaVariableTableSeeder::class,
+        ModuloSeeder::class,
+        RoleSeeder::class,
+        PermissionSeeder::class,
       ]);
     }
 }

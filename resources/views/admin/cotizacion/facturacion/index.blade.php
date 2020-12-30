@@ -8,6 +8,7 @@
       <h2>Facturaciones</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Facturaciones</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-tasks" aria-hidden="true"></i> Facturaciones</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.facturacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Facturación</a>
+            @permission('cotizacion-facturacion-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.facturacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Facturación</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -62,7 +65,9 @@
                   <td class="text-center"><small>{!! $facturacion->status() !!}</small></td>
                   <td class="text-center">{{ $facturacion->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $facturacion->id]) }}"><i class="fa fa-search"></i></a>
+                    @permission('cotizacion-facturacion-create')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $facturacion->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

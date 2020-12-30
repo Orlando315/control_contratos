@@ -8,6 +8,7 @@
       <h2>Ordenes de compra</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Ordenes de compra</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-plus-square" aria-hidden="true"></i> Ordenes de compra</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Orden de compra</a>
+            @permission('compra-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Orden de compra</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -60,8 +63,12 @@
                   <td class="text-center"><small>{!! $compra->facturacionStatus() !!}</small></td>
                   <td class="text-center">{{ $compra->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('compra-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('compra-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

@@ -81,6 +81,8 @@ class CotizacionProductoController extends Controller
      */
     public function destroy(CotizacionProducto $producto)
     {
+      $this->authorize('update', $producto->cotizacion);
+
       if($producto->delete()){
         return redirect()->back()->with([
             'flash_message' => 'Producto eliminado exitosamente.',

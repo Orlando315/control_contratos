@@ -14,6 +14,7 @@
       <h2>Facturaciones</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}">Facturaciones</a></li>
         <li class="breadcrumb-item active"><strong>Asociar</strong></li>
       </ol>

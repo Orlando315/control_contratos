@@ -26,6 +26,7 @@ class PlantillaController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Plantilla::class);
       $variables = PlantillaVariable::toFormEditor();
 
       return view('admin.plantilla.create', compact('variables'));
@@ -39,6 +40,7 @@ class PlantillaController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Plantilla::class);
       $this->validate($request, [
         'nombre' => 'required',
         'secciones' => 'required|min:1',
@@ -76,6 +78,8 @@ class PlantillaController extends Controller
      */
     public function show(Plantilla $plantilla)
     {
+      $this->authorize('view', $plantilla);
+
       $plantilla->load('secciones');
 
       return view('admin.plantilla.show', compact('plantilla'));
@@ -89,6 +93,8 @@ class PlantillaController extends Controller
      */
     public function edit(Plantilla $plantilla)
     {
+      $this->authorize('update', $plantilla);
+
       $plantilla->load('secciones');
       $variables = PlantillaVariable::toFormEditor();
 
@@ -104,6 +110,7 @@ class PlantillaController extends Controller
      */
     public function update(Request $request, Plantilla $plantilla)
     {
+      $this->authorize('update', $plantilla);
       $this->validate($request, [
         'nombre' => 'required',
         'secciones' => 'required|min:1',
@@ -154,6 +161,8 @@ class PlantillaController extends Controller
      */
     public function destroy(Plantilla $plantilla)
     {
+      $this->authorize('delete', $plantilla);
+
       if($plantilla->delete()){
         return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Plantilla eliminada exitosamente.',

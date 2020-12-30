@@ -27,6 +27,9 @@ class InventariosEntregasController extends Controller
      */
     public function create(Inventario $inventario)
     {
+      $this->authorize('view', $inventario);
+      $this->authorize('create', InventarioEntrega::class);
+
       $empleados = $inventario->contrato->empleados()->with('usuario:id,empleado_id,nombres,apellidos')->get();
 
       return view('admin.inventarios.entregas.create', compact('inventario', 'empleados'));
@@ -41,6 +44,8 @@ class InventariosEntregasController extends Controller
      */
     public function store(Request $request, Inventario $inventario)
     {
+      $this->authorize('view', $inventario);
+      $this->authorize('create', InventarioEntrega::class);
       $this->validate($request, [
         'usuario' => 'required',
         'cantidad' => 'required|numeric',        
@@ -118,6 +123,8 @@ class InventariosEntregasController extends Controller
      */
     public function update(Request $request, InventarioEntrega $entrega)
     {
+      $this->authorize('update', $entrega);
+
       if(Auth::user()->id == $entrega->entregado){
         $entrega->recibido = true;
 
@@ -142,6 +149,8 @@ class InventariosEntregasController extends Controller
      */
     public function destroy(InventarioEntrega $entrega)
     {
+      $this->authorize('delete', $entrega);
+
       $inventario = $entrega->inventario;
       $inventario->cantidad += $entrega->cantidad;
 
@@ -169,6 +178,8 @@ class InventariosEntregasController extends Controller
      */
     public function download(InventarioEntrega $entrega)
     {
+      $this->authorize('view', $entrega);
+
       return Storage::exists($entrega->adjunto) ? Storage::download($entrega->adjunto) : abort(404);
     }
 }

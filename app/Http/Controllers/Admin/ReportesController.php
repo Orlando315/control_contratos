@@ -11,6 +11,16 @@ use Carbon\Carbon;
 class ReportesController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('permission:reporte-view');
+    }
+
+    /**
      * Formulario de consulta.
      *
      * @return \Illuminate\Http\Response

@@ -8,6 +8,7 @@
       <h2>Faenas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Faenas</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>

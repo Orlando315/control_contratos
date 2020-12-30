@@ -8,6 +8,7 @@
       <h2>Carpetas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ $carpeta->backUrl }}">Carpeta</a></li>
         <li class="breadcrumb-item active"><strong>Carpeta</strong></li>
       </ol>
@@ -19,7 +20,7 @@
   <div class="row mb-3">
     <div class="col-12">
       <a class="btn btn-default btn-sm" href="{{ $carpeta->backUrl }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @if(Auth::user()->tipo <= 2)
+      @if(Auth::user()->isAdmin())
         <a class="btn btn-default btn-sm" href="{{ route('admin.carpeta.edit', ['carpeta' => $carpeta->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif
@@ -111,7 +112,7 @@
     </div>
   </div>
 
-  @if(Auth::user()->tipo <= 2)
+  @if(Auth::user()->isAdmin())
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">

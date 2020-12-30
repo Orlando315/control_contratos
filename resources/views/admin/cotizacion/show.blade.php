@@ -19,9 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.edit', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('cotizacion-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('cotizacion-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.edit', ['cotizacion' => $cotizacion->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('cotizacion-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -42,17 +48,25 @@
             <li class="list-group-item">
               <b>Generado por</b>
               <span class="pull-right">
-                <a href="{{ route('admin.usuarios.show', ['usuario' => $cotizacion->user_id]) }}">
+                @permission('user-view')
+                  <a href="{{ route('admin.usuarios.show', ['usuario' => $cotizacion->user_id]) }}">
+                    {{ $cotizacion->user->nombre() }}
+                  </a>
+                @else
                   {{ $cotizacion->user->nombre() }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Cliente</b>
               <span class="pull-right">
-                <a href="{{ route('admin.cliente.show', ['cliente' => $cotizacion->cliente_id]) }}">
+                @permission('cliente-view')
+                  <a href="{{ route('admin.cliente.show', ['cliente' => $cotizacion->cliente_id]) }}">
+                    {{ $cotizacion->cliente->nombre }}
+                  </a>
+                @else
                   {{ $cotizacion->cliente->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
@@ -156,9 +170,13 @@
               <li class="list-group-item">
                 <b>Factura Sii ID</b>
                 <span class="pull-right">
-                  <a href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $cotizacion->facturacion->id]) }}">
+                  @permission('cotizacion-facturacion-view')
+                    <a href="{{ route('admin.cotizacion.facturacion.show', ['facturacion' => $cotizacion->facturacion->id]) }}">
+                      {{ $cotizacion->facturacion->sii_factura_id }}
+                    </a>
+                  @else
                     {{ $cotizacion->facturacion->sii_factura_id }}
-                  </a>
+                  @endpermission
                 </span>
               </li>
               <li class="list-group-item">
@@ -192,7 +210,9 @@
           </div>
         @else
           <div class="w-100 text-center">
-            <a class="btn btn-primary" href="{{ route('admin.cotizacion.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
+            @permission('cotizacion-facturacion-create')
+              <a class="btn btn-primary" href="{{ route('admin.cotizacion.facturacion.create', ['cotizacion' => $cotizacion->id]) }}">Realizar facturación</a>
+            @endpermission
           </div>
         @endif
       @endif
@@ -227,7 +247,7 @@
                   <td>@nullablestring($producto->tipo_codigo)</td>
                   <td>@nullablestring($producto->codigo)</td>
                   <td>
-                    @if($producto->inventario)
+                    @if($producto->inventario && Auth::user()->hasPermission('inventario-view'))
                       <a href="{{ route('admin.inventarios.show', ['inventario' => $producto->inventario_id]) }}">
                         {{ $producto->nombre }}
                       </a>
@@ -243,9 +263,11 @@
                   <td class="text-right">{{ $producto->impuesto() }}</td>
                   <td class="text-right">{{ $producto->total() }}</td>
                   <td class="text-center">
-                    <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.cotizacion.producto.destroy', ['producto' => $producto->id]) }}">
-                      <i class="fa fa-times"></i>
-                    </button>
+                    @permission('cotizacion-edit')
+                      <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.cotizacion.producto.destroy', ['producto' => $producto->id]) }}">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach
@@ -256,58 +278,62 @@
     </div>
   </div>
 
-  <div id="delProductoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delProductoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="delProductoModalForm" action="#" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('cotizacion-edit')
+    <div id="delProductoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delProductoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delProductoModalForm" action="#" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="delDataModalLabel">Eliminar Producto</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Producto?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm btn-delete-data" type="submit" disabled>Eliminar</button>
-          </div>
-        </form>
+              <h4 class="modal-title" id="delDataModalLabel">Eliminar Producto</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Producto?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm btn-delete-data" type="submit" disabled>Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
   
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.cotizacion.destroy', ['cotizacion' => $cotizacion->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('cotizacion-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.cotizacion.destroy', ['cotizacion' => $cotizacion->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="delModalLabel">Eliminar Cotización</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Cotización?</h4>
-            <p class="text-center">Se eliminará toda la información asociada a esta Cotización</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Cotización</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Cotización?</h4>
+              <p class="text-center">Se eliminará toda la información asociada a esta Cotización</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')

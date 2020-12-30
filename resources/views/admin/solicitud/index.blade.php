@@ -8,6 +8,7 @@
       <h2>Solicitudes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Solicitudes</strong></li>
       </ol>
     </div>
@@ -53,15 +54,21 @@
                   <td>{{ $solicitud->tipo() }}</td>
                   <td>@nullablestring($solicitud->descripcion)</td>
                   <td>{!! $solicitud->status() !!}</td>
-                  <td>
+                  <td class="text-center">
                     @if($solicitud->adjunto)
-                      <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
+                      @permission('solicitud-view')
+                        <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
+                      @else
+                        Sí
+                      @endpermission
                     @else
                       @nullablestring(null)
                     @endif
                   </td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                    @permission('solicitud-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                    @endprmission
                   </td>
                 </tr>
               @endforeach

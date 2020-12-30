@@ -16,6 +16,8 @@ class AnticiposController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Anticipo::class);
+
       $actualYear = request()->year ?? date('Y');
       $allYears = Anticipo::allYears()->get()->pluck('year')->toArray();
       $monthlyGroupedSeries = Anticipo::monthlySeriesGroupedByYear($actualYear);
@@ -40,6 +42,8 @@ class AnticiposController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Anticipo::class);
+
       $contratos = Contrato::all();
 
       return view('admin.anticipos.create', compact('contratos'));
@@ -53,8 +57,7 @@ class AnticiposController extends Controller
      */
     public function store(Request $request)
     {
-      $contrato = Contrato::findOrFail($request->contrato);
-
+      $this->authorize('create', Anticipo::class);
       $this->validate($request, [
         'empleado_id' => 'required',
         'fecha' => 'required|date_format:d-m-Y',
@@ -64,6 +67,7 @@ class AnticiposController extends Controller
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
+      $contrato = Contrato::findOrFail($request->contrato);
       $anticipo = new Anticipo($request->all());
       $anticipo->contrato_id = $contrato->id;
       $anticipo->status = true;
@@ -101,6 +105,8 @@ class AnticiposController extends Controller
      */
     public function show(Anticipo $anticipo)
     {
+      $this->authorize('view', $anticipo);
+
       return view('admin.anticipos.show', compact('anticipo'));
     }
 
@@ -174,6 +180,8 @@ class AnticiposController extends Controller
      */
     public function destroy(Anticipo $anticipo)
     {
+      $this->authorize('delete', $anticipo);
+
       if($anticipo->delete()){
         if($anticipo->adjunto){
           Storage::delete($anticipo->adjunto);
@@ -199,6 +207,8 @@ class AnticiposController extends Controller
      */
     public function masivo()
     {
+      $this->authorize('create', Anticipo::class);
+
       $contratos = Contrato::all();
 
       return view('admin.anticipos.createMasivo', ['contratos' => $contratos]);
@@ -233,8 +243,7 @@ class AnticiposController extends Controller
      */
     public function storeMasivo(Request $request)
     {
-      $contrato = Contrato::findOrFail($request->contrato);
-      
+      $this->authorize('create', Anticipo::class);      
       $this->validate($request, [
         'fecha' => 'required|date_format:d-m-Y',
         'empleados.*.anticipo' => 'required|numeric|min:0|max:99999999',
@@ -243,6 +252,7 @@ class AnticiposController extends Controller
         'empleados.*.adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
+      $contrato = Contrato::findOrFail($request->contrato);
       if(count($request->empleados) == 0){
         return redirect()->back()
                   ->withErrors('No se encontro información de los empleados.')
@@ -305,6 +315,8 @@ class AnticiposController extends Controller
      */
     public function download(Anticipo $anticipo)
     {
+      $this->authorize('view', $anticipo);
+
       if(!$anticipo->adjunto || !Storage::exists($anticipo->adjunto)){
         abort(404);
       }
@@ -321,6 +333,8 @@ class AnticiposController extends Controller
      */
     public function status(Request $request, Anticipo $anticipo)
     {
+      $this->authorize('update', $anticipo);
+
       $anticipo->status = $request->status == '1';
 
       if($anticipo->save()){
@@ -345,6 +359,8 @@ class AnticiposController extends Controller
      */
     public function serie($serie)
     {
+      $this->authorize('viewAny', Anticipo::class);
+
       $anticipos = Anticipo::whereSerie($serie)->get();
 
       if($anticipos->isEmpty()){
@@ -367,6 +383,8 @@ class AnticiposController extends Controller
      */
     public function printSerie($serie)
     {
+      $this->authorize('viewAny', Anticipo::class);
+
       $anticipos = Anticipo::whereSerie($serie)->get();
 
       if($anticipos->isEmpty()){
@@ -389,6 +407,8 @@ class AnticiposController extends Controller
      */
     public function destroySerie($serie)
     {
+      $this->authorize('deleteSerie', Anticipo::class);
+
       $anticipos = Anticipo::select('id', 'adjunto')->whereSerie($serie)->get();
       $adjuntos = $anticipos->pluck('adjunto')->reject(function($adjunto){
         return is_null($adjunto);

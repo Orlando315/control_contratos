@@ -8,6 +8,7 @@
       <h2>Documentos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.plantilla.documento.index') }}">Documentos</a></li>
         <li class="breadcrumb-item active"><strong>Documento</strong></li>
       </ol>
@@ -18,11 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @if(Auth::user()->tipo < 2)
+      @permission('plantilla-documento-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('plantilla-documento-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('plantilla-documento-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-      @endif
+      @endpermission
     </div>
   </div>
 
@@ -38,25 +43,37 @@
             <li class="list-group-item">
               <b>Contrato</b>
               <span class="pull-right">
-                <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+                    {{ $documento->contrato->nombre }}
+                  </a>
+                @else
                   {{ $documento->contrato->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Empleado</b>
               <span class="pull-right">
-                <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                @permission('empleado-view')
+                  <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                    {{ $documento->empleado->nombre() }}
+                  </a>
+                @else
                   {{ $documento->empleado->nombre() }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Plantilla</b>
               <span class="pull-right">
-                <a href="{{ route('admin.plantilla.show', ['plantilla' => $documento->plantilla_id]) }}">
+                @permission('plantilla-view')
+                  <a href="{{ route('admin.plantilla.show', ['plantilla' => $documento->plantilla_id]) }}">
+                    {{ $documento->plantilla->nombre }}
+                  </a>
+                @else
                   {{ $documento->plantilla->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
@@ -96,7 +113,7 @@
     </div>
   </div>
 
-  @if(Auth::user()->tipo < 2)
+  @permission('plantilla-documento-delete')
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -124,5 +141,5 @@
         </div>
       </div>
     </div>
-  @endif
+  @endpermission
 @endsection

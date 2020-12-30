@@ -16,6 +16,7 @@
       <h2>Inventarios</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
@@ -41,7 +42,7 @@
                   <label class="control-label" class="form-control" for="tipo">Tipo: *</label>
                   <select id="tipo" class="form-control" name="tipo" required>
                     <option value="">Seleccione...</option>
-                    @if(Auth::user()->tipo < 3)
+                    @if(Auth::user()->isAdmin())
                       <option value="1"{{ old('tipo', $inventario->tipo) == '1' ? ' selected' : '' }}>Insumo</option>
                       <option value="2"{{ old('tipo', $inventario->tipo) == '2' ? ' selected' : '' }}>EPP</option>
                       <option value="4"{{ old('tipo', $inventario->tipo) == '4' ? ' selected' : '' }}>Equipo</option>

@@ -8,6 +8,7 @@
       <h2>Usuarios</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Usuarios</strong></li>
       </ol>
     </div>
@@ -35,7 +36,9 @@
           <h5><i class="fa fa-users"></i> Usuarios</h5>
 
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Administrador</a>
+            @permission('user-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Administrador</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -43,7 +46,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
-                <th class="text-center">Tipo</th>
+                <th class="text-center">Role</th>
                 <th class="text-center">Nombres</th>
                 <th class="text-center">Apellidos</th>
                 <th class="text-center">RUT</th>
@@ -55,14 +58,18 @@
               @foreach($usuarios as $usuario)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $usuario->tipo() }}</td>
+                  <td>{{ $usuario->role()->name() }}</td>
                   <td>{{ $usuario->nombres }}</td>
-                  <td>{{ $usuario->apellidos }}</td>
+                  <td>@nullablestring($usuario->apellidos)</td>
                   <td>{{ $usuario->rut }}</td>
                   <td>@nullablestring($usuario->telefono)</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('user-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('user-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

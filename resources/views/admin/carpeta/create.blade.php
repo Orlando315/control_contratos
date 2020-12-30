@@ -8,6 +8,7 @@
       <h2>Carpetas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.'.$type.'.show', [$varName => $model->id]) }}">Carpetas</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>

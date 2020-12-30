@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Row;
-use App\{Empleado, Contrato, Usuario, EmpleadosContrato};
+use App\{Empleado, Contrato, User, EmpleadosContrato, Role};
 use DateTime;
 
 class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
@@ -85,7 +85,7 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
       $this->contrato->empleados()->save($empleado);
 
       // Crear Usuario
-      $usuario = new Usuario([
+      $usuario = new User([
         'nombres' => $item['nombres'],
         'apellidos' => $item['apellidos'],
         'rut' =>  $rut,
@@ -94,9 +94,12 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
       ]);
       $usuario->password = bcrypt($rut);
       $usuario->usuario  = $rut;
-      $usuario->tipo = 4; // Tipo 4 = Empleado
       $usuario->empresa_id = Auth::user()->empresa->id;
       $empleado->usuario()->save($usuario);
+
+      // Asignar role al usuario
+      $role = Role::firstWhere('name', 'empleado');
+      $usuario->attachRole($role);
 
       $jornada = (isset($item['jornada']) && in_array($item['jornada'], EmpleadosContrato::getJornadas()))
         ? $item['jornada']
@@ -154,7 +157,7 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
     private function isRegistered(Collection $item): bool
     {
       $rut = $item['rut'].'-'.$item['dv'];
-      $exists = Usuario::where('rut', $rut)
+      $exists = User::where('rut', $rut)
         ->when($item['email'], function ($query, $email) {
           return $query->orWhere('email', $email);
         })

@@ -16,6 +16,7 @@
       <h2>Inventarios</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
@@ -34,7 +35,7 @@
           <form action="{{ route('admin.inventarios.store') }}" method="POST" enctype="multipart/form-data">
             @csrf()
 
-            @if(Auth::user()->tipo <= 2)
+            @if(Auth::user()->isAdmin())
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('contrato_id') ? ' has-error' : '' }}">
@@ -58,7 +59,7 @@
                   <label for="tipo">Tipo: *</label>
                   <select id="tipo" class="form-control" name="tipo" required>
                     <option value="">Seleccione...</option>
-                    @if(Auth::user()->tipo < 3)
+                    @if(Auth::user()->isAdmin())
                       <option value="1"{{ old('tipo') == '1' ? ' selected' : '' }}>Insumo</option>
                       <option value="2"{{ old('tipo') == '2' ? ' selected' : '' }}>EPP</option>
                       <option value="4"{{ old('tipo') == '4' ? ' selected' : '' }}>Equipo</option>

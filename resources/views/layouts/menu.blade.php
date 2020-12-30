@@ -33,7 +33,7 @@
         </a>
       </li>
 
-      @if(Auth::user()->tipo <= 2)
+      @permission('contrato-index|contrato-create')
         <li>
           <a href="#">
             <i class="fa fa-clipboard"></i>
@@ -41,12 +41,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.contratos.index') }}">Ver contratos</a></li>
-            @if(Auth::user()->tipo == 1)
+            @permission('contrato-index')
+              <li><a href="{{ route('admin.contratos.index') }}">Ver contratos</a></li>
+            @endpermission
+            @permission('contrato-create')
               <li><a href="{{ route('admin.contratos.create') }}">Agregar contrato</a></li>
-            @endif
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('plantilla-documento-index|plantilla-documento-create|plantilla-index|plantilla-variable-index|plantilla-variable-view')
         <li>
           <a href="#">
             <i class="fa fa-file-text-o"></i>
@@ -54,10 +58,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.plantilla.documento.index') }}">Ver documentos</a></li>
-            <li><a href="{{ route('admin.plantilla.documento.create') }}">Agregar documento</a></li>
+            @permission('plantilla-documento-index')
+              <li><a href="{{ route('admin.plantilla.documento.index') }}">Ver documentos</a></li>
+            @endpermission
+            @permission('plantilla-documento-create')
+              <li><a href="{{ route('admin.plantilla.documento.create') }}">Agregar documento</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('user-index|user-create')
         <li>
           <a href="#">
             <i class="fa fa-users"></i>
@@ -65,20 +75,30 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.usuarios.index') }}">Ver usuarios</a></li>
-            <li><a href="{{ route('admin.usuarios.create') }}">Agregar usuario</a></li>
+            @permission('contrato-index')
+              <li><a href="{{ route('admin.usuarios.index') }}">Ver usuarios</a></li>
+            @endpermission
+            @permission('contrato-create')
+              <li><a href="{{ route('admin.usuarios.create') }}">Agregar usuario</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('empleado-index')
         <li>
           <a href="{{ route('admin.empleados.index') }}">
             <i class="fa fa-address-card"></i> <span class="nav-label">Empleados</span>
           </a>
         </li>
+      @endpermission
+      @permission('solicitud-index')
         <li>
           <a href="{{ route('admin.solicitud.index') }}">
             <i class="fa fa-archive"></i> <span class="nav-label">Solicitudes</span>
           </a>
         </li>
+      @endpermission
+      @permission('anticipo-index|anticipo-create')
         <li>
           <a href="#">
             <i class="fa fa-level-up"></i>
@@ -86,11 +106,17 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.anticipos.index') }}">Ver anticipos</a></li>
-            <li><a href="{{ route('admin.anticipos.individual') }}">Anticipo Individual</a></li>
-            <li><a href="{{ route('admin.anticipos.masivo') }}">Anticipo Masivo</a></li>
+            @permission('anticipo-index')
+              <li><a href="{{ route('admin.anticipos.index') }}">Ver anticipos</a></li>
+            @endpermission
+            @permission('anticipo-create')
+              <li><a href="{{ route('admin.anticipos.individual') }}">Anticipo Individual</a></li>
+              <li><a href="{{ route('admin.anticipos.masivo') }}">Anticipo Masivo</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('etiqueta-index|etiqueta-create')
         <li>
           <a href="#">
             <i class="fa fa-tags"></i>
@@ -98,10 +124,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.etiquetas.index') }}">Ver etiquetas</a></li>
-            <li><a href="{{ route('admin.etiquetas.create') }}">Agregar etiqueta</a></li>
+            @permission('etiqueta-index')
+              <li><a href="{{ route('admin.etiquetas.index') }}">Ver etiquetas</a></li>
+            @endpermission
+            @permission('etiqueta-create')
+              <li><a href="{{ route('admin.etiquetas.create') }}">Agregar etiqueta</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('factura-index|factura-create')
         <li>
           <a href="#">
             <i class="fa fa-file"></i>
@@ -109,10 +141,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.facturas.index') }}">Ver facturas</a></li>
-            <li><a href="{{ route('admin.facturas.create') }}">Agregar factura</a></li>
+            @permission('factura-index')
+              <li><a href="{{ route('admin.facturas.index') }}">Ver facturas</a></li>
+            @endpermission
+            @permission('factura-create')
+              <li><a href="{{ route('admin.facturas.create') }}">Agregar factura</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('gasto-index|gasto-create')
         <li>
           <a href="#">
             <i class="fa fa-credit-card"></i>
@@ -120,10 +158,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.gastos.index') }}">Ver gastos</a></li>
-            <li><a href="{{ route('admin.gastos.create') }}">Agregar gasto</a></li>
+            @permission('gasto-index')
+              <li><a href="{{ route('admin.gastos.index') }}">Ver gastos</a></li>
+            @endpermission
+            @permission('gasto-create')
+              <li><a href="{{ route('admin.gastos.create') }}">Agregar gasto</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('cotizacion-index|cotizacion-facturacion-index')
         <li>
           <a href="#">
             <i class="fa fa-dollar"></i>
@@ -131,10 +175,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.cotizacion.index') }}">Ver cotizaciones</a></li>
-            <li><a href="{{ route('admin.cotizacion.facturacion.index') }}">Ver facturaciones</a></li>
+            @permission('cotizacion-index')
+              <li><a href="{{ route('admin.cotizacion.index') }}">Ver cotizaciones</a></li>
+            @endpermission
+            @permission('cotizacion-facturacion-index')
+              <li><a href="{{ route('admin.cotizacion.facturacion.index') }}">Ver facturaciones</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('compra-index')
         <li>
           <a href="#">
             <i class="fa fa-plus-square"></i>
@@ -145,9 +195,8 @@
             <li><a href="{{ route('admin.compra.index') }}">Ver ordenes de compra</a></li>
           </ul>
         </li>
-      @endif
-
-      @if(Auth::user()->tipo <= 3)
+      @endpermission
+      @permission('inventario-index|inventario-create')
         <li>
           <a href="#">
             <i class="fa fa-cubes"></i>
@@ -155,10 +204,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.inventarios.index') }}">Ver inventarios</a></li>
-            <li><a href="{{ route('admin.inventarios.create') }}">Agregar inventario</a></li>
+            @permission('inventario-index')
+              <li><a href="{{ route('admin.inventarios.index') }}">Ver inventarios</a></li>
+            @endpermission
+            @permission('inventario-create')
+              <li><a href="{{ route('admin.inventarios.create') }}">Agregar inventario</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('transporte-index|transporte-create')
         <li>
           <a href="#">
             <i class="fa fa-car"></i>
@@ -166,15 +221,16 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.transportes.index') }}">Ver transportes</a></li>
-            @if(Auth::user()->tipo <= 2)
-            <li><a href="{{ route('admin.transportes.create') }}">Agregar transporte</a></li>
-            @endif
+            @permission('transporte-index')
+              <li><a href="{{ route('admin.transportes.index') }}">Ver transportes</a></li>
+            @endpermission
+            @permission('transporte-create')
+              <li><a href="{{ route('admin.transportes.create') }}">Agregar transporte</a></li>
+            @endpermission
           </ul>
         </li>
-      @endif
-
-      @if(Auth::user()->tipo == 1)
+      @endpermission
+      @permission('cliente-index|cliente-create')
         <li>
           <a href="#">
             <i class="fa fa-user-circle"></i>
@@ -182,11 +238,17 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.cliente.index') }}">Ver clientes</a></li>
-            <li><a href="{{ route('admin.cliente.create', ['type' => 'persona']) }}">Agregar persona</a></li>
-            <li><a href="{{ route('admin.cliente.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
+            @permission('cliente-index')
+              <li><a href="{{ route('admin.cliente.index') }}">Ver clientes</a></li>
+            @endpermission
+            @permission('cliente-create')
+              <li><a href="{{ route('admin.cliente.create', ['type' => 'persona']) }}">Agregar persona</a></li>
+              <li><a href="{{ route('admin.cliente.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
+            @endpermission
           </ul>
         </li>
+      @endpermission
+      @permission('proveedor-index|proveedor-create')
         <li>
           <a href="#">
             <i class="fa fa-briefcase"></i>
@@ -194,14 +256,17 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.proveedor.index') }}">Ver proveedores</a></li>
-            <li><a href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Agregar persona</a></li>
-            <li><a href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
+            @permission('proveedor-index')
+              <li><a href="{{ route('admin.proveedor.index') }}">Ver proveedores</a></li>
+            @endpermission
+            @permission('proveedor-create')
+              <li><a href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Agregar persona</a></li>
+              <li><a href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Agregar empresa</a></li>
+            @endpermission
           </ul>
         </li>
-      @endif
-
-      @if(Auth::user()->tipo <= 2)
+      @endpermission
+      @permission('reporte-view')
         <li>
           <a href="#">
             <i class="fa fa-area-chart"></i>
@@ -219,9 +284,8 @@
             <li><a href="{{ route('admin.reportes.reemplazos.index') }}">Reemplazos</a></li>
           </ul>
         </li>
-      @endif
-
-      @if(Auth::user()->isEmpleado())
+      @endpermission
+      @role('empleado'))
         <li>
           <a href="{{ route('anticipos.create') }}">
             <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
@@ -238,7 +302,21 @@
             <li><a href="{{ route('solicitud.create') }}">Agregar solicitud</a></li>
           </ul>
         </li>
-      @endif
+      @endrole
+      @ability('developer', 'god')
+        <li>
+          <a href="#">
+            <i class="fa fa-terminal"></i>
+            <span class="nav-label">Development</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.development.modulo.index') }}"><i class="fa fa-cube" aria-hidden="true"></i>Modulos</a></li>
+            <li><a href="{{ route('admin.development.role.index') }}"><i class="fa fa-user-circle" aria-hidden="true"></i>Roles</a></li>
+            <li><a href="{{ route('admin.development.permission.index') }}"><i class="fa fa-key" aria-hidden="true"></i>Permissions</a></li>
+          </ul>
+        </li>
+      @endability
     </ul>
   </div>
 </nav>

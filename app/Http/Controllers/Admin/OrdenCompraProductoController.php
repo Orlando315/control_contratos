@@ -81,6 +81,8 @@ class OrdenCompraProductoController extends Controller
      */
     public function destroy(OrdenCompraProducto $producto)
     {
+      $this->authorize('update', $producto->ordenCompra);
+
       if($producto->delete()){
         return redirect()->back()->with([
             'flash_message' => 'Producto eliminado exitosamente.',

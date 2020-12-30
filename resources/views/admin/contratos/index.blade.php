@@ -8,6 +8,7 @@
       <h2>Contratos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Contratos</strong></li>
       </ol>
     </div>
@@ -33,86 +34,100 @@
     <div class="col-md-12">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-clipboard"></i> Contratos</a></li>
-          <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-file-text-o"></i> Faenas</a></li>
+          @permission('contrato-index')
+            <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-clipboard"></i> Contratos</a></li>
+          @endpermission
+          @permission('faena-index')
+            <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-file-text-o"></i> Faenas</a></li>
+          @endpermission
         </ul>
         <div class="tab-content">
-          <div id="tab-1" class="tab-pane active">
-            <div class="panel-body">
-              @if(Auth::user()->tipo < 2)
-                <div class="mb-3 text-right">
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
-                </div>
-              @endif
+          @permission('contrato-index')
+            <div id="tab-1" class="tab-pane active">
+              <div class="panel-body">
+                @permission('contrato-create')
+                  <div class="mb-3 text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
+                  </div>
+                @endpermission
 
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Nombre</th>
-                    <th class="text-center">Descripción</th>
-                    <th class="text-center">Inicio</th>
-                    <th class="text-center">Fin</th>
-                    <th class="text-center">Valor</th>
-                    <th class="text-center">Empleados</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($contratos as $contrato)
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
                     <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>{{ $contrato->nombre }}</td>
-                      <td>@nullablestring($contrato->descripcion)</td>
-                      <td>{{ $contrato->inicio }}</td>
-                      <td>{{ $contrato->fin }}</td>
-                      <td>{{ $contrato->valor() }}</td>
-                      <td>{{ $contrato->empleados()->count() }}</td>
-                      <td>
-                        <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
-                        @if(Auth::user()->tipo < 2)
-                          <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contratos.edit', ['contrato' => $contrato->id] )}}"><i class="fa fa-pencil"></i></a>
-                        @endif
-                      </td>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Nombre</th>
+                      <th class="text-center">Descripción</th>
+                      <th class="text-center">Inicio</th>
+                      <th class="text-center">Fin</th>
+                      <th class="text-center">Valor</th>
+                      <th class="text-center">Empleados</th>
+                      <th class="text-center">Acción</th>
                     </tr>
-                  @endforeach
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contratos as $contrato)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $contrato->nombre }}</td>
+                        <td>@nullablestring($contrato->descripcion)</td>
+                        <td>{{ $contrato->inicio }}</td>
+                        <td>{{ $contrato->fin }}</td>
+                        <td>{{ $contrato->valor() }}</td>
+                        <td>{{ $contrato->empleados()->count() }}</td>
+                        <td>
+                          @permission('contrato-view')
+                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
+                          @endpermission
+                          @permission('contrato-edit')
+                            <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contratos.edit', ['contrato' => $contrato->id] )}}"><i class="fa fa-pencil"></i></a>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-          <div id="tab-2" class="tab-pane">
-            <div class="panel-body">
-              @if(Auth::user()->tipo < 2)
-                <div class="mb-3 text-right">
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.faena.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Faena</a>
-                </div>
-              @endif
+          @endpermission
+          @permission('faena-index')
+            <div id="tab-2" class="tab-pane">
+              <div class="panel-body">
+                @permission('faena-create')
+                  <div class="mb-3 text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.faena.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Faena</a>
+                  </div>
+                @endpermission
 
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Faena</th>
-                    <th class="text-center">Contratos</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($faenas as $faena)
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
                     <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>{{ $faena->nombre }}</td>
-                      <td>{{ $faena->contratos()->count() }}</td>
-                      <td>
-                        <a class="btn btn-success btn-xs" href="{{ route('admin.faena.show', ['faena' => $faena->id] )}}"><i class="fa fa-search"></i></a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.faena.edit', ['faena' => $faena->id] )}}"><i class="fa fa-pencil"></i></a>
-                      </td>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Faena</th>
+                      <th class="text-center">Contratos</th>
+                      <th class="text-center">Acción</th>
                     </tr>
-                  @endforeach
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($faenas as $faena)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $faena->nombre }}</td>
+                        <td>{{ $faena->contratos()->count() }}</td>
+                        <td>
+                          @permission('faena-view')
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.faena.show', ['faena' => $faena->id] )}}"><i class="fa fa-search"></i></a>
+                          @endpermission
+                          @permission('faena-edit')
+                            <a class="btn btn-primary btn-xs" href="{{ route('admin.faena.edit', ['faena' => $faena->id] )}}"><i class="fa fa-pencil"></i></a>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          @endpermission
         </div>
       </div>
     </div>

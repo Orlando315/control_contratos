@@ -16,6 +16,8 @@ class ClienteController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Cliente::class);
+
       $clientes = Auth::user()->empresa->clientes;
 
       return view('admin.cliente.index', compact('clientes'));
@@ -29,6 +31,8 @@ class ClienteController extends Controller
      */
     public function create($type)
     {
+      $this->authorize('create', Cliente::class);
+
       if($type != 'persona' && $type != 'empresa'){
         abort(404);
       }
@@ -45,6 +49,8 @@ class ClienteController extends Controller
      */
     public function store(Request $request, $type)
     {
+      $this->authorize('create', Cliente::class);
+
       if($type != 'persona' && $type != 'empresa'){
         abort(404);
       }
@@ -262,6 +268,8 @@ class ClienteController extends Controller
      */
     public function show(Cliente $cliente)
     {
+      $this->authorize('view', $cliente);
+
       $cliente->load(['direcciones', 'contactos', 'cotizaciones', 'facturaciones']);
 
       return view('admin.cliente.show', compact('cliente'));
@@ -275,6 +283,8 @@ class ClienteController extends Controller
      */
     public function edit(Cliente $cliente)
     {
+      $this->authorize('update', $cliente);
+
       if($cliente->isEmpresa()){
         abort(403);
       }
@@ -293,6 +303,8 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
+      $this->authorize('update', $cliente);
+
       if($cliente->isEmpresa()){
         abort(403);
       }
@@ -351,6 +363,8 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
+      $this->authorize('delete', $cliente);
+
       if($cliente->delete()){
         return redirect()->route('admin.cliente.index')->with([
           'flash_message' => 'Cliente eliminado exitosamente.',

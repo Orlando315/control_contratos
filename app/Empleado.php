@@ -106,7 +106,7 @@ class Empleado extends Model
      */
     public function usuario()
     {
-      return $this->hasOne('App\Usuario');
+      return $this->hasOne('App\User');
     }
 
     /**

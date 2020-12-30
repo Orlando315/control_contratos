@@ -35,15 +35,17 @@
         <div class="ibox-title">
           <h5><i class="fa fa-briefcase" aria-hidden="true"></i> Proveedores</h5>
           <div class="ibox-tools">
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fa fa-plus" aria-hidden="false"></i> Nuevo Proveedor
-              </button>
-              <div class="dropdown-menu dropdown-menu-right" x-placement="top-start">
-                <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Persona</a>
-                <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Empresa</a>
+            @permission('proveedor-create')
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-plus" aria-hidden="false"></i> Nuevo Proveedor
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" x-placement="top-start">
+                  <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Persona</a>
+                  <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Empresa</a>
+                </div>
               </div>
-            </div>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -73,8 +75,14 @@
                     </small>
                   </td>
                   <td class="text-center">
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.proveedor.show', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.proveedor.edit', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('proveedor-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.proveedor.show', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('proveedor-edit')
+                      @if($proveedor->isPersona())
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.proveedor.edit', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-pencil"></i></a>
+                      @endif
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

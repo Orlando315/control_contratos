@@ -16,7 +16,10 @@ class GastosController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Gasto::class);
+
       $gastos = Gasto::all();
+
       return view('admin.gastos.index', compact('gastos'));
     }
 
@@ -27,6 +30,8 @@ class GastosController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Gasto::class);
+
       $contratos = Contrato::all();
       $etiquetas = Etiqueta::all();
 
@@ -41,6 +46,7 @@ class GastosController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Gasto::class);
       $this->validate($request, [
         'contrato_id' => 'required',
         'etiqueta_id' => 'required',
@@ -72,6 +78,8 @@ class GastosController extends Controller
      */
     public function show(gasto $gasto)
     {
+      $this->authorize('view', $gasto);
+
       return view('admin.gastos.show', compact('gasto'));
     }
 
@@ -83,6 +91,8 @@ class GastosController extends Controller
      */
     public function edit(gasto $gasto)
     {
+      $this->authorize('update', $gasto);
+
       $contratos = Contrato::all();
       $etiquetas = Etiqueta::all();
 
@@ -98,6 +108,7 @@ class GastosController extends Controller
      */
     public function update(Request $request, gasto $gasto)
     {
+      $this->authorize('update', $gasto);
       $this->validate($request, [
         'contrato_id' => 'required',
         'etiqueta_id' => 'required',
@@ -129,6 +140,8 @@ class GastosController extends Controller
      */
     public function destroy(gasto $gasto)
     {
+      $this->authorize('delete', $gasto);
+
       if($gasto->delete()){
         return redirect()->route('admin.gastos.index')->with([
           'flash_message' => 'Gasto eliminado exitosamente.',

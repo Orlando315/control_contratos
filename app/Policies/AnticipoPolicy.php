@@ -11,6 +11,30 @@ class AnticipoPolicy
     use HandlesAuthorization;
 
     /**
+     * Verificar una accion antes de validar la peticion por el metodo solicitado.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function before($user, $ability)
+    {
+      if($user->hasRole('developer|superadmin|empresa')){
+        return true;
+      }
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
+    {
+      return $user->hasPermission('anticipo-index');
+    }
+
+    /**
      * Determine whether the user can view the anticipo.
      *
      * @param  \App\User  $user
@@ -19,7 +43,7 @@ class AnticipoPolicy
      */
     public function view(User $user, Anticipo $anticipo)
     {
-        //
+      return $user->hasPermission('contrato-view');
     }
 
     /**
@@ -30,7 +54,7 @@ class AnticipoPolicy
      */
     public function create(User $user)
     {
-        //
+      return $user->hasPermission('contrato-create');
     }
 
     /**
@@ -54,7 +78,19 @@ class AnticipoPolicy
      */
     public function delete(User $user, Anticipo $anticipo)
     {
-        //
+      return $user->hasPermission('anticipo-delete');
+    }
+
+    /**
+     * Determine whether the user can delete the anticipo.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Anticipo  $anticipo
+     * @return mixed
+     */
+    public function deleteSerie(User $user)
+    {
+      return $user->hasPermission('anticipo-delete');
     }
 
     /**

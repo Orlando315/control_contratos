@@ -9,6 +9,16 @@ use App\EmpleadosSueldo;
 class EmpleadosSueldosController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\EmpleadosSueldo  $sueldo
@@ -17,7 +27,7 @@ class EmpleadosSueldosController extends Controller
     public function show(EmpleadosSueldo $sueldo)
     {
       // Los usuarios Supervisores (3) y Empleados (4), solo pueden ver sus propios sueldos
-      if(Auth::user()->tipo >= 3 && Auth::user()->empleado_id != $sueldo->empleado_id){
+      if(Auth::user()->isNotAdmin() && Auth::user()->empleado->id != $sueldo->empleado_id){
         abort(404);
       }
 
@@ -32,7 +42,7 @@ class EmpleadosSueldosController extends Controller
      */
     public function recibido(EmpleadosSueldo $sueldo)
     {
-      if(Auth::user()->empleado_id === $sueldo->empleado_id){
+      if(Auth::user()->empleado->id === $sueldo->empleado_id){
         $sueldo->recibido = true;
 
         if($sueldo->save()){

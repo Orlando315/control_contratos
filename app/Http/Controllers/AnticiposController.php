@@ -10,6 +10,16 @@ use App\Anticipo;
 class AnticiposController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -37,6 +47,7 @@ class AnticiposController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Anticipo::class);
       $this->validate($request, [
         'anticipo' => 'required|numeric|min:1|max:99999999',
         'bono' => 'nullable|numeric|min:1|max:99999999',
@@ -128,6 +139,8 @@ class AnticiposController extends Controller
      */
     public function download(Anticipo $anticipo)
     {
+      $this->authorize('view', $anticipo);
+
       if(!$anticipo->adjunto || !Storage::exists($anticipo->adjunto)){
         abort(404);
       }

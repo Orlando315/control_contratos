@@ -16,6 +16,8 @@ class SolicitudController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Solicitud::class);
+
       $solicitudes = Solicitud::all();
 
       return view('admin.solicitud.index', compact('solicitudes'));
@@ -50,6 +52,8 @@ class SolicitudController extends Controller
      */
     public function show(Solicitud $solicitud)
     {
+      $this->authorize('view', $solicitud);
+
       return view('admin.solicitud.show', compact('solicitud'));
     }
 
@@ -61,6 +65,8 @@ class SolicitudController extends Controller
      */
     public function edit(Solicitud $solicitud)
     {
+      $this->authorize('update', $solicitud);
+
       return view('admin.solicitud.edit', compact('solicitud'));
     }
 
@@ -73,6 +79,7 @@ class SolicitudController extends Controller
      */
     public function update(Request $request, Solicitud $solicitud)
     {
+      $this->authorize('update', $solicitud);
       $this->validate($request, [
         'observacion' => 'nullable|string|max:200',
         'estatus' => 'required|in:aprobar,rechazar',
@@ -114,6 +121,8 @@ class SolicitudController extends Controller
      */
     public function destroy(Solicitud $solicitud)
     {
+      $this->authorize('delete', $solicitud);
+
       if($solicitud->delete()){
         if(Storage::exists($solicitud->adjunto)){
           Storage::delete($solicitud->adjunto); 

@@ -8,6 +8,7 @@
       <h2>Clientes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.cliente.index') }}">Clientes</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>

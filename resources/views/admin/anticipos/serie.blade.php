@@ -8,6 +8,7 @@
       <h2>Anticipos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Serie</strong></li>
       </ol>
@@ -18,9 +19,13 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>      
+      @permission('anticipo-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
       <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.print.serie', ['serie' => $serie]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('anticipo-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -36,22 +41,26 @@
             <li class="list-group-item">
               <b>Contrato</b>
               <span class="pull-right">
-                <a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">
+                @permission('contrato-view')
+                  <a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">
+                    {{ $contrato->nombre }}
+                  </a>
+                @else
                   {{ $contrato->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Total anticipo</b>
-              <span class="pull-right"> {{ number_format($totalAnticipos, 2, ',', '.') }}</span>
+              <span class="pull-right">{{ number_format($totalAnticipos, 2, ',', '.') }}</span>
             </li>
             <li class="list-group-item">
               <b>Total bono</b>
-              <span class="pull-right"> {{ number_format($totalBonos, 2, ',', '.') }}</span>
+              <span class="pull-right">{{ number_format($totalBonos, 2, ',', '.') }}</span>
             </li>
             <li class="list-group-item">
               <b>Fecha</b>
-              <span class="pull-right"> {{ $serieFecha }}</span>
+              <span class="pull-right">{{ $serieFecha }}</span>
             </li>
           </ul>
         </div>
@@ -61,7 +70,7 @@
     <div class="col-md-9">
       <div class="ibox">
         <div class="ibox-title">
-          <h5><i class="fa fa-level-up"></i>  Anticipos</h5>
+          <h5><i class="fa fa-level-up"></i> Anticipos</h5>
         </div>
         <div class="ibox-content">
           <table class="table data-table table-bordered table-hover table-sm w-100">
@@ -82,7 +91,9 @@
                   <td class="text-right">{{ $anticipo->anticipo() }}</td>
                   <td class="text-right">{{ $anticipo->bono() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                    @permission('anticipo-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach
@@ -93,27 +104,29 @@
     </div>
   </div>
   
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.anticipos.destroy.serie', ['serie' => $serie]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('anticipo-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.anticipos.destroy.serie', ['serie' => $serie]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="delModalLabel">Eliminar Serie</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Serie?</h4>
-            <p class="text-center">Se eliminarán todos los Anticipos de la serie</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Serie</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Serie?</h4>
+              <p class="text-center">Se eliminarán todos los Anticipos de la serie</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection

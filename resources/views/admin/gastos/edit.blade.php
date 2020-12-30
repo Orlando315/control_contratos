@@ -14,8 +14,9 @@
       <h2>Gastos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.gastos.index') }}">Gastos</a></li>
-        <li class="breadcrumb-item active"><strong>Agregar</strong></li>
+        <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
   </div>
@@ -67,7 +68,7 @@
               </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('valor') ? ' has-error' : '' }}">
-                  <label for="valor">Nombre: *</label>
+                  <label for="valor">Valor: *</label>
                   <input id="valor" class="form-control" type="number" name="valor" min="0" max="9999999999999999999" value="{{ old('valor', $gasto->valor) }}" placeholder="Valor" required>
                 </div>
               </div>
@@ -84,7 +85,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.gastos.show', ['gasto' => $etiqueta->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

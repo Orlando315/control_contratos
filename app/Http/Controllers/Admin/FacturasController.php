@@ -16,6 +16,7 @@ class FacturasController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Factura::class);
       $facturas = Factura::all();
 
       return view('admin.facturas.index', compact('facturas'));
@@ -28,6 +29,7 @@ class FacturasController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Factura::class);
       $contratos = Contrato::all();
       $etiquetas = Etiqueta::all();
 
@@ -42,6 +44,7 @@ class FacturasController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Factura::class);
       $this->validate($request, [
         'contrato_id' => 'required',
         'tipo' => 'required|in:1,2',
@@ -96,6 +99,8 @@ class FacturasController extends Controller
      */
     public function show(Factura $factura)
     {
+      $this->authorize('view', $factura);
+
       return view('admin.facturas.show', compact('factura'));
     }
 
@@ -107,6 +112,8 @@ class FacturasController extends Controller
      */
     public function edit(Factura $factura)
     {
+      $this->authorize('update', $factura);
+
       return view('admin.facturas.edit', compact('factura'));
     }
 
@@ -119,6 +126,7 @@ class FacturasController extends Controller
      */
     public function update(Request $request, Factura $factura)
     {
+      $this->authorize('update', $factura);
       $this->validate($request, [
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
@@ -181,6 +189,8 @@ class FacturasController extends Controller
      */
     public function destroy(Factura $factura)
     {
+      $this->authorize('delete', $factura);
+
       if($factura->delete()){
         Storage::deleteDirectory($factura->directory());
 
@@ -206,6 +216,8 @@ class FacturasController extends Controller
      */
     public function download(Factura $factura, $adjunto)
     {
+      $this->authorize('view', $factura);
+
       $path = $factura->{"adjunto{$adjunto}"};
       if(($adjunto < 1 || $adjunto > 2) || $path == null){
         abort(404);

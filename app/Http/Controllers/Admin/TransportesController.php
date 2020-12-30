@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Contrato;
 use App\Transporte;
-use App\Usuario;
+use App\User;
 use App\TransporteContrato;
 
 class TransportesController extends Controller
@@ -20,6 +20,8 @@ class TransportesController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Transporte::class);
+
       $transportes = Transporte::all();
 
       return view('admin.transportes.index', ['transportes' => $transportes]);
@@ -32,8 +34,10 @@ class TransportesController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Transporte::class);
+
       $contratos = Contrato::all();
-      $usuarios = Usuario::supervisores();
+      $usuarios = User::supervisores();
 
       return view('admin.transportes.create', ['contratos' => $contratos, 'usuarios' => $usuarios]);
     }
@@ -46,14 +50,14 @@ class TransportesController extends Controller
      */
     public function store(Request $request)
     {
-      $contrato = Contrato::findOrFail($request->contrato);
-      $supervisor = Usuario::findOrFail($request->supervisor);
-
+      $this->authorize('create', Transporte::class);
       $this->validate($request, [
         'vehiculo' => 'required',
         'patente' => 'required',
       ]);
 
+      $contrato = Contrato::findOrFail($request->contrato);
+      $supervisor = User::findOrFail($request->supervisor);
       $transporte = new Transporte($request->only('vehiculo', 'patente'));
       $transporte->user_id = $supervisor->id;
 
@@ -81,6 +85,8 @@ class TransportesController extends Controller
      */
     public function show(Transporte $transporte)
     {
+      $this->authorize('view', $transporte);
+
       $contratosIds = $transporte->contratos()->pluck('contrato_id')->toArray();
       $otherContratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
 
@@ -95,6 +101,8 @@ class TransportesController extends Controller
      */
     public function edit(Transporte $transporte)
     {
+      $this->authorize('update', $transporte);
+
       return view('admin.transportes.edit', ['transporte' => $transporte]);
     }
 
@@ -107,6 +115,7 @@ class TransportesController extends Controller
      */
     public function update(Request $request, Transporte $transporte)
     {
+      $this->authorize('update', $transporte);
       $this->validate($request, [
         'vehiculo' => 'required',
         'patente' => 'required',
@@ -136,6 +145,8 @@ class TransportesController extends Controller
      */
     public function destroy(Transporte $transporte)
     {
+      $this->authorize('delete', $transporte);
+
       if($transporte->delete()){
         $directory = 'Empresa' . Auth::user()->empresa_id . '/Transportes/' . $transporte->id;
 
@@ -158,6 +169,8 @@ class TransportesController extends Controller
 
     public function storeContratos(Request $request, Transporte $transporte)
     {
+      $this->authorize('update', $transporte);
+
       $contrato = Contrato::findOrFail($request->contrato);
 
       if($transporte->contratos()->create(['contrato_id' => $contrato->id])){
@@ -182,6 +195,8 @@ class TransportesController extends Controller
      */
     public function destroyContratos(Transporte $transporte, TransporteContrato $contrato)
     {
+      $this->authorize('update', $transporte);
+
       if($contrato->delete()){
         return redirect()->back()->with([
           'flash_class'   => 'alert-success',

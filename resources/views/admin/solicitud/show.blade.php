@@ -8,6 +8,7 @@
       <h2>Solicitudes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.solicitud.index') }}">Solicitudes</a></li>
         <li class="breadcrumb-item active"><strong>Solicitud</strong></li>
       </ol>
@@ -18,9 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.solicitud.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.solicitud.edit', ['solicitud' => $solicitud->id]) }}"><i class="fa {{ !$solicitud->isPendiente() ? 'fa-pencil' : 'fa-share' }}" aria-hidden="true"></i> {{ !$solicitud->isPendiente() ? 'Editar' : 'Responder solicitud' }}</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('solicitud-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.solicitud.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('solicitud-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.solicitud.edit', ['solicitud' => $solicitud->id]) }}"><i class="fa {{ !$solicitud->isPendiente() ? 'fa-pencil' : 'fa-share' }}" aria-hidden="true"></i> {{ !$solicitud->isPendiente() ? 'Editar' : 'Responder solicitud' }}</a>
+      @endpermission
+      @permission('solicitud-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -64,28 +71,30 @@
     </div>
   </div>
 
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.solicitud.destroy', ['solicitud' => $solicitud->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('solicitud-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.solicitud.destroy', ['solicitud' => $solicitud->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delModalLabel">Eliminar Solicitud</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Solicitud?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Solicitud</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Solicitud?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection

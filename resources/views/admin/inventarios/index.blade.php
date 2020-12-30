@@ -8,6 +8,7 @@
       <h2>Inventarios</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Inventarios</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-cubes"></i> Inventarios</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</a>
+            @permission('inventario-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -55,19 +58,19 @@
               @foreach($inventarios as $inventario)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>
-                    <a href="{{ route('admin.contratos.show', ['contrato' => $inventario->contrato_id]) }}">{{ $inventario->contrato->nombre }}</a>
-                  </td>
+                  <td>{{ $inventario->contrato->nombre }}</td>
                   <td>{{ $inventario->tipo() }}</td>
                   <td>{{ $inventario->nombre }}</td>
-                  <td>{{ $inventario->valor() }}</td>
+                  <td class="text-right">{{ $inventario->valor() }}</td>
                   <td>{{ $inventario->fecha }}</td>
                   <td>{{ $inventario->cantidad() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
-                    @if(Auth::user()->tipo <= 2 || $inventario->tipo == 3)
+                    @permission('inventario-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('inventario-edit')
                       <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.edit', ['inventario' => $inventario->id] )}}"><i class="fa fa-pencil"></i></a>
-                    @endif
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

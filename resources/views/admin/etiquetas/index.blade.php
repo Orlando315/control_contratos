@@ -8,6 +8,7 @@
       <h2>Etiquetas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Etiquetas</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-tags"></i> Etiquetas</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
+            @permission('etiqueta-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -56,8 +59,12 @@
                   <td>{{ $etiqueta->facturas()->count() }}</td>
                   <td>{{ $etiqueta->gastos()->count() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @permission('etiqueta-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('etiqueta-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

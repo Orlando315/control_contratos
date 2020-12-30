@@ -9,6 +9,16 @@ use App\EmpleadosEvento;
 class EmpleadosEventosController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

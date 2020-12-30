@@ -16,6 +16,7 @@
       <h2>Contratos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
@@ -67,7 +68,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
-                  <label for="faena">Nombre:</label>
+                  <label for="faena">Faena:</label>
                   <select id="faena" class="form-control" name="faena">
                     <option value="">Seleccione...</option>
                     @foreach($faenas as $faena)
@@ -75,7 +76,9 @@
                     @endforeach
                   </select>
 
-                  <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Faena</button>
+                  @permission('faena-create')
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Faena</button>
+                  @endpermission
                 </div>
               </div>
             </div>
@@ -105,39 +108,41 @@
     </div>
   </div>
 
-  <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="option-form" action="{{ route('admin.faena.store') }}" method="POST">
-          @csrf
+  @permission('faena-create')
+    <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="option-form" action="{{ route('admin.faena.store') }}" method="POST">
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="optionModalLabel">Agregar Faena</h4>
-          </div>
-          <div class="modal-body">
-            
-            <div class="form-group">
-              <label class="control-label" for="faena">Nombre: *</label>
-              <input id="faena" class="form-control" type="text" name="nombre" maxlength="50" required>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="optionModalLabel">Agregar Faena</h4>
             </div>
+            <div class="modal-body">
+              
+              <div class="form-group">
+                <label class="control-label" for="faena">Nombre: *</label>
+                <input id="faena" class="form-control" type="text" name="nombre" maxlength="50" required>
+              </div>
 
-            <div class="alert alert-dismissible alert-danger alert-option" role="alert" style="display: none">
-              <strong class="text-center">Ha ocurrido un error</strong> 
+              <div class="alert alert-dismissible alert-danger alert-option" role="alert" style="display: none">
+                <strong class="text-center">Ha ocurrido un error</strong> 
 
-              <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-              </button>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm option-submit" type="submit">Guardar</button>
-          </div>
-        </form>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm option-submit" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')
@@ -147,8 +152,10 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
-    const alertOption = $('.alert-option');
-    const optionSubmit = $('.option-submit');
+    @permission('faena-create')
+      const alertOption = $('.alert-option');
+      const optionSubmit = $('.option-submit');
+    @endpermission
 
     $(document).ready( function(){
       $('#inicio, #fin').datepicker({
@@ -164,38 +171,40 @@
         allowClear: true,
       });
 
-      $('#option-form').submit(function(e){
-        e.preventDefault();
+      @permission('faena-create')
+        $('#option-form').submit(function(e){
+          e.preventDefault();
 
-        optionSubmit.prop('disabled', true)
+          optionSubmit.prop('disabled', true)
 
-        let form = $(this),
-            action = form.attr('action');
+          let form = $(this),
+              action = form.attr('action');
 
-        $.ajax({
-          type: 'POST',
-          data: form.serialize(),
-          url: action,
-          dataType: 'json'
-        })
-        .done(function (response) {
-          if(response.response){
-            $('#faena').append(`<option value="${response.faena.id}">${response.faena.nombre}</option`);
-            $('#faena').val(response.faena.id);
-            $('#faena').trigger('change');
-            $('#option-form')[0].reset();
-            $('#optionModal').modal('hide');
-          }else{
-            alertOption.show().delay(7000).hide('slow');  
-          }
-        })
-        .fail(function () {
-          alertOption.show().delay(7000).hide('slow');
-        })
-        .always(function () {
-          optionSubmit.prop('disabled', false);
-        })
-      });
+          $.ajax({
+            type: 'POST',
+            data: form.serialize(),
+            url: action,
+            dataType: 'json'
+          })
+          .done(function (response) {
+            if(response.response){
+              $('#faena').append(`<option value="${response.faena.id}">${response.faena.nombre}</option`);
+              $('#faena').val(response.faena.id);
+              $('#faena').trigger('change');
+              $('#option-form')[0].reset();
+              $('#optionModal').modal('hide');
+            }else{
+              alertOption.show().delay(7000).hide('slow');  
+            }
+          })
+          .fail(function () {
+            alertOption.show().delay(7000).hide('slow');
+          })
+          .always(function () {
+            optionSubmit.prop('disabled', false);
+          })
+        });
+      @endpermission
     });
   </script>
 @endsection

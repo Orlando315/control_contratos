@@ -17,6 +17,8 @@ class EmpleadosContratoController extends Controller
      */
     public function create(Empleado $empleado)
     {
+      $this->authorize('update', $empleado);
+
       return view('admin.empleados.contrato.create', compact('empleado'));
     }
 
@@ -29,6 +31,7 @@ class EmpleadosContratoController extends Controller
      */
     public function store(Request $request, Empleado $empleado)
     {
+      $this->authorize('update', $empleado);
       $this->validate($request, [
         'inicio' => 'required|date_format:d-m-Y',
         'fin' => 'nullable|date_format:d-m-Y',
@@ -90,6 +93,7 @@ class EmpleadosContratoController extends Controller
      */
     public function edit(Empleado $empleado)
     {
+      $this->authorize('update', $empleado);
       return view('admin.empleados.contrato.edit', compact('empleado'));
     }
 
@@ -102,6 +106,7 @@ class EmpleadosContratoController extends Controller
      */
     public function update(Request $request, Empleado $empleado)
     {
+      $this->authorize('update', $empleado);
       $this->validate($request, [
         'sueldo' => 'required|numeric',
         'inicio' => 'required|date_format:d-m-Y',
@@ -149,6 +154,7 @@ class EmpleadosContratoController extends Controller
      */
     public function cambio(Request $request, Empleado $empleado)
     {
+      $this->authorize('update', $empleado);
       $contrato = Contrato::findOrFail($request->contrato);
       $empleado->contrato_id = $contrato->id;
 

@@ -8,6 +8,7 @@
       <h2>Facturas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Facturas</strong></li>
       </ol>
     </div>
@@ -35,7 +36,9 @@
           <h5><i class="fa fa-clipboard"></i> Facturas</h5>
           
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Factura</a>
+            @permission('factura-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Factura</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -56,15 +59,19 @@
               @foreach($facturas as $factura)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td><a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato->id]) }}">{{ $factura->contrato->nombre }} </a></td>
+                  <td>{{ $factura->contrato->nombre }}</td>
                   <td>{{ $factura->tipo() }}</td>
                   <td>{{ $factura->nombre }}</td>
                   <td>{{ $factura->valor() }}</td>
                   <td>{{ $factura->fecha }}</td>
                   <td>{!! $factura->pago() !!}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @permission('factura-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('factura-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

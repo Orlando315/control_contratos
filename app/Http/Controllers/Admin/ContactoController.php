@@ -9,6 +9,16 @@ use App\{Contacto, Cliente, Proveedor};
 class ContactoController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('permission:cliente-create|cliente-update|proveedor-create|proveedor-update');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response

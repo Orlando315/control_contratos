@@ -16,6 +16,8 @@ class FacturacionController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Facturacion::class);
+
       $facturaciones = Facturacion::all();
 
       return view('admin.cotizacion.facturacion.index', compact('facturaciones'));
@@ -29,6 +31,8 @@ class FacturacionController extends Controller
      */
     public function create(Cotizacion $cotizacion = null)
     {
+      $this->authorize('create', Facturacion::class);
+
       $cotizaciones = cotizacion::doesntHave('facturacion')->get();
 
       return view('admin.cotizacion.facturacion.create', ['cotizaciones' => $cotizaciones, 'selectedCotizacion' => $cotizacion]);
@@ -42,6 +46,7 @@ class FacturacionController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Facturacion::class);
       $this->validate($request, [
         'cotizacion' => 'required',
         'rut' => 'required|regex:/^(\d{4,9})$/',
@@ -93,6 +98,8 @@ class FacturacionController extends Controller
      */
     public function show(Facturacion $facturacion)
     {
+      $this->authorize('view', $facturacion);
+
       return view('admin.cotizacion.facturacion.show', compact('facturacion'));
     }
 

@@ -3,7 +3,7 @@
 @section('title', 'Perfil')
 
 @section('head')
-  @if(Auth::user()->tipo <= 2)
+  @if(Auth::user()->isAdmin())
     <!-- Select2 -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
@@ -30,7 +30,7 @@
                 </div>
               </div>
               <div class="col-md-6">
-                @if(Auth::user()->tipo <= 2)
+                @if(Auth::user()->isAdmin())
                   <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                     <label for="rut">RUT: *</label>
                     <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old( 'rut' ) ? old( 'rut' ) : Auth::user()->rut }}" placeholder="RUT" required>
@@ -60,7 +60,7 @@
               </div>
             </div>
             
-            @if(Auth::user()->tipo <= 2)
+            @if(Auth::user()->isAdmin())
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group{{ $errors->has('representante') ? ' has-error' : '' }}">
@@ -166,7 +166,7 @@
 
 
 @section('script')
-  @if(Auth::user()->tipo <= 2)
+  @if(Auth::user()->isAdmin())
     <!-- Select2 -->
     <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
     <script type="text/javascript">

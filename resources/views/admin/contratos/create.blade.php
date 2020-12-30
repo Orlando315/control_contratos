@@ -16,6 +16,7 @@
       <h2>Contratos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
@@ -67,7 +68,7 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
-                  <label for="faena">Nombre:</label>
+                  <label for="faena">Faena:</label>
                   <select id="faena" class="form-control" name="faena">
                     <option value="">Seleccione...</option>
                     @foreach($faenas as $faena)
@@ -75,7 +76,9 @@
                     @endforeach
                   </select>
 
-                  <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Faena</button>
+                  @permission('faena-create')
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Faena</button>
+                  @endpermission
                 </div>
               </div>
             </div>
@@ -85,100 +88,102 @@
               <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="150" value="{{ old('descripcion') }}" placeholder="Descripción">
             </div>
 
-            <div class="requisitos-container">
-              <div class="custom-control custom-checkbox">
-                <input id="allow" class="custom-control-input check-requisitos" type="checkbox" data-type="requisitos">
-                <label class="custom-control-label" for="allow">Agregar requisitos de Documentos adjuntos</label>
+            @permission('requisito-create')
+              <div class="requisitos-container">
+                <div class="custom-control custom-checkbox">
+                  <input id="allow" class="custom-control-input check-requisitos" type="checkbox" data-type="requisitos">
+                  <label class="custom-control-label" for="allow">Agregar requisitos de Documentos adjuntos</label>
+                </div>
+
+                <fieldset id="section-requisitos" class="mt-2 px-3" style="display: none;" disabled>
+                  <legend>Requisitos</legend>
+
+                  <div class="custom-control custom-checkbox">
+                    <input id="allow-contratos" class="custom-control-input check-requisitos" type="checkbox" data-type="contratos">
+                    <label class="custom-control-label" for="allow-contratos">Agregar requisitos para el Contrato</label>
+                  </div>
+                  <fieldset id="section-contratos" class="mt-2 px-3" style="display: none" disabled>
+                    <legend>Contrato</legend>
+
+                    <table class="table">
+                      <tbody id="tbody-contratos">
+                        <tr>
+                          <td class="text-center align-middle">
+                            <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                          </td>
+                          <td>
+                            <input class="form-control form-control-sm" type="text" name="requisitos[contratos][]" maxlength="50" value="{{ old('requisitos.contratos.0') }}" placeholder="Nombre">
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="2">
+                            <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="contratos">Nuevo requisito</button>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </fieldset>
+
+                  <div class="custom-control custom-checkbox">
+                    <input id="allow-empleados" class="custom-control-input check-requisitos" type="checkbox" data-type="empleados">
+                    <label class="custom-control-label" for="allow-empleados">Agregar requisitos para los Empleados</label>
+                  </div>
+                  <fieldset id="section-empleados" class="mt-2 px-3" style="display: none" disabled>
+                    <legend>Empleados</legend>
+
+                    <table class="table">
+                      <tbody id="tbody-empleados">
+                        <tr>
+                          <td class="text-center align-middle">
+                            <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                          </td>
+                          <td>
+                            <input class="form-control form-control-sm" type="text" name="requisitos[empleados][]" maxlength="50" value="{{ old('requisitos.empleados.0') }}" placeholder="Nombre">
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="2">
+                            <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="empleados">Nuevo requisito</button>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </fieldset>
+
+                  <div class="custom-control custom-checkbox">
+                    <input id="allow-transportes" class="custom-control-input check-requisitos" type="checkbox" data-type="transportes">
+                    <label class="custom-control-label" for="allow-transportes">Agregar requisitos para los Transportes</label>
+                  </div>
+                  <fieldset id="section-transportes" class="mt-2 px-3" style="display: none" disabled>
+                    <legend>Transportes</legend>
+
+                    <table class="table">
+                      <tbody id="tbody-transportes">
+                        <tr>
+                          <td class="text-center align-middle">
+                            <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                          </td>
+                          <td>
+                            <input class="form-control form-control-sm" type="text" name="requisitos[transportes][]" maxlength="50" value="{{ old('requisitos.transportes.0') }}" placeholder="Nombre">
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="2">
+                            <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="transportes">Nuevo requisito</button>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </fieldset>
+                </fieldset>
               </div>
-
-              <fieldset id="section-requisitos" class="mt-2 px-3" style="display: none;" disabled>
-                <legend>Requisitos</legend>
-
-                <div class="custom-control custom-checkbox">
-                  <input id="allow-contratos" class="custom-control-input check-requisitos" type="checkbox" data-type="contratos">
-                  <label class="custom-control-label" for="allow-contratos">Agregar requisitos para el Contrato</label>
-                </div>
-                <fieldset id="section-contratos" class="mt-2 px-3" style="display: none" disabled>
-                  <legend>Contrato</legend>
-
-                  <table class="table">
-                    <tbody id="tbody-contratos">
-                      <tr>
-                        <td class="text-center align-middle">
-                          <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
-                        </td>
-                        <td>
-                          <input class="form-control form-control-sm" type="text" name="requisitos[contratos][]" maxlength="50" value="{{ old('requisitos.contratos.0') }}" placeholder="Nombre">
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="2">
-                          <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="contratos">Nuevo requisito</button>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </fieldset>
-
-                <div class="custom-control custom-checkbox">
-                  <input id="allow-empleados" class="custom-control-input check-requisitos" type="checkbox" data-type="empleados">
-                  <label class="custom-control-label" for="allow-empleados">Agregar requisitos para los Empleados</label>
-                </div>
-                <fieldset id="section-empleados" class="mt-2 px-3" style="display: none" disabled>
-                  <legend>Empleados</legend>
-
-                  <table class="table">
-                    <tbody id="tbody-empleados">
-                      <tr>
-                        <td class="text-center align-middle">
-                          <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
-                        </td>
-                        <td>
-                          <input class="form-control form-control-sm" type="text" name="requisitos[empleados][]" maxlength="50" value="{{ old('requisitos.empleados.0') }}" placeholder="Nombre">
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="2">
-                          <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="empleados">Nuevo requisito</button>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </fieldset>
-
-                <div class="custom-control custom-checkbox">
-                  <input id="allow-transportes" class="custom-control-input check-requisitos" type="checkbox" data-type="transportes">
-                  <label class="custom-control-label" for="allow-transportes">Agregar requisitos para los Transportes</label>
-                </div>
-                <fieldset id="section-transportes" class="mt-2 px-3" style="display: none" disabled>
-                  <legend>Transportes</legend>
-
-                  <table class="table">
-                    <tbody id="tbody-transportes">
-                      <tr>
-                        <td class="text-center align-middle">
-                          <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
-                        </td>
-                        <td>
-                          <input class="form-control form-control-sm" type="text" name="requisitos[transportes][]" maxlength="50" value="{{ old('requisitos.transportes.0') }}" placeholder="Nombre">
-                        </td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="2">
-                          <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="transportes">Nuevo requisito</button>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </fieldset>
-              </fieldset>
-            </div>
+            @endpermission
 
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important">
@@ -200,39 +205,41 @@
     </div>
   </div>
 
-  <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="option-form" action="{{ route('admin.faena.store') }}" method="POST">
-          @csrf
+  @permission('faena-create')
+    <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="option-form" action="{{ route('admin.faena.store') }}" method="POST">
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="optionModalLabel">Agregar Faena</h4>
-          </div>
-          <div class="modal-body">
-            
-            <div class="form-group">
-              <label class="control-label" for="faena">Nombre: *</label>
-              <input id="faena" class="form-control" type="text" name="nombre" maxlength="50" required>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="optionModalLabel">Agregar Faena</h4>
             </div>
+            <div class="modal-body">
+              
+              <div class="form-group">
+                <label class="control-label" for="faena">Nombre: *</label>
+                <input id="faena" class="form-control" type="text" name="nombre" maxlength="50" required>
+              </div>
 
-            <div class="alert alert-dismissible alert-danger alert-option" role="alert" style="display: none">
-              <strong class="text-center">Ha ocurrido un error</strong> 
+              <div class="alert alert-dismissible alert-danger alert-option" role="alert" style="display: none">
+                <strong class="text-center">Ha ocurrido un error</strong> 
 
-              <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-              </button>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm option-submit" type="submit">Guardar</button>
-          </div>
-        </form>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm option-submit" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')
@@ -242,19 +249,23 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
-    const alertOption = $('.alert-option');
-    const optionSubmit = $('.option-submit');
-    let requisitoField = function (index, type) {
-      return `<tr>
-                <td class="text-center align-middle">
-                  <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
-                </td>
-                <td>
-                  <input class="form-control form-control-sm" type="text" name="requisitos[${type}][]" maxlength="50" placeholder="Nombre">
-                </td>
-              </tr>
-            `;
-    }
+    @permission('faena-create')
+      const alertOption = $('.alert-option');
+      const optionSubmit = $('.option-submit');
+    @endpermission
+    @permission('requisito-create')
+      let requisitoField = function (index, type) {
+        return `<tr>
+                  <td class="text-center align-middle">
+                    <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
+                  </td>
+                  <td>
+                    <input class="form-control form-control-sm" type="text" name="requisitos[${type}][]" maxlength="50" placeholder="Nombre">
+                  </td>
+                </tr>
+              `;
+      }
+    @endpermission
 
     $(document).ready( function(){
       $('#inicio, #fin').datepicker({
@@ -270,57 +281,63 @@
         allowClear: true,
       });
 
-      $('.requisitos-container').on('change', '.check-requisitos', function () {
-        let type = $(this).data('type');
-        let checked = $(this).is(':checked');
-        $(`#section-${type}`).toggle(checked).prop('disabled', !checked)
-      });
 
-      $('.check-requisitos').change();
+      @permission('requisito-create')
+        $('.requisitos-container').on('change', '.check-requisitos', function () {
+          let type = $(this).data('type');
+          let checked = $(this).is(':checked');
+          $(`#section-${type}`).toggle(checked).prop('disabled', !checked)
+        });
 
-      $('.requisitos-container').on('click', '.btn-add-field', function () {
-        let type = $(this).data('type')
-        let index = $(`#tbody-${type} tr`).length
+        $('.check-requisitos').change();
 
-        $(`#tbody-${type}`).append(requisitoField(index, type))
-      });
+        $('.requisitos-container').on('click', '.btn-add-field', function () {
+          let type = $(this).data('type')
+          let index = $(`#tbody-${type} tr`).length
 
-      $('.requisitos-container').on('click', '.btn-delete-requisito', function () {
-        $(this).closest('tr').remove();
-      });
+          $(`#tbody-${type}`).append(requisitoField(index, type))
+        });
 
-      $('#option-form').submit(function(e){
-        e.preventDefault();
+        $('.requisitos-container').on('click', '.btn-delete-requisito', function () {
+          $(this).closest('tr').remove();
+        });
+      @endpermission
 
-        optionSubmit.prop('disabled', true)
 
-        let form = $(this),
-            action = form.attr('action');
+      @permission('faena-create')
+        $('#option-form').submit(function(e){
+          e.preventDefault();
 
-        $.ajax({
-          type: 'POST',
-          data: form.serialize(),
-          url: action,
-          dataType: 'json'
-        })
-        .done(function (response) {
-          if(response.response){
-            $('#faena').append(`<option value="${response.faena.id}">${response.faena.nombre}</option`);
-            $('#faena').val(response.faena.id);
-            $('#faena').trigger('change');
-            $('#option-form')[0].reset();
-            $('#optionModal').modal('hide');
-          }else{
-            alertOption.show().delay(7000).hide('slow');  
-          }
-        })
-        .fail(function () {
-          alertOption.show().delay(7000).hide('slow');
-        })
-        .always(function () {
-          optionSubmit.prop('disabled', false);
-        })
-      });
+          optionSubmit.prop('disabled', true)
+
+          let form = $(this),
+              action = form.attr('action');
+
+          $.ajax({
+            type: 'POST',
+            data: form.serialize(),
+            url: action,
+            dataType: 'json'
+          })
+          .done(function (response) {
+            if(response.response){
+              $('#faena').append(`<option value="${response.faena.id}">${response.faena.nombre}</option`);
+              $('#faena').val(response.faena.id);
+              $('#faena').trigger('change');
+              $('#option-form')[0].reset();
+              $('#optionModal').modal('hide');
+            }else{
+              alertOption.show().delay(7000).hide('slow');  
+            }
+          })
+          .fail(function () {
+            alertOption.show().delay(7000).hide('slow');
+          })
+          .always(function () {
+            optionSubmit.prop('disabled', false);
+          })
+        });
+      @endpermission
     });
   </script>
 @endsection

@@ -16,6 +16,8 @@ class OrdenCompraController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', OrdenCompra::class);
+
       $compras = OrdenCompra::all();
 
       return view('admin.compra.index', compact('compras'));
@@ -29,6 +31,8 @@ class OrdenCompraController extends Controller
      */
     public function create(Proveedor $proveedor = null)
     {
+      $this->authorize('create', OrdenCompra::class);
+
       $proveedores = Proveedor::all();
       $inventarios = Inventario::all();
       $selectedProveedor = $proveedor;
@@ -44,6 +48,7 @@ class OrdenCompraController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', OrdenCompra::class);
       $this->validate($request, [
         'proveedor' => 'required',
         'notas' => 'nullable|string|max:350',
@@ -114,6 +119,8 @@ class OrdenCompraController extends Controller
      */
     public function show(OrdenCompra $compra)
     {
+      $this->authorize('view', $compra);
+
       $compra->load(['productos']);
 
       return view('admin.compra.show', compact('compra'));
@@ -127,6 +134,8 @@ class OrdenCompraController extends Controller
      */
     public function edit(OrdenCompra $compra)
     {
+      $this->authorize('update', $compra);
+
       $compra->load('productos');
       $proveedores = Proveedor::all();
       $inventarios = Inventario::all();
@@ -143,6 +152,7 @@ class OrdenCompraController extends Controller
      */
     public function update(Request $request, OrdenCompra $compra)
     {
+      $this->authorize('update', $compra);
       $this->validate($request, [
         'proveedor' => 'required',
         'notas' => 'nullable|string|max:350',
@@ -215,6 +225,8 @@ class OrdenCompraController extends Controller
      */
     public function destroy(OrdenCompra $compra)
     {
+      $this->authorize('delete', $compra);
+
       if($compra->delete()){
         return redirect()->route('admin.compra.index')->with([
           'flash_class'   => 'alert-success',

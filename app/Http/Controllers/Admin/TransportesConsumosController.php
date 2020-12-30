@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{TransporteConsumo, Transporte, Documento};
+use App\{TransporteConsumo, Transporte, Documento, Contrato};
 
 class TransportesConsumosController extends Controller
 {
@@ -26,6 +26,9 @@ class TransportesConsumosController extends Controller
      */
     public function create(Transporte $transporte)
     {
+      $this->authorize('view', $transporte);
+      $this->authorize('create', TransporteConsumo::class);
+
       $contratos = $transporte->contratos()->get();
 
       return view('admin.transportes.consumos.create', ['transporte' => $transporte, 'contratos' => $contratos]);
@@ -39,8 +42,8 @@ class TransportesConsumosController extends Controller
      */
     public function store(Request $request, Transporte $transporte)
     {
-      $contrato = \App\Contrato::findOrFail($request->contrato);
-
+      $this->authorize('view', $transporte);
+      $this->authorize('create', TransporteConsumo::class);
       $this->validate($request, [
         'contrato' => 'required',
         'tipo' => 'required|in:1,2,3,4',
@@ -52,6 +55,7 @@ class TransportesConsumosController extends Controller
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
+      $contrato = Contrato::findOrFail($request->contrato);
       $consumo = new TransporteConsumo($request->all());
       $consumo->contrato_id = $contrato->id;
 
@@ -94,6 +98,8 @@ class TransportesConsumosController extends Controller
      */
     public function show(TransporteConsumo $consumo)
     {
+      $this->authorize('view', $consumo);
+
       return view('admin.transportes.consumos.show', ['consumo' => $consumo]);
     }
 
@@ -105,6 +111,8 @@ class TransportesConsumosController extends Controller
      */
     public function edit(TransporteConsumo $consumo)
     {
+      $this->authorize('update', $consumo);
+
       return view('admin.transportes.consumos.edit', ['consumo' => $consumo]);
     }
 
@@ -117,6 +125,7 @@ class TransportesConsumosController extends Controller
      */
     public function update(Request $request, TransporteConsumo $consumo)
     {
+      $this->authorize('update', $consumo);
       $this->validate($request, [
         'tipo' => 'required|in:1,2,3,4',
         'fecha' => 'nullable|date_format:d-m-Y',
@@ -150,6 +159,8 @@ class TransportesConsumosController extends Controller
      */
     public function destroy(TransporteConsumo $consumo)
     {
+      $this->authorize('delete', $consumo);
+
       if($consumo->delete()){
         $consumo->carpetas()->delete();
         $consumo->documentos()->delete();

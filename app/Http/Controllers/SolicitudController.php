@@ -9,13 +9,25 @@ use App\Solicitud;
 class SolicitudController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-      $solicitudes = Solicitud::all();
+      $this->authorize('viewAny', Solicitud::class);
+
+      $solicitudes = Auth::user()->empleado->solicitudes;
 
       return view('solicitud.index', compact('solicitudes'));
     }
@@ -72,7 +84,7 @@ class SolicitudController extends Controller
      */
     public function show(Solicitud $solicitud)
     {
-      $this->authorize('create', $solicitud);
+      $this->authorize('view', $solicitud);
 
       return view('solicitud.show', compact('solicitud'));
     }
@@ -130,8 +142,12 @@ class SolicitudController extends Controller
      */
     public function destroy(Solicitud $solicitud)
     {
+      $this->authorize('delete', $solicitud);
+
       if($solicitud->delete()){
-        Storage::delete($solicitud->adjunto);
+        if($solicitud->adjunto){
+          Storage::delete($solicitud->adjunto); 
+        }
 
         return redirect()->route('solicitud.index')->with([
           'flash_class'   => 'alert-success',
@@ -154,6 +170,8 @@ class SolicitudController extends Controller
      */
     public function download(Solicitud $solicitud)
     {
+      $this->authorize('view', $solicitud);
+
       return Storage::exists($solicitud->adjunto) ? Storage::download($solicitud->adjunto) : abort(404);
     }
 }

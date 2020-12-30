@@ -9,7 +9,7 @@
     <h3 class="font-bold">Prohibído.</h3>
 
     <div class="error-desc">
-      Lo siento, tienes prohibído acceder a esta página.</br>
+      Lo siento, no tienes permitido acceder a esta página.</br>
       Podrías <a href="{{ route('dashboard') }}">volver al Inicio</a>.
     </div>
   </div>

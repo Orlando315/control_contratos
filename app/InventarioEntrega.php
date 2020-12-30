@@ -67,7 +67,7 @@ class InventarioEntrega extends model
      */
     public function entregadoA()
     {
-      return $this->belongsTo('App\Usuario', 'entregado', 'id');
+      return $this->belongsTo('App\User', 'entregado', 'id');
     }
 
     /**
@@ -75,7 +75,7 @@ class InventarioEntrega extends model
      */
     public function realizadoPor()
     {
-      return $this->belongsTo('App\Usuario', 'realizado', 'id');
+      return $this->belongsTo('App\User', 'realizado', 'id');
     }
 
     /**

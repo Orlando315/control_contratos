@@ -20,6 +20,8 @@ class ContratosController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Contrato::class);
+
       $contratos = Contrato::all();
       $faenas = Faena::all();
 
@@ -33,6 +35,7 @@ class ContratosController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Contrato::class);
       $faenas = Faena::all();
 
       return view('admin.contratos.create', compact('faenas'));
@@ -46,6 +49,7 @@ class ContratosController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Contrato::class);
       $this->validate($request, [
         'nombre' => 'required|string',
         'inicio' => 'required|date_format:d-m-Y',
@@ -96,6 +100,8 @@ class ContratosController extends Controller
      */
     public function show(Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+
       return view('admin.contratos.show', compact('contrato'));
     }
 
@@ -107,6 +113,8 @@ class ContratosController extends Controller
      */
     public function edit(Contrato $contrato)
     {
+      $this->authorize('update', $contrato);
+
       $faenas = Faena::all();
 
       return view('admin.contratos.edit', compact('contrato', 'faenas'));
@@ -121,6 +129,7 @@ class ContratosController extends Controller
      */
     public function update(Request $request, Contrato $contrato)
     {
+      $this->authorize('update', $contrato);
       $this->validate($request, [
         'nombre' => 'required|string',
         'inicio' => 'required|date_format:d-m-Y',
@@ -155,6 +164,8 @@ class ContratosController extends Controller
      */
     public function destroy(Contrato $contrato)
     {
+      $this->authorize('delete', $contrato);
+
       if($contrato->delete()){
         return redirect()->route('admin.contratos.index')->with([
           'flash_class'   => 'alert-success',
@@ -178,6 +189,8 @@ class ContratosController extends Controller
      */
     public function calendar(Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+
       $empleados = $contrato->empleados()->with('usuario:empleado_id,nombres,apellidos,rut')->get();
       $eventos   = $contrato->eventsToCalendar(true, '!=', 1, false);
       $jornadas  = $contrato->jornadasToCalendar();
@@ -193,6 +206,8 @@ class ContratosController extends Controller
      */
     public function exportJornadas(Request $request, Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+
       $this->exportExcel($contrato->exportJornadas($request->inicio, $request->fin), 'Jornadas');
     }
 
@@ -204,6 +219,8 @@ class ContratosController extends Controller
      */
     protected function exportExcel($data, $nombre)
     {
+      $this->authorize('view', $contrato);
+
       $rows = collect($data)->map(function($cells, $rowKey){
 
         // Estilos para la cabecera

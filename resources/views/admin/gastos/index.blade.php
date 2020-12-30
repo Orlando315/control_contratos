@@ -8,6 +8,7 @@
       <h2>Gastos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Gastos</strong></li>
       </ol>
     </div>
@@ -34,7 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-credit-card"></i> Gastos</h5>
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Gasto</a>
+            @permission('gasto-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Gasto</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -53,13 +56,17 @@
               @foreach($gastos as $gasto)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td><a href="{{ route('admin.contratos.show', ['contrato' => $gasto->contrato_id]) }}">{{ $gasto->contrato->nombre }}</a></td>
-                  <td><a href="{{ route('admin.etiquetas.show', ['etiqueta' => $gasto->etiqueta_id]) }}">{{ $gasto->etiqueta->etiqueta }}</a></td>
+                  <td>{{ $gasto->contrato->nombre }}</td>
+                  <td>{{ $gasto->etiqueta->etiqueta }}</td>
                   <td>{{ $gasto->nombre }}</td>
                   <td>{{ $gasto->valor() }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('gasto-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('gasto-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

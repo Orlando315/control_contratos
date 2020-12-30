@@ -17,6 +17,9 @@ class EmpleadosSueldosController extends Controller
      */
     public function index(Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+      $this->authorize('viewAny', EmpleadosSueldo::class);
+
       $actualYear = request()->year ?? date('Y');
       $allYears = EmpleadosSueldo::allYears($contrato->id)->get()->pluck('year')->toArray();
       $monthlyGroupedSueldos = EmpleadosSueldo::monthlyGroupedByYear($contrato->id, $actualYear);
@@ -32,6 +35,9 @@ class EmpleadosSueldosController extends Controller
      */
     public function create(Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+      $this->authorize('create', EmpleadosSueldo::class);
+
       $paymentMonth = $contrato->getPaymentMonth();
       $empleados = $contrato->empleados()->get();
 
@@ -47,6 +53,9 @@ class EmpleadosSueldosController extends Controller
      */
     public function store(Request $request, Contrato $contrato)
     {
+      $this->authorize('view', $contrato);
+      $this->authorize('create', EmpleadosSueldo::class);
+
       $payments = [];
       $month = $contrato->getPaymentMonth(true);
 
@@ -104,10 +113,7 @@ class EmpleadosSueldosController extends Controller
      */
     public function show(EmpleadosSueldo $sueldo)
     {
-      // Los usuarios Supervisores (3) y Empleados (4), solo pueden ver sus propios sueldos
-      if(Auth::user()->tipo >= 3 && Auth::user()->empleado_id != $sueldo->empleado_id){
-        abort(404);
-      }
+      $this->authorize('view', $sueldo);
 
       return view('admin.sueldos.show', compact('sueldo'));
     }

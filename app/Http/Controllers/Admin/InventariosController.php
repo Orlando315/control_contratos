@@ -16,6 +16,8 @@ class InventariosController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Inventario::class);
+
       $inventarios = Inventario::all();
 
       return view('admin.inventarios.index', compact('inventarios'));
@@ -28,6 +30,8 @@ class InventariosController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Inventario::class);
+
       $contratos = Contrato::all();
 
       return view('admin.inventarios.create', compact('contratos'));
@@ -41,6 +45,7 @@ class InventariosController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Inventario::class);
       $this->validate($request, [
         'contrato_id' => 'required',
         'tipo' => 'required',
@@ -62,7 +67,7 @@ class InventariosController extends Controller
       $inventario->calibracion = $request->has('calibracion');
       $inventario->certificado = $request->has('certificado');
 
-      if(Auth::user()->tipo >= 3){
+      if(Auth::user()->hasRole('supervisor')){
         $inventario->tipo = 3;
         $inventario->contrato_id = Auth::user()->empleado->contrato_id;
       }
@@ -100,6 +105,8 @@ class InventariosController extends Controller
      */
     public function show(Inventario $inventario)
     {
+      $this->authorize('view', $inventario);
+
       return view('admin.inventarios.show', compact('inventario'));
     }
 
@@ -111,8 +118,9 @@ class InventariosController extends Controller
      */
     public function edit(Inventario $inventario)
     {
+      $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -128,8 +136,9 @@ class InventariosController extends Controller
      */
     public function update(Request $request, Inventario $inventario)
     {
+      $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -192,8 +201,9 @@ class InventariosController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
+      $this->authorize('delete', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
-      if(Auth::user()->tipo >= 3 && $inventario->tipo < 3){
+      if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
         abort(404);
       }
 
@@ -223,6 +233,8 @@ class InventariosController extends Controller
      */
     public function download(Inventario $inventario)
     {
+      $this->authorize('view', $inventario);
+
       if(!Storage::exists($inventario->adjunto)){
         abort(404);
       }
@@ -238,6 +250,8 @@ class InventariosController extends Controller
      */
     public function clone(Inventario $inventario)
     {
+      $this->authorize('update', $inventario);
+
       $copy = $inventario->replicate();
       $copy->adjunto = null;
       $copy->nombre = $inventario->nombre.' (copia)';

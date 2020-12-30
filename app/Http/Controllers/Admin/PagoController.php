@@ -27,9 +27,7 @@ class PagoController extends Controller
      */
     public function create(Facturacion $facturacion)
     {
-      if($facturacion->isPaga()){
-        abort(403);
-      }
+      $this->authorize('create', [Pago::class, $facturacion]);
 
       return view('admin.pago.create', compact('facturacion'));
     }
@@ -43,10 +41,7 @@ class PagoController extends Controller
      */
     public function store(Request $request, Facturacion $facturacion)
     {
-      if($facturacion->isPaga()){
-        abort(403);
-      }
-
+      $this->authorize('create', [Pago::class, $facturacion]);
       $max = number_format($facturacion->pendiente, 2, '.', '');
       $this->validate($request, [
         'metodo' => 'required|string',
@@ -103,6 +98,8 @@ class PagoController extends Controller
      */
     public function edit(Pago $pago)
     {
+      $this->authorize('update', $pago);
+
       return view('admin.pago.edit', compact('pago'));
     }
 
@@ -115,6 +112,7 @@ class PagoController extends Controller
      */
     public function update(Request $request, Pago $pago)
     {
+      $this->authorize('update', $pago);
       $max = number_format($pago->facturacion->pendienteWithoutPago($pago, false), 2, '.', '');
       $this->validate($request, [
         'metodo' => 'required|string',
@@ -163,6 +161,8 @@ class PagoController extends Controller
      */
     public function destroy(Pago $pago)
     {
+      $this->authorize('delete', $pago);
+
       if($pago->delete()){
         if(Storage::exists($pago->adjunto)){
           Storage::delete($pago->adjunto);
@@ -189,6 +189,8 @@ class PagoController extends Controller
      */
     public function download(Pago $pago)
     {
+      $this->authorize('view', $pago);
+
       if(!Storage::exists($pago->adjunto)){
         abort(404);
       }

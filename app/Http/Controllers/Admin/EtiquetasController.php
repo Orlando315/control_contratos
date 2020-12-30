@@ -16,6 +16,8 @@ class EtiquetasController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Etiqueta::class);
+
       $etiquetas = Auth::user()->empresa->etiquetas;
 
       return view('admin.etiquetas.index', compact('etiquetas'));
@@ -28,6 +30,8 @@ class EtiquetasController extends Controller
      */
     public function create()
     {
+      $this->authorize('create', Etiqueta::class);
+
       return view('admin.etiquetas.create');
     }
 
@@ -39,6 +43,8 @@ class EtiquetasController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Etiqueta::class);
+
       $this->validate($request, [
         'etiqueta' => 'required|max:50',
       ]);
@@ -69,6 +75,8 @@ class EtiquetasController extends Controller
      */
     public function show(Etiqueta $etiqueta)
     {
+      $this->authorize('view', $etiqueta);
+
       return view('admin.etiquetas.show', compact('etiqueta'));
     }
 
@@ -80,6 +88,8 @@ class EtiquetasController extends Controller
      */
     public function edit(Etiqueta $etiqueta)
     {
+      $this->authorize('update', $etiqueta);
+
       return view('admin.etiquetas.edit', compact('etiqueta'));
     }
 
@@ -92,6 +102,7 @@ class EtiquetasController extends Controller
      */
     public function update(Request $request, Etiqueta $etiqueta)
     {
+      $this->authorize('update', $etiqueta);
       $this->validate($request, [
         'etiqueta' => 'required|max:50',
       ]);
@@ -120,6 +131,8 @@ class EtiquetasController extends Controller
      */
     public function destroy(Etiqueta $etiqueta)
     {
+      $this->authorize('delete', $etiqueta);
+
       if($etiqueta->facturas()->count() > 0 || $etiqueta->gastos()->count() > 0){
         return redirect()->back()->with([
           'flash_message' => 'No se puede eliminar. Esta etiqueta tiene elementos agregados.',

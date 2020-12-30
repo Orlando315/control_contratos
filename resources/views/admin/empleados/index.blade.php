@@ -8,6 +8,7 @@
       <h2>Empleados</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Empleados</strong></li>
       </ol>
     </div>
@@ -57,8 +58,12 @@
                   <td>{{ $empleado->usuario->rut }}</td>
                   <td>@nullablestring($empleado->usuario->telefono)</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id] )}}"><i class="fa fa-search"></i></a>
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @permission('empleado-view')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id] )}}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('empleado-edit')
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id] )}}"><i class="fa fa-pencil"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

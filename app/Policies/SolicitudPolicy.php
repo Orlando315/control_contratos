@@ -11,6 +11,34 @@ class SolicitudPolicy
     use HandlesAuthorization;
 
     /**
+     * Verificar una accion antes de validar la peticion por el metodo solicitado.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function before($user, $ability)
+    {
+      if($user->hasRole('developer|superadmin')){
+        return true;
+      }
+    }
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
+    {
+      if($user->isStaff()){
+        return $user->hasPermission('solicitud-index');
+      }
+
+      return true;
+    }
+
+    /**
      * Determine whether the user can view the solicitud.
      *
      * @param  \App\User  $user
@@ -19,7 +47,11 @@ class SolicitudPolicy
      */
     public function view(User $user, Solicitud $solicitud)
     {
-      return $user->isEmpleado() && ($user->empleado->id == $solicitud->empleado_id);
+      if($user->isStaff()){
+        return $user->hasPermission('solicitud-view');
+      }
+
+      return ($user->empleado->id == $solicitud->empleado_id);
     }
 
     /**
@@ -30,6 +62,10 @@ class SolicitudPolicy
      */
     public function create(User $user)
     {
+      if($user->isStaff()){
+        return $user->hasPermission('solicitud-create');
+      }
+
       return true;
     }
 
@@ -42,7 +78,11 @@ class SolicitudPolicy
      */
     public function update(User $user, Solicitud $solicitud)
     {
-      return $user->isEmpleado() && ($user->empleado->id == $solicitud->empleado_id) && $solicitud->isPendiente();
+      if($user->isStaff()){
+        return $user->hasPermission('solicitud-edit');
+      }
+
+      return ($user->empleado->id == $solicitud->empleado_id) && $solicitud->isPendiente();
     }
 
     /**
@@ -54,7 +94,11 @@ class SolicitudPolicy
      */
     public function delete(User $user, Solicitud $solicitud)
     {
-      return $user->isEmpleado() && ($user->empleado->id == $solicitud->empleado_id);
+      if($user->isStaff()){
+        return $user->hasPermission('solicitud-delete');
+      }
+
+      return ($user->empleado->id == $solicitud->empleado_id);
     }
 
     /**

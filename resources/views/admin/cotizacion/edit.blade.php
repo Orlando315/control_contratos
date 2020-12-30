@@ -14,6 +14,7 @@
       <h2>Cotizaciones</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.cotizacion.index') }}">Cotizaciones</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
@@ -47,7 +48,9 @@
                   @endforeach
                 </select>
 
-                <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Cliente</button>
+                @permission('cliente-create')
+                  <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Cliente</button>
+                @endpermission
               </div>
             </div>
           </div>
@@ -83,7 +86,9 @@
               </div>
             </fieldset>
 
-            <button class="btn btn-simple btn-link btn-sm btn-contacto" type="button" data-toggle="modal" data-target="#contactoModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Contacto</button>
+            @permission('cliente-edit')
+              <button class="btn btn-simple btn-link btn-sm btn-contacto" type="button" data-toggle="modal" data-target="#contactoModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Contacto</button>
+            @endpermission
 
             <div class="alert alert-danger"{!! $errors->has('contacto') ? '' : ' style=display:none;"' !!}>
               <ul class="m-0 box-errors-contactos">
@@ -102,7 +107,9 @@
               </div>
             </div>
 
-            <button class="btn btn-simple btn-link btn-sm btn-direccion" type="button" data-toggle="modal" data-target="#direccionModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Dirección</button>
+            @permission('cliente-edit')
+              <button class="btn btn-simple btn-link btn-sm btn-direccion" type="button" data-toggle="modal" data-target="#direccionModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Dirección</button>
+            @endpermission
 
             <div class="alert alert-danger"{!! $errors->has('direccion') ? '' : ' style="display:none;"' !!}>
               <ul class="m-0 box-errors-direcciones">
@@ -338,156 +345,32 @@
     </div>
   </div>
 
-  <div id="contactoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contactoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="add-form-contacto" action="#" method="POST">
-          @csrf
+  @permission('cliente-edit')
+    <div id="contactoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contactoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="add-form-contacto" action="#" method="POST">
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="contactoModalLabel">Agregar Contacto</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-nombre">Nombre: *</label>
-                  <input id="contacto-nombre" class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nombre" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-telefono">Teléfono: *</label>
-                  <input id="contacto-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
-                </div>
-              </div>
+              <h4 class="modal-title" id="contactoModalLabel">Agregar Contacto</h4>
             </div>
-
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-email">Email:</label>
-                  <input id="contacto-email" class="form-control" type="email" name="email" maxlength="50" placeholder="Email">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-cargo">Cargo:</label>
-                  <input id="contacto-cargo" class="form-control" type="text" name="cargo" maxlength="50" placeholder="Cargo">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="contacto-descripcion">Descripción:</label>
-              <input id="contacto-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
-            </div>
-
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-contactos">
-              </ul>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-contacto" type="submit" disabled>Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div id="direccionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="direccionModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="add-form-direccion" action="#" method="POST">
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-
-            <h4 class="modal-title" id="direccionModalLabel">Agregar Dirección</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="ciudad">Ciudad:</label>
-                  <input id="ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="comuna">Comuna:</label>
-                  <input id="comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="direccion">Dirección: *</label>
-              <input id="direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección" required>
-            </div>
-
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-direcciones">
-              </ul>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-direccion" type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <form id="add-form-cliente" action="#" method="POST">
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-
-            <h4 class="modal-title" id="optionModalLabel">Agregar Cliente</h4>
-          </div>
-          <div class="modal-body">
-
-            <div class="row justify-content-center">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="cliente-type">Tipo:</label>
-                  <select id="cliente-type" class="custom-select">
-                    <option value="persona">Persona</option>
-                    <option value="empresa">Empresa</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <fieldset id="cliente-type-persona">
+            <div class="modal-body">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="persona-nombre">Nombre: *</label>
-                    <input id="persona-nombre" class="form-control" type="text" name="nombre" maxlength="100" placeholder="Nombre" required>
+                    <label for="contacto-nombre">Nombre: *</label>
+                    <input id="contacto-nombre" class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nombre" required>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="persona-telefono">Teléfono: *</label>
-                    <input id="persona-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
+                    <label for="contacto-telefono">Teléfono: *</label>
+                    <input id="contacto-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
                   </div>
                 </div>
               </div>
@@ -495,159 +378,287 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="persona-rut">RUT: *</label>
-                    <input id="persona-rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" placeholder="RUT" required>
-                    <small class="form-text text-muted">Ejemplo: 00000000-0</small>
+                    <label for="contacto-email">Email:</label>
+                    <input id="contacto-email" class="form-control" type="email" name="email" maxlength="50" placeholder="Email">
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="persona-email">Email:</label>
-                    <input id="persona-email" class="form-control" type="text" name="email" maxlength="50" placeholder="Email">
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-ciudad">Ciudad:</label>
-                    <input id="persona-ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-comuna">Comuna:</label>
-                    <input id="persona-comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
+                    <label for="contacto-cargo">Cargo:</label>
+                    <input id="contacto-cargo" class="form-control" type="text" name="cargo" maxlength="50" placeholder="Cargo">
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="persona-direccion">Dirección:</label>
-                <input id="persona-direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección">
+                <label for="contacto-descripcion">Descripción:</label>
+                <input id="contacto-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
+              </div>
+
+              <div class="alert alert-danger" style="display: none">
+                <ul class="m-0 form-errors-contactos">
+                </ul>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm btn-add-contacto" type="submit" disabled>Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="direccionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="direccionModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="add-form-direccion" action="#" method="POST">
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+
+              <h4 class="modal-title" id="direccionModalLabel">Agregar Dirección</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="ciudad">Ciudad:</label>
+                    <input id="ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="comuna">Comuna:</label>
+                    <input id="comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
-                <label for="persona-descripcion">Descripción:</label>
-                <input id="persona-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
+                <label for="direccion">Dirección: *</label>
+                <input id="direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección" required>
               </div>
-            </fieldset>
 
-            <fieldset id="cliente-type-empresa" disabled>
+              <div class="alert alert-danger" style="display: none">
+                <ul class="m-0 form-errors-direcciones">
+                </ul>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm btn-add-direccion" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endpermission
+
+  @permission('cliente-create')
+    <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <form id="add-form-cliente" action="#" method="POST">
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+
+              <h4 class="modal-title" id="optionModalLabel">Agregar Cliente</h4>
+            </div>
+            <div class="modal-body">
+
               <div class="row justify-content-center">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
-                    <label for="empresa-rut">RUT: *</label>
-                    <div class="input-group">
-                      <input id="empresa-rut" class="form-control" type="text" name="rut" maxlength="9" pattern="^(\d{4,9})$" placeholder="RUT" required>
-                      <div class="input-group-append">
-                        <span class="input-group-addon border-right-0">-</span>
-                        <input id="empresa-digito_validador" class="form-control" type="text" name="digito_validador" maxlength="1" pattern="^([\dkK])$" placeholder="DV" required style="width:75px">
-                        <button class="btn btn-default btn-xs border-left-0 btn-consultar" type="button"><i class="fa fa-search"></i> Consultar</button>
-                      </div>
-                    </div>
+                    <label for="cliente-type">Tipo:</label>
+                    <select id="cliente-type" class="custom-select">
+                      <option value="persona">Persona</option>
+                      <option value="empresa">Empresa</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="empresa-razon_social">Razón social:</label>
-                <input id="empresa-razon_social" class="form-control" type="text" readonly>
-              </div>
-
-              <fieldset>
-                <legend class="form-legend">Dirección</legend>
-                
+              <fieldset id="cliente-type-persona">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label for="empresa-ciudad">Ciudad:</label>
-                      <input id="empresa-ciudad" class="form-control" type="text" readonly>
+                      <label for="persona-nombre">Nombre: *</label>
+                      <input id="persona-nombre" class="form-control" type="text" name="nombre" maxlength="100" placeholder="Nombre" required>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label for="empresa-comuna">Comuna:</label>
-                      <input id="empresa-comuna" class="form-control" type="telefono" readonly>
+                      <label for="persona-telefono">Teléfono: *</label>
+                      <input id="persona-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
                     </div>
                   </div>
                 </div>
-                
-                <div class="form-group">
-                  <label for="empresa-direccion">Dirección:</label>
-                  <input id="empresa-direccion" class="form-control" type="text" readonly>
-                </div>
-              </fieldset><!-- direccion -->
 
-              <fieldset>
-                <legend class="form-legend">Contactos</legend>
-
-                <div id="section-contactos">
-                  <div id="contacto-0" class="border-bottom mb-3">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="nombre-0">Nombre: *</label>
-                          <input id="nombre-0" class="form-control" type="text" name="contactos[0][nombre]" maxlength="100" placeholder="Nombre" required>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="telefono-0">Teléfono: *</label>
-                          <input id="telefono-0" class="form-control" type="telefono" name="contactos[0][telefono]" maxlength="20" placeholder="Teléfono" required>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="email-0">Email:</label>
-                          <input id="email-0" class="form-control" type="email" name="contactos[0][email]" maxlength="50" placeholder="Email">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="cargo-0">Cargo:</label>
-                          <input id="cargo-0" class="form-control" type="text" name="contactos[0][cargo]" maxlength="50" placeholder="Cargo">
-                        </div>
-                      </div>
-                    </div>
-
+                <div class="row">
+                  <div class="col-md-6">
                     <div class="form-group">
-                      <label for="descripcion-0">Descripción:</label>
-                      <input id="descripcion-0" class="form-control" type="text" name="contactos[0][descripcion]" maxlength="100" placeholder="Descripción">
+                      <label for="persona-rut">RUT: *</label>
+                      <input id="persona-rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" placeholder="RUT" required>
+                      <small class="form-text text-muted">Ejemplo: 00000000-0</small>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-email">Email:</label>
+                      <input id="persona-email" class="form-control" type="text" name="email" maxlength="50" placeholder="Email">
                     </div>
                   </div>
                 </div>
-              </fieldset><!-- contactos -->
-            </fieldset><!-- #cliente-persona -->
 
-            <div class="form-group">
-              <label>Proveedor:</label>
-              <div class="custom-control custom-checkbox">
-                <input id="proveedor" class="custom-control-input" type="checkbox" name="proveedor" value="1">
-                <label class="custom-control-label" for="proveedor">
-                  Es proveedor
-                </label>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-ciudad">Ciudad:</label>
+                      <input id="persona-ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-comuna">Comuna:</label>
+                      <input id="persona-comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="persona-direccion">Dirección:</label>
+                  <input id="persona-direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección">
+                </div>
+
+                <div class="form-group">
+                  <label for="persona-descripcion">Descripción:</label>
+                  <input id="persona-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
+                </div>
+              </fieldset>
+
+              <fieldset id="cliente-type-empresa" disabled>
+                <div class="row justify-content-center">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="empresa-rut">RUT: *</label>
+                      <div class="input-group">
+                        <input id="empresa-rut" class="form-control" type="text" name="rut" maxlength="9" pattern="^(\d{4,9})$" placeholder="RUT" required>
+                        <div class="input-group-append">
+                          <span class="input-group-addon border-right-0">-</span>
+                          <input id="empresa-digito_validador" class="form-control" type="text" name="digito_validador" maxlength="1" pattern="^([\dkK])$" placeholder="DV" required style="width:75px">
+                          <button class="btn btn-default btn-xs border-left-0 btn-consultar" type="button"><i class="fa fa-search"></i> Consultar</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="empresa-razon_social">Razón social:</label>
+                  <input id="empresa-razon_social" class="form-control" type="text" readonly>
+                </div>
+
+                <fieldset>
+                  <legend class="form-legend">Dirección</legend>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="empresa-ciudad">Ciudad:</label>
+                        <input id="empresa-ciudad" class="form-control" type="text" readonly>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="empresa-comuna">Comuna:</label>
+                        <input id="empresa-comuna" class="form-control" type="telefono" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="empresa-direccion">Dirección:</label>
+                    <input id="empresa-direccion" class="form-control" type="text" readonly>
+                  </div>
+                </fieldset><!-- direccion -->
+
+                <fieldset>
+                  <legend class="form-legend">Contactos</legend>
+
+                  <div id="section-contactos">
+                    <div id="contacto-0" class="border-bottom mb-3">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="nombre-0">Nombre: *</label>
+                            <input id="nombre-0" class="form-control" type="text" name="contactos[0][nombre]" maxlength="100" placeholder="Nombre" required>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="telefono-0">Teléfono: *</label>
+                            <input id="telefono-0" class="form-control" type="telefono" name="contactos[0][telefono]" maxlength="20" placeholder="Teléfono" required>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="email-0">Email:</label>
+                            <input id="email-0" class="form-control" type="email" name="contactos[0][email]" maxlength="50" placeholder="Email">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="cargo-0">Cargo:</label>
+                            <input id="cargo-0" class="form-control" type="text" name="contactos[0][cargo]" maxlength="50" placeholder="Cargo">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="descripcion-0">Descripción:</label>
+                        <input id="descripcion-0" class="form-control" type="text" name="contactos[0][descripcion]" maxlength="100" placeholder="Descripción">
+                      </div>
+                    </div>
+                  </div>
+                </fieldset><!-- contactos -->
+              </fieldset><!-- #cliente-persona -->
+
+              <div class="form-group">
+                <label>Proveedor:</label>
+                <div class="custom-control custom-checkbox">
+                  <input id="proveedor" class="custom-control-input" type="checkbox" name="proveedor" value="1">
+                  <label class="custom-control-label" for="proveedor">
+                    Es proveedor
+                  </label>
+                </div>
+                <small class="form-text text-muted">Se creará un registro de Proveedor usando la misma información</small>
               </div>
-              <small class="form-text text-muted">Se creará un registro de Proveedor usando la misma información</small>
-            </div>
 
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-cliente">
-              </ul>
+              <div class="alert alert-danger" style="display: none">
+                <ul class="m-0 form-errors-cliente">
+                </ul>
+              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-cliente" type="submit">Guardar</button>
-          </div>
-        </form>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm btn-add-cliente" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')

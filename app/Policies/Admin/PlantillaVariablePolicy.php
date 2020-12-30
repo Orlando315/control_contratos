@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Admin;
 
 use App\User;
 use App\PlantillaVariable;
@@ -11,6 +11,19 @@ class PlantillaVariablePolicy
     use HandlesAuthorization;
 
     /**
+     * Verificar una accion antes de validar la peticion por el metodo solicitado.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function before($user, $ability)
+    {
+      if($user->hasRole('developer|superadmin')){
+        return true;
+      }
+    }
+
+    /**
      * Determine whether the user can view the plantilla variable.
      *
      * @param  \App\User  $user
@@ -19,7 +32,7 @@ class PlantillaVariablePolicy
      */
     public function view(User $user, PlantillaVariable $variable)
     {
-        //
+      return $user->hasPermission('plantilla-variable-view');
     }
 
     /**
@@ -30,7 +43,7 @@ class PlantillaVariablePolicy
      */
     public function create(User $user)
     {
-        //
+      return $user->hasPermission('plantilla-variable-create');
     }
 
     /**
@@ -42,7 +55,7 @@ class PlantillaVariablePolicy
      */
     public function update(User $user, PlantillaVariable $variable)
     {
-      return !$variable->isStatic();
+      return $user->hasPermission('plantilla-variable-edit') && !$variable->isStatic();
     }
 
     /**
@@ -54,7 +67,7 @@ class PlantillaVariablePolicy
      */
     public function delete(User $user, PlantillaVariable $variable)
     {
-      return !$variable->isStatic();
+      return $user->hasPermission('plantilla-variable-delete') && !$variable->isStatic();
     }
 
     /**

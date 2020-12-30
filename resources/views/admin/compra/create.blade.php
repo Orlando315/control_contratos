@@ -14,6 +14,7 @@
       <h2>Ordenes de compra</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.compra.index') }}">Ordenes de compra</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
@@ -52,7 +53,9 @@
                   @endforeach
                 </select>
 
-                <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Proveedor</button>
+                @permission('proveedor-create')
+                  <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="tipo"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Proveedor</button>
+                @endpermission
               </div>
             </div>
           </div>
@@ -88,7 +91,9 @@
               </div>
             </fieldset>
 
-            <button class="btn btn-simple btn-link btn-sm btn-contacto" type="button" data-toggle="modal" data-target="#contactoModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Contacto</button>
+            @permission('proveedor-edit')
+              <button class="btn btn-simple btn-link btn-sm btn-contacto" type="button" data-toggle="modal" data-target="#contactoModal" disabled><i class="fa fa-plus" aria-hidden="true"></i> Agregar Contacto</button>
+            @endpermission
 
             <div class="alert alert-danger"{!! $errors->has('contacto') ? '' : ' style="display:none;"' !!}>
               <ul class="m-0 box-errors-contactos">
@@ -290,268 +295,272 @@
     </div>
   </div>
 
-  <div id="contactoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contactoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="add-form-contacto" action="#" method="POST">
-          @csrf
+  @permission('proveedor-edit')
+    <div id="contactoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contactoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="add-form-contacto" action="#" method="POST">
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="contactoModalLabel">Agregar Contacto</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-nombre">Nombre: *</label>
-                  <input id="contacto-nombre" class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nombre" required>
+              <h4 class="modal-title" id="contactoModalLabel">Agregar Contacto</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="contacto-nombre">Nombre: *</label>
+                    <input id="contacto-nombre" class="form-control" type="text" name="nombre" maxlength="50" placeholder="Nombre" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="contacto-telefono">Teléfono: *</label>
+                    <input id="contacto-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-telefono">Teléfono: *</label>
-                  <input id="contacto-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="contacto-email">Email:</label>
+                    <input id="contacto-email" class="form-control" type="email" name="email" maxlength="50" placeholder="Email">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="contacto-cargo">Cargo:</label>
+                    <input id="contacto-cargo" class="form-control" type="text" name="cargo" maxlength="50" placeholder="Cargo">
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-email">Email:</label>
-                  <input id="contacto-email" class="form-control" type="email" name="email" maxlength="50" placeholder="Email">
-                </div>
+              <div class="form-group">
+                <label for="contacto-descripcion">Descripción:</label>
+                <input id="contacto-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="contacto-cargo">Cargo:</label>
-                  <input id="contacto-cargo" class="form-control" type="text" name="cargo" maxlength="50" placeholder="Cargo">
-                </div>
+
+              <div class="alert alert-danger" style="display: none">
+                <ul class="m-0 form-errors-contactos">
+                </ul>
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="contacto-descripcion">Descripción:</label>
-              <input id="contacto-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm btn-add-contacto" type="submit" disabled>Guardar</button>
             </div>
-
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-contactos">
-              </ul>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-contacto" type="submit" disabled>Guardar</button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 
-  <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <form id="add-form-proveedor" action="#" method="POST">
-          @csrf
+  @permission('proveedor-create')
+    <div id="optionModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="optionModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <form id="add-form-proveedor" action="#" method="POST">
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="optionModalLabel">Agregar Proveedor</h4>
-          </div>
-          <div class="modal-body">
-
-            <div class="row justify-content-center">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="proveedor-type">Tipo:</label>
-                  <select id="proveedor-type" class="custom-select">
-                    <option value="persona">Persona</option>
-                    <option value="empresa">Empresa</option>
-                  </select>
-                </div>
-              </div>
+              <h4 class="modal-title" id="optionModalLabel">Agregar Proveedor</h4>
             </div>
+            <div class="modal-body">
 
-            <fieldset id="proveedor-type-persona">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-nombre">Nombre: *</label>
-                    <input id="persona-nombre" class="form-control" type="text" name="nombre" maxlength="100" placeholder="Nombre" required>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-telefono">Teléfono: *</label>
-                    <input id="persona-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-rut">RUT: *</label>
-                    <input id="persona-rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" placeholder="RUT" required>
-                    <small class="form-text text-muted">Ejemplo: 00000000-0</small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-email">Email:</label>
-                    <input id="persona-email" class="form-control" type="text" name="email" maxlength="50" placeholder="Email">
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-ciudad">Ciudad:</label>
-                    <input id="persona-ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="persona-comuna">Comuna:</label>
-                    <input id="persona-comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="persona-direccion">Dirección:</label>
-                <input id="persona-direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección">
-              </div>
-
-              <div class="form-group">
-                <label for="persona-descripcion">Descripción:</label>
-                <input id="persona-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
-              </div>
-            </fieldset>
-
-            <fieldset id="proveedor-type-empresa" disabled>
               <div class="row justify-content-center">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group">
-                    <label for="empresa-rut">RUT: *</label>
-                    <div class="input-group">
-                      <input id="empresa-rut" class="form-control" type="text" name="rut" maxlength="9" pattern="^(\d{4,9})$" placeholder="RUT" required>
-                      <div class="input-group-append">
-                        <span class="input-group-addon border-right-0">-</span>
-                        <input id="empresa-digito_validador" class="form-control" type="text" name="digito_validador" maxlength="1" pattern="^([\dkK])$" placeholder="DV" required style="width:75px">
-                        <button class="btn btn-default btn-xs border-left-0 btn-consultar" type="button"><i class="fa fa-search"></i> Consultar</button>
-                      </div>
-                    </div>
+                    <label for="proveedor-type">Tipo:</label>
+                    <select id="proveedor-type" class="custom-select">
+                      <option value="persona">Persona</option>
+                      <option value="empresa">Empresa</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="empresa-razon_social">Razón social:</label>
-                <input id="empresa-razon_social" class="form-control" type="text" readonly>
-              </div>
-
-              <fieldset>
-                <legend class="form-legend">Dirección</legend>
-                
+              <fieldset id="proveedor-type-persona">
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label for="empresa-ciudad">Ciudad:</label>
-                      <input id="empresa-ciudad" class="form-control" type="text" readonly>
+                      <label for="persona-nombre">Nombre: *</label>
+                      <input id="persona-nombre" class="form-control" type="text" name="nombre" maxlength="100" placeholder="Nombre" required>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
-                      <label for="empresa-comuna">Comuna:</label>
-                      <input id="empresa-comuna" class="form-control" type="telefono" readonly>
+                      <label for="persona-telefono">Teléfono: *</label>
+                      <input id="persona-telefono" class="form-control" type="telefono" name="telefono" maxlength="20" placeholder="Teléfono" required>
                     </div>
                   </div>
                 </div>
-                
-                <div class="form-group">
-                  <label for="empresa-direccion">Dirección:</label>
-                  <input id="empresa-direccion" class="form-control" type="text" readonly>
-                </div>
-              </fieldset><!-- direccion -->
 
-              <fieldset>
-                <legend class="form-legend">Contactos</legend>
-
-                <div id="section-contactos">
-                  <div id="contacto-0" class="border-bottom mb-3">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="nombre-0">Nombre: *</label>
-                          <input id="nombre-0" class="form-control" type="text" name="contactos[0][nombre]" maxlength="100" placeholder="Nombre" required>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="telefono-0">Teléfono: *</label>
-                          <input id="telefono-0" class="form-control" type="telefono" name="contactos[0][telefono]" maxlength="20" placeholder="Teléfono" required>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="email-0">Email:</label>
-                          <input id="email-0" class="form-control" type="email" name="contactos[0][email]" maxlength="50" placeholder="Email">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="cargo-0">Cargo:</label>
-                          <input id="cargo-0" class="form-control" type="text" name="contactos[0][cargo]" maxlength="50" placeholder="Cargo">
-                        </div>
-                      </div>
-                    </div>
-
+                <div class="row">
+                  <div class="col-md-6">
                     <div class="form-group">
-                      <label for="descripcion-0">Descripción:</label>
-                      <input id="descripcion-0" class="form-control" type="text" name="contactos[0][descripcion]" maxlength="100" placeholder="Descripción">
+                      <label for="persona-rut">RUT: *</label>
+                      <input id="persona-rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" placeholder="RUT" required>
+                      <small class="form-text text-muted">Ejemplo: 00000000-0</small>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-email">Email:</label>
+                      <input id="persona-email" class="form-control" type="text" name="email" maxlength="50" placeholder="Email">
                     </div>
                   </div>
                 </div>
-              </fieldset><!-- contactos -->
-            </fieldset><!-- #proveedor-persona -->
 
-            <div class="form-group">
-              <label>Cliente:</label>
-              <div class="custom-control custom-checkbox">
-                <input id="cliente" class="custom-control-input" type="checkbox" name="cliente" value="1">
-                <label class="custom-control-label" for="cliente">
-                  Es cliente
-                </label>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-ciudad">Ciudad:</label>
+                      <input id="persona-ciudad" class="form-control" type="text" name="ciudad" maxlength="50" placeholder="Ciudad">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="persona-comuna">Comuna:</label>
+                      <input id="persona-comuna" class="form-control" type="text" name="comuna" maxlength="50" placeholder="Comuna">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="persona-direccion">Dirección:</label>
+                  <input id="persona-direccion" class="form-control" type="text" name="direccion" maxlength="200" placeholder="Dirección">
+                </div>
+
+                <div class="form-group">
+                  <label for="persona-descripcion">Descripción:</label>
+                  <input id="persona-descripcion" class="form-control" type="text" name="descripcion" maxlength="200" placeholder="Descripción">
+                </div>
+              </fieldset>
+
+              <fieldset id="proveedor-type-empresa" disabled>
+                <div class="row justify-content-center">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="empresa-rut">RUT: *</label>
+                      <div class="input-group">
+                        <input id="empresa-rut" class="form-control" type="text" name="rut" maxlength="9" pattern="^(\d{4,9})$" placeholder="RUT" required>
+                        <div class="input-group-append">
+                          <span class="input-group-addon border-right-0">-</span>
+                          <input id="empresa-digito_validador" class="form-control" type="text" name="digito_validador" maxlength="1" pattern="^([\dkK])$" placeholder="DV" required style="width:75px">
+                          <button class="btn btn-default btn-xs border-left-0 btn-consultar" type="button"><i class="fa fa-search"></i> Consultar</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="empresa-razon_social">Razón social:</label>
+                  <input id="empresa-razon_social" class="form-control" type="text" readonly>
+                </div>
+
+                <fieldset>
+                  <legend class="form-legend">Dirección</legend>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="empresa-ciudad">Ciudad:</label>
+                        <input id="empresa-ciudad" class="form-control" type="text" readonly>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="empresa-comuna">Comuna:</label>
+                        <input id="empresa-comuna" class="form-control" type="telefono" readonly>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="empresa-direccion">Dirección:</label>
+                    <input id="empresa-direccion" class="form-control" type="text" readonly>
+                  </div>
+                </fieldset><!-- direccion -->
+
+                <fieldset>
+                  <legend class="form-legend">Contactos</legend>
+
+                  <div id="section-contactos">
+                    <div id="contacto-0" class="border-bottom mb-3">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="nombre-0">Nombre: *</label>
+                            <input id="nombre-0" class="form-control" type="text" name="contactos[0][nombre]" maxlength="100" placeholder="Nombre" required>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="telefono-0">Teléfono: *</label>
+                            <input id="telefono-0" class="form-control" type="telefono" name="contactos[0][telefono]" maxlength="20" placeholder="Teléfono" required>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="email-0">Email:</label>
+                            <input id="email-0" class="form-control" type="email" name="contactos[0][email]" maxlength="50" placeholder="Email">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="cargo-0">Cargo:</label>
+                            <input id="cargo-0" class="form-control" type="text" name="contactos[0][cargo]" maxlength="50" placeholder="Cargo">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="descripcion-0">Descripción:</label>
+                        <input id="descripcion-0" class="form-control" type="text" name="contactos[0][descripcion]" maxlength="100" placeholder="Descripción">
+                      </div>
+                    </div>
+                  </div>
+                </fieldset><!-- contactos -->
+              </fieldset><!-- #proveedor-persona -->
+
+              <div class="form-group">
+                <label>Cliente:</label>
+                <div class="custom-control custom-checkbox">
+                  <input id="cliente" class="custom-control-input" type="checkbox" name="cliente" value="1">
+                  <label class="custom-control-label" for="cliente">
+                    Es cliente
+                  </label>
+                </div>
+                <small class="form-text text-muted">Se creará un registro de Cliente usando la misma información</small>
               </div>
-              <small class="form-text text-muted">Se creará un registro de Cliente usando la misma información</small>
-            </div>
 
-            <div class="alert alert-danger" style="display: none">
-              <ul class="m-0 form-errors-proveedor">
-              </ul>
+              <div class="alert alert-danger" style="display: none">
+                <ul class="m-0 form-errors-proveedor">
+                </ul>
+              </div>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-primary btn-sm btn-add-proveedor" type="submit">Guardar</button>
-          </div>
-        </form>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-primary btn-sm btn-add-proveedor" type="submit">Guardar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')

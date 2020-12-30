@@ -14,6 +14,7 @@
       <h2>Transportes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Transportes</a></li>
         <li class="breadcrumb-item active"><strong>Transporte</strong></li>
       </ol>
@@ -24,11 +25,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @if(Auth::user()->tipo <= 2)
+      @permission('transporte-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('transporte-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('transporte-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-      @endif
+      @endpermission
     </div>
   </div>
 
@@ -40,9 +45,13 @@
             <li class="list-group-item">
               <b>Supervisor</b>
               <span class="pull-right">
-                <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
-                  {{ $transporte->usuario->nombres }} {{ $transporte->usuario->apellidos }}
-                </a>
+                @permission('transporte-create')
+                  <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
+                    {{ $transporte->usuario->nombre() }}
+                  </a>
+                @else
+                  {{ $transporte->usuario->nombre() }}
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
@@ -99,17 +108,19 @@
                               @endif
                             </div>
                             <div class="col-3">
-                              <div class="btn-group">
-                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                                <ul class="dropdown-menu" x-placement="bottom-start">
-                                  @if($requisito->documento)
-                                    <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                                    <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
-                                  @else
-                                    <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
-                                  @endif
-                                </ul>
-                              </div>
+                              @permission('transporte-edit')
+                                <div class="btn-group">
+                                  <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                  <ul class="dropdown-menu" x-placement="bottom-start">
+                                    @if($requisito->documento)
+                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                      <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                    @else
+                                      <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                    @endif
+                                  </ul>
+                                </div>
+                              @endpermission
                             </div>
                           </div>
                         </div>
@@ -126,7 +137,7 @@
           </div>
           <div class="tab-pane" id="tab-11">
             <div class="panel-body">
-              @if($transporte->documentos()->count() < 10)
+              @if($transporte->documentos()->count() < 10 && Auth::user()->hasPermission('transporte-edit'))
                 <div class="mb-3">
                   <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                   <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
@@ -168,7 +179,9 @@
           <div id="tab-1" class="tab-pane active">
             <div class="panel-body">
               <div class="mb-3">
-                <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus" aria-hidden="true"></i> Agregar a Contrato</button>
+                @permission('transporte-edit')
+                  <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus" aria-hidden="true"></i> Agregar a Contrato</button>
+                @endpermission
               </div>
               <table class="table table-bordered data-table table-hover table-sm w-100">
                 <thead>
@@ -176,22 +189,22 @@
                     <th class="text-center">#</th>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Agregado</th>
-                    @if(Auth::user()->tipo <= 2)
+                    @permission('transporte-edit')
                       <th class="text-center">Acción</th>
-                    @endif
+                    @endpermission
                   </tr>
                 </thead>
                 <tbody class="text-center">
                   @foreach($transporte->contratos as $contrato)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $contrato->contrato->nombre }} </td>
-                      <td>{{ $contrato->created_at }} </td>
-                      @if(Auth::user()->tipo <= 2)
+                      <td>{{ $contrato->contrato->nombre }}</td>
+                      <td>{{ $contrato->created_at }}</td>
+                      @permission('transporte-edit')
                         <td>
                           <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delContratoModal"><i class="fa fa-times" aria-hidden="true"></i></button>
                         </td>
-                      @endif
+                      @endpermission
                     </tr>
                   @endforeach
                 </tbody>
@@ -201,7 +214,9 @@
           <div id="tab-2" class="tab-pane">
             <div class="panel-body">
               <div class="mb-3">
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.consumos.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
+                @permission('transporte-consumo-create')
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.consumos.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
+                @endpermission
               </div>
               <table id="tableConsumos" class="table table-bordered data-table table-hover table-sm w-100">
                 <thead>
@@ -219,15 +234,21 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>
-                        <a href="{{ route('admin.contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                        @permission('contrato-view')
+                          <a href="{{ route('admin.contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                            {{ $consumo->contrato->nombre }}
+                          </a>
+                        @else
                           {{ $consumo->contrato->nombre }}
-                        </a>
+                        @endpermission
                       </td>
-                      <td>{{ $consumo->tipo() }} </td>
-                      <td>{{ $consumo->fecha() }} </td>
+                      <td>{{ $consumo->tipo() }}</td>
+                      <td>{{ $consumo->fecha() }}</td>
                       <td>{{ $consumo->valor() }}</td>
                       <td>
-                        <a class="btn btn-success btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-search"></i></a>
+                        @permission('transporte-consumo-view')
+                          <a class="btn btn-success btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-search"></i></a>
+                        @endpermission
                       </td>
                     </tr>
                   @endforeach
@@ -240,7 +261,7 @@
     </div>
   </div>
 
-  @if(Auth::user()->tipo <= 2)
+  @permission('transporte-edit')
     <div id="addModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -298,6 +319,33 @@
       </div>
     </div>
 
+    <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delete-file-form" action="#" method="POST">
+            @method('DELETE')
+            @csrf
+
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delFileModalLabel">Eliminar Adjunto</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  @endpermission
+
+  @permission('transporte-delete')
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -320,61 +368,38 @@
         </div>
       </div>
     </div>
-  @endif
-
-  <div id="delFileModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delFileModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="delete-file-form" action="#" method="POST">
-          @method('DELETE')
-          @csrf
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delFileModalLabel">Eliminar Adjunto</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Adjunto?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit" disabled>Eliminar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  @endpermission
 @endsection
 
 @section('script')
-  <!-- Select2 -->
-  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
-  <script type="text/javascript">
-    $(document).ready( function(){
-      $('#contrato').select2({
-        dropdownParent: $('#add-modal-body'),
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione...',
+  @permission('transporte-edit')
+    <!-- Select2 -->
+    <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready( function(){
+        $('#contrato').select2({
+          dropdownParent: $('#add-modal-body'),
+          theme: 'bootstrap4',
+          placeholder: 'Seleccione...',
+        });
+
+          $('#delContratoModal').on('show.bs.modal', function(e){
+            let btn = $(e.relatedTarget),
+                action = btn.data('url');
+
+            if(!action){ return false; }
+
+            $('#destroyContrato').attr('action', action)
+          });
+
+        $('#delFileModal').on('show.bs.modal', function(e){
+          let button = $(e.relatedTarget),
+              url = button.data('url');
+
+          $('#delete-file-form button[type="submit"]').prop('disabled', !url)
+          $('#delete-file-form').attr('action', url);
+        });
       });
-
-      $('#delContratoModal').on('show.bs.modal', function(e){
-        let btn = $(e.relatedTarget),
-            action = btn.data('url');
-
-        if(!action){ return false; }
-
-        $('#destroyContrato').attr('action', action)
-      })
-
-      $('#delFileModal').on('show.bs.modal', function(e){
-        let button = $(e.relatedTarget),
-            url = button.data('url');
-
-        $('#delete-file-form button[type="submit"]').prop('disabled', !url)
-        $('#delete-file-form').attr('action', url);
-      });
-    });
-  </script>
+    </script>
+  @endpermission
 @endsection

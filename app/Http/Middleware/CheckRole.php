@@ -3,20 +3,24 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Laratrust\Middleware\LaratrustMiddleware;
 
-class CheckRole
+class CheckRole extends LaratrustMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Handle incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Closure $next
+     * @param  string  $roles
+     * @param  string|null  $team
+     * @param  string|null  $options
      * @return mixed
      */
-    public function handle($request, Closure $next, $role)
+    public function handle($request, Closure $next, $roles, $team = null, $options = '')
     {
-      if(! ($role == 'staff' ? $request->user()->isStaff() : $request->user()->checkRole($role))){
-        return redirect('dashboard');
+      if(!$this->authorization('roles', $roles, $team, $options)) {
+          return $this->unauthorized();
       }
 
       return $next($request);

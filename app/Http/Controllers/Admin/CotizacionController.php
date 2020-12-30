@@ -16,6 +16,8 @@ class CotizacionController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Cotizacion::class);
+
       $cotizaciones = Cotizacion::all();
 
       return view('admin.cotizacion.index', compact('cotizaciones'));
@@ -29,6 +31,8 @@ class CotizacionController extends Controller
      */
     public function create(Cliente $cliente = null)
     {
+      $this->authorize('create', Cotizacion::class);
+
       $clientes = Cliente::all();
       $inventarios = Inventario::all();
       $selectedCliente = $cliente;
@@ -44,6 +48,7 @@ class CotizacionController extends Controller
      */
     public function store(Request $request)
     {
+      $this->authorize('create', Cotizacion::class);
       $this->validate($request, [
         'cliente' => 'required',
         'direccion' => 'required',
@@ -118,6 +123,8 @@ class CotizacionController extends Controller
      */
     public function show(Cotizacion $cotizacion)
     {
+      $this->authorize('view', $cotizacion);
+
       $cotizacion->load(['productos', 'facturacion']);
 
       return view('admin.cotizacion.show', compact('cotizacion'));
@@ -131,6 +138,8 @@ class CotizacionController extends Controller
      */
     public function edit(Cotizacion $cotizacion)
     {
+      $this->authorize('update', $cotizacion);
+
       $cotizacion->load('productos');
       $clientes = Cliente::all();
       $inventarios = Inventario::all();
@@ -147,6 +156,7 @@ class CotizacionController extends Controller
      */
     public function update(Request $request, Cotizacion $cotizacion)
     {
+      $this->authorize('update', $cotizacion);
       $this->validate($request, [
         'cliente' => 'required',
         'notas' => 'nullable|string|max:350',
@@ -222,6 +232,8 @@ class CotizacionController extends Controller
      */
     public function destroy(Cotizacion $cotizacion)
     {
+      $this->authorize('delete', $cotizacion);
+
       if($cotizacion->delete()){
         return redirect()->route('admin.cotizacion.index')->with([
           'flash_class'   => 'alert-success',

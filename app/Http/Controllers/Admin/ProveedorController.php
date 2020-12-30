@@ -16,6 +16,8 @@ class ProveedorController extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Proveedor::class);
+
       $proveedores = Auth::user()->empresa->proveedores;
 
       return view('admin.proveedor.index', compact('proveedores'));
@@ -29,6 +31,8 @@ class ProveedorController extends Controller
      */
     public function create($type)
     {
+      $this->authorize('create', Proveedor::class);
+
       if($type != 'persona' && $type != 'empresa'){
         abort(404);
       }
@@ -45,6 +49,8 @@ class ProveedorController extends Controller
      */
     public function store(Request $request, $type)
     {
+      $this->authorize('create', Proveedor::class);
+
       if($type != 'persona' && $type != 'empresa'){
         abort(404);
       }
@@ -259,6 +265,8 @@ class ProveedorController extends Controller
      */
     public function show(Proveedor $proveedor)
     {
+      $this->authorize('view', $proveedor);
+
       $proveedor->load(['direcciones', 'contactos', 'compras']);
 
       return view('admin.proveedor.show', compact('proveedor'));
@@ -272,6 +280,8 @@ class ProveedorController extends Controller
      */
     public function edit(Proveedor $proveedor)
     {
+      $this->authorize('update', $proveedor);
+
       if($proveedor->isEmpresa()){
         abort(403);
       }
@@ -290,6 +300,8 @@ class ProveedorController extends Controller
      */
     public function update(Request $request, Proveedor $proveedor)
     {
+      $this->authorize('update', $proveedor);
+
       if($proveedor->isEmpresa()){
         abort(403);
       }
@@ -348,6 +360,8 @@ class ProveedorController extends Controller
      */
     public function destroy(Proveedor $proveedor)
     {
+      $this->authorize('delete', $proveedor);
+
       if($proveedor->delete()){
         return redirect()->route('admin.proveedor.index')->with([
           'flash_message' => 'Proveedor eliminado exitosamente.',

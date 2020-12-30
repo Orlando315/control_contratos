@@ -8,6 +8,7 @@
       <h2>Sueldos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
         <li class="breadcrumb-item active"><strong>Sueldos</strong></li>
@@ -19,7 +20,9 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @permission('contrato-view')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
     </div>
   </div>
 
@@ -48,7 +51,9 @@
           <h5><i class="fa fa-money"></i> Sueldos</h5>
 
           <div class="ibox-tools">
-            <a class="btn btn-primary btn-xs" href="{{ route('admin.sueldos.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Realizar Pagos</a>
+            @permission('sueldo-create')
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.sueldos.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Realizar Pagos</a>
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -79,14 +84,20 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $sueldo->mesPagado() }}</td>
                             <td>
-                              <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                              @permission('empleado-view')
+                                <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                                  {{ $sueldo->nombreEmpleado() }}
+                                </a>
+                              @else
                                 {{ $sueldo->nombreEmpleado() }}
-                              </a>
+                              @endpermission
                             </td>
                             <td class="text-right">{{ $sueldo->alcanceLiquido() }}</td>
                             <td class="text-right">{{ $sueldo->sueldoLiquido() }}</td>
                             <td>
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                              @permission('sueldo-view')
+                                <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                              @endpermission
                             </td>
                           </tr>
                         @endforeach

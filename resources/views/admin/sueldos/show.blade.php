@@ -8,6 +8,7 @@
       <h2>Sueldos</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $sueldo->contrato_id]) }}">Contrato</a></li>
         <li class="breadcrumb-item"><a href="{{ route('admin.sueldos.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
         <li class="breadcrumb-item active"><strong>Sueldo</strong></li>
@@ -31,9 +32,13 @@
             <li class="list-group-item">
               <b>Empleado</b>
               <span class="pull-right">
-                <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
-                  {{ $sueldo->empleado->usuario->nombres }} {{ $sueldo->empleado->usuario->nombres }}
-                </a>
+                @permission('empleado-view')
+                  <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                    {{ $sueldo->empleado->usuario->nombre() }}
+                  </a>
+                @else
+                  {{ $sueldo->empleado->usuario->nombre() }}
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
@@ -54,11 +59,11 @@
             </li>
             <li class="list-group-item">
               <b>Bono de reemplazo</b>
-              <span class="pull-right"> {{ $sueldo->bonoReemplazo() }} </span>
+              <span class="pull-right">{{ $sueldo->bonoReemplazo() }}</span>
             </li>
             <li class="list-group-item">
               <b>Sueldo liquido</b>
-              <span class="pull-right"> {{ $sueldo->sueldoLiquido() }} </span>
+              <span class="pull-right">{{ $sueldo->sueldoLiquido() }}</span>
             </li>
             <li class="list-group-item">
               <b>Adjunto</b>

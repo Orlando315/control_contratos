@@ -8,6 +8,7 @@
       <h2>Faenas</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Faenas</a></li>
         <li class="breadcrumb-item active"><strong>Faena</strong></li>
       </ol>
@@ -18,9 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.faena.edit', ['faena' => $faena->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('contrato-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('faena-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.faena.edit', ['faena' => $faena->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('faena-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -71,7 +78,9 @@
                   <td>{{ $contrato->valor() }}</td>
                   <td>{{ $contrato->empleados()->count() }}</td>
                   <td>
-                    <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
+                    @permission('contrato-index')
+                      <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach
@@ -82,28 +91,30 @@
     </div>
   </div><!-- .row -->
 
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.faena.destroy', ['faena' => $faena->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('faena-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.faena.destroy', ['faena' => $faena->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
-            <h4 class="modal-title" id="delModalLabel">Eliminar Faena</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Faena?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger" type="submit">Eliminar</button>
-          </div>
-        </form>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Faena</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Faena?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 @endsection

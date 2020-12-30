@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{Usuario, Empresa, ConfiguracionEmpresa};
+use App\{User, Empresa, ConfiguracionEmpresa};
 
 class UsuariosController extends Controller
 {
@@ -37,16 +37,17 @@ class UsuariosController extends Controller
         'password_confirmation' => 'required'
       ]);
 
-      $empresa = new Empresa($request->all());
+      $empresa = new Empresa($request->only('nombres', 'representante', 'logo'));
 
       if($empresa->save()){
-        $user = new Usuario($request->all());
-        $user->tipo = 1;
+        $user = new User($request->only('nombres', 'rut', 'email', 'telefono'));
         $user->usuario = $request->rut;
         $user->password = bcrypt($request->input('password'));
         $empresa->usuario()->save($user);
+        $empresa->configuracion()->create($request->only('jornada'));
 
-        $empresa->configuracion()->create($request->all());        
+        $role = Role::firstWhere('name', 'empresa');
+        $user->attachRole($role);
 
         return redirect()->route('login.view')->with([
           'flash_message' => 'Registro completado con exito.',
@@ -97,14 +98,14 @@ class UsuariosController extends Controller
       ]);
 
       // Para Supervisores y Empleados
-      if(Auth::user()->tipo > 2){
+      if(!Auth::user()->isAdmin()){
         $this->validate($request, [
           'apellidos' => 'required|string',
         ]);
       }
       
       // Para Administradores
-      if(Auth::user()->tipo <= 2){
+      if(Auth::user()->isAdmin()){
         $this->validate($request, [
           'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut,' . Auth::user()->id . ',id',
           'representante' => 'required|string',
@@ -138,7 +139,7 @@ class UsuariosController extends Controller
       Auth::user()->telefono = $request->telefono;
 
       if(Auth::user()->push()){
-        if(Auth::user()->tipo <= 2 && $request->hasFile('logo')){
+        if(Auth::user()->isAdmin() && $request->hasFile('logo')){
           $directory = Auth::user()->empresa->directory;
           if(!Storage::exists($directory)){
             Storage::makeDirectory($directory);
@@ -169,7 +170,6 @@ class UsuariosController extends Controller
      * Cambiar la contraseña del Usuario en sesion
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Usuario|null $usuario
      * @return \Illuminate\Http\Response
      */
     public function password(Request $request)

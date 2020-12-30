@@ -15,7 +15,7 @@
 
 @section('content')
   <div class="row">
-    @if(Auth::user()->tipo <= 2)
+    @permission('contrato-index')
       <div class="col-6 col-md-3">
         <div class="ibox ">
           <div class="ibox-title">
@@ -26,9 +26,9 @@
           </div>
         </div>
       </div>
-    @endif
+    @endpermission
 
-    @if(Auth::user()->tipo <= 3)
+    @permission('inventario-index')
       <div class="col-6 col-md-3">
         <div class="ibox">
           <div class="ibox-title">
@@ -39,167 +39,173 @@
           </div>
         </div>
       </div>
-    @endif
+    @endpermission
 
-    @if(Auth::user()->tipo <= 2)
+    @permission('contrato-index|empleado-index|transporte-index')
       <div class="col-12 col-md-6">
         <div class="ibox">
           <div class="ibox-title">
             <h5>Contratos / Documentos por vencer</h5>
           </div>
-          <div class="ibox-content py-1">
-            <div class="row">
-              <div class="col-12 text-center">
-                <p class="mb-1"><strong>Contratos</strong></p>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}#vencidos" title="Contratos {{ $contratosPorVencer->vencidos }} / Documentos {{ $documentosContratosPorVencer->vencidos }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $contratosPorVencer->vencidos }}/{{ $documentosContratosPorVencer->vencidos }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>Vencidos</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 3]) }}" title="Contratos {{ $contratosPorVencer->lessThan3 }} / Documentos {{ $documentosContratosPorVencer->lessThan3 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $contratosPorVencer->lessThan3 }}/{{ $documentosContratosPorVencer->lessThan3 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>3 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 7]) }}" title="Contratos {{ $contratosPorVencer->lessThan7 }} / Documentos {{ $documentosContratosPorVencer->lessThan7 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $contratosPorVencer->lessThan7 }}/{{ $documentosContratosPorVencer->lessThan7 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>7 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}" title="Contratos {{ $contratosPorVencer->lessThan21 }} / Documentos {{ $documentosContratosPorVencer->lessThan21 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $contratosPorVencer->lessThan21 }}/{{ $documentosContratosPorVencer->lessThan21 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>21 días</small>
-              </div>
-            </div>
-          </div>
-          <div class="ibox-content py-1">
-            <div class="row">
-              <div class="col-12 text-center">
-                <p class="mb-1"><strong>Empleados</strong></p>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}#vencidos" title="Contratos {{ $empleadosContratosPorVencer->vencidos }} / Documentos {{ $documentosEmpleadosPorVencer->vencidos }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $empleadosContratosPorVencer->vencidos }}/{{ $documentosEmpleadosPorVencer->vencidos }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>Vencidos</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 3]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan3 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan3 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan3 }}/{{ $documentosEmpleadosPorVencer->lessThan3 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>3 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 7]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan7 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan7 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan7 }}/{{ $documentosEmpleadosPorVencer->lessThan7 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>7 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan21 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan21 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $empleadosContratosPorVencer->lessThan21 }}/{{ $documentosEmpleadosPorVencer->lessThan21 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>21 días</small>
+          @permission('contrato-index')
+            <div class="ibox-content py-1">
+              <div class="row">
+                <div class="col-12 text-center">
+                  <p class="mb-1"><strong>Contratos</strong></p>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}#vencidos" title="Contratos {{ $contratosPorVencer->vencidos }} / Documentos {{ $documentosContratosPorVencer->vencidos }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $contratosPorVencer->vencidos }}/{{ $documentosContratosPorVencer->vencidos }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>Vencidos</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 3]) }}" title="Contratos {{ $contratosPorVencer->lessThan3 }} / Documentos {{ $documentosContratosPorVencer->lessThan3 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $contratosPorVencer->lessThan3 }}/{{ $documentosContratosPorVencer->lessThan3 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>3 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 7]) }}" title="Contratos {{ $contratosPorVencer->lessThan7 }} / Documentos {{ $documentosContratosPorVencer->lessThan7 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $contratosPorVencer->lessThan7 }}/{{ $documentosContratosPorVencer->lessThan7 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>7 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}" title="Contratos {{ $contratosPorVencer->lessThan21 }} / Documentos {{ $documentosContratosPorVencer->lessThan21 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $contratosPorVencer->lessThan21 }}/{{ $documentosContratosPorVencer->lessThan21 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>21 días</small>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="ibox-content py-1">
-            <div class="row">
-              <div class="col-12 text-center">
-                <p class="mb-1"><strong>Transportes</strong></p>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}#vencidos" title="Documentos {{ $documentosTransportesPorVencer->vencidos }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $documentosTransportesPorVencer->vencidos }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>Vencidos</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 3]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan3 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan3 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>3 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 7]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan7 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan7 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>7 días</small>
-              </div>
-              <div class="col-md-3 text-center">
-                <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan21 }}">
-                  <div class="w-100">
-                    <i class="fa fa-clock-o"></i>
-                    <br>
-                    <p class="m-0">{{ $documentosTransportesPorVencer->lessThan21 }}</p>
-                  </div>
-                </a>
-                <small class=text-muted>21 días</small>
+          @endpermission
+          @permission('empleado-index')
+            <div class="ibox-content py-1">
+              <div class="row">
+                <div class="col-12 text-center">
+                  <p class="mb-1"><strong>Empleados</strong></p>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}#vencidos" title="Contratos {{ $empleadosContratosPorVencer->vencidos }} / Documentos {{ $documentosEmpleadosPorVencer->vencidos }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $empleadosContratosPorVencer->vencidos }}/{{ $documentosEmpleadosPorVencer->vencidos }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>Vencidos</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 3]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan3 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan3 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan3 }}/{{ $documentosEmpleadosPorVencer->lessThan3 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>3 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 7]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan7 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan7 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan7 }}/{{ $documentosEmpleadosPorVencer->lessThan7 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>7 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan21 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan21 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan21 }}/{{ $documentosEmpleadosPorVencer->lessThan21 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>21 días</small>
+                </div>
               </div>
             </div>
-          </div>
+          @endpermission
+          @permission('transporte-index')
+            <div class="ibox-content py-1">
+              <div class="row">
+                <div class="col-12 text-center">
+                  <p class="mb-1"><strong>Transportes</strong></p>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}#vencidos" title="Documentos {{ $documentosTransportesPorVencer->vencidos }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $documentosTransportesPorVencer->vencidos }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>Vencidos</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 3]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan3 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan3 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>3 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 7]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan7 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan7 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>7 días</small>
+                </div>
+                <div class="col-md-3 text-center">
+                  <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan21 }}">
+                    <div class="w-100">
+                      <i class="fa fa-clock-o"></i>
+                      <br>
+                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan21 }}</p>
+                    </div>
+                  </a>
+                  <small class=text-muted>21 días</small>
+                </div>
+              </div>
+            </div>
+          @endpermission
         </div>
       </div>
-    @endif
+    @endpermission
   </div>
 
   <div class="row">
     @if(Auth::user()->empleado)
-      @if(Auth::user()->tipo <= 2)
+      @role('developer|superadministrador|empresa|administrador')
         <div class="col-md-12">
           <h3 class="text-center"> Información como Empleado</h3>
         </div>
-      @endif
+      @endrole
       <div class="col-md-12 mb-3">
         <div class="tabs-container">
           <ul class="nav nav-tabs">
@@ -267,7 +273,7 @@
                             @nullablestring(null)
                           @endif
                         </td>
-                        <td>{!! $anticipo->status() !!}</td>
+                        <td><small>{!! $anticipo->status() !!}</small></td>
                       </tr>
                     @endforeach
                   </tbody>
@@ -337,7 +343,7 @@
         <div class="modal-content">
           <form id="eventForm" action="{{ route('eventos.store') }}" method="POST">
             <input id="eventDay" type="hidden" name="inicio" value="">
-            {{ csrf_field() }}
+            @csrf
 
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">

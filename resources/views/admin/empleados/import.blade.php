@@ -8,6 +8,7 @@
       <h2>Empleados</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Empleados</a></li>
         <li class="breadcrumb-item active"><strong>Importar</strong></li>
       </ol>

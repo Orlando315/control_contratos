@@ -8,6 +8,7 @@
       <h2>Ordenes de compra</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.compra.index') }}">Ordenes de compra</a></li>
         <li class="breadcrumb-item active"><strong>Orden de compra</strong></li>
       </ol>
@@ -18,9 +19,15 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.compra.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      <a class="btn btn-default btn-sm" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @permission('compra-index')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.compra.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      @endpermission
+      @permission('compra-edit')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+      @endpermission
+      @permission('compra-delete')
+        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endpermission
     </div>
   </div>
 
@@ -41,17 +48,25 @@
             <li class="list-group-item">
               <b>Generado por</b>
               <span class="pull-right">
-                <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->user_id]) }}">
+                @permission('user-view')
+                  <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->user_id]) }}">
+                    {{ $compra->user->nombre() }}
+                  </a>
+                @else
                   {{ $compra->user->nombre() }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
               <b>Proveedor</b>
               <span class="pull-right">
-                <a href="{{ route('admin.proveedor.show', ['proveedor' => $compra->proveedor_id]) }}">
+                @permission('proveedor-view')
+                  <a href="{{ route('admin.proveedor.show', ['proveedor' => $compra->proveedor_id]) }}">
+                    {{ $compra->proveedor->nombre }}
+                  </a>
+                @else
                   {{ $compra->proveedor->nombre }}
-                </a>
+                @endpermission
               </span>
             </li>
             <li class="list-group-item">
@@ -119,25 +134,27 @@
         <div class="ibox">
           <div class="ibox-title">
             <h5>Facturación</h5>
-            <div class="ibox-tools">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                <i class="fa fa-cogs"></i>
-              </a>
-              <ul class="dropdown-menu dropdown-user dropdown-menu-right" x-placement="bottom-start">
-                @if(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'))
+            @permission('compra-edit')
+              <div class="ibox-tools">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                  <i class="fa fa-cogs"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user dropdown-menu-right" x-placement="bottom-start">
+                  @if(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'))
+                    <li>
+                      <a class="dropdown-item" type="button" data-toggle="modal" data-target="#syncModal">
+                        <i class="fa fa-refresh"></i> Sincronizar
+                      </a>
+                    </li>
+                  @endif
                   <li>
-                    <a class="dropdown-item" type="button" data-toggle="modal" data-target="#syncModal">
-                      <i class="fa fa-refresh"></i> Sincronizar
+                    <a class="dropdown-item text-danger" type="button" data-toggle="modal" data-target="#delFacturacionModal">
+                      <i class="fa fa-times"></i> Eliminar
                     </a>
                   </li>
-                @endif
-                <li>
-                  <a class="dropdown-item text-danger" type="button" data-toggle="modal" data-target="#delFacturacionModal">
-                    <i class="fa fa-times"></i> Eliminar
-                  </a>
-                </li>
-              </ul>
-            </div>
+                </ul>
+              </div>
+            @endpermission
           </div>
           <div class="ibox-content no-padding">
             <ul class="list-group list-group-unbordered">
@@ -193,7 +210,9 @@
           </div>
         @else
           <div class="w-100 text-center">
-            <a class="btn btn-primary" href="{{ route('admin.compra.facturacion.create', ['compra' => $compra->id]) }}">Asociar factura</a>
+            @permission('compra-edit')
+              <a class="btn btn-primary" href="{{ route('admin.compra.facturacion.create', ['compra' => $compra->id]) }}">Asociar factura</a>
+            @endpermission
           </div>
         @endif
       @endif
@@ -228,7 +247,7 @@
                   <td>@nullablestring($producto->tipo_codigo)</td>
                   <td>@nullablestring($producto->codigo)</td>
                   <td>
-                    @if($producto->inventario)
+                    @if($producto->inventario && Auth::user()->hasPermission('inventario-view'))
                       <a href="{{ route('admin.inventarios.show', ['inventario' => $producto->inventario_id]) }}">
                         {{ $producto->nombre }}
                       </a>
@@ -244,9 +263,11 @@
                   <td class="text-right">{{ $producto->impuesto() }}</td>
                   <td class="text-right">{{ $producto->total() }}</td>
                   <td class="text-center">
-                    <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.compra.producto.destroy', ['producto' => $producto->id]) }}">
-                      <i class="fa fa-times"></i>
-                    </button>
+                    @permission('compra-edit')
+                      <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.compra.producto.destroy', ['producto' => $producto->id]) }}">
+                        <i class="fa fa-times"></i>
+                      </button>
+                    @endpermission
                   </td>
                 </tr>
               @endforeach
@@ -257,60 +278,64 @@
     </div>
   </div>
 
-  <div id="delProductoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delProductoModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="delProductoModalForm" action="#" method="POST">
-          @method('DELETE')
-          @csrf
+  @permission('compra-edit')
+    <div id="delProductoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delProductoModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form id="delProductoModalForm" action="#" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="delDataModalLabel">Eliminar Producto</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Producto?</h4>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm btn-delete-data" type="submit" disabled>Eliminar</button>
-          </div>
-        </form>
+              <h4 class="modal-title" id="delDataModalLabel">Eliminar Producto</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar este Producto?</h4>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm btn-delete-data" type="submit" disabled>Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form action="{{ route('admin.compra.destroy', ['compra' => $compra->id]) }}" method="POST">
-          @method('DELETE')
-          @csrf
+  @endpermission
+    
+  @permission('compra-delete')
+    <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form action="{{ route('admin.compra.destroy', ['compra' => $compra->id]) }}" method="POST">
+            @method('DELETE')
+            @csrf
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
-            </button>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
+              </button>
 
-            <h4 class="modal-title" id="delModalLabel">Eliminar Cotización</h4>
-          </div>
-          <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar esta Cotización?</h4>
-            <p class="text-center">Se eliminará toda la información asociada a esta Cotización</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
-            <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-          </div>
-        </form>
+              <h4 class="modal-title" id="delModalLabel">Eliminar Cotización</h4>
+            </div>
+            <div class="modal-body">
+              <h4 class="text-center">¿Esta seguro de eliminar esta Cotización?</h4>
+              <p class="text-center">Se eliminará toda la información asociada a esta Cotización</p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+              <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  @endpermission
 
-  @if($compra->facturacion)
+  @if($compra->facturacion && Auth::user()->hasPermission('compra-edit'))
     <div id="syncModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="syncModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -367,21 +392,23 @@
 @endsection
 
 @section('script')
-  <script type="text/javascript">
-    $(document).ready(function() {
-      $('#delProductoModal').on('show.bs.modal', function (e) {
-        let btn = $(e.relatedTarget),
-            url = btn.data('url');
+  @permission('compra-edit')
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#delProductoModal').on('show.bs.modal', function (e) {
+          let btn = $(e.relatedTarget),
+              url = btn.data('url');
 
-        if(!url){
-          setTimeout(function (){
-            $('#delProductoModal').modal('hide');
-          }, 500);
-        }
+          if(!url){
+            setTimeout(function (){
+              $('#delProductoModal').modal('hide');
+            }, 500);
+          }
 
-        $('.btn-delete-data').prop('disabled', !url);
-        $('#delProductoModalForm').attr('action', url);
+          $('.btn-delete-data').prop('disabled', !url);
+          $('#delProductoModalForm').attr('action', url);
+        });
       });
-    });
-  </script>
+    </script>
+  @endpermission
 @endsection

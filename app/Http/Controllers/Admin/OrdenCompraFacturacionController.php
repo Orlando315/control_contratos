@@ -28,6 +28,8 @@ class OrdenCompraFacturacionController extends Controller
      */
     public function create(OrdenCompra $compra)
     {
+      $this->authorize('update', $compra);
+
       $facturas = FacturacionCompra::facturasRecibidas();
 
       return view('admin.compra.facturacion.create', compact('compra', 'facturas'));
@@ -42,6 +44,7 @@ class OrdenCompraFacturacionController extends Controller
      */
     public function store(Request $request, OrdenCompra $compra)
     {
+      $this->authorize('update', $compra);
       $this->validate($request, [
         'factura' => 'required',
       ]);
@@ -114,6 +117,8 @@ class OrdenCompraFacturacionController extends Controller
      */
     public function destroy(FacturacionCompra $facturacion)
     {
+      $this->authorize('update', $facturacion->compra);
+
       if($facturacion->delete()){
         return redirect()->route('admin.compra.show', ['compra' => $facturacion->orden_compra_id])->with([
           'flash_class'   => 'alert-success',
@@ -149,6 +154,8 @@ class OrdenCompraFacturacionController extends Controller
      */
     public function sync(FacturacionCompra $facturacion)
     {
+      $this->authorize('update', $facturacion->compra);
+
       if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
         return redirect()->back()->withErrors('!Error! Integración incompleta.');
       }

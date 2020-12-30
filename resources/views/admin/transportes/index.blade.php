@@ -8,6 +8,7 @@
       <h2>Transportes</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item active"><strong>Transportes</strong></li>
       </ol>
     </div>
@@ -34,9 +35,9 @@
         <div class="ibox-title">
           <h5><i class="fa fa-car"></i> Transportes</h5>
           <div class="ibox-tools">
-            @if(Auth::user()->tipo <= 2)
+            @permission('transporte-create')
               <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Transporte</a>
-            @endif
+            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -54,18 +55,16 @@
               @foreach($transportes as $transporte)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
-                      {{ $transporte->usuario->nombre() }}
-                    </a>
-                  </td>
+                  <td>{{ $transporte->usuario->nombre() }}</td>
                   <td>{{ $transporte->vehiculo }}</td>
                   <td>{{ $transporte->patente }}</td>
                   <td>
-                    <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
-                    @if(Auth::user()->tipo <= 2)
+                    @permission('transporte-create')
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
+                    @endpermission
+                    @permission('transporte-view')
                       <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil"></i></a>
-                    @endif
+                    @endpermission
                   </td>
                 </tr>
               @endforeach
