@@ -27,13 +27,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-      'empresa_id',
       'empleado_id',
       'nombres',
       'apellidos',
       'rut',
       'telefono',
-      'email'
+      'email',
     ];
 
     /**
@@ -60,7 +59,7 @@ class User extends Authenticatable
      */
     public function scopeStaff($query)
     {
-      return $query->whereRoleIs(['administrador', 'supervisor']);
+      return $query->whereRoleIs(['empresa', 'administrador', 'supervisor']);
     }
 
     /**
@@ -151,6 +150,16 @@ class User extends Authenticatable
                   ->when($pendiente, function($query){
                     $query->where('recibido', false);
                   });
+    }
+
+    /**
+     * Evaluar si el User es tiene algun role de Administrador
+     * 
+     * @return bool
+     */
+    public function isSuper()
+    {
+      return $this->hasRole('developer|superadmin');
     }
 
     /**

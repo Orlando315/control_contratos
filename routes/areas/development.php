@@ -13,15 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-/* --- Modulos --- */
-Route::resource('modulo', 'ModuloController');
+Route::group(['middleware' => 'role:developer'], function(){
+  /* --- Modulos --- */
+  Route::resource('modulo', 'ModuloController');
 
-/* --- Roles --- */
-Route::resource('role', 'RoleController');
+  /* --- Roles --- */
+  Route::resource('role', 'RoleController');
 
-/* --- Permissions --- */
-Route::resource('permission', 'PermissionController');
+  /* --- Permissions --- */
+  Route::resource('permission', 'PermissionController');
 
-/* --- Fixs --- */
-Route::get('fix', 'FixController@index')->name('fix.index');
-Route::get('fix/{fix}', 'FixController@route')->name('fix.route');
+  /* --- Fixs --- */
+  Route::get('fix', 'FixController@index')->name('fix.index');
+  Route::get('fix/{fix}', 'FixController@route')->name('fix.route');
+});

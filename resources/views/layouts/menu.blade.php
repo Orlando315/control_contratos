@@ -12,7 +12,7 @@
           </a>
           <ul class="dropdown-menu animated fadeInRight m-t-xs">
             <li><a class="dropdown-item" href="{{ route('perfil') }}">Perfil</a></li>
-            @role('empresa')
+            @role('developer|superadmin|empresa')
               <li><a class="dropdown-item" href="{{ route('admin.empresa.perfil') }}">Perfil Empresa</a></li>
             @endrole
             <li class="dropdown-divider"></li>
@@ -306,6 +306,19 @@
           </ul>
         </li>
       @endrole
+
+      @role('developer|superadmin')
+        <li>
+          <a href="#">
+            <i class="fa fa-sliders"></i>
+            <span class="nav-label">Administración</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            <li><a href="{{ route('admin.manage.empresa.index') }}"><i class="fa fa-building"></i>Empresas</a></li>
+          </ul>
+        </li>
+      @endability
       @ability('developer', 'god')
         <li>
           <a href="#">

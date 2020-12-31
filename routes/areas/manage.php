@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-/* --- Users --- */
-Route::resource('user', 'UserController');
-Route::patch('user/{user}/status', 'UserController@status')->name('user.status');
-Route::patch('user/{user}/password/reset', 'UserController@password')->name('user.password');
+Route::group(['middleware' => 'role:developer|superadmin'], function(){
+  /* --- Empresa --- */
+  Route::resource('empresa', 'EmpresaController');
 
-/* --- Empresa --- */
-Route::resource('empresa', 'EmpresaController');
+  /* --- Users --- */
+  Route::get('user/create/{empresa}', 'UserController@create')->name('user.create');
+  Route::post('user/create/{empresa}', 'UserController@store')->name('user.store');
+  Route::patch('user/{user}/password/reset', 'UserController@password')->name('user.password');
+  Route::resource('user', 'UserController')
+        ->except(['index', 'create', 'store']);
+});

@@ -77,6 +77,7 @@ class Role extends LaratrustRole
     {
       $this->attributes['name'] = strtolower($value);
     }
+
      /**
      * Obtener los Roles que no sean superadmins
      *
@@ -86,6 +87,28 @@ class Role extends LaratrustRole
     public function scopeNotAdmins(Builder $query)
     {
       return $query->whereIn('name', self::$_simple);
+    }
+
+     /**
+     * Obtener los Roles que no sean superadmins
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNotDevs(Builder $query)
+    {
+      return $query->whereNotIn('name', self::$_developers);
+    }
+
+     /**
+     * Obtener los Roles que no sean superadmins
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNotSuper(Builder $query)
+    {
+      return $query->whereIn('name', self::$_users);
     }
 
     /**
