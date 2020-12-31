@@ -36,8 +36,8 @@ Route::get('password/confirm', 'Auth\ConfirmPasswordController@showConfirmForm')
 Route::post('password/confirm', 'Auth\ConfirmPasswordController@confirm');
 
 /* --- Empresas --- */
-Route::get('registro', 'UsuariosController@create')->name('empresas.create');
-Route::post('registro', 'UsuariosController@store')->name('empresas.store');
+Route::get('registro', 'EmpresaController@create')->name('register');
+Route::post('registro', 'EmpresaController@store');
 
 /* --- Cronjob --- */
 Route::get('cronjob/asistencias/create', 'HomeController@cronjobAsistencias');
@@ -49,10 +49,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 
   /* --- Perfil --- */
-  Route::get('/perfil', 'UsuariosController@perfil')->name('perfil');
-  Route::get('/perfil/edit', 'UsuariosController@edit' )->name('perfil.edit');
-  Route::patch('/perfil', 'UsuariosController@update')->name('perfil.update');
-  Route::patch('/perfil/password', 'UsuariosController@password')->name('perfil.password');
+  Route::get('perfil', 'PerfilController@perfil')->name('perfil');
+  Route::get('perfil/edit', 'PerfilController@edit' )->name('perfil.edit');
+  Route::patch('perfil', 'PerfilController@update')->name('perfil.update');
+  Route::patch('perfil/password', 'PerfilController@password')->name('perfil.password');
 
   /* --- Sueldos --- */
   Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');

@@ -30,9 +30,8 @@ class ConfiguracionEmpresa extends Model
     protected $fillable = [
       'jornada',
       'dias_vencimiento',
-      'clave_sii',
+      'sii_clave',
       'sii_clave_certificado',
-      'configuracion_empresas',
       'firma',
     ];
 

@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Auth};
-use App\{User, Role};
+use App\{User, Role, Empresa};
 
-class FixsController extends Controller
+class FixController extends Controller
 {
     /**
      * Instantiate a new controller instance.
@@ -27,7 +27,19 @@ class FixsController extends Controller
      * @param  string  $fix
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $fix)
+    public function index(Request $request)
+    {
+      return view('admin.development.fix.index');
+    }
+
+    /**
+     * Ejecutar el metodo segun el fix proporcionado.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $fix
+     * @return \Illuminate\Http\Response
+     */
+    public function route(Request $request, $fix)
     {
       $method = 'fix'.Str::studly(str_replace('.', '_', strtolower($fix)));
 
@@ -83,8 +95,54 @@ class FixsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function fixAttachUsersEmpresas()
+    private function fixAttachUsersEmpresas()
     {
-      $usuarios = User::all();
+      $users = User::whereNotNull('empresa_id')->doesntHave('empresas')->get();
+      $groupedByEmpresa = $users->groupBy('empresa_id');
+      $asociados = 0;
+
+      // Se agrupan los usuarios por empresa para minimizar la cantidad de querys a ejecutar
+      foreach ($groupedByEmpresa as $empresaId => $empresaUsers) {
+        $empresa = Empresa::find($empresaId);
+
+        if($empresa){
+          $usersId = $empresaUsers->pluck('id');
+          $empresa->users()->attach($usersId);
+
+          $asociados +=  count($usersId);
+        }
+      }
+
+      return response()->json([
+        'users' => $users->count(),
+        'empresas' => $groupedByEmpresa->count(),
+        'usuarios_asociados' => $asociados,
+      ]);
+    }
+
+    /**
+     * Crear los roles de todos los usuarios que no tengan uno.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    private function fixCopyRutEmpresas()
+    {
+      $empresas = Empresa::whereNull('rut')->get();
+      $actualizadas = 0;
+
+      foreach ($empresas as $empresa) {
+        $user = $empresa->user;
+
+        if($user){
+          $empresa->fill($user->only('rut', 'telefono', 'email'));
+          $empresa->save();
+          $actualizadas++;
+        }
+      }
+
+      return response()->json([
+        'empresas' => $empresas->count(),
+        'actualizadas' => $actualizadas
+      ]);
     }
 }

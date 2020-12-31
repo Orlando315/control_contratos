@@ -40,7 +40,7 @@
         <div class="text-center">
           <a href="{{ route('password.request') }}"><small>Recuperar contraseña</small></a>
           <p class="text-muted"><small>¿No tienes cuenta?</small></p>
-          <a class="btn btn-sm btn-white btn-block" href="{{ route('empresas.create') }}">¡Registrate!</a>
+          <a class="btn btn-sm btn-white btn-block" href="{{ route('register') }}">¡Registrate!</a>
         </div>
       </form>
       <p class="m-t"><small>{{ config('app.name') }} &copy; {{ date('Y') }}</small></p>

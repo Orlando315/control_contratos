@@ -23,4 +23,5 @@ Route::resource('role', 'RoleController');
 Route::resource('permission', 'PermissionController');
 
 /* --- Fixs --- */
-Route::get('fixs/{fix}', 'FixsController@index');
+Route::get('fix', 'FixController@index')->name('fix.index');
+Route::get('fix/{fix}', 'FixController@route')->name('fix.route');

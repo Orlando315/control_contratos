@@ -12,6 +12,9 @@
           </a>
           <ul class="dropdown-menu animated fadeInRight m-t-xs">
             <li><a class="dropdown-item" href="{{ route('perfil') }}">Perfil</a></li>
+            @role('empresa')
+              <li><a class="dropdown-item" href="{{ route('admin.empresa.perfil') }}">Perfil Empresa</a></li>
+            @endrole
             <li class="dropdown-divider"></li>
             <li>
               <form action="{{ route('login.logout') }}" method="POST">

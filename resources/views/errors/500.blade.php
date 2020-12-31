@@ -9,7 +9,7 @@
     <h3 class="font-bold">Error.</h3>
 
     <div class="error-desc">
-      Oops, algo salió mal en nuestros servidores.</br>
+      Oops, algo salió mal en nuestros servidores.
     </div>
   </div>
 @endsection

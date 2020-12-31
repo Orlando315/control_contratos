@@ -68,6 +68,8 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
         return false;
       }
 
+      $empresa = Auth::user()->empresa;
+
       $rut = $item['rut'].'-'.$item['dv'];
       $fechaNacimiento = $this->convertDate($item['fecha_de_nacimiento']);
       $empleado = new Empleado([
@@ -81,7 +83,7 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
         'nombre_emergencia' => $item['nombre'],
         'telefono_emergencia' => $item['telefono_de_contacto'],
       ]);
-      $empleado->empresa_id = Auth::user()->empresa->id;
+      $empleado->empresa_id = $empresa->id;
       $this->contrato->empleados()->save($empleado);
 
       // Crear Usuario
@@ -94,8 +96,8 @@ class EmpleadoImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
       ]);
       $usuario->password = bcrypt($rut);
       $usuario->usuario  = $rut;
-      $usuario->empresa_id = Auth::user()->empresa->id;
       $empleado->usuario()->save($usuario);
+      $empresa->users()->attach($usuario->id);
 
       // Asignar role al usuario
       $role = Role::firstWhere('name', 'empleado');

@@ -65,7 +65,7 @@ class UsuariosController extends Controller
         $usuario->attachPermissions($request->permissions ?? []);
 
         return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
-          'flash_message' => 'User agregado exitosamente.',
+          'flash_message' => 'Usuario agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }
@@ -133,7 +133,7 @@ class UsuariosController extends Controller
         $usuario->syncPermissions($request->permissions ?? []);
 
         return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
-          'flash_message' => 'User modificado exitosamente.',
+          'flash_message' => 'Usuario modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }
@@ -158,7 +158,7 @@ class UsuariosController extends Controller
       if($usuario->delete()){
         return redirect()->route('admin.usuarios.index')->with([
           'flash_class'   => 'alert-success',
-          'flash_message' => 'User eliminado exitosamente.'
+          'flash_message' => 'Usuario eliminado exitosamente.'
         ]);
       }
 

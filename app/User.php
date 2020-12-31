@@ -29,7 +29,6 @@ class User extends Authenticatable
     protected $fillable = [
       'empresa_id',
       'empleado_id',
-      'tipo',
       'nombres',
       'apellidos',
       'rut',
@@ -45,6 +44,13 @@ class User extends Authenticatable
     protected $hidden = [
       'password'
     ];
+
+    /**
+     * Empresa a la que pertenece el User y esta usando en session
+     *
+     * @var array
+     */
+    private $_empresa = null;
 
     /**
      * Filtrar por los usuarios con Roles de administracion
@@ -77,6 +83,24 @@ class User extends Authenticatable
     public function scopeEmpleados($query)
     {
       return $query->whereRoleIs(['empleado']);
+    }
+
+    /**
+     * Obtener las Empresa a la que pertenece el User y esta usando en session
+     *
+     * @param  \App\Models\Empresa|null
+     */
+    public function getEmpresaAttribute()
+    {
+      return $this->_empresa = $this->_empresa ?? $this->empresas()->first();
+    }
+
+    /**
+     * Obtener las Empresas a la que pertenece el User
+     */
+    public function empresas()
+    {
+      return $this->belongsToMany('App\Empresa', 'empresa_user');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Empresa extends Model
 {
@@ -19,10 +20,59 @@ class Empresa extends Model
      * @var array
      */
     protected $fillable = [
-      'nombres',
+      'rut',
+      'nombre',
       'representante',
       'logo',
+      'telefono',
+      'email',
     ];
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+      'configuracion'
+    ];
+    
+    /**
+     * User con role Empresa
+     *
+     * @var array
+     */
+    private $_user = null;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+      parent::boot();
+      /**
+       * Eliminar toda la informacion relacionada
+       */
+      static::deleting(function ($model) {
+        $model->users()->delete();
+        
+        if(Storage::exists($model->directory)){
+          Storage::deleteDirectory($model->directory);
+        }
+      });
+    }
+
+    /**
+     * Obtener el User con Role Empresa
+     *
+     * @param  \App\Models\Empresa|null
+     */
+    public function getUserAttribute()
+    {
+      return $this->_user = $this->_user ?? $this->users()->whereRoleIs('empresa')->first();
+    }
 
     /**
      * Obtener el path del Logo, si no tiene un logo se carga la imagen por defecto
@@ -46,19 +96,11 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener el User de la Empresa
-     */
-    public function usuario()
-    {
-      return $this->hasOne('App\User');
-    }
-
-    /**
-     * Obtener los User de la Empresa
+     * Obtener los user que pertenecen a la empresa
      */
     public function users()
     {
-      return $this->hasMany('App\User');
+      return $this->belongsToMany('App\User', 'empresa_user');
     }
 
     /**
@@ -229,7 +271,7 @@ class Empresa extends Model
      */
     public function getRutPart($part)
     {
-      return explode('-', $this->usuario->rut)[$part];
+      return explode('-', $this->rut)[$part];
     }
 
     /**
