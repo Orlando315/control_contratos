@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Carbon\Carbon;
@@ -57,7 +58,13 @@ class EmpleadosController extends Controller
       $this->authorize('create', Empleado::class);
 
       if($request->filled('usuario')){
-        $usuario = Auth::user()->empresa->users()->doesntHave('empleado')->where('id', $request->usuario)->firstOrFail();
+        $usuario = Auth::user()
+        ->empresa
+        ->users()
+        ->whereDoesntHave('empleado', function (Builder $query) use ($request){
+          $query->where('id', $request->usuario);
+        })
+        ->firstOrFail();
       }else{
         // Aplica cuando no se esta creando el Empleado a partir de un Usuario ya existente
         $this->validate($request, [
@@ -108,36 +115,36 @@ class EmpleadosController extends Controller
       $empleado->empresa_id = Auth::user()->empresa->id;
 
       if($contrato->empleados()->save($empleado)){
+        $role = Role::firstWhere('name', 'empleado');
+
         // Si se esta creando un Emplado a partir de un Usuario ya existente
         // solo se agrega el id del Empleado al Usuario
         if(isset($usuario)){
-          $usuario->empleado_id = $emplado->id;
+          $usuario->empleado_id = $empleado->id;
           $usuario->save();
+          $usuario->roles()->attach($role->id, ['active' => false]);
         }else{
           $usuario = new User($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
           $usuario->usuario  = $request->rut;
           $usuario->password = bcrypt($request->rut);
-          $usuario->empresa_id = Auth::user()->empresa->id;
           $empleado->usuario()->save($usuario);
-
-          $role = Role::firstWhere('name', 'empleado');
           $usuario->attachRole($role);
         }
         
         $empleado->contratos()->create($request->only('sueldo', 'inicio', 'fin', 'jornada', 'inicio_jornada', 'descripcion'));
-        $empleado->banco()->create($request->only('nombre', 'tipo_cuenta'));
+        $empleado->banco()->create($request->only('nombre', 'tipo_cuenta', 'cuenta'));
 
-        return redirect()->route('admin.empleados.show', ['empleado' => $emplado->id])->with([
+        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado registrado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -237,7 +244,7 @@ class EmpleadosController extends Controller
         'telefono_emergencica'
       ));
       $empleado->contratos->last()->fill($request->only('sueldo', 'inicio', 'fin', 'jornada', 'inicio_jornada', 'descripcion'));
-      $empleado->banco->fill($request->only('nombre', 'tipo_cuenta'));
+      $empleado->banco->fill($request->only('nombre', 'tipo_cuenta', 'cuenta'));
       $empleado->usuario->fill($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
       $empleado->usuario->usuario = $request->rut;
 
@@ -245,14 +252,14 @@ class EmpleadosController extends Controller
         return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado modificado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -416,64 +423,49 @@ class EmpleadosController extends Controller
     public function changeRole(Request $request, Empleado $empleado)
     {
       $this->authorize('update', $empleado);
-      $requestedRole = $request->role;
+      $role = Role::where('name', $request->role)->firstOrFail();
 
       if($empleado->usuario->isEmpresa()){
         return redirect()->back()->withInput()->with([
-          'flash_message' => 'No se puede cambiar el Role de un Empelado con Usuario de role Empresa.',
+          'flash_message' => 'No se puede cambiar el role de un Usuario con role Empresa.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
-          ]);
+        ]);
       }
 
-
-      $role = Role::firstWhere('name', $request->role);
-      if(!$role){
-        return redirect()->back()->withInput()->with([
-          'flash_message' => 'Role no encontrado.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
-      }
-
-      if($request->role == 'empresa'){
+      if($role->name == 'empresa'){
         return redirect()->back()->withInput()->with([
           'flash_message' => 'El role Empresa no puede ser asignado.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
-          ]);
+        ]);
       }
 
-      if((Auth::user()->hasRole('supervisor|empleado') && $request->role == 'administrador') || Auth::user()->hasRole('empleado') && $request->role == 'supervisor'){
+      if(
+        (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador') && $request->role == 'administrador')
+        || (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador|supervisor') && $request->role == 'supervisor')
+      ){
         return redirect()->back()->withInput()->with([
-          'flash_message' => 'No puedes asignar un role superior al suyo.',
+          'flash_message' => 'No puedes asignar un role superior al tuyo.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
-          ]);
+        ]);
       }
 
-      if(Auth::user()->hasRole('empleado') && $request->role == 'administrador'){
-        return redirect()->back()->withInput()->with([
-          'flash_message' => 'No puedes asignar un role superior al suyo.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
-      }
+      try{
+        $empleado->usuario->assignRole($role);
 
-      $empleado->usuario->syncRoles([$role->id]);
-
-      if($empleado->push()){
         return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado actualizado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
-      }
-
-      return redirect()->back()->withInput()->with([
-        'flash_message' => 'Ha ocurrido un error.',
-        'flash_class' => 'alert-danger',
-        'flash_important' => true
         ]);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'Ha ocurrido un error.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
     }
 
     /**
@@ -498,7 +490,7 @@ class EmpleadosController extends Controller
     public function importCreate(Contrato $contrato)
     {
       $this->authorize('view', $contrato);
-      $this->authorize('create', Empelado::class);
+      $this->authorize('create', Empleado::class);
 
       return view('admin.empleados.import', compact('contrato'));
     }
@@ -513,7 +505,7 @@ class EmpleadosController extends Controller
     public function importStore(Request $request, Contrato $contrato)
     {
       $this->authorize('view', $contrato);
-      $this->authorize('create', Empelado::class);
+      $this->authorize('create', Empleado::class);
       $this->validate($request, [
         'archivo' => 'required|file|mimes:xlsx,xls',
       ]);

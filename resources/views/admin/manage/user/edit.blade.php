@@ -2,12 +2,6 @@
 
 @section('title', 'Editar')
 
-@section('head')
-  <!-- Select2 -->
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
-@endsection
-
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -35,15 +29,19 @@
             @csrf
 
             <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
-              <label for="role">Role: *</label>
-              <select id="role" class="form-control" name="role" required>
-                <option value="">Seleccione...</option>
+              <label>Role: *</label>
+              <div class="row">
                 @foreach($roles as $role)
-                  <option value="{{ $role->id }}"{{ old('role', $user->role()->id) == $role->id ? ' selected' : '' }}>
-                    {{ $role->name() }}{{ $role->description ? ' ('.$role->description.')' : '' }}
-                  </option>
+                  @continue($role->name == 'empleado')
+
+                  <div class="col-md-6">
+                    <div class="custom-control custom-radio">
+                      <input id="role-{{ $role->name }}" class="custom-control-input" type="radio" name="role" value="{{ $role->name }}"{{ $user->hasActiveOrInactiveRole($role->name) ? ' checked' : '' }} required>
+                      <label for="role-{{ $role->name }}" class="custom-control-label">{{ $role->name() }}</label>
+                    </div>
+                  </div>
                 @endforeach
-              </select>
+              </div>
             </div>
 
             <div class="row">
@@ -106,19 +104,3 @@
     </div>
   </div>
 @endsection
-
-@section('script')
-  <!-- Select2 -->
-  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
-  <script type="text/javascript">
-    $(document).ready( function(){
-      $('#role').select2({
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione...',
-      });
-
-      $('#role').change();
-    });
-  </script>
-@endsection
-

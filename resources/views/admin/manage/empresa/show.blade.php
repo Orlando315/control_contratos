@@ -130,7 +130,7 @@
                 <thead>
                   <tr>
                     <th class="text-center">#</th>
-                    <th class="text-center">Role</th>
+                    <th class="text-center">Roles</th>
                     <th class="text-center">RUT</th>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Email</th>
@@ -142,9 +142,7 @@
                     <tr>
                       <td class="text-center">{{ $loop->iteration }}</td>
                       <td clasS="text-center">
-                        <small class="label label-primary">
-                          {{ $user->role()->name() }}
-                        </small>
+                        {!! $user->allRolesNames() !!}
                       </td>
                       <td>{{ $user->rut }}</td>
                       <td>{{ $user->nombre() }}</td>

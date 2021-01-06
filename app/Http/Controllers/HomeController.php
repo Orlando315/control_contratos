@@ -64,4 +64,21 @@ class HomeController extends Controller
         }
       }
     }
+
+    /**
+     * Cambiar el Role activo del User
+     */
+    public function roleToggle()
+    {
+      $roleActivo = Auth::user()->role();
+      $roleInactivo = Auth::user()->inactiveRole();
+
+      if($roleActivo && $roleInactivo){
+        Auth::user()->roles(null)->updateExistingPivot($roleActivo->id, ['active' => false]);
+        Auth::user()->roles(null)->updateExistingPivot($roleInactivo->id, ['active' => true]);
+        Auth::user()->flushCache();
+      }
+
+      return redirect()->route('dashboard');
+    }
 }

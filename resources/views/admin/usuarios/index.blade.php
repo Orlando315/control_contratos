@@ -37,7 +37,7 @@
 
           <div class="ibox-tools">
             @permission('user-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Administrador</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Usuario</a>
             @endpermission
           </div>
         </div>
@@ -46,7 +46,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
-                <th class="text-center">Role</th>
+                <th class="text-center">Roles</th>
                 <th class="text-center">Nombres</th>
                 <th class="text-center">Apellidos</th>
                 <th class="text-center">RUT</th>
@@ -58,7 +58,7 @@
               @foreach($usuarios as $usuario)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>{{ $usuario->role()->name() }}</td>
+                  <td>{!! $usuario->allRolesNames() !!}</td>
                   <td>{{ $usuario->nombres }}</td>
                   <td>@nullablestring($usuario->apellidos)</td>
                   <td>{{ $usuario->rut }}</td>

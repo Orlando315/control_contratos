@@ -145,4 +145,30 @@ class FixController extends Controller
         'actualizadas' => $actualizadas
       ]);
     }
+
+    /**
+     * Agregar el Role de Empleado a los User que tengan Roles de staff y un registro de Empleado
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    private function fixMissingEmpleadoRole()
+    {
+      $usuarios = User::has('empleado')
+      ->whereRoleIs(['empresa', 'administrador', 'supervisor'])
+      ->has('allRoles', '=', 1)
+      ->get();
+
+      $role = Role::firstWhere('name', 'empleado');
+      $actualizados = 0;
+
+      foreach ($usuarios as $usuario) {
+        $usuario->roles()->attach($role->id, ['active' => false]);
+        $actualizados++;
+      }
+
+      return response()->json([
+        'usuarios' => $usuarios->count(),
+        'actualizados' => $actualizados,
+      ]);
+    }
 }

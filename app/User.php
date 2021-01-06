@@ -3,11 +3,14 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use App\Notifications\ResetPassword;
 use Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Helper;
+use App\Role;
 
 class User extends Authenticatable
 {
@@ -126,6 +129,47 @@ class User extends Authenticatable
     public function role()
     {
       return $this->roles()->first();
+    }
+
+    /**
+    * Obtener el Role inactivo del User
+    *
+    * @return  \App\Models\Role|null
+    */
+    public function inactiveRole()
+    {
+      return $this->roles(false)->first();
+    }
+
+    /**
+     * Relacion con Roles segun el status proporcionado
+     *
+     * @param  bool  $activeRoles
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function roles($activeRoles = true)
+    {
+      return $this->morphToMany(
+        'App\Role',
+        'user',
+        'role_user',
+        'user_id',
+        'role_id'
+      )
+      ->when(!is_null($activeRoles), function (Builder $query) use ($activeRoles) {
+        $query->where('active', $activeRoles);
+      })
+      ->withPivot('active');
+    }
+
+    /**
+     * Obtener todos los Roles (activos e inactivos)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function allRoles()
+    {
+      return $this->roles(null);
     }
 
     /**
@@ -248,13 +292,37 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener el atributo formateado
-     *
-     * @return string
+     * Evaluar si el User tiene algun role inactivo
+     * 
+     * @param  string  $name
+     * @return bool
      */
-    public function tipo()
+    public function hasInactiveRole($name)
     {
-      return $this->role()->name();
+      $roles = Arr::wrap(Helper::standardize($name));
+
+      $rolesCount = $this->roles(false)
+      ->whereIn('name', $roles)
+      ->count();
+
+      return $rolesCount > 0;
+    }
+
+    /**
+     * Evaluar si el User tiene algun role inactivo
+     * 
+     * @param  string  $name
+     * @return bool
+     */
+    public function hasActiveOrInactiveRole($name)
+    {
+      $roles = Arr::wrap(Helper::standardize($name));
+
+      $rolesCount = $this->roles(null)
+      ->whereIn('name', $roles)
+      ->count();
+
+      return $rolesCount > 0;
     }
 
     /**
@@ -273,5 +341,57 @@ class User extends Authenticatable
     public function nombre()
     {
       return $this->nombres.' '.$this->apellidos;
+    }
+
+    /**
+     * Obtener los nombre de los roles asignados al User
+     *
+     * @param  bool  $asTag
+     * @return string
+     */
+    public function allRolesNames($asTag = true)
+    {
+      $names = $this->roles(null)
+      ->get()
+      ->transform(function ($role) use ($asTag) {
+        return $asTag ? $role->asTag() : $role->name();
+      })
+      ->toArray();
+
+      $separator = $asTag ? ' ' : ', ';
+
+      return implode($separator, $names);
+    }
+
+    /**
+     * Asignar role al User
+     * 
+     * @param  \App\Role  $role
+     */
+    public function assignRole(Role $role)
+    {
+      // Los Empleados siempre deben tener el Role empleado
+      $roleEmpleado = Role::firstWhere('name', 'empleado');
+      $rolesToSync = [$roleEmpleado->id];
+
+      if($this->isEmpleado()){
+        // Si el role a asignar no es el de empleado, se agrega como inactivo
+        // Si el role enviado es empleado, no es necesario agregarlo porque ya debe estar agregado
+        if($role->name != 'empleado'){
+          $rolesToSync[$role->id] = ['active' => false];
+        }
+        // Se sincronizan los roles
+        $this->roles(null)->sync($rolesToSync);
+        // Si no existe un role activo, se activa el de empleado
+        if(!$this->role()){
+          $this->roles(null)->updateExistingPivot($roleEmpleado->id, ['active' => true]);
+        }
+        // Eliminar cache de roles/permissions del User
+        $this->flushCache();
+      }
+      // Los usuarios que no son empleados solo pueden tener 1 role
+      else{
+        $this->syncRoles([$role->id]);
+      }
     }
 }

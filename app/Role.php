@@ -122,6 +122,17 @@ class Role extends LaratrustRole
     }
 
     /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function asTag()
+    {
+      $label = (!is_null($this->pivot) && $this->pivot->active) ? 'primary' : 'default';
+      return '<small class="label label-'.$label.'">'.$this->name().'</small>';
+    }
+
+    /**
      * Obtener el name de los Roles del tipo especificado
      * 
      * @param  string  $type

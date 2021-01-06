@@ -17,9 +17,19 @@ class AppServiceProvider extends ServiceProvider
     {
       setlocale(LC_ALL, config('app.locale'));
 
-      //
+      // reemplazar valores null con N/A
       Blade::directive('nullablestring', function ($expression) {
         return "<?php echo ($expression ? e($expression) : '<span class=\"text-muted\">N/A</span>'); ?>";
+      });
+
+      // Evaluar si el user tiene roles inactivos
+      Blade::directive('inactiveRole', function ($expression) {
+        return "<?php if (app('laratrust')->user()->hasInactiveRole({$expression})) : ?>";
+      });
+
+      // Cerrar condicion
+      Blade::directive('endinactiverole', function () {
+          return "<?php endif; // app('laratrust')->user()->hasInactiveRole ?>";
       });
     }
 

@@ -76,6 +76,9 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
   Route::post('eventos/', 'EmpleadosEventosController@store')->name('eventos.store');
 
+  /* --- Cambiar Role activo --- */
+  Route::put('role/toggle', 'HomeController@roleToggle')->name('role.toggle');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

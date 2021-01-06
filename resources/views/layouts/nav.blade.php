@@ -1,9 +1,19 @@
 <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
-    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>
+    @if(Auth::user()->hasInactiveRole('empresa|administrador|supervisor|empleado'))
+      <form class="navbar-form-custom" action="{{ route('role.toggle') }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <button class="minimalize-styl-2 btn btn-default" type="submit">
+          Cambiar a {{ Auth::user()->inactiveRole()->name() }}
+        </button>
+      </form>
+    @endif
   </div>
   <ul class="nav navbar-top-links navbar-right">
-    <li {{ Auth::user()->empresa->logo? '' : 'style="padding: 20px"' }}>
+    <li{{ Auth::user()->empresa->logo ? '' : ' style="padding: 20px"' }}>
       @if(Auth::user()->empresa->logo)
         <img src="{{ asset('images/logo-small.png') }}" class="user-image" alt="Logo Vertrag" style="max-height: 40px">
       @else

@@ -37,8 +37,10 @@
       @permission('empleado-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
         <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
-        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar rol</button>
-        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de contrato</button>
+        @if(!$empleado->usuario->isEmpresa())
+          <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar role</button>
+        @endif
+        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-clipboard" aria-hidden="true"></i> Cambio de contrato</button>
       @endpermission
       <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.print', ['empleado' => $empleado->id]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
       @permission('empleado-delete')
@@ -80,8 +82,8 @@
               </span>
             </li>
             <li class="list-group-item">
-              <b>Role</b>
-              <span class="pull-right">{{ $empleado->usuario->tipo() }}</span>
+              <b>Roles</b>
+              <span class="pull-right">{!! $empleado->usuario->allRolesNames() !!}</span>
             </li>
             <li class="list-group-item">
               <b>Nombres</b>
@@ -615,23 +617,24 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
               </button>
-              <h4 class="modal-title" id="toggleModalLabel">Cambiar de rol</h4>
+              <h4 class="modal-title" id="toggleModalLabel">Cambiar de role</h4>
             </div>
             <div class="modal-body">
               <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
+                <p class="text-center">¿Desea asignar un Role adicional a este Empleado?</p>
                 <label>Seleccionar role:</label>
                 @if(Auth::user()->isAdmin())
                   <div class="custom-control custom-radio m-0">
-                    <input id="role-admin" class="custom-control-input" type="radio" name="role" value="administrador"{{ $empleado->usuario->isAdministrador() ? ' checked' : '' }}>
+                    <input id="role-admin" class="custom-control-input" type="radio" name="role" value="administrador"{{ $empleado->usuario->hasActiveOrInactiveRole('administrador') ? ' checked' : '' }}>
                     <label for="role-admin" class="custom-control-label">Administrador</label>
                   </div>
                 @endif
                 <div class="custom-control custom-radio">
-                  <input id="role-supervisor" class="custom-control-input" type="radio" name="role" value="supervisor"{{ $empleado->usuario->hasRole('supervisor') ? ' checked' : '' }}>
+                  <input id="role-supervisor" class="custom-control-input" type="radio" name="role" value="supervisor"{{ $empleado->usuario->hasActiveOrInactiveRole('supervisor') ? ' checked' : '' }}>
                   <label for="role-supervisor" class="custom-control-label">Supervisor</label>
                 </div>
                 <div class="custom-control custom-radio">
-                  <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="empleado"{{ $empleado->usuario->hasRole('empleado') ? ' checked' : '' }}>
+                  <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="empleado"{{ $empleado->usuario->hasActiveOrInactiveRole('administrador|supervisor') ? '' : ' checked' }}>
                   <label for="role-empleado" class="custom-control-label">Empleado</label>
                 </div>
               </div>

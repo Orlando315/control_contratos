@@ -48,6 +48,7 @@ class UsuariosController extends Controller
     {
       $this->authorize('create', User::class);
       $this->validate($request, [
+        'role' => 'required',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut',
@@ -55,27 +56,27 @@ class UsuariosController extends Controller
         'telefono' => 'nullable|string'
       ]);
 
-      $usuario = new User($request->all());
+      $role = Role::where('name', $request->role)->firstOrFail();
+      $usuario = new User($request->only('nombres', 'apellidos', 'rut', 'email', 'telefono'));
       $usuario->usuario = $request->rut;
       $usuario->password = bcrypt($request->rut);
 
       if(Auth::user()->empresa->users()->save($usuario)){
-        $role = Role::firstWhere('name', 'administrador');
         $usuario->attachRole($role);
         $usuario->attachPermissions($request->permissions ?? []);
 
         return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
           'flash_message' => 'Usuario agregado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
       
       return redirect()->back()->withInput()>with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
-  }
+      ]);
+    }
 
     /**
      * Display the specified resource.
@@ -117,6 +118,7 @@ class UsuariosController extends Controller
     {
       $this->authorize('update', $usuario);
       $this->validate($request, [
+        'role' => 'required',
         'nombres' => 'required|string',
         'apellidos' => 'required|string',
         'rut' => 'required|regex:/^(\d{4,9}-[\dk])$/|unique:users,rut,' . $usuario->id . ',id',
@@ -124,25 +126,52 @@ class UsuariosController extends Controller
         'telefono' => 'nullable|string'
       ]);
 
-      $role = Role::findOrFail($request->role);
-      $usuario->fill($request->all());
+      $role = Role::where('name', $request->role)->firstOrFail();
+      $usuario->fill($request->only('nombres', 'apellidos', 'rut', 'email', 'telefono'));
       $usuario->usuario = $request->rut;
 
+      if($usuario->isEmpresa() && $role->name != 'empresa'){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'No se puede cambiar el role de un Usuario con role Empresa.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
+
+      if(!$usuario->isEmpresa() && $role->name == 'empresa'){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'El role Empresa no puede ser asignado.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
+
+      if(
+        (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador') && $request->role == 'administrador')
+        || (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador|supervisor') && $request->role == 'supervisor')
+      ){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'No puedes asignar un role superior al tuyo.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
+
       if($usuario->save()){
-        $usuario->syncRoles([$role->id]);
+        $usuario->assignRole($role);
         $usuario->syncPermissions($request->permissions ?? []);
 
         return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
           'flash_message' => 'Usuario modificado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**

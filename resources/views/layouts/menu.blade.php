@@ -288,7 +288,7 @@
           </ul>
         </li>
       @endpermission
-      @role('empleado'))
+      @role('empleado')
         <li>
           <a href="{{ route('anticipos.create') }}">
             <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
@@ -318,7 +318,7 @@
             <li><a href="{{ route('admin.manage.empresa.index') }}"><i class="fa fa-building"></i>Empresas</a></li>
           </ul>
         </li>
-      @endability
+      @endrole
       @ability('developer', 'god')
         <li>
           <a href="#">

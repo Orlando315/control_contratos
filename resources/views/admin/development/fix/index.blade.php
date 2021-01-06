@@ -60,6 +60,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>4</td>
+                <td>Agregar Role de Empleado a los User administradores que tengan registo de Empleado.</td>
+                <td class="text-center">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admin.development.fix.route', ['fix' => 'missing.empleado.role']) }}" target="_blank">
+                    <i class="fa fa-play" aria-hidden="false"></i>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

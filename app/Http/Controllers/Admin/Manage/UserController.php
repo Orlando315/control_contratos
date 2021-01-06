@@ -53,6 +53,7 @@ class UserController extends Controller
 
       $role = Role::findOrFail($request->role);
       $user = new User($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
+      $user->usuario = $request->rut;
       $user->password = bcrypt($request->password);
 
       if($empresa->users()->save($user)){
@@ -113,12 +114,13 @@ class UserController extends Controller
         'email' => 'nullable|email|unique:users,email,'.$user->id.',id',
       ]);
 
-      $role = Role::findOrFail($request->role);
+      $role = Role::where('name', $request->role)->firstOrFail();
       $user = $user->fill($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
+      $user->usuario = $request->rut;
       $user->password = bcrypt($request->password);
 
       if($user->save()){
-        $user->syncRoles([$role->id]);
+        $user->assignRole($role);
 
         return redirect()->route('admin.manage.user.show', ['user' => $user->id])->with([
           'flash_class'   => 'alert-success',

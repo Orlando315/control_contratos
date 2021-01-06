@@ -35,8 +35,8 @@
         <div class="ibox-content no-padding">
           <ul class="list-group list-group-unbordered">
             <li class="list-group-item">
-              <b>Role</b>
-              <span class="pull-right">{{ $user->role()->name() }}</span>
+              <b>Roles</b>
+              <span class="pull-right">{!! $user->allRolesNames() !!}</span>
             </li>
             <li class="list-group-item">
               <b>Empresa</b>

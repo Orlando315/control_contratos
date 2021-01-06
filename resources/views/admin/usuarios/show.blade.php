@@ -38,8 +38,8 @@
         <div class="ibox-content no-padding">
           <ul class="list-group">
             <li class="list-group-item">
-              <b>Role</b>
-              <span class="pull-right">{{ $usuario->role()->name() }}</span>
+              <b>Roles</b>
+              <span class="pull-right">{!! $usuario->allRolesNames() !!}</span>
             </li>
             @if($usuario->empleado_id)
               <li class="list-group-item">

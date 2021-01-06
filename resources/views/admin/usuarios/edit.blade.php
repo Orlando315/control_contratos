@@ -2,12 +2,6 @@
 
 @section('title', 'Editar')
 
-@section('head')
-  <!-- Select2 -->
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
-@endsection
-
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -27,26 +21,44 @@
     <div class="col-md-6">
       <div class="ibox">
         <div class="ibox-title">
-          <h5>Editar administrador</h5>
+          <h5>Editar usuario</h5>
         </div>
         <div class="ibox-content">
           <form action="{{ route('admin.usuarios.update', ['usuario' => $usuario->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
-                  <label for="role">Role: *</label>
-                  <select id="role" class="form-control" name="role" required>
-                    <option value="">Seleccione...</option>
-                    @foreach($roles as $role)
-                      <option value="{{ $role->id }}"{{ old('role', $usuario->role()->id) == $role->id ? ' selected' : '' }}>
-                        {{ $role->name() }} {{ $role->description ? '('.$role->description.')' : '' }}
-                      </option>
-                    @endforeach
-                  </select>
-                </div>
+            <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
+              <label>Role: *</label>
+              <div class="row">
+                @if($usuario->isEmpresa())
+                  <div class="col-md-6">
+                    <div class="custom-control custom-radio">
+                      <input id="role-empresa" class="custom-control-input" type="radio" name="role" value="empresa"{{ $usuario->hasActiveOrInactiveRole('empresa') ? '' : ' checked' }} required>
+                      <label for="role-empresa" class="custom-control-label">Empresa</label>
+                    </div>
+                  </div>
+                @endif
+
+                @foreach($roles as $role)
+                  @continue(!Auth::user()->isAdmin() && $role->name == 'administrador')
+
+                  <div class="col-md-6">
+                    <div class="custom-control custom-radio">
+                      <input id="role-{{ $role->name }}" class="custom-control-input" type="radio" name="role" value="{{ $role->name }}"{{ $usuario->hasActiveOrInactiveRole($role->name) ? ' checked' : '' }} required>
+                      <label for="role-{{ $role->name }}" class="custom-control-label">{{ $role->name() }}</label>
+                    </div>
+                  </div>
+                @endforeach
+
+                @if($usuario->isEmpleado())
+                  <div class="col-md-6">
+                    <div class="custom-control custom-radio">
+                      <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="empleado"{{ $usuario->hasActiveOrInactiveRole('administrador|supervisor') ? '' : ' checked' }} required>
+                      <label for="role-empleado" class="custom-control-label">Empleado</label>
+                    </div>
+                  </div>
+                @endif
               </div>
             </div>
 
@@ -69,7 +81,7 @@
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                   <label for="rut">RUT: *</label>
-                  <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="\d{4,9}-[\dk])$" value="{{ old('rut', $usuario->rut) }}" placeholder="RUT" required>
+                  <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dk])$" value="{{ old('rut', $usuario->rut) }}" placeholder="RUT" required>
                   <span class="help-block">Ejemplo: 00000000-0</span>
                 </div>
               </div>
@@ -79,13 +91,13 @@
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
                   <label for="telefono">Teléfono:</label>
-                  <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono', $usuario->telefono) }}" placeholder="Teléfono">
+                  <input id="telefono" class="form-control" type="text" name="telefono" maxlength="20" value="{{ old('telefono', $usuario->telefono) }}" placeholder="Teléfono">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                   <label for="email">Email:</label>
-                  <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email', $usuario->email) }}" placeholder="Email">
+                  <input id="email" class="form-control" type="email" name="email" maxlength="50" value="{{ old('email', $usuario->email) }}" placeholder="Email">
                 </div>
               </div>
             </div>
@@ -140,21 +152,14 @@
 @endsection
 
 @section('script')
-  <!-- Select2 -->
-  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     const ROLES = @json($roles);
     const OLD_PERMISSIONS = @json($usuario->permissions->pluck('id'));
 
     $(document).ready( function () {
-      $('#role').select2({
-        theme: 'bootstrap4',
-        placeholder: 'Seleccione...',
-      });
-
-      $('#role').change(function () {
-        let id = +$(this).val();
-        let role = ROLES.find(role => (role.id === id));
+      $('input[name="role"]').change(function () {
+        let name = $(this).val();
+        let role = ROLES.find(role => (role.name === name));
         
         $.each($('input[id^="permission-"]'), function (k, v) {
           let permission = +$(v).val();
@@ -168,7 +173,7 @@
         });
       });
 
-      $('#role').change();
+      $('input[name="role"]').change();
     });
   </script>
 @endsection

@@ -199,13 +199,8 @@
     @endpermission
   </div>
 
-  <div class="row">
-    @if(Auth::user()->empleado)
-      @role('developer|superadministrador|empresa|administrador')
-        <div class="col-md-12">
-          <h3 class="text-center"> Información como Empleado</h3>
-        </div>
-      @endrole
+  @role('empleado')
+    <div class="row">
       <div class="col-md-12 mb-3">
         <div class="tabs-container">
           <ul class="nav nav-tabs">
@@ -287,9 +282,7 @@
         <div class="tabs-container">
           <ul class="nav nav-tabs">
             <li><a class="nav-link active" href="#tab-21" data-toggle="tab">Calendario</a></li>
-            @if(Auth::user()->isEmpleado())
-              <li><a class="nav-link" href="#tab-22" data-toggle="tab">Eventos</a></li>
-            @endif
+            <li><a class="nav-link" href="#tab-22" data-toggle="tab">Eventos</a></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane active" id="tab-21">
@@ -301,43 +294,39 @@
                 <div id="calendar"></div>
               </div>
             </div>
-            @if(Auth::user()->isEmpleado())
-              <div class="tab-pane" id="tab-22">
-                <div class="panel-body">
-                  <table class="table data-table table-bordered table-hover table-sm w-100">
-                    <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Tipo</th>
-                        <th class="text-center">Inicio</th>
-                        <th class="text-center">Fin</th>
-                        <th class="text-center">Estatus</th>
-                        <th class="text-center">Agregado</th>
+            <div class="tab-pane" id="tab-22">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Tipo</th>
+                      <th class="text-center">Inicio</th>
+                      <th class="text-center">Fin</th>
+                      <th class="text-center">Estatus</th>
+                      <th class="text-center">Agregado</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach(Auth::user()->empleado->eventos()->notAsistencias()->latest()->get() as $evento)
+                      <tr id="evento-{{ $evento->id }}">
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $evento->tipo() }}</td>
+                        <td>{{ $evento->inicio }}</td>
+                        <td>@nullablestring($evento->fin)</td>
+                        <td>{!! $evento->status() !!}</td>
+                        <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
                       </tr>
-                    </thead>
-                    <tbody class="text-center">
-                      @foreach(Auth::user()->empleado->eventos()->notAsistencias()->latest()->get() as $evento)
-                        <tr id="evento-{{ $evento->id }}">
-                          <td>{{ $loop->iteration }}</td>
-                          <td>{{ $evento->tipo() }}</td>
-                          <td>{{ $evento->inicio }}</td>
-                          <td>@nullablestring($evento->fin)</td>
-                          <td>{!! $evento->status() !!}</td>
-                          <td>{{ optional($evento->created_at)->format('d-m-Y H:i:s')}}</td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
+                    @endforeach
+                  </tbody>
+                </table>
               </div>
-            @endif
+            </div>
           </div>
         </div>
       </div>
-    @endif
-  </div>
+    </div>
 
-  @if(Auth::user()->isEmpleado())
     <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -427,11 +416,11 @@
         </div>
       </div>
     </div>
-  @endif
+  @endrole
 @endsection
 
 @section('script')
-  @if(Auth::user()->isEmpleado())
+  @role('empleado')
     <!-- Datepicker -->
     <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
@@ -597,5 +586,5 @@
         })
       }
     </script>
-  @endif
+  @endrole
 @endsection
