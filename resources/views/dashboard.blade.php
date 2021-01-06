@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-  <div class="row">
+  <div class="row mt-3">
     @permission('contrato-index')
       <div class="col-6 col-md-3">
         <div class="ibox ">
@@ -53,7 +53,7 @@
                 <div class="col-12 text-center">
                   <p class="mb-1"><strong>Contratos</strong></p>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}#vencidos" title="Contratos {{ $contratosPorVencer->vencidos }} / Documentos {{ $documentosContratosPorVencer->vencidos }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -63,7 +63,7 @@
                   </a>
                   <small class=text-muted>Vencidos</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 3]) }}" title="Contratos {{ $contratosPorVencer->lessThan3 }} / Documentos {{ $documentosContratosPorVencer->lessThan3 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -73,7 +73,7 @@
                   </a>
                   <small class=text-muted>3 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 7]) }}" title="Contratos {{ $contratosPorVencer->lessThan7 }} / Documentos {{ $documentosContratosPorVencer->lessThan7 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -83,7 +83,7 @@
                   </a>
                   <small class=text-muted>7 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}" title="Contratos {{ $contratosPorVencer->lessThan21 }} / Documentos {{ $documentosContratosPorVencer->lessThan21 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -102,7 +102,7 @@
                 <div class="col-12 text-center">
                   <p class="mb-1"><strong>Empleados</strong></p>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}#vencidos" title="Contratos {{ $empleadosContratosPorVencer->vencidos }} / Documentos {{ $documentosEmpleadosPorVencer->vencidos }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -112,7 +112,7 @@
                   </a>
                   <small class=text-muted>Vencidos</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 3]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan3 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan3 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -122,7 +122,7 @@
                   </a>
                   <small class=text-muted>3 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 7]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan7 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan7 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -132,7 +132,7 @@
                   </a>
                   <small class=text-muted>7 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan21 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan21 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -151,7 +151,7 @@
                 <div class="col-12 text-center">
                   <p class="mb-1"><strong>Transportes</strong></p>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}#vencidos" title="Documentos {{ $documentosTransportesPorVencer->vencidos }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -161,7 +161,7 @@
                   </a>
                   <small class=text-muted>Vencidos</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 3]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan3 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -171,7 +171,7 @@
                   </a>
                   <small class=text-muted>3 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 7]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan7 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>
@@ -181,7 +181,7 @@
                   </a>
                   <small class=text-muted>7 días</small>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan21 }}">
                     <div class="w-100">
                       <i class="fa fa-clock-o"></i>

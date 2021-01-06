@@ -3,7 +3,7 @@
   <head>
     @include('layouts.head')
   </head>
-  <body>
+  <body class="fixed-sidebar">
     <div id="wrapper">
       @include('layouts.menu')
 

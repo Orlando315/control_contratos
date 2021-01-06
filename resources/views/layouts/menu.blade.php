@@ -3,7 +3,7 @@
     <ul class="nav metismenu" id="side-menu">
       <li class="nav-header">
         <div class="dropdown profile-element">
-          <div class="menu-logo-empresa">
+          <div class="menu-logo-empresa text-center">
             <img src="{{ Auth::user()->empresa->logo ? Auth::user()->empresa->logo_url : asset('images/logo-small-white.jpg') }}" class="user-image" alt="Logo empresa">
           </div>
           <a data-toggle="dropdown" class="dropdown-toggle" href="#">

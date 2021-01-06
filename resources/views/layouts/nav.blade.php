@@ -2,7 +2,7 @@
   <div class="navbar-header">
     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>
     @if(Auth::user()->hasInactiveRole('empresa|administrador|supervisor|empleado'))
-      <form class="navbar-form-custom" action="{{ route('role.toggle') }}" method="POST">
+      <form class="float-left" action="{{ route('role.toggle') }}" method="POST">
         @csrf
         @method('PUT')
 
