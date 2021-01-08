@@ -57,7 +57,7 @@ class AnticiposController extends Controller
 
       $anticipo = new Anticipo($request->only('anticipo', 'bono', 'descripcion', 'adjunto'));
       $anticipo->fecha = date('Y-m-d H:i:s');
-      $anticipo->empresa_id = Auth::user()->empresa_id;
+      $anticipo->empresa_id = Auth::user()->empresa->id;
       $anticipo->contrato_id = Auth::user()->empleado->contrato_id;
       $anticipo->status = null;
 

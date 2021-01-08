@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Contrato;
-use App\Transporte;
-use App\User;
-use App\TransporteContrato;
+use App\{Contrato, Transporte, User, TransporteContrato, Faena};
 
 class TransportesController extends Controller
 {
@@ -22,9 +19,9 @@ class TransportesController extends Controller
     {
       $this->authorize('viewAny', Transporte::class);
 
-      $transportes = Transporte::all();
+      $transportes = Transporte::with('faena')->get();
 
-      return view('admin.transportes.index', ['transportes' => $transportes]);
+      return view('admin.transportes.index', compact('transportes'));
     }
 
     /**
@@ -37,9 +34,10 @@ class TransportesController extends Controller
       $this->authorize('create', Transporte::class);
 
       $contratos = Contrato::all();
-      $usuarios = User::supervisores();
+      $supervisores = User::supervisores()->get();
+      $faenas = Faena::all();
 
-      return view('admin.transportes.create', ['contratos' => $contratos, 'usuarios' => $usuarios]);
+      return view('admin.transportes.create', compact('contratos', 'supervisores', 'faenas'));
     }
 
     /**
@@ -52,16 +50,18 @@ class TransportesController extends Controller
     {
       $this->authorize('create', Transporte::class);
       $this->validate($request, [
-        'vehiculo' => 'required',
-        'patente' => 'required',
+        'supervisor' => 'required',
+        'vehiculo' => 'required|string|max:50',
+        'patente' => 'required|string|max:50',
       ]);
 
       $contrato = Contrato::findOrFail($request->contrato);
       $supervisor = User::findOrFail($request->supervisor);
       $transporte = new Transporte($request->only('vehiculo', 'patente'));
       $transporte->user_id = $supervisor->id;
+      $transporte->faena_id = $request->faena;
 
-      if($transporte = Auth::user()->empresa->transportes()->save($transporte)){
+      if(Auth::user()->empresa->transportes()->save($transporte)){
         $transporte->contratos()->create(['contrato_id' => $contrato->id]);
 
         return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
@@ -87,6 +87,7 @@ class TransportesController extends Controller
     {
       $this->authorize('view', $transporte);
 
+      $transporte->load('faena');
       $contratosIds = $transporte->contratos()->pluck('contrato_id')->toArray();
       $otherContratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
 
@@ -103,7 +104,10 @@ class TransportesController extends Controller
     {
       $this->authorize('update', $transporte);
 
-      return view('admin.transportes.edit', ['transporte' => $transporte]);
+      $supervisores = User::supervisores()->get();
+      $faenas = Faena::all();
+
+      return view('admin.transportes.edit', compact('transporte', 'supervisores', 'faenas'));
     }
 
     /**
@@ -117,11 +121,14 @@ class TransportesController extends Controller
     {
       $this->authorize('update', $transporte);
       $this->validate($request, [
-        'vehiculo' => 'required',
-        'patente' => 'required',
+        'supervisor' => 'required',
+        'vehiculo' => 'required|string|max:50',
+        'patente' => 'required|string|max:50',
       ]);
 
       $transporte->fill($request->only('vehiculo', 'patente'));
+      $transporte->user_id = $request->supervisor;
+      $transporte->faena_id = $request->faena;
 
       if($transporte->save()){
         return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([

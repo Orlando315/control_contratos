@@ -45,6 +45,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
+                <th class="text-center">Faena</th>
                 <th class="text-center">Supervisor</th>
                 <th class="text-center">Vehiculo</th>
                 <th class="text-center">Patente</th>
@@ -55,14 +56,21 @@
               @foreach($transportes as $transporte)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
+                  <td>
+                    @if($transporte->faena)
+                      {{ $transporte->faena->nombre }}
+                    @else
+                      @nullablestring(null)
+                    @endif
+                  </td>
                   <td>{{ $transporte->usuario->nombre() }}</td>
                   <td>{{ $transporte->vehiculo }}</td>
                   <td>{{ $transporte->patente }}</td>
                   <td>
-                    @permission('transporte-create')
+                    @permission('transporte-view')
                       <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
-                    @permission('transporte-view')
+                    @permission('transporte-edit')
                       <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil"></i></a>
                     @endpermission
                   </td>

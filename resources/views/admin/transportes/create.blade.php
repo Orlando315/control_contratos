@@ -33,30 +33,40 @@
           <form action="{{ route('admin.transportes.store') }}" method="POST">
             @csrf
 
+            <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+              <label for="contrato">Contrato: *</label>
+              <select id="contrato" class="form-control" name="contrato" required>
+                <option value="">Seleccione...</option>
+                @foreach($contratos as $contrato)
+                  <option value="{{ $contrato->id }}"{{ old('contrato') == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="form-group{{ $errors->has('supervisor') ? ' has-error' : '' }}">
+              <label for="supervisor">Supervisor: *</label>
+              <select id="supervisor" class="form-control" name="supervisor" required>
+                <option value="">Seleccione...</option>
+                @foreach($supervisores as $supervisor)
+                  <option value="{{ $supervisor->id }}"{{ old('supervisor') == $supervisor->id ? ' selected' : '' }}>{{ $supervisor->rut }} | {{ $supervisor->nombre() }}</option>
+                @endforeach
+              </select>
+            </div>
+
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group{{ $errors->has('supervisor') ? ' has-error' : '' }}">
-                  <label for="supervisor">Supervisor: *</label>
-                  <select id="supervisor" class="form-control" name="supervisor" required>
+                <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
+                  <label for="faena">Faena:</label>
+                  <select id="faena" class="form-control" name="faena">
                     <option value="">Seleccione...</option>
-                    @foreach($usuarios as $usuario)
-                      <option value="{{ $usuario->id }}" {{ old('usuario') == $usuario->id ? 'selected':'' }}>{{ $usuario->nombres }} {{ $usuario->apellidos }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
-                  <label for="contrato">Contrato: *</label>
-                  <select id="contrato" class="form-control" name="contrato" required>
-                    <option value="">Seleccione...</option>
-                    @foreach($contratos as $contrato)
-                      <option value="{{ $contrato->id }}" {{ old('contrato') == $contrato->id ? 'selected':'' }}>{{ $contrato->nombre }}</option>
+                    @foreach($faenas as $faena)
+                      <option value="{{ $faena->id }}"{{ old('faena') == $faena->id ? ' selected' : '' }}>{{ $faena->nombre }}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
             </div>
+
             <div class="row">
               <div class="col-md-6">
               <div class="form-group{{ $errors->has('vehiculo') ? ' has-error' : '' }}">
@@ -98,7 +108,7 @@
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){
-      $('#contrato, #supervisor').select2({
+      $('#contrato, #supervisor, #faena').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       })

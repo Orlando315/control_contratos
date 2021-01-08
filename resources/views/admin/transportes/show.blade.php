@@ -43,9 +43,25 @@
         <div class="ibox-content no-padding">
           <ul class="list-group">
             <li class="list-group-item">
+              <b>Faena</b>
+              <span class="pull-right">
+                @if($transporte->faena)
+                  @permission('faena-view')
+                    <a href="{{ route('admin.faena.show', ['faena' => $transporte->faena_id]) }}">
+                      {{ $transporte->faena->nombre }}
+                    </a>
+                  @else
+                    {{ $transporte->faena->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Supervisor</b>
               <span class="pull-right">
-                @permission('transporte-create')
+                @permission('user-view')
                   <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
                     {{ $transporte->usuario->nombre() }}
                   </a>
@@ -198,7 +214,15 @@
                   @foreach($transporte->contratos as $contrato)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $contrato->contrato->nombre }}</td>
+                      <td>
+                        @permission('contrato-view')
+                          <a href="{{ route('admin.contratos.show', ['contrato' => $contrato->contrato_id]) }}">
+                            {{ $contrato->contrato->nombre }}
+                          </a>
+                        @else
+                          {{ $contrato->contrato->nombre }}
+                        @endpermission
+                      </td>
                       <td>{{ $contrato->created_at }}</td>
                       @permission('transporte-edit')
                         <td>

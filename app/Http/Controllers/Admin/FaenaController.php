@@ -79,7 +79,8 @@ class FaenaController extends Controller
     public function show(Faena $faena)
     {
       $this->authorize('view', $faena);
-      $faena->load('contratos');
+      
+      $faena->load('contratos', 'transportes');
 
       return view('admin.faena.show', compact('faena'));
     }

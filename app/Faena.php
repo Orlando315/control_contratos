@@ -41,4 +41,12 @@ class Faena extends Model
     {
       return $this->hasMany('App\Contrato');
     }
+
+    /**
+     * Obtener los Transportes
+     */
+    public function transportes()
+    {
+      return $this->hasMany('App\Transporte');
+    }
 }

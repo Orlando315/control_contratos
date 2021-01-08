@@ -43,7 +43,7 @@ class AnticipoPolicy
      */
     public function view(User $user, Anticipo $anticipo)
     {
-      return $user->hasPermission('contrato-view');
+      return $user->isEmpleado() || $user->hasPermission('anticipo-view');
     }
 
     /**
@@ -54,7 +54,7 @@ class AnticipoPolicy
      */
     public function create(User $user)
     {
-      return $user->hasPermission('contrato-create');
+      return $user->isEmpleado() || $user->hasPermission('anticipo-create');
     }
 
     /**

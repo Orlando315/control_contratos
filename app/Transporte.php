@@ -32,7 +32,6 @@ class Transporte extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
@@ -82,6 +81,14 @@ class Transporte extends Model
     public function documentos()
     {
       return $this->morphMany('App\Documento', 'documentable');
+    }
+
+    /**
+     * Obtener la Faena
+     */
+    public function faena()
+    {
+      return $this->belongsTo('App\Faena');
     }
 
     /**

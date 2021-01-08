@@ -260,7 +260,7 @@
                         <td>{{ $anticipo->anticipo() }}</td>
                         <td>{{ $anticipo->bono() }}</td>
                         <td>{{ $anticipo->fecha }}</td>
-                        <td>{{ $anticipo->descripcion }}</td>
+                        <td>@nullablestring($anticipo->descripcion)</td>
                         <td>
                           @if($anticipo->adjunto)
                             <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>

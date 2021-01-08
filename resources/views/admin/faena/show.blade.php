@@ -49,43 +49,90 @@
     </div>
 
     <div class="col-md-12">
-      <div class="ibox">
-        <div class="ibox-title">
-          <h5><i class="fa fa-clipboard"></i> Contratos</h5>
-        </div>
-        <div class="ibox-content">
-          <table class="table data-table table-bordered table-hover table-sm w-100">
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Nombre</th>
-                <th class="text-center">Descripción</th>
-                <th class="text-center">Inicio</th>
-                <th class="text-center">Fin</th>
-                <th class="text-center">Valor</th>
-                <th class="text-center">Empleados</th>
-                <th class="text-center">Acción</th>
-              </tr>
-            </thead>
-            <tbody class="text-center">
-              @foreach($faena->contratos as $contrato)
-                <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td>{{ $contrato->nombre }}</td>
-                  <td>{{ $contrato->descripcion ?? 'M/A' }}</td>
-                  <td>{{ $contrato->inicio }}</td>
-                  <td>{{ $contrato->fin }}</td>
-                  <td>{{ $contrato->valor() }}</td>
-                  <td>{{ $contrato->empleados()->count() }}</td>
-                  <td>
-                    @permission('contrato-index')
-                      <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
+      <div class="tabs-container">
+        <ul class="nav nav-tabs">
+          @permission('contrato-index')
+            <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-clipboard"></i> Contratos</a></li>
+          @endpermission
+          @permission('transporte-index')
+            <li><a class="nav-link{{ !Auth::user()->hasPermission('contrato-view') ? ' active' : '' }}" href="#tab-2" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
+          @endpermission
+        </ul>
+        <div class="tab-content">
+          @permission('contrato-index')
+            <div id="tab-1" class="tab-pane active">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Nombre</th>
+                      <th class="text-center">Descripción</th>
+                      <th class="text-center">Inicio</th>
+                      <th class="text-center">Fin</th>
+                      <th class="text-center">Valor</th>
+                      <th class="text-center">Empleados</th>
+                      @permission('contrato-view')
+                        <th class="text-center">Acción</th>
+                      @endpermission
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($faena->contratos as $contrato)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $contrato->nombre }}</td>
+                        <td>{{ $contrato->descripcion ?? 'M/A' }}</td>
+                        <td>{{ $contrato->inicio }}</td>
+                        <td>{{ $contrato->fin }}</td>
+                        <td>{{ $contrato->valor() }}</td>
+                        <td>{{ $contrato->empleados()->count() }}</td>
+                        @permission('contrato-view')
+                          <td>
+                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
+                          </td>
+                        @endpermission
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
+          @permission('transporte-index')
+            <div id="tab-2" class="tab-pane{{ !Auth::user()->hasPermission('contrato-view') ? ' active' : '' }}">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Supervisor</th>
+                      <th class="text-center">Vehiculo</th>
+                      <th class="text-center">Patente</th>
+                      @permission('transporte-view')
+                        <th class="text-center">Acción</th>
+                      @endpermission
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($faena->transportes as $transporte)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $transporte->usuario->nombre() }}</td>
+                        <td>{{ $transporte->vehiculo }}</td>
+                        <td>{{ $transporte->patente }}</td>
+                        @permission('transporte-view')
+                          <td>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
+                          </td>
+                        @endpermission
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
         </div>
       </div>
     </div>
