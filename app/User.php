@@ -394,4 +394,16 @@ class User extends Authenticatable
         $this->syncRoles([$role->id]);
       }
     }
+
+    /**
+     * Evaluar si el User ha aceptado los terminos y condiciones de la Empresa
+     * 
+     * @return bool
+     */
+    public function haventAcceptedTerms()
+    {
+      $users = $this->empresa->configuracion->terminos->users;
+
+      return !in_array($this->id, $users);
+    }
 }

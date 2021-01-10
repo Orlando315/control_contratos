@@ -79,6 +79,10 @@ Route::group(['middleware' => 'auth'], function () {
   /* --- Cambiar Role activo --- */
   Route::put('role/toggle', 'HomeController@roleToggle')->name('role.toggle');
 
+  /* --- Terminos y condiciones --- */
+  Route::get('terminos', 'HomeController@terminos')->name('terminos');
+  Route::patch('terminos', 'HomeController@terminosAccept')->name('terminos.accept');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

@@ -87,24 +87,16 @@ class EmpresaController extends Controller
       $this->validate($request, [
         'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:empresas,rut,'.$empresa->id.',id',
         'razon_social' => 'required|string|max:50',
-        'jornada' => 'required',
-        'dias_vencimiento' => 'nullable|integer|min:1|max:255',
         'logo' => 'nullable|file|mimes:jpeg,png|max:3000',
         'representante_nombre' => 'required|string|max:50',
         'telefono' => 'nullable|string|max:20',
         'email' => 'nullable|email|max:50|unique:empresas,email,'.$empresa->id.',id',
-        'sii_clave' => 'nullable|string|max:120',
-        'sii_clave_certificado' => 'nullable|string|max:150',
-        'firma' => 'nullable|string|max:120',
       ]);
 
       // Empresa
       $empresa->fill($request->only('rut', 'email', 'telefono'));
       $empresa->representante = $request->representante_nombre;
       $empresa->nombre = $request->razon_social;
-
-      // Configuracion
-      $empresa->configuracion->fill($request->only('jornada', 'dias_vencimiento', 'sii_clave', 'sii_clave_certificado', 'firma'));
 
       if($empresa->push()){
         if($request->hasFile('logo')){

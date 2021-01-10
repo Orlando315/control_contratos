@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{Auth, Log, Http};
 use App\Integrations\FacturacionSii;
+use App\User;
 
 class ConfiguracionEmpresa extends Model
 {
@@ -33,6 +34,7 @@ class ConfiguracionEmpresa extends Model
       'sii_clave',
       'sii_clave_certificado',
       'firma',
+      'terminos',
     ];
 
     /**
@@ -57,6 +59,46 @@ class ConfiguracionEmpresa extends Model
         'sii_clave_certificado',
       ],
     ];
+
+    /**
+     * Valor por defecto de terminos
+     * 
+     * @var array
+     */
+    private $_terminos = [
+      'status' => false,
+      'terminos' => null,
+      'users' => [],
+    ];
+
+    /**
+     * Establecer la estructura para almacenar los terminos
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setTerminosAttribute($value)
+    {
+      $value = (array) $value;
+      $terminos = $this->_terminos;
+      $terminos['status'] = isset($value['status']) ? ($value['status'] == 1) : false;
+      $terminos['terminos'] = $value['terminos'] ?? null;
+      $terminos['users'] = $value['users'] ?? [];
+
+      $this->attributes['terminos'] = json_encode($terminos);
+    }
+
+    /**
+     * Obtener los terminos
+     *
+     * @param  string  $value
+     * @return obejct
+     */
+    public function getTerminosAttribute($value)
+    {
+      $terminos = is_null($value) ? json_encode($this->_terminos) : $value;
+      return json_decode($terminos);
+    }
 
     /**
      * Obtener la Empresa a la que pertenece la Configuracion
@@ -105,5 +147,35 @@ class ConfiguracionEmpresa extends Model
       }
 
       return (new FacturacionSii)->busquedaReceptor($rut, $dv);
+    }
+
+    /**
+     * Evaluar si los terminos y condiciones estan activos
+     *
+     * @param  bool  $asTag
+     * @return string
+     */
+    public function hasActiveTerminos(bool $asTag = false)
+    {
+      if(!$asTag){
+        return $this->terminos->status;
+      }
+
+      return $this->terminos->status ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Aceptar los terminos y condiciones
+     *
+     * @param  \App\User|null  $user
+     * @return bool
+     */
+    public function acceptTerms(User $user = null)
+    {
+      $terminos = $this->terminos;
+      $terminos->users[] = $user ? $user->id : Auth::id();
+      $this->terminos = $terminos;
+
+      return $this->save();
     }
 }

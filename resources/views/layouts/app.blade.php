@@ -15,7 +15,7 @@
           @yield('page-heading')
         </div>
         
-        <div class="wrapper wrapper-content">
+        <div class="wrapper wrapper-content mb-3">
           @include('partials.entregas')
           @include('partials.sueldos')
           @include('partials.flash')
@@ -24,6 +24,7 @@
         </div>
         @include('layouts.footer')
       </div>
+      @include('layouts.banner')
     </div>
 
     @include('layouts.script')

@@ -81,4 +81,36 @@ class HomeController extends Controller
 
       return redirect()->route('dashboard');
     }
+
+    /**
+     * Mostrar la pagina de terminos y condiciones de la empresa
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function terminos()
+    {
+      if(!Auth::user()->empresa->configuracion->hasActiveTerminos()){
+        abort(404);
+      }
+
+      $terminos = Auth::user()->empresa->configuracion->terminos;
+
+      return view('terminos', compact('terminos'));
+    }
+
+    /**
+     * Aceptar los terminos y condiciones
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function terminosAccept()
+    {
+      $response = false;
+
+      if(Auth::user()->empresa->configuracion->hasActiveTerminos()){
+        $response = Auth::user()->empresa->configuracion->acceptTerms();
+      }
+
+      return response()->json(['response' => $response]);
+    }
 }

@@ -307,6 +307,14 @@
         </li>
       @endrole
 
+      @role('developer|superadmin|empresa')
+        <li>
+          <a href="{{ route('admin.empresa.configuracion') }}">
+            <i class="fa fa-cogs"></i> <span class="nav-label">Configuración</span>
+          </a>
+        </li>
+      @endrole
+
       @role('developer|superadmin')
         <li>
           <a href="#">

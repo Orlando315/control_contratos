@@ -81,4 +81,38 @@
     })
   });
 </script>
+
+@if(Auth::user()->isEmpleado() && Auth::user()->empresa->configuracion->hasActiveTerminos() && Auth::user()->haventAcceptedTerms())
+  <script type="text/javascript">
+    const termsBanner = $('.terms-banner');
+
+    $(document).ready(function() {
+      termsBanner.slideDown();
+
+      $('.btn-accept-terms').click(function () {
+        let btn = $(this);
+
+        btn.prop('disabled', true);
+
+        $.ajax({
+          type: 'POST',
+          url: '{{ route("terminos.accept") }}',
+          data: {
+            _method: 'PATCH',
+          },
+          dataType: 'json',
+        })
+        .done(function (data) {
+          if(data.response){
+            termsBanner.slideUp();
+          }
+        })
+        .always(function () {
+          btn.prop('disabled', false);
+        });
+      });
+    });
+  </script>
+@endif
+
 @yield('script')

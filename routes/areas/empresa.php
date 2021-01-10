@@ -18,6 +18,12 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   Route::get('empresa/perfil', 'EmpresaController@perfil')->name('empresa.perfil');
   Route::get('empresa/edit', 'EmpresaController@edit')->name('empresa.edit');
   Route::put('empresa/edit', 'EmpresaController@update')->name('empresa.update');
+
+  /* --- Configuracion --- */
+  Route::get('empresa/configuracion', 'ConfiguracionController@configuracion')->name('empresa.configuracion');
+  Route::patch('empresa/configuracion/general', 'ConfiguracionController@general')->name('empresa.configuracion.general');
+  Route::patch('empresa/configuracion/sii', 'ConfiguracionController@sii')->name('empresa.configuracion.sii');
+  Route::patch('empresa/configuracion/terminos', 'ConfiguracionController@terminos')->name('empresa.configuracion.terminos');
 });
 
 /* --- Contratos --- */

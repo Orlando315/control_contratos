@@ -63,33 +63,6 @@
                   </div>
                 </div>
               </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->has('jornada') ? ' has-error' : '' }}">
-                    <label for="jornada">Jornada: *</label>
-                    <select id="jornada" class="custom-select" name="jornada" required>
-                      <option value="">Seleccione...</option>
-                      <option value="5x2"{{ old('jornada', $empresa->configuracion->jornada) == '5x2' ? ' selected' : '' }}>5x2</option>
-                      <option value="4x3"{{ old('jornada', $empresa->configuracion->jornada) == '4x3' ? ' selected' : '' }}>4x3</option>
-                      <option value="6x1"{{ old('jornada', $empresa->configuracion->jornada) == '6x1' ? ' selected' : '' }}>6x1</option>
-                      <option value="7x7"{{ old('jornada', $empresa->configuracion->jornada) == '7x7' ? ' selected' : '' }}>7x7</option>
-                      <option value="10x10"{{ old('jornada', $empresa->configuracion->jornada) == '10x10' ? ' selected' : '' }}>10x10</option>
-                      <option value="12x12"{{ old('jornada', $empresa->configuracion->jornada) == '12x12' ? ' selected' : '' }}>12x12</option>
-                      <option value="20x10"{{ old('jornada', $empresa->configuracion->jornada) == '20x10' ? ' selected' : '' }}>20x10</option>
-                      <option value="7x14"{{ old('jornada', $empresa->configuracion->jornada) == '7x14' ? ' selected' : '' }}>7x14</option>
-                      <option value="14x14"{{ old('jornada', $empresa->configuracion->jornada) == '14x14' ? ' selected' : '' }}>14x14</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->has('dias_vencimiento') ? ' has-error' : '' }}">
-                    <label for="dias_vencimiento">Días antes del vencimiento: *</label>
-                    <input id="dias_vencimiento" class="form-control" type="number" name="dias_vencimiento" min="1" max="255" value="{{ old('dias_vencimiento', $empresa->configuracion->dias_vencimiento) }}" placeholder="Días vencimiento" required>
-                    <span class="form-text text-muted">Cantidad de días restantes al vencimiento de un Contrato / Documento</span>
-                  </div>
-                </div>
-              </div>
             </section>
 
             <section>
@@ -115,34 +88,6 @@
                   <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <label for="email">Email:</label>
                     <input id="email" class="form-control" type="email" name="email" maxlength="50" value="{{ old('email', $empresa->email) }}" placeholder="Email">
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section>
-              <legend class="form-legend">Facturación Sii</legend>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->has('sii_clave') ? ' has-error' : '' }}">
-                    <label for="sii_clave">Clave Sii:</label>
-                    <input id="sii_clave" class="form-control" type="text" name="sii_clave" maxlength="120" value="{{ old('sii_clave', $empresa->configuracion->sii_clave) }}" placeholder="Clave SII">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->has('sii_clave_certificado') ? ' has-error' : '' }}">
-                    <label for="sii_clave_certificado">Clave certificado digital:</label>
-                    <input id="sii_clave_certificado" class="form-control" type="text" name="sii_clave_certificado" maxlength="150" value="{{ old('sii_clave_certificado', $empresa->configuracion->sii_clave_certificado) }}" placeholder="Clave certificado digital">
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->has('firma') ? ' has-error' : '' }}">
-                    <label for="firma">Firma:</label>
-                    <input id="firma" class="form-control" type="text" name="firma" maxlength="120" value="{{ old('firma', Auth::user()->empresa->configuracion->firma) }}" placeholder="Firma">
                   </div>
                 </div>
               </div>

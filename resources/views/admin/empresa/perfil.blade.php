@@ -75,7 +75,60 @@
     <div class="col-md-9">
       <div class="ibox mb-3">
         <div class="ibox-title">
+          <h5><i class="fa fa-cogs"></i> Configuración</h5>
+
+          <div class="ibox-tools">
+            <a class="btn btn-default btn-xs" href="{{ route('admin.empresa.configuracion') }}" title="Editar configuración"><i class="fa fa-pencil"></i></a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="card mb-3">
+            <div class="card-header text-center">
+              General
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-md-4 text-right">
+                    <strong>Jornada:</strong>
+                  </div>
+                  <div class="col-md-8">
+                    @nullablestring($empresa->configuracion->jornada)
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-md-4 text-right">
+                    <strong>Días antes el vencimiento:</strong>
+                  </div>
+                  <div class="col-md-8">
+                    @nullablestring($empresa->configuracion->dias_vencimiento)
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-md-4 text-right">
+                    <strong>Terminos y condiciones:</strong>
+                  </div>
+                  <div class="col-md-8">
+                    {!! $empresa->configuracion->hasActiveTerminos(true) !!}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="ibox mb-3">
+        <div class="ibox-title">
           <h5><i class="fa fa-random"></i> Integraciones (API)</h5>
+
+          <div class="ibox-tools">
+            <a class="btn btn-default btn-xs" href="{{ route('admin.empresa.configuracion') }}" title="Editar configuración"><i class="fa fa-pencil"></i></a>
+          </div>
         </div>
         <div class="ibox-content">
           <div class="card mb-3">
