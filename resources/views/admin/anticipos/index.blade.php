@@ -317,3 +317,13 @@
     </div>
   </div>
 @endsection
+
+@section('script')
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#select-years').change(function () {
+        $('#form-years').submit();
+      });
+    })
+  </script>
+@endsection

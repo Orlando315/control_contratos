@@ -197,6 +197,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener las respuestas de la encuesta Covid19
+     */
+    public function covid19Respuestas()
+    {
+      return $this->hasMany('App\Covid19Respuesta');
+    }
+
+    /**
      * Evaluar si el User es tiene algun role de Administrador
      * 
      * @return bool
@@ -405,5 +413,15 @@ class User extends Authenticatable
       $users = $this->empresa->configuracion->terminos->users;
 
       return !in_array($this->id, $users);
+    }
+
+    /**
+     * Evaluar si el User ya ha respondido la encuesta Covid19 "hoy"
+     * 
+     * @return bool
+     */
+    public function haventAnsweredCovid19Today()
+    {
+      return !$this->covid19Respuestas()->whereDate('created_at', date('Y-m-d'))->exists();
     }
 }

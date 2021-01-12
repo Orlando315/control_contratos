@@ -157,9 +157,21 @@ class EmpleadosController extends Controller
     {
       $this->authorize('view', $empleado);
 
+      $empleado->load([
+        'banco',
+        'plantillaDocumentos',
+        'solicitudes',
+        'sueldos',
+        'anticipos',
+        'reemplazos',
+        'entregas',
+        'contratos',
+        'usuario.covid19Respuestas'
+      ]);
       $empleados = Empleado::select('id')
                             ->with('usuario:empleado_id,nombres,apellidos,rut')
-                            ->where('contrato_id', $empleado->contrato_id)
+                            ->where('contrato_id',
+                              $empleado->contrato_id)
                             ->get();
       $contratos = Contrato::where('id', '!=', $empleado->contrato_id)->get();
       $roles = Role::notAdmins()->get();

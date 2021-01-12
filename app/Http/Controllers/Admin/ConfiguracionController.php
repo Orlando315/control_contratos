@@ -120,4 +120,32 @@ class ConfiguracionController extends Controller
         'flash_important' => true
       ]);
     }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function covid19(Request $request)
+    {
+      $this->validateWithBag('covid19', $request, [
+        'covid19.status' => 'nullable|boolean',
+      ]);
+
+      Auth::user()->empresa->configuracion->covid19 = $request->covid19['status'] == '1';
+
+      if(Auth::user()->empresa->push()){
+        return redirect()->back()->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Configuracion modificada exitosamente.',
+        ]);
+      }
+
+      return redirect()->back()->withInput()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
+    }
 }

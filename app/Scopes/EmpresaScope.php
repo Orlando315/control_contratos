@@ -18,7 +18,7 @@ class EmpresaScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-      if(Auth::check() && !Auth::user()->isSuper()){
+      if(Auth::check()){
         $tableColumn = $model->getTable().'.empresa_id';
 
         $builder->where($tableColumn, Auth::user()->empresa->id);

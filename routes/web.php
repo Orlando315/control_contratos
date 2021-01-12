@@ -83,6 +83,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('terminos', 'HomeController@terminos')->name('terminos');
   Route::patch('terminos', 'HomeController@terminosAccept')->name('terminos.accept');
 
+  /* --- Covid19 --- */
+  Route::get('covid19', 'Covid19Controller@encuesta')->name('covid19');
+  Route::post('covid19', 'Covid19Controller@store')->name('covid19.store');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

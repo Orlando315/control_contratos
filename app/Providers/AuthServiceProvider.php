@@ -36,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Facturacion' => 'App\Policies\Admin\FacturacionPolicy',
       'App\Pago' => 'App\Policies\Admin\PagoPolicy',
       'App\Requisito' => 'App\Policies\Admin\RequisitoPolicy',
+      'App\Covid19Respuesta' => 'App\Policies\Admin\Covid19RespuestaPolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
     ];

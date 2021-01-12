@@ -309,6 +309,11 @@
 
       @role('developer|superadmin|empresa')
         <li>
+          <a href="{{ route('admin.empresa.covid19.index') }}">
+            <i class="fa fa-heartbeat"></i> <span class="nav-label">Covid-19</span>
+          </a>
+        </li>
+        <li>
           <a href="{{ route('admin.empresa.configuracion') }}">
             <i class="fa fa-cogs"></i> <span class="nav-label">Configuración</span>
           </a>
@@ -324,6 +329,7 @@
           </a>
           <ul class="nav nav-second-level">
             <li><a href="{{ route('admin.manage.empresa.index') }}"><i class="fa fa-building"></i>Empresas</a></li>
+            <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-heartbeat"></i>Covid-19</a></li>
           </ul>
         </li>
       @endrole

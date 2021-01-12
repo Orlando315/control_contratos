@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use App\Covid19Respuesta;
 
 class Empresa extends Model
 {
@@ -261,6 +262,14 @@ class Empresa extends Model
     public function compras()
     {
       return $this->hasMany('App\OrdenCompra');
+    }
+
+    /**
+     * Obtener las respuestas de la encuesta Covid-19
+     */
+    public function covid19Respuestas()
+    {
+      return $this->hasMany('App\Covid19Respuesta');
     }
 
     /**

@@ -35,6 +35,7 @@ class ConfiguracionEmpresa extends Model
       'sii_clave_certificado',
       'firma',
       'terminos',
+      'covid19',
     ];
 
     /**
@@ -46,6 +47,15 @@ class ConfiguracionEmpresa extends Model
       'sii_clave',
       'sii_clave_certificado',
       'firma',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'covid19' => 'boolean',
     ];
 
     /**
@@ -177,5 +187,20 @@ class ConfiguracionEmpresa extends Model
       $this->terminos = $terminos;
 
       return $this->save();
+    }
+
+    /**
+     * Evaluar si esta activa la encuesta de Covid19
+     * 
+     * @param  bool  $asTag
+     * @return string
+     */
+    public function hasActiveCovid19Encuesta(bool $asTag = false)
+    {
+      if(!$asTag){
+        return $this->covid19;
+      }
+
+      return $this->covid19 ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
     }
 }

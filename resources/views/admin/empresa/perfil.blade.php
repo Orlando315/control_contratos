@@ -117,6 +117,16 @@
                   </div>
                 </div>
               </li>
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="col-md-4 text-right">
+                    <strong>Encuesta Covid-19:</strong>
+                  </div>
+                  <div class="col-md-8">
+                    {!! $empresa->configuracion->hasActiveCovid19Encuesta(true) !!}
+                  </div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>

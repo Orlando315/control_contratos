@@ -289,7 +289,7 @@
                 <div class="panel-body">
                   @permission('empleado-edit')
                     <div class="mb-3">
-                      @if($empleado->documentos->count() < 10)
+                      @if($empleado->documentos()->count() < 10)
                         <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                       @endif
@@ -410,6 +410,9 @@
           <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
           <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-retweet"></i> Reemplazos</a></li>
           <li><a class="nav-link" href="#tab-4" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventario</a></li>
+          @role('developer|superadmin|empresa')
+            <li><a class="nav-link" href="#tab-5" data-toggle="tab"><i class="fa fa-heartbeat"></i> Covid-19</a></li>
+          @endrole
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab-1">
@@ -536,6 +539,34 @@
               </table>
             </div>
           </div>
+          @role('developer|superadmin|empresa')
+            <div class="tab-pane" id="tab-5">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Fecha</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($empleado->usuario->covid19Respuestas as $respuesta)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>
+                          {{ $respuesta->created_at->format('d-m-Y H:i:s') }}
+                        </td>
+                        <td>
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.empresa.covid19.show', ['respuesta' => $respuesta->id] )}}"><i class="fa fa-search"></i></a>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endrole
         </div>
       </div>
     </div>

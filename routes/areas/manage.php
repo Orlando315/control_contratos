@@ -23,4 +23,8 @@ Route::group(['middleware' => 'role:developer|superadmin'], function(){
   Route::patch('user/{user}/password/reset', 'UserController@password')->name('user.password');
   Route::resource('user', 'UserController')
         ->except(['index', 'create', 'store']);
+
+  /* --- Covid19 --- */
+  Route::resource('covid19', 'Covid19PreguntaController')
+    ->parameters(['covid19' => 'pregunta']);
 });

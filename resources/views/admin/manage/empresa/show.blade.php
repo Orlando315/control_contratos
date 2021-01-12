@@ -207,7 +207,7 @@
             <h4 class="modal-title" id="delModalLabel">Eliminar Empresa</h4>
           </div>
           <div class="modal-body">
-            <h4 class="text-center">¿Esta seguro de eliminar este Empresa?</h4>
+            <h4 class="text-center">¿Esta seguro de eliminar esta Empresa?</h4>
             <p class="text-center">Se eliminará toda la información asociada a esta Empresa</p>
             <p class="text-center">Para confirmar esta acción, introduzca su contraseña</p>
 

@@ -125,6 +125,42 @@
                   <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
                 </div>
               </form>
+
+              <form action="{{ route('admin.empresa.configuracion.covid19') }}" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <fielset>
+                  <legend class="form-legend">Encuesta Covid-19</legend>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group{{ $errors->covid19->has('covid19.status') ? ' has-error' : '' }}">
+                        <label for="covid19-activo">Activar encuesta:</label>
+
+                        <div class="custom-control custom-switch">
+                          <input id="covid19-activo" class="custom-control-input" type="checkbox" name="covid19[status]" value="1"{{ old('covid19.status', $configuracion->covid19) ? ' checked' : '' }}>
+                          <label class="custom-control-label" for="covid19-activo">Activar encuesta</label>
+                        </div>
+                        <span class="form-text text-muted">Determina si la encuesta se mostrará o no a los usuarios.</span>
+                      </div>
+                    </div>
+                  </div>
+                </fielset>
+
+                @if(count($errors->covid19) > 0)
+                  <div class="alert alert-danger alert-important">
+                    <ul class="m-0">
+                      @foreach($errors->covid19->all() as $error)
+                        <li>{{ $error }}</li>
+                      @endforeach
+                    </ul>
+                  </div>
+                @endif
+
+                <div class="text-right mt-2">
+                  <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
+                </div>
+              </form>
             </div>
           </div>
 
