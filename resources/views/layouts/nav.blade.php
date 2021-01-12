@@ -20,6 +20,9 @@
         <span class="m-r-sm text-muted welcome-message">Bienvenidos a <strong>{{ config('app.name') }}</strong>.</span>
       @endif
     </li>
+    <li>
+      <a href="{{ route('ayuda.index') }}" title="Ayuda"><i class="fa fa-question-circle"></i></a>
+    </li>
     @if(Auth::user()->isAdmin())
       <li class="dropdown">
         <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">

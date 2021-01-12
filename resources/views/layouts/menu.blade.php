@@ -330,6 +330,7 @@
           <ul class="nav nav-second-level">
             <li><a href="{{ route('admin.manage.empresa.index') }}"><i class="fa fa-building"></i>Empresas</a></li>
             <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-heartbeat"></i>Covid-19</a></li>
+            <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-question-circle"></i>Ayudas</a></li>
           </ul>
         </li>
       @endrole
@@ -347,6 +348,12 @@
           </ul>
         </li>
       @endability
+
+      <li>
+        <a href="{{ route('ayuda.index') }}">
+          <i class="fa fa-question-circle"></i> <span class="nav-label">Ayuda</span>
+        </a>
+      </li>
     </ul>
   </div>
 </nav>

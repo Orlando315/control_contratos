@@ -112,6 +112,14 @@ class Role extends LaratrustRole
     }
 
     /**
+     * Obtener las Ayudas
+     */
+    public function ayudas()
+    {
+      return $this->belongsToMany('App\Ayuda', 'ayuda_role');
+    }
+
+    /**
      * Obtener el atributo formateado
      *
      * @return string

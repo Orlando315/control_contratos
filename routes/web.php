@@ -87,6 +87,10 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('covid19', 'Covid19Controller@encuesta')->name('covid19');
   Route::post('covid19', 'Covid19Controller@store')->name('covid19.store');
 
+  /* --- Ayuda --- */
+  Route::resource('ayuda', 'AyudaController')
+        ->only(['index', 'show']);
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

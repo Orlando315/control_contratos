@@ -194,3 +194,18 @@ a.text-primary:focus, a.text-primary:hover {
   bottom: 20px;
   z-index: 3001;
 }
+
+.video-responsive-container{
+  position:relative;
+  overflow:hidden;
+  height:0;
+  padding-bottom:56.25%;
+  text-align: center;
+}
+.video-responsive-container iframe{
+  left:0;
+  top:0;
+  height:100%;
+  width:100%;
+  position:absolute;
+}

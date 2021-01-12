@@ -39,6 +39,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Covid19Respuesta' => 'App\Policies\Admin\Covid19RespuestaPolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
+      'App\Ayuda' => 'App\Policies\AyudaPolicy',
     ];
 
     /**

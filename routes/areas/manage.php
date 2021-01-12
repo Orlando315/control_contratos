@@ -27,4 +27,7 @@ Route::group(['middleware' => 'role:developer|superadmin'], function(){
   /* --- Covid19 --- */
   Route::resource('covid19', 'Covid19PreguntaController')
     ->parameters(['covid19' => 'pregunta']);
+
+  /* --- Ayuda --- */
+  Route::resource('ayuda', 'AyudaController');
 });
