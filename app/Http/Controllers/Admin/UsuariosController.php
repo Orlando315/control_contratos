@@ -184,7 +184,13 @@ class UsuariosController extends Controller
     {
       $this->authorize('delete', $usuario);
 
+      $empleado = $usuario->empleado;
+
       if($usuario->delete()){
+        if(!is_null($empleado)){
+          $empleado->delete();
+        }
+
         return redirect()->route('admin.usuarios.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Usuario eliminado exitosamente.'

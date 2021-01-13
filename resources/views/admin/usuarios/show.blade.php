@@ -142,6 +142,9 @@
             </div>
             <div class="modal-body">
               <h4 class="text-center">¿Esta seguro de eliminar este Usuario?</h4>
+              @if($usuario->isEmpleado())
+                <p class="text-center">El perfil de Empleado de este Usuario, y toda la información relacionada tambien será eliminada.</p>
+              @endif
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>

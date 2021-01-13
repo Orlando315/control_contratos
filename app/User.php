@@ -404,6 +404,25 @@ class User extends Authenticatable
     }
 
     /**
+     * Eliminar role Empleado
+     */
+    public function removeRoleEmpleado()
+    {
+      if($this->hasActiveOrInactiveRole('empleado')){
+        $roleEmpleado = Role::firstWhere('name', 'empleado');
+
+        $this->roles(null)->detach($roleEmpleado->id);
+        // Si no existe un role activo, se activa el primero que se encuentre
+        if(!$this->role()){
+          $role = $this->roles(null)->first();
+          $this->roles(null)->updateExistingPivot($role->id, ['active' => true]);
+        }
+        // Eliminar cache de roles/permissions del User
+        $this->flushCache();
+      }
+    }
+
+    /**
      * Evaluar si el User ha aceptado los terminos y condiciones de la Empresa
      * 
      * @return bool

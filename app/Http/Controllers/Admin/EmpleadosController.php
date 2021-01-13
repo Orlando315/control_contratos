@@ -61,9 +61,8 @@ class EmpleadosController extends Controller
         $usuario = Auth::user()
         ->empresa
         ->users()
-        ->whereDoesntHave('empleado', function (Builder $query) use ($request){
-          $query->where('id', $request->usuario);
-        })
+        ->where('users.id', $request->usuario)
+        ->doesntHave('empleado')
         ->firstOrFail();
       }else{
         // Aplica cuando no se esta creando el Empleado a partir de un Usuario ya existente
@@ -122,6 +121,7 @@ class EmpleadosController extends Controller
         if(isset($usuario)){
           $usuario->empleado_id = $empleado->id;
           $usuario->save();
+          $usuario->removeRoleEmpleado();
           $usuario->roles()->attach($role->id, ['active' => false]);
         }else{
           $usuario = new User($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
@@ -288,8 +288,9 @@ class EmpleadosController extends Controller
       // No eliminar el Usuario del Empleado si es Admin,
       // a menos que se indique que se debe eliminar.
       // Menos el Usuario Empresa (Tipo 1) que nunca se elimina
-      if($empleado->usuario->isEmpresa() || ($empleado->usuario->isAdministrador() && !$request->filled('eliminar_admin'))){
+      if($empleado->usuario->isSuper() || $empleado->usuario->isEmpresa() || ($empleado->usuario->isAdministrador() && !$request->filled('eliminar_admin'))){
         $empleado->usuario->empleado_id = null;
+        $empleado->usuario->removeRoleEmpleado();
         $empleado->push();
       }
 
