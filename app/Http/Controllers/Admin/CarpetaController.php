@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
-use App\{Carpeta, Contrato, Empleado, TransporteConsumo};
+use App\{Carpeta, Contrato, Empleado, TransporteConsumo, Requisito};
 
 class CarpetaController extends Controller
 {
@@ -32,8 +32,10 @@ class CarpetaController extends Controller
       $class = Carpeta::getModelClass($type);
       $model = $class::findOrFail($id);
       $varName = Carpeta::getRouteVarNameByType($type);
+      $requisitos = ($class == 'App\Empleado' || $class == 'App\Contrato' || $class == 'App\Transporte') ? $model->requisitosFaltantes(true) : [];
+      $requisitoSelected = Requisito::where([['id', request()->requisito], ['type', $type]])->first();
 
-      return view('admin.carpeta.create', compact('type', 'model', 'carpeta', 'varName'));
+      return view('admin.carpeta.create', compact('type', 'model', 'carpeta', 'varName', 'requisitos', 'requisitoSelected'));
     }
 
     /**
@@ -51,12 +53,19 @@ class CarpetaController extends Controller
       $model = $class::findOrFail($id);
 
       $this->validate($request, [
-        'nombre' => 'required|string|max:50',
+        'nombre' => 'required_without:requisito|string|max:50',
       ]);
 
       $newCarpeta = new Carpeta($request->only('nombre'));
       $newCarpeta->empresa_id = Auth::user()->empresa->id;
       $newCarpeta->carpeta_id = optional($carpeta)->id;
+
+      // Varificar si se esta cargando una carpeta que sea "requisito"
+      if($request->requisito){
+        $requisito = Requisito::where([['id', $request->requisito], ['type', $type]])->firstOrFail();
+        $newCarpeta->nombre = $requisito->nombre;
+        $newCarpeta->requisito_id = $requisito->id;
+      }
 
       if($model->carpetas()->save($newCarpeta)){
         return redirect()->route('admin.carpeta.show', ['carpeta' => $newCarpeta->id])->with([
@@ -91,7 +100,9 @@ class CarpetaController extends Controller
      */
     public function edit(Carpeta $carpeta)
     {
-      return view('admin.carpeta.edit', compact('carpeta'));
+      $requisitos = ($carpeta->isType('App\Empleado') || $carpeta->isType('App\Contrato') || $carpeta->isType('App\Transporte')) ? $carpeta->carpetable->requisitosFaltantes() : [];
+
+      return view('admin.carpeta.edit', compact('carpeta', 'requisitos'));
     }
 
     /**

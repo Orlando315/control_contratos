@@ -132,7 +132,7 @@ class DocumentosController extends Controller
      */
     public function edit(Documento $documento)
     {
-      $requisitos = ($documento->isType('App\Empleado') || $documento->isType('App\Contrato')) ? $documento->documentable->requisitosFaltantes() : [];
+      $requisitos = ($documento->isType('App\Empleado') || $documento->isType('App\Contrato') || $documento->isType('App\Transporte')) ? $documento->documentable->requisitosFaltantes() : [];
 
       return view('admin.documentos.edit', compact('documento', 'requisitos'));
     }
@@ -160,7 +160,7 @@ class DocumentosController extends Controller
         $documento->requisito_id = $requisito->id;
       }
 
-      if($documento->save()){        
+      if($documento->save()){
         return redirect($documento->backUrl)->with([
           'flash_message' => 'Adjunto editado exitosamente.',
           'flash_class' => 'alert-success'

@@ -248,14 +248,14 @@
                               <div class="col-9">
                                 <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                                 @if($requisito->documento)
-                                  <a href="{{ route('admin.documentos.download', ['documento' => $requisito->documento->id]) }}">
-                                    {{ $requisito->nombre }}
+                                  <a href="{{ $requisito->isFile() ? route('admin.documentos.download', ['documento' => $requisito->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisito->documento->id]) }}">
+                                    {!! $requisito->icon() !!} {{ $requisito->nombre }}
                                     @if($requisito->documento->vencimiento)
                                       <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
                                     @endif
                                   </a>
                                 @else
-                                  {{ $requisito->nombre }}
+                                  {!! $requisito->icon() !!} {{ $requisito->nombre }}
                                 @endif
                               </div>
                               <div class="col-3">
@@ -264,10 +264,14 @@
                                     <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                                     <ul class="dropdown-menu" x-placement="bottom-start">
                                       @if($requisito->documento)
-                                        <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                                        <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                        @if($requisito->isFile())
+                                          <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                          <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                        @else
+                                          <li><a class="dropdown-item" href="{{ route('admin.carpeta.edit', ['carpeta' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                        @endif
                                       @else
-                                        <li><a class="dropdown-item" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                        <li><a class="dropdown-item" href="{{ $requisito->isFile() ? route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) : route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
                                       @endif
                                     </ul>
                                   </div>
@@ -299,6 +303,9 @@
                     @foreach($empleado->carpetas()->main()->get() as $carpeta)
                       <div class="col-md-3 col-xs-4 infont mb-3">
                         <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                          @if($carpeta->isRequisito())
+                            <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                          @endif
                           <i class="fa fa-folder" aria-hidden="true"></i>
                           <p class="m-0">{{ $carpeta->nombre }}</p>
                         </a>

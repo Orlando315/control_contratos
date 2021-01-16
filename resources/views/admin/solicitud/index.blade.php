@@ -68,7 +68,7 @@
                   <td>
                     @permission('solicitud-view')
                       <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
-                    @endprmission
+                    @endpermission
                   </td>
                 </tr>
               @endforeach

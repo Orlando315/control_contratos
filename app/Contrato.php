@@ -257,28 +257,32 @@ class Contrato extends Model
     }
 
     /**
-     * Obtener los Requisitos (Documetos) en el Contrato
+     * Obtener los Requisitos (Documetos/Carpetas) en el Contrato
      */
     public function requisitosWithDocumentos()
     {
       $documentosRequisitos = $this->documentos()->requisito()->distinct('requisito_id')->get();
+      $carpetasRequisitos = $this->carpetas()->requisito()->distinct('requisito_id')->get();
 
       return $this->requisitos()
                   ->ofType('contratos')
                   ->get()
-                  ->map(function ($requisito) use ($documentosRequisitos) {
-                    $requisito->documento = $documentosRequisitos->firstWhere('requisito_id', $requisito->id);
+                  ->map(function ($requisito) use ($documentosRequisitos, $carpetasRequisitos) {
+                    $requisitos = $requisito->isFolder() ? $carpetasRequisitos : $documentosRequisitos;
+                    $requisito->documento = $requisitos->firstWhere('requisito_id', $requisito->id);
                     return $requisito;
                   });
     }
 
     /**
-     * Obtener los Requisitos que aun no tienen un Documento agregado
+     * Obtener los Requisitos que aun no tienen un Documento/Carpeta agregado
+     *
+     * @param  bool  $folder
      */
-    public function requisitosFaltantes()
+    public function requisitosFaltantes($folder = false)
     {
       $ids = $this->documentos()->requisito()->distinct('requisito_id')->pluck('requisito_id');
-      return $this->requisitos()->ofType('contratos')->whereNotIn('id', $ids)->get();
+      return $this->requisitos()->ofType('contratos')->where('folder', $folder)->whereNotIn('id', $ids)->get();
     }
 
     /**

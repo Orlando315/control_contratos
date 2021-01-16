@@ -37,8 +37,9 @@ class ContratosController extends Controller
     {
       $this->authorize('create', Contrato::class);
       $faenas = Faena::all();
+      $contratosWithRequisitos = Auth::user()->hasPermission('requisito-create') ? Contrato::has('requisitos')->with('requisitos')->get() : [];
 
-      return view('admin.contratos.create', compact('faenas'));
+      return view('admin.contratos.create', compact('faenas', 'contratosWithRequisitos'));
     }
 
     /**
@@ -67,11 +68,16 @@ class ContratosController extends Controller
         if($request->has('requisitos')){
           foreach ($request->requisitos as $type => $requisitos) {
             $data = [];
-            foreach ($requisitos as $requisito) {
+            foreach ($requisitos as $requisito) {              
+              if(!$requisito['requisito']){
+                continue;
+              }
+
               $data[] = [
-                'nombre' => $requisito,
+                'nombre' => $requisito['requisito'],
                 'empresa_id' => Auth::user()->empresa->id,
                 'type' => $type,
+                'folder' => isset($requisito['carpeta']),
               ];
             }
 

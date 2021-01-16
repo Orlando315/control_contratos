@@ -19,7 +19,16 @@ class Requisito extends Model
      *
      * @var array
      */
-    protected $fillable = ['empresa_id', 'nombre', 'type'];
+    protected $fillable = ['empresa_id', 'nombre', 'type', 'folder'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'folder' => 'boolean',
+    ];
 
     /**
      * Tipos de Requisitos permitidos.
@@ -52,6 +61,28 @@ class Requisito extends Model
     }
 
     /**
+     * Scope a query to only include folders.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFolder($query)
+    {
+      return $query->where('folder', true);
+    }
+
+    /**
+     * Scope a query to only include files.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFile($query)
+    {
+      return $query->where('folder', false);
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -68,6 +99,26 @@ class Requisito extends Model
     }
 
     /**
+     * Evaluar si el Requisito es una carpeta
+     * 
+     * @return bool
+     */
+    public function isFolder()
+    {
+      return $this->folder;
+    }
+
+    /**
+     * Evaluar si el Requisito es un archivo
+     * 
+     * @return bool
+     */
+    public function isFile()
+    {
+      return !$this->isFolder();
+    }
+
+    /**
      * Obtener el status
      * 
      * @return bool
@@ -75,6 +126,17 @@ class Requisito extends Model
     public function status()
     {
       return !is_null($this->documento);
+    }
+
+    /**
+     * Obtener el icono del requisito si es carpeta o archivo
+     * 
+     * @return string
+     */
+    public function icon()
+    {
+      $icon = $this->isFolder() ? 'folder-o' : 'file-o';
+      return '<i class="fa fa-'.$icon.'"></i>';
     }
 
     /**

@@ -92,31 +92,35 @@ class Transporte extends Model
     }
 
     /**
-     * Obtener los Requisitos (Documetos) del Contrato especificado
+     * Obtener los Requisitos (Documetos/Carpetas) del Contrato especificado
      *
      * @param  \App\Contrato  $contrato
      */
     public function requisitosWithDocumentos($contrato)
     {
       $documentosRequisitos = $this->documentos()->requisito()->distinct('requisito_id')->get();
+      $carpetasRequisitos = $this->carpetas()->requisito()->distinct('requisito_id')->get();
 
       return $contrato->requisitos()
                   ->ofType('transportes')
                   ->get()
-                  ->map(function ($requisito) use ($documentosRequisitos) {
-                    $requisito->documento = $documentosRequisitos->firstWhere('requisito_id', $requisito->id);
+                  ->map(function ($requisito) use ($documentosRequisitos, $carpetasRequisitos) {
+                    $requisitos = $requisito->isFolder() ? $carpetasRequisitos : $documentosRequisitos;
+                    $requisito->documento = $requisitos->firstWhere('requisito_id', $requisito->id);
                     return $requisito;
                   });
     }
 
     /**
-     * Obtener los Requisitos que aun no tienen un Documento agregado
+     * Obtener los Requisitos que aun no tienen un Documento/Carpeta agregado
+     *
+     * @param  bool  $folder
      */
-    public function requisitosFaltantes()
+    public function requisitosFaltantes($folder = false)
     {
-      $ids = $this->documentos()->requisito()->distinct('requisito_id')->pluck('requisito_id');      
-      $requisitos =  $this->parentContratos->flatMap(function ($contrato) use ($ids){
-        return $contrato->requisitos()->ofType('transportes')->whereNotIn('id', $ids)->get();
+      $ids = $this->documentos()->requisito()->distinct('requisito_id')->pluck('requisito_id');
+      $requisitos =  $this->parentContratos->flatMap(function ($contrato) use ($ids, $folder){
+        return $contrato->requisitos()->ofType('transportes')->where('folder', $folder)->whereNotIn('id', $ids)->get();
       });
 
       return $requisitos;

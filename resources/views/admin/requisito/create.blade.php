@@ -32,6 +32,15 @@
               <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre" required>
             </div>
 
+            <div class="form-group{{ $errors->has('carpeta') ? ' has-error' : '' }}">
+              <label class="control-label" for="carpeta">Es carpeta:</label>
+              <div class="custom-control custom-switch" title="Seleccione si el requisito es una carpeta">
+                <input id="carpeta" class="custom-control-input" type="checkbox" name="carpeta" value="1"{{ old('carpeta') ? ' checked' : '' }}>
+                <label class="custom-control-label" for="carpeta">Carpeta</label>
+              </div>
+              <small class="text-muted">Una vez creado el requisito, no se podrá cambiar esta opción.</small>
+            </div>
+
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important">
                 <ul class="m-0">

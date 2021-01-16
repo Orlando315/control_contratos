@@ -48,6 +48,18 @@ class Carpeta extends Model
     }
 
     /**
+     * Incluir solo las Carpetas que son Requisitos.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isRequisito
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRequisito($query, $isRequisito = true)
+    {
+      return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -85,6 +97,14 @@ class Carpeta extends Model
     public function documentos()
     {
       return $this->hasMany('App\Documento');
+    }
+
+    /**
+     * Obtener el Requisito
+     */
+    public function requisito()
+    {
+      return $this->belongsTo('App\Requisito');
     }
 
     /**
@@ -184,5 +204,20 @@ class Carpeta extends Model
     public static function getRouteVarNameByType($type)
     {
       return substr($type, 0, -1);
+    }
+
+    /**
+     * Evaluar si la carpeta es un requisito
+     *
+     * @param  string  $asTag
+     * @return bool
+     */
+    public function isRequisito($asTag = false)
+    {
+      if(!$asTag){
+        return !is_null($this->requisito); 
+      }
+
+      return $this->isRequisito() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
     }
 }

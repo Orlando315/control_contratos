@@ -1,4 +1,4 @@
-@extends('layouts.app')
+  @extends('layouts.app')
 
 @section('title', 'Contratos')
 
@@ -90,13 +90,17 @@
 
             @permission('requisito-create')
               <div class="requisitos-container">
-                <div class="custom-control custom-checkbox">
-                  <input id="allow" class="custom-control-input check-requisitos" type="checkbox" data-type="requisitos">
-                  <label class="custom-control-label" for="allow">Agregar requisitos de Documentos adjuntos</label>
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input id="allow" class="custom-control-input check-requisitos" type="checkbox" data-type="requisitos">
+                    <label class="custom-control-label" for="allow">Agregar requisitos de Documentos adjuntos</label>
+                  </div>
                 </div>
 
                 <fieldset id="section-requisitos" class="mt-2 px-3" style="display: none;" disabled>
                   <legend>Requisitos</legend>
+
+                  <button class="btn btn-link btn-sm mb-3" type="button" data-toggle="modal" data-target="#requisitoModal"><i class="fa fa-copy" aria-hidden="true"></i> Copiar requisitos de otro Contrato</button>
 
                   <div class="custom-control custom-checkbox">
                     <input id="allow-contratos" class="custom-control-input check-requisitos" type="checkbox" data-type="contratos">
@@ -105,20 +109,33 @@
                   <fieldset id="section-contratos" class="mt-2 px-3" style="display: none" disabled>
                     <legend>Contrato</legend>
 
-                    <table class="table">
+                    <table class="table table-bordered table-sm table-sm">
+                      <thead>
+                        <tr>
+                          <th class="text-center">-</th>
+                          <th class="text-center">Requisito</th>
+                          <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                        </tr>
+                      </thead>
                       <tbody id="tbody-contratos">
                         <tr>
                           <td class="text-center align-middle">
                             <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
                           </td>
                           <td>
-                            <input class="form-control form-control-sm" type="text" name="requisitos[contratos][]" maxlength="50" value="{{ old('requisitos.contratos.0') }}" placeholder="Nombre">
+                            <input class="form-control form-control-sm" type="text" name="requisitos[contratos][0][requisito]" maxlength="50" value="{{ old('requisitos.contratos.0.requisito') }}" placeholder="Nombre">
+                          </td>
+                          <td>
+                            <div class="custom-control custom-switch" title="Seleccione si el requisito es una carpeta">
+                              <input id="requisitos-contratos-0-carpeta" class="custom-control-input" type="checkbox" name="requisitos[contratos][0][carpeta]" value="1"{{ old('requisitos.contratos.0.carpeta') ? ' checked' : '' }}>
+                              <label class="custom-control-label" for="requisitos-contratos-0-carpeta">Sí</label>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2">
+                          <td colspan="3">
                             <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="contratos">Nuevo requisito</button>
                           </td>
                         </tr>
@@ -133,20 +150,33 @@
                   <fieldset id="section-empleados" class="mt-2 px-3" style="display: none" disabled>
                     <legend>Empleados</legend>
 
-                    <table class="table">
+                    <table class="table table-bordered table-sm table-sm">
+                      <thead>
+                        <tr>
+                          <th class="text-center">-</th>
+                          <th class="text-center">Requisito</th>
+                          <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                        </tr>
+                      </thead>
                       <tbody id="tbody-empleados">
                         <tr>
                           <td class="text-center align-middle">
                             <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
                           </td>
                           <td>
-                            <input class="form-control form-control-sm" type="text" name="requisitos[empleados][]" maxlength="50" value="{{ old('requisitos.empleados.0') }}" placeholder="Nombre">
+                            <input class="form-control form-control-sm" type="text" name="requisitos[empleados][0][requisito]" maxlength="50" value="{{ old('requisitos.empleados.0.requisito') }}" placeholder="Nombre">
+                          </td>
+                          <td>
+                            <div class="custom-control custom-switch" title="Seleccione si el requisito es una carpeta">
+                              <input id="requisitos-empleados-0-carpeta" class="custom-control-input" type="checkbox" name="requisitos[empleados][0][carpeta]" value="1"{{ old('requisitos.empleados.0.carpeta') ? ' checked' : '' }}>
+                              <label class="custom-control-label" for="requisitos-empleados-0-carpeta">Sí</label>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2">
+                          <td colspan="3">
                             <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="empleados">Nuevo requisito</button>
                           </td>
                         </tr>
@@ -161,20 +191,33 @@
                   <fieldset id="section-transportes" class="mt-2 px-3" style="display: none" disabled>
                     <legend>Transportes</legend>
 
-                    <table class="table">
+                    <table class="table table-bordered table-sm table-sm">
+                      <thead>
+                        <tr>
+                          <th class="text-center">-</th>
+                          <th class="text-center">Requisito</th>
+                          <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                        </tr>
+                      </thead>
                       <tbody id="tbody-transportes">
                         <tr>
                           <td class="text-center align-middle">
                             <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
                           </td>
                           <td>
-                            <input class="form-control form-control-sm" type="text" name="requisitos[transportes][]" maxlength="50" value="{{ old('requisitos.transportes.0') }}" placeholder="Nombre">
+                            <input class="form-control form-control-sm" type="text" name="requisitos[transportes][0][requisito]" maxlength="50" value="{{ old('requisitos.transportes.0.requisito') }}" placeholder="Nombre">
+                          </td>
+                          <td>
+                            <div class="custom-control custom-switch" title="Seleccione si el requisito es una carpeta">
+                              <input id="requisitos-transportes-0-carpeta" class="custom-control-input" type="checkbox" name="requisitos[transportes][0][carpeta]" value="1"{{ old('requisitos.transportes.0.carpeta') ? ' checked' : '' }}>
+                              <label class="custom-control-label" for="requisitos-transportes-0-carpeta">Sí</label>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
-                          <td colspan="2">
+                          <td colspan="3">
                             <button class="btn btn-primary btn-block btn-xs btn-add-field" type="button" data-type="transportes">Nuevo requisito</button>
                           </td>
                         </tr>
@@ -201,6 +244,91 @@
             </div>
           </form>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="requisitoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="requisitoModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="requisitos-form" action="#" method="POST">
+          @csrf
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="requisitoModalLabel">Copiar Requisitos</h4>
+          </div>
+          <div id="requisito-modal-body" class="modal-body">
+            <div class="form-group">
+              <label class="control-label" for="contrato">Contrato:</label>
+              <select id="contrato" class="form-control" name="contrato" style="width: 100%">
+                <option value="">Seleccione...</option>
+                @foreach($contratosWithRequisitos as $contrato)
+                  <option value="{{ $contrato->id }}">{{ $contrato->nombre }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            <fieldset id="section-copy-requisitos" class="mt-2">
+              <legend>Requisitos</legend>
+
+              <p class="text-center text-muted">Seleccione los requisitos que desea copiar</p>
+              <fieldset id="section-empleados" class="mt-2">
+                <legend style="font-size: 0.8rem">Contratos</legend>
+
+                <table class="table table-bordered table-sm table-sm">
+                  <thead>
+                    <tr>
+                      <th class="text-center">-</th>
+                      <th class="text-center">Requisito</th>
+                      <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                    </tr>
+                  </thead>
+                  <tbody id="copy-tbody-contratos">
+
+                  </tbody>
+                </table>
+              </fieldset>
+
+              <fieldset id="section-empleados" class="mt-2">
+                <legend style="font-size: 0.8rem">Empleados</legend>
+
+                <table class="table table-bordered table-sm table-sm">
+                  <thead>
+                    <tr>
+                      <th class="text-center">-</th>
+                      <th class="text-center">Requisito</th>
+                      <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                    </tr>
+                  </thead>
+                  <tbody id="copy-tbody-empleados">
+                  </tbody>
+                </table>
+              </fieldset>
+
+              <fieldset id="section-empleados" class="mt-2">
+                <legend style="font-size: 0.8rem">Transportes</legend>
+
+                <table class="table table-bordered table-sm table-sm">
+                  <thead>
+                    <tr>
+                      <th class="text-center">-</th>
+                      <th class="text-center">Requisito</th>
+                      <th class="text-center" title="Seleccione si el requisito es una carpeta">¿Es carpeta?</th>
+                    </tr>
+                  </thead>
+                  <tbody id="copy-tbody-transportes">
+                  </tbody>
+                </table>
+              </fieldset>
+            </fieldset>
+
+            <button class="btn btn-primary btn-block btn-xs btn-copy-requisitos" type="submit">Copiar requisitos</button>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -254,16 +382,50 @@
       const optionSubmit = $('.option-submit');
     @endpermission
     @permission('requisito-create')
-      let requisitoField = function (index, type) {
+      let requisitoField = function (index, type, requisito = null) {
         return `<tr>
                   <td class="text-center align-middle">
                     <button class="btn btn-danger btn-xs btn-delete-requisito" type="button"><i class="fa fa-times"></i></button>
                   </td>
                   <td>
-                    <input class="form-control form-control-sm" type="text" name="requisitos[${type}][]" maxlength="50" placeholder="Nombre">
+                    <input class="form-control form-control-sm" type="text" name="requisitos[${type}][${index}][requisito]" maxlength="50" value="${requisito ? requisito.nombre : ''}" placeholder="Nombre">
                   </td>
-                </tr>
-              `;
+                  <td>
+                    <div class="custom-control custom-switch">
+                      <input id="requisitos-${type}-${index}-carpeta" class="custom-control-input" type="checkbox" name="requisitos[${type}][${index}][carpeta]" value="1"${requisito && requisito.folder ? ' checked' : ''}>
+                      <label class="custom-control-label" for="requisitos-${type}-${index}-carpeta">Sí</label>
+                    </div>
+                  </td>
+                </tr>`;
+      }
+
+      let copyRequisitoField = function (index, requisito) {
+        checked = requisito.folder ? ' checked' : '';
+        return `<tr>
+                  <td class="text-center align-middle">
+                    <div class="custom-control custom-checkbox m-0 ">
+                      <input id="check-${requisito.type}-${index}" class="custom-control-input copy-requisitos" type="checkbox" data-type="${requisito.type}" data-nombre="${requisito.nombre}" data-folder="${requisito.folder}" checked>
+                      <label class="custom-control-label" for="check-${requisito.type}-${index}"></label>
+                    </div>
+                  </td>
+                  <td>
+                    ${requisito.nombre}
+                  </td>
+                  <td>
+                    <div class="custom-control custom-switch">
+                      <input class="custom-control-input" type="checkbox" readonly${checked}>
+                      <label class="custom-control-label">Sí</label>
+                    </div>
+                  </td>
+                </tr>`;
+      }
+
+      const CONTRATOS_REQUISITOS = @json($contratosWithRequisitos);
+
+      function loadRequisitos(requisitos){
+        $.each(requisitos, function (k, v) {
+          $('#copy-tbody-'+v.type).append(copyRequisitoField(k, v));
+        });
       }
     @endpermission
 
@@ -281,12 +443,55 @@
         allowClear: true,
       });
 
-
       @permission('requisito-create')
+        $('#contrato').select2({
+          theme: 'bootstrap4',
+          dropdownParent: $('#requisito-modal-body'),
+          placeholder: 'Seleccione...',
+        });
+
+        $('#contrato').change(function () {
+          let id = $(this).val();
+
+          $('#copy-tbody-contratos, #copy-tbody-empleados, #copy-tbody-transportes').empty();
+
+          if(id){
+            let contratoFinded = CONTRATOS_REQUISITOS.find(contrato => (contrato.id == id));
+            loadRequisitos(contratoFinded.requisitos); 
+          }
+        });
+        $('#contrato').change();
+
+        $('#requisitos-form').submit(function (e) {
+          e.preventDefault();
+
+          let id = $(this).val();
+          let btn = $('.btn-copy-requisitos');
+          let requisitos = $('.copy-requisitos:checked');
+
+          btn.prop('disabled', true);
+
+          $.each(requisitos, function (k, v) {
+            requisito = {
+              type: $(v).data('type'),
+              nombre: $(v).data('nombre'),
+              folder: $(v).data('folder'),
+            };
+
+            let index = $(`#tbody-${requisito.type} tr`).length;
+
+            $(`#tbody-${requisito.type}`).append(requisitoField(index, requisito.type, requisito));
+          });
+
+          btn.prop('disabled', false);
+          $('#requisitoModal').modal('hide');
+          $('#allow-contratos, #allow-empleados, #allow-transportes').prop('checked', true).change();
+        });
+
         $('.requisitos-container').on('change', '.check-requisitos', function () {
           let type = $(this).data('type');
           let checked = $(this).is(':checked');
-          $(`#section-${type}`).toggle(checked).prop('disabled', !checked)
+          $(`#section-${type}`).toggle(checked).prop('disabled', !checked);
         });
 
         $('.check-requisitos').change();
@@ -302,7 +507,6 @@
           $(this).closest('tr').remove();
         });
       @endpermission
-
 
       @permission('faena-create')
         $('#option-form').submit(function(e){

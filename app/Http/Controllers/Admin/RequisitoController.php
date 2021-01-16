@@ -28,8 +28,8 @@ class RequisitoController extends Controller
      */
     public function create(Contrato $contrato, $type)
     {
-      $this->autorize('view', $contrato);
-      $this->autorize('create', Requisito::class);
+      $this->authorize('view', $contrato);
+      $this->authorize('create', Requisito::class);
 
       $type = Requisito::allowedTypes($type);
 
@@ -46,16 +46,18 @@ class RequisitoController extends Controller
      */
     public function store(Request $request, Contrato $contrato, $type)
     {
-      $this->autorize('view', $contrato);
-      $this->autorize('create', Requisito::class);
+      $this->authorize('view', $contrato);
+      $this->authorize('create', Requisito::class);
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
+        'carpeta' => 'nullable|boolean',
       ]);
 
       $type = Requisito::allowedTypes($type);
       $requisito = new requisito($request->only('nombre'));
       $requisito->empresa_id = Auth::user()->empresa->id;
       $requisito->type = $type;
+      $requisito->folder = $request->has('carpeta') && $request->carpeta == '1';
 
       if($contrato->requisitos()->save($requisito)){
         return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
@@ -90,7 +92,7 @@ class RequisitoController extends Controller
      */
     public function edit(Requisito $requisito)
     {
-      $this->autorize('update', $requisito);
+      $this->authorize('update', $requisito);
 
       return view('admin.requisito.edit', compact('requisito'));
     }
@@ -104,7 +106,7 @@ class RequisitoController extends Controller
      */
     public function update(Request $request, Requisito $requisito)
     {
-      $this->autorize('update', $requisito);
+      $this->authorize('update', $requisito);
       $this->validate($request, [
         'nombre' => 'required|string|max:50',
       ]);
@@ -133,7 +135,7 @@ class RequisitoController extends Controller
      */
     public function destroy(Requisito $requisito)
     {
-      $this->autorize('delete', $requisito);
+      $this->authorize('delete', $requisito);
 
       if($requisito->delete()){
         return redirect()->route('admin.contratos.show', ['contrato' => $requisito->contrato_id])->with([

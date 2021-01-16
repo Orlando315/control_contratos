@@ -122,14 +122,14 @@
                             <div class="col-9">
                               <i class="fa {{ $requisitoContrato->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                               @if($requisitoContrato->documento)
-                                <a href="{{ route('admin.documentos.download', ['documento' => $requisitoContrato->documento->id]) }}">
-                                  {{ $requisitoContrato->nombre }}
+                                <a href="{{ $requisitoContrato->isFile() ? route('admin.documentos.download', ['documento' => $requisitoContrato->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisitoContrato->documento->id]) }}">
+                                  {!! $requisitoContrato->icon() !!} {{ $requisitoContrato->nombre }}
                                   @if($requisitoContrato->documento->vencimiento)
                                     <small class="text-muted">- {{ $requisitoContrato->documento->vencimiento }}</small>
                                   @endif
                                 </a>
                               @else
-                                {{ $requisitoContrato->nombre }}
+                                {!! $requisitoContrato->icon() !!} {{ $requisitoContrato->nombre }}
                               @endif
                             </div>
                             <div class="col-3">
@@ -174,11 +174,11 @@
                           @endpermission
                         </div>
                       </div>
-                      @forelse($contrato->requisitos()->ofType('empleados')->get() as $requisitoEmpleados)
+                      @forelse($contrato->requisitos()->ofType('empleados')->get() as $requisitoEmpleado)
                         <div class="ibox-content p-2">
                           <div class="row">
                             <div class="col-9">
-                              {{ $requisitoEmpleados->nombre }}
+                              {!! $requisitoEmpleado->icon() !!} {{ $requisitoEmpleado->nombre }}
                             </div>
                             <div class="col-3">
                               @permission('requisito-edit|requisito-delete')
@@ -186,10 +186,10 @@
                                   <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                                   <ul class="dropdown-menu" x-placement="bottom-start">
                                     @permission('requisito-edit')
-                                      <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                      <li><a class="dropdown-item" href="{{ route('admin.requisito.edit', ['requisito' => $requisitoEmpleado->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
                                     @endpermission
                                     @permission('requisito-delete')
-                                      <li><a class="dropdown-item text-danger" button="type" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoEmpleados->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                                      <li><a class="dropdown-item text-danger" button="type" data-toggle="modal" data-type="requisito" data-target="#delFileModal" data-url="{{ route('admin.requisito.destroy', ['requisito' => $requisitoEmpleado->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
                                     @endpermission
                                   </ul>
                                 </div>
@@ -226,7 +226,7 @@
                         <div class="ibox-content p-2">
                           <div class="row">
                             <div class="col-9">
-                              {{ $requisitoTransporte->nombre }}
+                              {!! $requisitoTransporte->icon() !!} {{ $requisitoTransporte->nombre }}
                             </div>
                             <div class="col-3">
                               @permission('requisito-edit|requisito-delete')
@@ -268,6 +268,9 @@
                 @foreach($contrato->carpetas()->main()->get() as $carpeta)
                   <div class="col-md-3 col-xs-4 infont mb-3">
                     <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
+                      @if($carpeta->isRequisito())
+                        <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                      @endif
                       <i class="fa fa-folder" aria-hidden="true"></i>
                       <p class="m-0">{{ $carpeta->nombre }}</p>
                     </a>
@@ -502,7 +505,7 @@
             </div>
             <div class="modal-body text-center">
               <h4 class="text-center">¿Esta seguro de eliminar este <span class="delItemType"></span>?</h4>
-              <p class="text-center text-info-requisito">No se eliminarán los documentos asociados a este Requisito</p>
+              <p class="text-center text-info-requisito">No se eliminarán los documentos o carpetas asociadas a este Requisito</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>

@@ -40,6 +40,10 @@
               <b>Adjuntos</b>
               <span class="pull-right">{{ $carpeta->documentos->count() }}</span>
             </li>
+            <li class="list-group-item">
+              <b>Requisito</b>
+              <span class="pull-right">{!! $carpeta->isRequisito(true) !!}</span>
+            </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $carpeta->created_at }}</small>
             </li>
@@ -65,6 +69,9 @@
             @foreach($carpeta->subcarpetas as $subcarpeta)
               <div class="col-md-3 col-xs-4 infont mb-3">
                 <a href="{{ route('admin.carpeta.show', ['carpeta' => $subcarpeta->id]) }}">
+                  @if($subcarpeta->isRequisito())
+                    <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                  @endif
                   <i class="fa fa-folder" aria-hidden="true"></i>
                   <p class="m-0">{{ $subcarpeta->nombre }}</p>
                 </a>
