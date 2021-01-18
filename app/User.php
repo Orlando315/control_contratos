@@ -62,18 +62,18 @@ class User extends Authenticatable
      */
     public function scopeStaff($query)
     {
-      return $query->whereRoleIs(['empresa', 'administrador', 'supervisor']);
+      return $query->whereInAllRolesIs('empresa|administrador|supervisor');
     }
 
     /**
-     * Filtrar por los usuarios con Roles de administracion
+     * Filtrar por los usuarios con Role de Supervisor
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSupervisores($query)
     {
-      return $query->whereRoleIs(['supervisor']);
+      return $query->whereInAllRolesIs('supervisor');
     }
 
     /**
@@ -84,7 +84,23 @@ class User extends Authenticatable
      */
     public function scopeEmpleados($query)
     {
-      return $query->whereRoleIs(['empleado']);
+      return $query->whereInAllRolesIs('empleado');
+    }
+
+    /**
+     * Filtrar por los usuarios con el/los Roles proporcionados
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param   array|string  $role
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereInAllRolesIs($query, $role)
+    {
+      $role = Arr::wrap(Helper::standardize($role));
+
+      return $query->whereHas('allRoles', function ($roleQuery) use ($role) {
+        $roleQuery->whereIn('name', $role);
+      });
     }
 
     /**

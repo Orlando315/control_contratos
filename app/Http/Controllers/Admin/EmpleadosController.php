@@ -25,7 +25,7 @@ class EmpleadosController extends Controller
     {
       $this->authorize('viewAny', Empleado::class);
 
-      $empleados = Empleado::all();
+      $empleados = Empleado::with('contrato')->get();
 
       return view('admin.empleados.index', compact('empleados'));
     }
@@ -129,6 +129,7 @@ class EmpleadosController extends Controller
           $usuario->password = bcrypt($request->rut);
           $empleado->usuario()->save($usuario);
           $usuario->attachRole($role);
+          Auth::user()->empresa->users()->attach($usuario->id);
         }
         
         $empleado->contratos()->create($request->only('sueldo', 'inicio', 'fin', 'jornada', 'inicio_jornada', 'descripcion'));
@@ -158,13 +159,15 @@ class EmpleadosController extends Controller
       $this->authorize('view', $empleado);
 
       $empleado->load([
+        'contrato',
+        'lastContrato',
         'banco',
         'plantillaDocumentos',
         'solicitudes',
         'sueldos',
         'anticipos',
         'reemplazos',
-        'entregas',
+        'entregas.inventario',
         'contratos',
         'usuario.covid19Respuestas'
       ]);
@@ -455,8 +458,8 @@ class EmpleadosController extends Controller
       }
 
       if(
-        (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador') && $request->role == 'administrador')
-        || (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador|supervisor') && $request->role == 'supervisor')
+        (!Auth::user()->hasActiveOrInactiveRole('developer|superadmin|empresa|administrador') && $request->role == 'administrador')
+        || (!Auth::user()->hasActiveOrInactiveRole('developer|superadmin|empresa|administrador|supervisor') && $request->role == 'supervisor')
       ){
         return redirect()->back()->withInput()->with([
           'flash_message' => 'No puedes asignar un role superior al tuyo.',
