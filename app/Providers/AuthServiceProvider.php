@@ -37,6 +37,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Pago' => 'App\Policies\Admin\PagoPolicy',
       'App\Requisito' => 'App\Policies\Admin\RequisitoPolicy',
       'App\Covid19Respuesta' => 'App\Policies\Admin\Covid19RespuestaPolicy',
+      'App\CentroCosto' => 'App\Policies\Admin\CentroCostoPolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
       'App\Ayuda' => 'App\Policies\AyudaPolicy',

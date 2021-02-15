@@ -40,6 +40,9 @@
           @permission('faena-index')
             <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-file-text-o"></i> Faenas</a></li>
           @endpermission
+          @permission('centro-costo-index')
+            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-bank"></i> Centros de costo</a></li>
+          @endpermission
         </ul>
         <div class="tab-content">
           @permission('contrato-index')
@@ -119,6 +122,43 @@
                           @endpermission
                           @permission('faena-edit')
                             <a class="btn btn-primary btn-xs" href="{{ route('admin.faena.edit', ['faena' => $faena->id] )}}"><i class="fa fa-pencil"></i></a>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
+          @permission('centro-costo-index')
+            <div id="tab-3" class="tab-pane">
+              <div class="panel-body">
+                @permission('centro-costo-create')
+                  <div class="mb-3 text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.centro.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Centro de costo</a>
+                  </div>
+                @endpermission
+
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Nombre</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($centros as $centro)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $centro->nombre }}</td>
+                        <td>
+                          @permission('centro-costo-view')
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.centro.show', ['centro' => $centro->id] )}}"><i class="fa fa-search"></i></a>
+                          @endpermission
+                          @permission('centro-costo-edit')
+                            <a class="btn btn-primary btn-xs" href="{{ route('admin.centro.edit', ['centro' => $centro->id] )}}"><i class="fa fa-pencil"></i></a>
                           @endpermission
                         </td>
                       </tr>

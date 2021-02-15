@@ -43,6 +43,16 @@ Route::resource('faena', 'FaenaController')->except([
   'index',
 ]);
 
+/* --- Centros de costos --- */
+Route::resource('centro-costo', 'CentroCostoController')
+->names('centro')
+->parameters([
+  'centro-costo' => 'centro',
+])
+->except([
+  'index',
+]);
+
 /* --- Contratos - Requisitos --- */
 Route::resource('requisito', 'RequisitoController')
     ->except(['index', 'create', 'store']);

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\Color;
-use App\{Contrato, Faena};
+use App\{Contrato, Faena, CentroCosto};
 
 class ContratosController extends Controller
 {
@@ -24,8 +24,9 @@ class ContratosController extends Controller
 
       $contratos = Contrato::all();
       $faenas = Faena::all();
+      $centros = CentroCosto::all();
 
-      return view('admin.contratos.index', compact('contratos', 'faenas'));
+      return view('admin.contratos.index', compact('contratos', 'faenas', 'centros'));
     }
 
     /**

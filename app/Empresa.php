@@ -273,6 +273,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener los Centros de costos
+     */
+    public function centros()
+    {
+      return $this->hasMany('App\CentroCosto');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part
