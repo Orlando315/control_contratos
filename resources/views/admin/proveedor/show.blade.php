@@ -217,12 +217,15 @@
     </div>
   </div>
 
-  @permission('compra-index')
+  @permission('compra-index|inventario-ingreso-index')
     <div class="row">
       <div class="col-md-12">
         <div class="tabs-container">
           <ul class="nav nav-tabs">
             <li><a class="nav-link active" href="#tab-11" data-toggle="tab"><i class="fa fa-plus-square" aria-hidden="true"></i> Ordenes de compra</a></li>
+            @permission('inventario-ingreso-index')
+              <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-level-down"></i> Ingresos (Inventarios V2)</a></li>
+            @endpermission
           </ul>
           <div class="tab-content">
             <div id="tab-11" class="tab-pane active">
@@ -281,6 +284,70 @@
                 </table>
               </div>
             </div><!-- /.tab-pane -->
+            @permission('inventario-ingreso-index')
+              <div id="tab-12" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Inventario</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Costo</th>
+                        <th class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-center">
+                      @foreach($proveedor->inventariosV2Ingreso as $ingreso)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>
+                            @permission('inventario-v2-view')
+                              <a href="{{ route('admin.inventario.v2.show', ['inventario' => $ingreso->inventario_id]) }}">
+                                {{ $ingreso->inventario->nombre }}
+                              </a>
+                            @else
+                              {{ $ingreso->inventario->nombre }}
+                            @endpermission
+                          </td>
+                          <td class="text-right">{{ $ingreso->cantidad() }}</td>
+                          <td class="text-right">
+                            @if($ingreso->costo)
+                              {{ $ingreso->costo() }}
+                            @else
+                              @nullablestring(null)
+                            @endif
+                          </td>
+                          <td>
+                            @permission('inventario-ingreso-view|inventario-ingreso-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('inventario-ingreso-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.show', ['ingreso' => $ingreso->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-ingreso-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.edit', ['ingreso' => $ingreso->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
+                            @endpermission
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
           </div><!-- /.tab-content -->
         </div>
       </div>

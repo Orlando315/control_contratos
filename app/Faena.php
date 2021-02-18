@@ -49,4 +49,12 @@ class Faena extends Model
     {
       return $this->hasMany('App\Transporte');
     }
+
+    /**
+     * Obtener los Inventarios V2 - Egreso
+     */
+    public function inventariosV2Egreso()
+    {
+      return $this->hasMany('App\InventarioV2Egreso');
+    }
 }

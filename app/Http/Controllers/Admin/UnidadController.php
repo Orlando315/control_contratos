@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\CentroCosto;
+use Illuminate\Support\Facades\Auth;
+use App\Unidad;
 
-class CentroCostoController extends Controller
+class UnidadController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,9 +26,9 @@ class CentroCostoController extends Controller
      */
     public function create()
     {
-      $this->authorize('create', CentroCosto::class);
+      $this->authorize('create', Unidad::class);
 
-      return view('admin.centro.create');
+      return view('admin.unidad.create');
     }
 
     /**
@@ -39,20 +39,20 @@ class CentroCostoController extends Controller
      */
     public function store(Request $request)
     {
-      $this->authorize('create', CentroCosto::class);
+      $this->authorize('create', Unidad::class);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
 
-      $centro = new CentroCosto($request->only('nombre'));
+      $unidad = new Unidad($request->only('nombre'));
 
-      if(Auth::user()->empresa->centros()->save($centro)){
+      if(Auth::user()->empresa->unidades()->save($unidad)){
         if($request->ajax()){
-          return response()->json(['response' =>  true, 'centro' => $centro]);
+          return response()->json(['response' =>  true, 'unidad' => $unidad]);
         }
 
-        return redirect()->route('admin.centro.show', ['centro' => $centro->id])->with([
-          'flash_message' => 'Centro de costo agregado exitosamente.',
+        return redirect()->route('admin.unidad.show', ['unidad' => $unidad->id])->with([
+          'flash_message' => 'Unidad agregada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
       }
@@ -61,7 +61,7 @@ class CentroCostoController extends Controller
         return response()->json(['response' =>  false]);
       }
 
-      return redirect()->route('admin.centro.create')->withInput()->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -71,50 +71,50 @@ class CentroCostoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\CentroCosto  $centro
+     * @param  \App\Unidad  $unidad
      * @return \Illuminate\Http\Response
      */
-    public function show(CentroCosto $centro)
+    public function show(Unidad $unidad)
     {
-      $this->authorize('view', $centro);
+      $this->authorize('view', $unidad);
+      
+      $unidad->load('inventariosV2.unidad');
 
-      $centro->load('inventariosV2Egreso');
-
-      return view('admin.centro.show', compact('centro'));
+      return view('admin.unidad.show', compact('unidad'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\CentroCosto  $centro
+     * @param  \App\Unidad  $unidad
      * @return \Illuminate\Http\Response
      */
-    public function edit(CentroCosto $centro)
+    public function edit(Unidad $unidad)
     {
-      $this->authorize('update', $centro);
+      $this->authorize('update', $unidad);
 
-      return view('admin.centro.edit', compact('centro'));
+      return view('admin.unidad.edit', compact('unidad'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\CentroCosto  $centro
+     * @param  \App\Unidad  $unidad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CentroCosto $centro)
+    public function update(Request $request, Unidad $unidad)
     {
-      $this->authorize('update', $centro);
+      $this->authorize('update', $unidad);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
 
-      $centro->nombre = $request->nombre;
+      $unidad->nombre = $request->nombre;
 
-      if($centro->save()){
-        return redirect()->route('admin.centro.show', ['centro' => $centro->id])->with([
-          'flash_message' => 'Centro de costo modificado exitosamente.',
+      if($unidad->save()){
+        return redirect()->route('admin.unidad.show', ['unidad' => $unidad->id])->with([
+          'flash_message' => 'Unidad modificada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
       }
@@ -129,16 +129,23 @@ class CentroCostoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\CentroCosto  $centro
+     * @param  \App\Unidad  $unidad
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CentroCosto $centro)
+    public function destroy(Unidad $unidad)
     {
-      $this->authorize('delete', $centro);
+      $this->authorize('delete', $unidad);
 
-      if($centro->delete()){
-        return redirect()->route('admin.contratos.index')->with([
-          'flash_message' => 'Centro de costo eliminado exitosamente.',
+      if($unidad->inventariosV2()->count() > 0){
+        return redirect()->back()->with([
+          'flash_message' => 'Esta Unidad tiene Inventarios V2 agregados.',
+          'flash_class' => 'alert-success'
+        ]);
+      }
+
+      if($unidad->delete()){
+        return redirect()->route('admin.inventario.v2.index')->with([
+          'flash_message' => 'Unidad eliminada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
       }

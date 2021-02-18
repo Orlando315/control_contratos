@@ -216,6 +216,24 @@
           </ul>
         </li>
       @endpermission
+      @permission('inventario-v2-index|inventario-v2-create')
+        <li>
+          <a href="#">
+            <i class="fa fa-tasks"></i>
+            <span class="nav-label">Inventarios</span>
+            <span class="fa arrow"></span>
+            <span class="label label-warning float-right mr-2">v2</span>
+          </a>
+          <ul class="nav nav-second-level">
+            @permission('inventario-v2-index')
+              <li><a href="{{ route('admin.inventario.v2.index') }}">Ver inventarios</a></li>
+            @endpermission
+            @permission('inventario-v2-create')
+              <li><a href="{{ route('admin.inventario.v2.create') }}">Agregar inventario</a></li>
+            @endpermission
+          </ul>
+        </li>
+      @endpermission
       @permission('transporte-index|transporte-create')
         <li>
           <a href="#">

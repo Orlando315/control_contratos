@@ -18,7 +18,7 @@ class EtiquetasController extends Controller
     {
       $this->authorize('viewAny', Etiqueta::class);
 
-      $etiquetas = Auth::user()->empresa->etiquetas;
+      $etiquetas = Auth::user()->empresa->etiquetas()->withCount(['facturas', 'gastos', 'inventariosV2'])->get();
 
       return view('admin.etiquetas.index', compact('etiquetas'));
     }
@@ -54,10 +54,18 @@ class EtiquetasController extends Controller
                   ]);
 
       if(Auth::user()->empresa->etiquetas()->save($etiqueta)){
+        if($request->ajax()){
+          return response()->json(['response' =>  true, 'etiqueta' => $etiqueta]);
+        }
+
         return redirect()->route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id])->with([
           'flash_message' => 'Etiqueta agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
+      }
+
+      if($request->ajax()){
+        return response()->json(['response' =>  false]);
       }
 
       return redirect()->route('admin.etiquetas.create')->with([
@@ -76,6 +84,8 @@ class EtiquetasController extends Controller
     public function show(Etiqueta $etiqueta)
     {
       $this->authorize('view', $etiqueta);
+
+      $etiqueta->load(['facturas.contrato', 'gastos.contrato', 'inventariosV2.unidad']);
 
       return view('admin.etiquetas.show', compact('etiqueta'));
     }
@@ -148,7 +158,7 @@ class EtiquetasController extends Controller
           ]);
       }
 
-      return redirect()->route('admin.etiquetas.show', ['id' => $etiqueta->id])->with([
+      return redirect()->back()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true

@@ -109,6 +109,14 @@ class ContratosController extends Controller
     {
       $this->authorize('view', $contrato);
 
+      $contrato->load([
+        'faena',
+        'plantillaDocumentos',
+        'empleados',
+        'transportes',
+        'inventariosV2Egreso'
+      ]);
+
       return view('admin.contratos.show', compact('contrato'));
     }
 

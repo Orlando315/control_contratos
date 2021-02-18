@@ -281,6 +281,22 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener las Unidades (Inventarios V2)
+     */
+    public function unidades()
+    {
+      return $this->hasMany('App\Unidad');
+    }
+
+    /**
+     * Obtener los Inventarios V2
+     */
+    public function inventariosV2()
+    {
+      return $this->hasMany('App\InventarioV2');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part

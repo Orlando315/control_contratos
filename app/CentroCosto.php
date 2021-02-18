@@ -41,4 +41,12 @@ class CentroCosto extends Model
     {
       return $this->belongsTo('App\Empresa');
     }
+
+    /**
+     * Obtener los Inventarios V2 - Egreso
+     */
+    public function inventariosV2Egreso()
+    {
+      return $this->hasMany('App\InventarioV2Egreso');
+    }
 }

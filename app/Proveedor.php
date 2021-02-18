@@ -116,6 +116,14 @@ class Proveedor extends Model
     }
 
     /**
+     * Obtener los Inventarios V2 - Ingreso
+     */
+    public function inventariosV2Ingreso()
+    {
+      return $this->hasMany('App\InventarioV2Ingreso');
+    }
+
+    /**
      * Evaluar si el proveedor es Empresa
      * 
      * @return bool

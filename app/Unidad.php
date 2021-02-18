@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 
-class Etiqueta extends Model
+class Unidad extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'etiquetas';
+    protected $table = 'unidades';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +20,7 @@ class Etiqueta extends Model
      * @var array
      */
     protected $fillable = [
-      'etiqueta'
+      'nombre',
     ];
 
     /**
@@ -31,31 +31,22 @@ class Etiqueta extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
     /**
-     * Obtener La Factuas que pertenecen a la Etiqueta
+     * Obtener la Empresa
      */
-    public function facturas()
+    public function empresa()
     {
-      return $this->hasMany('App\Factura');
+      return $this->hasMany('App\Empresa');
     }
 
     /**
-     * Obtener los Gastos que pertenecen a la Etiqueta
-     */
-    public function gastos()
-    {
-      return $this->hasMany('App\Gasto');
-    }
-
-    /**
-     * Obtener las Categorias/Etiquetas
+     * Obtener los Inventarios V2
      */
     public function inventariosV2()
     {
-      return $this->belongsToMany('App\InventarioV2', 'inventarios_categorias', 'etiqueta_id', 'inventario_id');
+      return $this->hasMany('App\InventarioV2');
     }
 }

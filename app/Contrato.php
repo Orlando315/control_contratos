@@ -257,6 +257,14 @@ class Contrato extends Model
     }
 
     /**
+     * Obtener los Inventarios V2 - Egreso
+     */
+    public function inventariosV2Egreso()
+    {
+      return $this->hasMany('App\InventarioV2Egreso');
+    }
+
+    /**
      * Obtener los Requisitos (Documetos/Carpetas) en el Contrato
      */
     public function requisitosWithDocumentos()

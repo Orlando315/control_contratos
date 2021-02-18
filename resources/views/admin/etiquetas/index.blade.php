@@ -48,6 +48,7 @@
                 <th class="text-center">Etiqueta</th>
                 <th class="text-center">Facturas</th>
                 <th class="text-center">Gastos</th>
+                <th class="text-center">Inventarios V2</th>
                 <th class="text-center">Acción</th>
               </tr>
             </thead>
@@ -56,8 +57,9 @@
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $etiqueta->etiqueta }}</td>
-                  <td>{{ $etiqueta->facturas()->count() }}</td>
-                  <td>{{ $etiqueta->gastos()->count() }}</td>
+                  <td>{{ $etiqueta->facturas_count }}</td>
+                  <td>{{ $etiqueta->gastos_count }}</td>
+                  <td>{{ $etiqueta->inventarios_v2_count }}</td>
                   <td>
                     @permission('etiqueta-view')
                       <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-search"></i></a>

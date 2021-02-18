@@ -344,6 +344,9 @@
               <li><a class="nav-link{{ !Auth::user()->hasPermission('empleado-index') ? ' active' : '' }}" href="#tab-22" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
             @endpermission
             <li><a class="nav-link{{ !Auth::user()->hasPermission('empleado-index|transporte-index') ? ' active' : '' }}" href="#tab-23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
+            @permission('inventario-egreso-index')
+              <li><a class="nav-link" href="#tab-24" data-toggle="tab"><i class="fa fa-level-up"></i> Egresos (Inventarios V2)</a></li>
+            @endpermission
           </ul>
           <div class="ibox-tools">
             <a class="collapse-link" href="#" data-toggle="collapse" data-target="#panels-tab-2" aria-expanded="true">
@@ -484,6 +487,70 @@
               </table>
             </div>
           </div><!-- #tab-3 -->
+          @permission('inventario-egreso-index')
+            <div id="tab-24" class="tab-pane">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Inventario</th>
+                      <th class="text-center">Cantidad</th>
+                      <th class="text-center">Costo</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->inventariosV2Egreso as $egreso)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>
+                          @permission('inventario-v2-view')
+                            <a href="{{ route('admin.inventario.v2.show', ['inventario' => $egreso->inventario_id]) }}">
+                              {{ $egreso->inventario->nombre }}
+                            </a>
+                          @else
+                            {{ $egreso->inventario->nombre }}
+                          @endpermission
+                        </td>
+                        <td class="text-right">{{ $egreso->cantidad() }}</td>
+                        <td class="text-right">
+                          @if($egreso->costo)
+                            {{ $egreso->costo() }}
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td>
+                          @permission('inventario-egreso-view|inventario-egreso-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('inventario-egreso-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.inventario.egreso.show', ['egreso' => $egreso->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('inventario-egreso-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.inventario.egreso.edit', ['egreso' => $egreso->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endpermission
+                              </ul>
+                            </div>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
         </div>
       </div>
     </div>

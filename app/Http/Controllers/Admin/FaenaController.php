@@ -80,7 +80,7 @@ class FaenaController extends Controller
     {
       $this->authorize('view', $faena);
       
-      $faena->load('contratos', 'transportes');
+      $faena->load('contratos', 'transportes', 'inventariosV2Egreso');
 
       return view('admin.faena.show', compact('faena'));
     }

@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    @permission('factura-index|gasto-index')
+    @permission('factura-index|gasto-index|inventario-v2-index')
       <div class="col-md-12">
         <div class="tabs-container">
           <ul class="nav nav-tabs">
@@ -57,6 +57,9 @@
             @endpermission
             @permission('gasto-index')
               <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-credit-card"></i> Gastos</a></li>
+            @endpermission
+            @permission('inventario-v2-index')
+              <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-tasks"></i> Inventarios V2</a></li>
             @endpermission
           </ul>
           <div class="tab-content">
@@ -147,6 +150,70 @@
                   </table>
                 </div>
               </div><!-- /.tab-pane -->
+            @endpermission
+            @permission('inventario-v2-index')
+              <div id="tab-3" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Nombre</th>
+                        <th class="text-center">Unidad</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-center">
+                      @foreach($etiqueta->inventariosV2 as $inventario)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $inventario->nombre }}</td>
+                          <td>{{ $inventario->unidad->nombre }}</td>
+                          <td class="text-right">{{ $inventario->stock() }}</td>
+                          <td>
+                            @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('inventario-v2-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.v2.show', ['inventario' => $inventario->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-v2-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.v2.edit', ['inventario' => $inventario->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-ingreso-create')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.create', ['inventario' => $inventario->id]) }}" title="Ingreso de Stock">
+                                        <i class="fa fa-plus"></i> Nuevo Ingreso
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-egreso-create')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.egreso.create', ['inventario' => $inventario->id]) }}" title="Egreso de Stock">
+                                        <i class="fa fa-plus"></i> Nuevo Egreso
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
+                            @endpermission
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             @endpermission
           </div><!-- /.tab-content -->
         </div>

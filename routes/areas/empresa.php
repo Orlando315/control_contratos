@@ -296,6 +296,42 @@ Route::resource('transportes/consumos', 'TransportesConsumosController')->except
 Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosController@create')->name('consumos.create');
 Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
+/* --- Inventario V2 ---*/
+Route::patch('inventario/v2/{inventario}/ajustar', 'InventarioV2Controller@ajustarStock')->name('inventario.v2.ajustar');
+Route::resource('inventario/v2', 'InventarioV2Controller')
+->names('inventario.v2')
+->parameters([
+  'v2' => 'inventario',
+]);
+
+/* --- Inventario V2 - Unidad ---*/
+Route::resource('unidad', 'UnidadController')
+->except([
+  'index',
+]);
+
+/* --- Inventario V2 - Ingresos de Stock ---*/
+Route::get('inventario/v2/ingreso/create/{inventario}', 'InventarioV2IngresoController@create')->name('inventario.ingreso.create');
+Route::post('inventario/v2/ingreso/create/{inventario}', 'InventarioV2IngresoController@store')->name('inventario.ingreso.store');
+Route::resource('inventario/v2/ingreso', 'InventarioV2IngresoController')
+->names('inventario.ingreso')
+->except([
+  'index',
+  'create',
+  'store'
+]);
+
+/* --- Inventario V2 - Egresos de Stock ---*/
+Route::get('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@create')->name('inventario.egreso.create');
+Route::post('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@store')->name('inventario.egreso.store');
+Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')
+->names('inventario.egreso')
+->except([
+  'index',
+  'create',
+  'store'
+]);
+
 /* --- Inventario ---*/
 Route::resource('inventarios', 'InventariosController');
 Route::get('inventarios/download/{inventario}', 'InventariosController@download')->name('inventarios.download');
