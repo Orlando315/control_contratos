@@ -183,6 +183,16 @@ class Documento extends Model
     }
 
     /**
+     * Obtener el Link de descarga directa
+     * 
+     * @return string
+     */
+    public function getDownloadUrlAttribute()
+    {
+      return asset('storage/'.$this->path);
+    }
+
+    /**
      * Get all of the owning documentable models.
      */
     public function documentable()
@@ -209,6 +219,16 @@ class Documento extends Model
     public function isRequisito()
     {
       return !is_null($this->requisito_id);
+    }
+
+    /**
+     * Evaluar si el Documento es un PDF
+     * 
+     * @return boolean
+     */
+    public function isPdf()
+    {
+      return $this->mime == 'application/pdf';
     }
 
     /**
@@ -278,5 +298,15 @@ class Documento extends Model
         'lessThan7' => $lessThan7,
         'lessThan21' => $lessThan21,
       ];
+    }
+
+    /**
+     * Obtener la extension del archivo
+     * 
+     * @return string
+     */
+    public function getExtension()
+    {
+      return explode('.', $this->path)[1];
     }
 }

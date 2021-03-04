@@ -130,6 +130,13 @@
                                   <ul class="dropdown-menu" x-placement="bottom-start">
                                     @if($requisito->documento)
                                       @if($requisito->isFile())
+                                        @if($requisito->documento->isPdf())
+                                          <li>
+                                            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->download_url }}">
+                                              <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
+                                            </a>
+                                          </li>
+                                        @endif
                                         <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
                                         <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
                                       @else
@@ -403,6 +410,8 @@
 @endsection
 
 @section('script')
+  @include('partials.preview-pdf')
+
   @permission('transporte-edit')
     <!-- Select2 -->
     <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>

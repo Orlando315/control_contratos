@@ -683,6 +683,8 @@
 @endsection
 
 @section('script')
+  @include('partials.preview-pdf')
+
   @permission('contrato-edit|requisito-delete')
     <script type="text/javascript">
       $(document).ready(function(){

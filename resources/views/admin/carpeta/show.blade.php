@@ -151,6 +151,8 @@
 @endsection
 
 @section('script')
+  @include('partials.preview-pdf')
+
   <script type="text/javascript">
     $(document).ready(function(){
       $('#delFileModal').on('show.bs.modal', function(e){

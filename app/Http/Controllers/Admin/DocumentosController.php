@@ -218,7 +218,7 @@ class DocumentosController extends Controller
         abort(404);
       }
 
-      return Storage::download($documento->path);
+      return Storage::download($documento->path, $documento->nombre.'.'.$documento->getExtension());
     }
 
     /**

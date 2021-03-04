@@ -310,6 +310,8 @@
 @endsection
 
 @section('script')
+  @include('partials.preview-pdf')
+
   @permission('inventario-entrega-delete')
     <script type="text/javascript">
       $(document).ready(function(){

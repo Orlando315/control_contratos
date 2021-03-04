@@ -6,6 +6,13 @@
     <div class="float-right dropdown">
       <button data-toggle="dropdown" class="dropdown-toggle btn-white" aria-expanded="false"></button>
       <ul class="dropdown-menu m-t-xs" x-placement="bottom-start" style="position: absolute; top: 21px; left: 0px; will-change: top, left;">
+        @if($documento->isPdf())
+          <li>
+            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $documento->download_url }}">
+              <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
+            </a>
+          </li>
+        @endif
         @if($edit)
           <li>
             <a title="Editar documento" href="{{ route('admin.documentos.edit', ['documento' => $documento->id]) }}">
