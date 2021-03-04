@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Empresa, EmpresaConfiguracion, User};
+use App\User;
 
 class ConfiguracionController extends Controller
 {
@@ -27,8 +27,9 @@ class ConfiguracionController extends Controller
     public function configuracion()
     {
       $configuracion = Auth::user()->empresa->configuracion;
+      $users = Auth::user()->empresa->users;
 
-      return view('admin.empresa.configuracion', compact('configuracion'));
+      return view('admin.empresa.configuracion', compact('configuracion', 'users'));
     }
 
     /**
@@ -134,6 +135,52 @@ class ConfiguracionController extends Controller
       ]);
 
       Auth::user()->empresa->configuracion->covid19 = $request->covid19['status'] == '1';
+
+      if(Auth::user()->empresa->push()){
+        return redirect()->back()->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Configuracion modificada exitosamente.',
+        ]);
+      }
+
+      return redirect()->back()->withInput()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function requerimientos(Request $request)
+    {
+      $this->validateWithBag('firmantes', $request, [
+        'usuarios' => 'required|min:1',
+        'usuarios.*.usuario' => 'required',
+        'usuarios.*.texto' => 'required|string|max:50',
+        'usuarios.*.obligatorio' => 'nullable|boolean',
+      ]);
+
+      $usuarios = [];
+
+      foreach ($request->usuarios as $usuario) {
+        $user = User::find($usuario['usuario']);
+
+        if($user){
+          $usuarios[] = [
+            'usuario' => $user->id,
+            'nombre' => $user->nombre(),
+            'texto' => trim($usuario['texto']),
+            'obligatorio' => $usuario['obligatorio'] == 1,
+          ];
+        }
+      }
+
+      Auth::user()->empresa->configuracion->requerimientos_firmantes = $usuarios;
 
       if(Auth::user()->empresa->push()){
         return redirect()->back()->with([

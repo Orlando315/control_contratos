@@ -41,11 +41,32 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
       view()->composer('*', function ($view){
-        $notificationSolicitudesAnticiposPendientes = Auth::check() && Auth::user()->isAdmin() ? Anticipo::pendientes()->get() : [];
-        $notificationSolicitudesPendientes = Auth::check() && Auth::user()->isAdmin() ? Solicitud::pendientes()->get() : [];
-        $notificationEmpleadoEventosPendientes = Auth::check() && Auth::user()->isAdmin() ? EmpleadosEvento::pendientes()->get() : [];
+        if(Auth::check()){
+          $notificationSolicitudesAnticiposPendientes = Auth::user()->isAdmin() ? Anticipo::pendientes()->get() : [];
+          $notificationSolicitudesPendientes = Auth::user()->isAdmin() ? Solicitud::pendientes()->get() : [];
+          $notificationEmpleadoEventosPendientes = Auth::user()->isAdmin() ? EmpleadosEvento::pendientes()->get() : [];
+          $notificationRequerimientosMaterialesPendientes = Auth::user()
+          ->requerimientosMaterialesFirmante()
+          ->pendiente()
+          ->with(['requerimiento' => function ($query){
+            $query->with('userSolicitante')->withCount('productos');
+          }])
+          ->get();
+        }else{
+          $notificationSolicitudesAnticiposPendientes = [];
+          $notificationSolicitudesPendientes = [];
+          $notificationEmpleadoEventosPendientes = [];
+          $notificationRequerimientosMaterialesPendientes = [];
+        }
 
-        $view->with(compact('notificationSolicitudesAnticiposPendientes', 'notificationSolicitudesPendientes', 'notificationEmpleadoEventosPendientes'));
+        $view->with(
+          compact(
+            'notificationSolicitudesAnticiposPendientes',
+            'notificationSolicitudesPendientes',
+            'notificationEmpleadoEventosPendientes',
+            'notificationRequerimientosMaterialesPendientes'
+          )
+        );
       });
     }
 }

@@ -22,9 +22,9 @@ class ContratosController extends Controller
     {
       $this->authorize('viewAny', Contrato::class);
 
-      $contratos = Contrato::all();
-      $faenas = Faena::all();
-      $centros = CentroCosto::all();
+      $contratos = Contrato::withCount('empleados')->get();
+      $faenas = Faena::withCount(['contratos', 'transportes', 'inventariosV2Egreso', 'requerimientosMateriales'])->get();
+      $centros = CentroCosto::withCount(['inventariosV2Egreso', 'requerimientosMateriales'])->get();
 
       return view('admin.contratos.index', compact('contratos', 'faenas', 'centros'));
     }
@@ -114,7 +114,15 @@ class ContratosController extends Controller
         'plantillaDocumentos',
         'empleados',
         'transportes',
-        'inventariosV2Egreso'
+        'inventariosV2Egreso',
+        'requerimientosMateriales' => function ($query){
+          $query->with([
+            'faena',
+            'centroCosto',
+            'dirigidoA'
+          ])
+          ->withCount('productos');
+        },
       ]);
 
       return view('admin.contratos.show', compact('contrato'));

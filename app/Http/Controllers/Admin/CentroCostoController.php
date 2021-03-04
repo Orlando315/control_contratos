@@ -78,7 +78,17 @@ class CentroCostoController extends Controller
     {
       $this->authorize('view', $centro);
 
-      $centro->load('inventariosV2Egreso');
+      $centro->load([
+        'inventariosV2Egreso',
+        'requerimientosMateriales' => function ($query){
+          $query->with([
+            'faena',
+            'contrato',
+            'dirigidoA'
+          ])
+          ->withCount('productos');
+        },
+      ]);
 
       return view('admin.centro.show', compact('centro'));
     }

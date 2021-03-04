@@ -8,6 +8,7 @@
       <h2>Empresa</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.empresa.perfil') }}">Empresas</a></li>
         <li class="breadcrumb-item active">Editar</li>
       </ol>

@@ -25,7 +25,7 @@
     </li>
     @if(Auth::user()->isAdmin())
       <li class="dropdown">
-        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" title="Eventos de Empleados pendientes">
           <i class="fa fa-address-card"></i>
           @if(count($notificationEmpleadoEventosPendientes) > 0)
             <span class="label label-success">{{ count($notificationEmpleadoEventosPendientes) }}</span>
@@ -49,7 +49,7 @@
         </ul>
       </li>
       <li class="dropdown">
-        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" title="Solicitudes pendientes">
           <i class="fa fa-archive"></i>
           @if(count($notificationSolicitudesPendientes) > 0)
             <span class="label label-danger">{{ count($notificationSolicitudesPendientes) }}</span>
@@ -72,7 +72,7 @@
         </ul>
       </li>
       <li class="dropdown">
-        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+        <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" title="Solicitudes de Anticipos">
           <i class="fa fa-level-up"></i>
           @if(count($notificationSolicitudesAnticiposPendientes) > 0)
             <span class="label label-success">{{ count($notificationSolicitudesAnticiposPendientes) }}</span>
@@ -95,6 +95,29 @@
         </ul>
       </li>
     @endif
+    <li class="dropdown">
+      <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" title="Requerimiento de Materiales">
+        <i class="fa fa-list"></i>
+        @if(count($notificationRequerimientosMaterialesPendientes) > 0)
+          <span class="label label-success">{{ count($notificationRequerimientosMaterialesPendientes) }}</span>
+        @endif
+      </a>
+      <ul class="dropdown-menu dropdown-messages">
+        @foreach($notificationRequerimientosMaterialesPendientes as $notificationRequerimiento)
+          <li>
+            <a class="dropdown-item px-2" href="{{ route('requerimiento.material.show', ['requerimiento' => $notificationRequerimiento->requerimiento_id]) }}">
+              <div class="dropdown-messages-box">
+                <div class="media-body">
+                  <p class="notification-description"><strong>{{ $notificationRequerimiento->requerimiento->userSolicitante->nombre() }}</strong> ha solicitado <strong>{{ $notificationRequerimiento->requerimiento->productos_count }}</strong> productos.</p>
+                  <small class="text-muted">{{ optional($notificationRequerimiento->requerimiento->created_at)->format('d-m-Y H:i:s') }}</small>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li class="dropdown-divider"></li>
+        @endforeach
+      </ul>
+    </li>
     <li>
       <a href="{{ route('login.logout') }}">
         <i class="fa fa-sign-out"></i> Salir

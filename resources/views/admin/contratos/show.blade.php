@@ -347,6 +347,9 @@
             @permission('inventario-egreso-index')
               <li><a class="nav-link" href="#tab-24" data-toggle="tab"><i class="fa fa-level-up"></i> Egresos (Inventarios V2)</a></li>
             @endpermission
+            @permission('requerimiento-material-index')
+              <li><a class="nav-link" href="#tab-25" data-toggle="tab"><i class="fa fa-list-ul"></i> Requerimiento de Materiales</a></li>
+            @endpermission
           </ul>
           <div class="ibox-tools">
             <a class="collapse-link" href="#" data-toggle="collapse" data-target="#panels-tab-2" aria-expanded="true">
@@ -536,6 +539,72 @@
                                 @permission('inventario-egreso-edit')
                                   <li>
                                     <a class="dropdown-item" href="{{ route('admin.inventario.egreso.edit', ['egreso' => $egreso->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endpermission
+                              </ul>
+                            </div>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
+          @permission('requerimiento-material-index')
+            <div id="tab-25" class="tab-pane">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-center">#</th>
+                      <th class="text-center">Faena</th>
+                      <th class="text-center">Centro de Costo</th>
+                      <th class="text-center">Dirigido a</th>
+                      <th class="text-center">Productos</th>
+                      <th class="text-center">Estatus</th>
+                      <th class="text-center">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    @foreach($contrato->requerimientosMateriales as $requerimiento)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>
+                          @if($requerimiento->faena)
+                            {{ $requerimiento->faena->nombre }}
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td>
+                          @if($requerimiento->centroCosto)
+                            {{ $requerimiento->centroCosto->nombre }}
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td>{{ $requerimiento->dirigidoA->nombre() }}</td>
+                        <td class="text-right">{{ $requerimiento->productos_count }}</td>
+                        <td class="text-center"><small>{!! $requerimiento->status() !!}</small></td>
+                        <td>
+                          @permission('requerimiento-material-view|requerimiento-material-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('requerimiento-material-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.requerimiento.material.show', ['requerimiento' => $requerimiento->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('requerimiento-material-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.requerimiento.material.edit', ['requerimiento' => $requerimiento->id]) }}">
                                       <i class="fa fa-pencil"></i> Editar
                                     </a>
                                   </li>

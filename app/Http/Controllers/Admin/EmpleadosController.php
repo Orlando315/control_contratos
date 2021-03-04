@@ -160,7 +160,6 @@ class EmpleadosController extends Controller
 
       $empleado->load([
         'contrato',
-        'lastContrato',
         'banco',
         'plantillaDocumentos',
         'solicitudes',

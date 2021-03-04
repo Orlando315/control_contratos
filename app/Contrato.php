@@ -265,6 +265,14 @@ class Contrato extends Model
     }
 
     /**
+     * Obtener los RequerimientoMaterial
+     */
+    public function requerimientosMateriales()
+    {
+      return $this->hasMany('App\RequerimientoMaterial');
+    }
+
+    /**
      * Obtener los Requisitos (Documetos/Carpetas) en el Contrato
      */
     public function requisitosWithDocumentos()

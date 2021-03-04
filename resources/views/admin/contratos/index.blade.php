@@ -75,8 +75,8 @@
                         <td>@nullablestring($contrato->descripcion)</td>
                         <td>{{ $contrato->inicio }}</td>
                         <td>{{ $contrato->fin }}</td>
-                        <td>{{ $contrato->valor() }}</td>
-                        <td>{{ $contrato->empleados()->count() }}</td>
+                        <td class="text-right">{{ $contrato->valor() }}</td>
+                        <td class="text-right">{{ $contrato->empleados_count }}</td>
                         <td>
                           @permission('contrato-view')
                             <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
@@ -107,6 +107,9 @@
                       <th class="text-center">#</th>
                       <th class="text-center">Faena</th>
                       <th class="text-center">Contratos</th>
+                      <th class="text-center">Transportes</th>
+                      <th class="text-center">Egresos (Inventarios V2)</th>
+                      <th class="text-center">Requerimiento de Materiales</th>
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
@@ -115,7 +118,10 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $faena->nombre }}</td>
-                        <td>{{ $faena->contratos()->count() }}</td>
+                        <td class="text-right">{{ $faena->contratos_count }}</td>
+                        <td class="text-right">{{ $faena->transportes_count }}</td>
+                        <td class="text-right">{{ $faena->inventarios_v2_egreso_count }}</td>
+                        <td class="text-right">{{ $faena->requerimientos_materiales_count }}</td>
                         <td>
                           @permission('faena-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.faena.show', ['faena' => $faena->id] )}}"><i class="fa fa-search"></i></a>
@@ -145,6 +151,8 @@
                     <tr>
                       <th class="text-center">#</th>
                       <th class="text-center">Nombre</th>
+                      <th class="text-center">Egresos (Inventarios V2)</th>
+                      <th class="text-center">Requerimiento de Materiales</th>
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
@@ -153,6 +161,8 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $centro->nombre }}</td>
+                        <td class="text-right">{{ $centro->inventarios_v2_egreso_count }}</td>
+                        <td class="text-right">{{ $centro->requerimientos_materiales_count }}</td>
                         <td>
                           @permission('centro-costo-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.centro.show', ['centro' => $centro->id] )}}"><i class="fa fa-search"></i></a>

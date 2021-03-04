@@ -115,7 +115,7 @@
                     <tr>
                       <td class="text-center">{{ $loop->iteration }}</td>
                       <td><a href="{{ route('admin.manage.user.show', ['user' => $user->id]) }}">{{ $user->rut }}</a></td>
-                      <td>{{ $user->nombre }}</td>
+                      <td>{{ $user->nombre() }}</td>
                       <td>{{ $user->email ?? 'N/A' }}</td>
                       <td class="text-center">
                         <a class="btn btn-success btn-xs" href="{{ route('admin.manage.user.show', ['user' => $user->id]) }}"><i class="fa fa-search"></i></a>

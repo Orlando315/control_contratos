@@ -87,6 +87,16 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('covid19', 'Covid19Controller@encuesta')->name('covid19');
   Route::post('covid19', 'Covid19Controller@store')->name('covid19.store');
 
+  /* --- Requerimiento Material --- */
+  Route::delete('requerimiento-material/producto/{producto}', 'RequerimientoMaterialController@destroyProducto')->name('requerimiento.material.producto.destroy');
+  Route::patch('requerimiento-material/approve/{requerimiento}', 'RequerimientoMaterialController@approve')->name('requerimiento.material.approve');
+  Route::get('requerimiento-material/{requerimiento}/pdf', 'RequerimientoMaterialController@pdf')->name('requerimiento.material.pdf');
+  Route::resource('requerimiento-material', 'RequerimientoMaterialController')
+  ->names('requerimiento.material')
+  ->parameters([
+    'requerimiento-material' => 'requerimiento',
+  ]);
+
   /* --- Ayuda --- */
   Route::resource('ayuda', 'AyudaController')
         ->only(['index', 'show']);

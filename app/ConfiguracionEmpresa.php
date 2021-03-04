@@ -36,6 +36,7 @@ class ConfiguracionEmpresa extends Model
       'firma',
       'terminos',
       'covid19',
+      'requerimientos_firmantes',
     ];
 
     /**
@@ -102,12 +103,34 @@ class ConfiguracionEmpresa extends Model
      * Obtener los terminos
      *
      * @param  string  $value
-     * @return obejct
+     * @return object
      */
     public function getTerminosAttribute($value)
     {
       $terminos = is_null($value) ? json_encode($this->_terminos) : $value;
       return json_decode($terminos);
+    }
+
+    /**
+     * Establecer la estructura para almacenar los RequerimientoFirmante
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setRequerimientosFirmantesAttribute($value)
+    {
+      $this->attributes['requerimientos_firmantes'] = json_encode(($value ?? []), true);
+    }
+
+    /**
+     * Obtener los firmantes
+     *
+     * @param  string  $value
+     * @return object
+     */
+    public function getRequerimientosFirmantesAttribute($value)
+    {
+      return is_null($value) ? [] : json_decode($value, true);
     }
 
     /**
@@ -202,5 +225,15 @@ class ConfiguracionEmpresa extends Model
       }
 
       return $this->covid19 ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si hay firmantes configurados
+     * 
+     * @return bool
+     */
+    public function hasFirmantes()
+    {
+      return count($this->requerimientos_firmantes) > 0;
     }
 }

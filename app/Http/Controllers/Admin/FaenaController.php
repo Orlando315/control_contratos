@@ -80,7 +80,25 @@ class FaenaController extends Controller
     {
       $this->authorize('view', $faena);
       
-      $faena->load('contratos', 'transportes', 'inventariosV2Egreso');
+      $faena->load([
+        'contratos' => function ($query){
+          $query->withCount('empleados');
+        },
+        'transportes' => function ($query){
+          $query->with('usuario');
+        },
+        'inventariosV2Egreso' => function ($query) {
+          $query->with('inventario');
+        },
+        'requerimientosMateriales' => function ($query){
+          $query->with([
+            'contrato',
+            'centroCosto',
+            'dirigidoA'
+          ])
+          ->withCount('productos');
+        },
+      ]);
 
       return view('admin.faena.show', compact('faena'));
     }

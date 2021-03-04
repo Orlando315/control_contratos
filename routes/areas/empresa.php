@@ -25,6 +25,7 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   Route::patch('empresa/configuracion/sii', 'ConfiguracionController@sii')->name('empresa.configuracion.sii');
   Route::patch('empresa/configuracion/terminos', 'ConfiguracionController@terminos')->name('empresa.configuracion.terminos');
   Route::patch('empresa/configuracion/covid19', 'ConfiguracionController@covid19')->name('empresa.configuracion.covid19');
+  Route::patch('empresa/configuracion/requerimientos', 'ConfiguracionController@requerimientos')->name('empresa.configuracion.requerimientos');
 
   /* --- Covid19 --- */
   Route::get('covid19', 'Covid19Controller@index')->name('empresa.covid19.index');
@@ -113,6 +114,14 @@ Route::patch('empleados/{empleado}/contrato/edit', 'EmpleadosContratoController@
 /* --- Solicitudes --- */
 Route::resource('solicitud', 'SolicitudController')
       ->except(['create', 'store']);
+
+/* --- Requerimiento Material --- */
+Route::delete('requerimiento-material/producto/{producto}', 'RequerimientoMaterialController@destroyProducto')->name('requerimiento.material.producto.destroy');
+Route::resource('requerimiento-material', 'RequerimientoMaterialController')
+->names('requerimiento.material')
+->parameters([
+  'requerimiento-material' => 'requerimiento',
+]);
 
 /* --- Empleados - Eventos --- */
 Route::get('empleados/eventos/', 'EmpleadosEventosController@index')->name('eventos.index');

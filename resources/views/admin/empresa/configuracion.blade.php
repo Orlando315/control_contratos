@@ -2,12 +2,19 @@
 
 @section('title', 'Configuración')
 
+@section('head')
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
+@endsection
+
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
       <h2>Configuración</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item">Empresa</li>
         <li class="breadcrumb-item active"><strong>Configuración</strong></li>
       </ol>
@@ -28,6 +35,7 @@
         <ul class="nav nav-tabs">
           <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-cogs"></i> General</a></li>
           <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-random"></i> Integraciones</a></li>
+          <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-list"></i> Requerimientos de Materiales</a></li>
         </ul>
         <div class="tab-content">
           <div id="tab-1" class="tab-pane active">
@@ -37,7 +45,7 @@
                 @csrf
                 @method('PATCH')
 
-                <fielset>
+                <fieldset>
                   <legend class="form-legend">General</legend>
 
                   <div class="row">
@@ -66,7 +74,7 @@
                       </div>
                     </div>
                   </div>
-                </fielset>
+                </fieldset>
 
                 @if(count($errors->general) > 0)
                   <div class="alert alert-danger alert-important">
@@ -87,7 +95,7 @@
                 @csrf
                 @method('PATCH')
 
-                <fielset>
+                <fieldset>
                   <legend class="form-legend">Terminos y condiciones</legend>
                   <p class="text-center">Cada vez que los terminos y condiciones sean moificados, los Empleados deberán aceptarlos nuevamente.</p>
 
@@ -109,7 +117,7 @@
                     <label for="terminos-terminos">Terminos:</label>
                     <textarea id="terminos-terminos" class="form-control" name="terminos[terminos]">{{ old('terminos.terminos', optional($configuracion->terminos)->terminos) }}</textarea>
                   </div>
-                </fielset>
+                </fieldset>
 
                 @if(count($errors->terminos) > 0)
                   <div class="alert alert-danger alert-important">
@@ -130,7 +138,7 @@
                 @csrf
                 @method('PATCH')
 
-                <fielset>
+                <fieldset>
                   <legend class="form-legend">Encuesta Covid-19</legend>
                   <div class="row">
                     <div class="col-md-6">
@@ -145,7 +153,7 @@
                       </div>
                     </div>
                   </div>
-                </fielset>
+                </fieldset>
 
                 @if(count($errors->covid19) > 0)
                   <div class="alert alert-danger alert-important">
@@ -163,14 +171,13 @@
               </form>
             </div>
           </div>
-
           <div id="tab-2" class="tab-pane">
             <div class="panel-body">
               <form action="{{ route('admin.empresa.configuracion.sii') }}" method="POST">
                 @csrf
                 @method('PATCH')
 
-                <fielset>
+                <fieldset>
                   <legend class="form-legend">Facturación Sii</legend>
 
                   <div class="row">
@@ -196,7 +203,7 @@
                       </div>
                     </div>
                   </div>
-                </fielset>
+                </fieldset>
 
                 @if(count($errors->sii) > 0)
                   <div class="alert alert-danger alert-important">
@@ -214,6 +221,123 @@
               </form>
             </div>
           </div>
+          <div id="tab-3" class="tab-pane">
+            <div class="panel-body">
+              <form id="add-firmante-form" action="#" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <p class="text-center m-0">Los cambios que se realicen no afectarán a los Requerimientos de Materiales ya existentes.</p>
+
+                <fieldset>
+                  <legend class="form-legend">Usuarios firmantes</legend>
+
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="firmante">Usuario: *</label>
+                        <select id="firmante" class="form-control" required style="width: 100%">
+                          <option value="">Seleccione...</option>
+                          @foreach($users as $user)
+                            <option value="{{ $user->id }}">
+                              {{ $user->nombre() }}
+                            </option>
+                          @endforeach
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="firmante-texto">Texto: *</label>
+                        <input id="firmante-texto" class="form-control" type="text" maxlength="50" placeholder="Texto" required>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="">Obligatorio:</label>
+                        <div class="custom-control custom-checkbox">
+                          <input id="firmante-obligatorio" class="custom-control-input" type="checkbox" value="1">
+                          <label class="custom-control-label" for="firmante-obligatorio">
+                            Sí
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <div class="row justify-content-center mb-3">
+                  <div class="col-md-3">
+                    <button id="btn-add-firmante" class="btn btn-block btn-sm btn-primary" type="submit">Agregar firmante</button>
+                  </div>
+                </div>
+              </form>
+
+              <form action="{{ route('admin.empresa.configuracion.requerimientos') }}" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <table class="table table-bordered">
+                  <colgroup>
+                    <col span="1" style="width: 5%;">
+                    <col span="1" style="width: 60%;">
+                    <col span="1" style="width: 20%;">
+                    <col span="1" style="width: 15%;">
+                  </colgroup>
+                  <thead>
+                    <tr class="text-center">
+                      <th class="align-middle">-</th>
+                      <th class="align-middle">Nombre</th>
+                      <th class="align-middle">Texto</th>
+                      <th class="align-middle">Obligatorio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-firmantes" class="{{ (count(old('usuarios', $configuracion->requerimientos_firmantes)) > 0) ? '' : 'is-empty' }}">
+                    @forelse(old('usuarios', $configuracion->requerimientos_firmantes) as $index => $userFirmante)
+                      <tr id="tr-{{ $index }}" class="tr-firmante">
+                        <td class="text-center align-middle">
+                          <button class="btn btn-danger btn-xs btn-firmantes-delete m-0" type="button" role="button" data-id="{{ $index }}" data-usuario="{{ $userFirmante['usuario'] }}"><i class="fa fa-trash"></i></button>
+                        </td>
+                        <td>
+                          {{ $userFirmante['nombre'] }}
+                          <input type="hidden" name="usuarios[{{ $index }}][usuario]" value="{{ $userFirmante['usuario'] }}">
+                          <input type="hidden" name="usuarios[{{ $index }}][nombre]" value="{{ $userFirmante['nombre'] }}">
+                        </td>
+                        <td>
+                          {{ $userFirmante['texto'] }}
+                          <input type="hidden" name="usuarios[{{ $index }}][texto]" value="{{ $userFirmante['texto'] }}">
+                        </td>
+                        <td class="text-center">
+                          @if($userFirmante['obligatorio'])
+                            <span class="label label-primary">Sí</span>
+                          @else
+                            <span class="label label-default">No</span>
+                          @endif
+                          <input type="hidden" name="usuarios[{{ $index }}][obligatorio]" value="{{ $userFirmante['obligatorio'] }}">
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td class="text-center text-muted" colspan="3">No se han agregado firmantes.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+
+                <div class="alert alert-danger alert-important alert-firmantes"{!! (count($errors->firmantes) > 0) ? '' : 'style="display: none"' !!}>
+                  <ul class="m-0">
+                    @foreach($errors->firmantes->all() as $error)
+                      <li>{{ $error }}</li>
+                    @endforeach
+                  </ul>
+                </div>
+
+                <div class="text-right mt-2">
+                  <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -223,11 +347,115 @@
 @section('script')
   <!-- CKEditor -->
   <script type="text/javascript" src="{{ asset('js/plugins/ckeditor/ckeditor.js') }}"></script>
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
+    const TBODY_FIRMANTES = $('#tbody-firmantes');
+    const BTN_ADD_FIRMANTE = $('#btn-add-firmante');
+    const FIRMANTES = @json($configuracion->requerimientos_firmantes);
+
     $(document).ready(function () {
       CKEDITOR.replace('terminos-terminos', {
         language: 'es',
       });
+
+      $('#firmante').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+      });
+
+      $('#add-firmante-form').submit(addFirmante);
+      TBODY_FIRMANTES.on('click', '.btn-firmantes-delete', deleteFirmante);
     });
+
+    function addFirmante(e){
+      e.preventDefault();
+
+      BTN_ADD_FIRMANTE.prop('disabled', true);
+
+      let usuario = $('#firmante').val();
+      let option = $(this).find(`option[value="${usuario}"]`);
+      let nombre = option.text();
+      let data = {
+        usuario: usuario,
+        nombre: nombre.trim(),
+        texto: $('#firmante-texto').val(),
+        obligatorio: $('#firmante-obligatorio').is(':checked'),
+      };
+
+      if(firmanteExist(usuario)){
+        $('.alert-firmantes ul').empty().append(`<li>Firmante ya agregado.</li>`)
+        $('.alert-firmantes').show().delay(5000).hide('slow');
+        BTN_ADD_FIRMANTE.prop('disabled', false);
+
+        return false;
+      }else{
+        FIRMANTES.push(data);
+      }
+
+      let index = Date.now();
+
+      if(TBODY_FIRMANTES.hasClass('is-empty')){
+        TBODY_FIRMANTES.removeClass('is-empty').empty();
+      }
+
+      TBODY_FIRMANTES.append(firmante(index, data));
+      BTN_ADD_FIRMANTE.prop('disabled', false);
+      $(this)[0].reset();
+      $('#firmante').val(null).trigger('change');
+    }
+
+    function deleteFirmante(){
+      let index = $(this).data('id');
+      let usuario = $(this).data('usuario');
+      $(`#tr-${index}`).remove();
+
+      removeAddedFirmante(usuario);
+
+      let firmantes = $('.tr-firmante').length;
+
+      if(firmantes == 0){
+        TBODY_FIRMANTES
+          .addClass('is-empty')
+          .append('<tr class="tr-empty"><td class="text-center text-muted" colspan="3">No se han agregado firmantes.</td></tr>');
+      }
+    }
+
+    function firmanteExist(usuario, returnIndex = false){
+      let firmante = FIRMANTES.find(firmante => firmante.usuario == usuario);
+      let index = -1;
+      if(firmante !== undefined){
+        index = FIRMANTES.indexOf(firmante);
+      }
+
+      return returnIndex ? index : (index !== -1);
+    }
+
+    function removeAddedFirmante(usuario){
+      let index = firmanteExist(usuario, true);
+      FIRMANTES.splice(index, 1);
+    }
+
+    // Informacion del Producto
+    let firmante = function(index, data) {
+      return `<tr id="tr-${index}" class="tr-firmante">
+                <td class="text-center align-middle">
+                  <button class="btn btn-danger btn-xs btn-firmantes-delete m-0" type="button" role="button" data-id="${index}" data-usuario="${data.usuario}"><i class="fa fa-trash"></i></button>
+                </td>
+                <td>
+                  ${data.nombre}
+                  <input type="hidden" name="usuarios[${index}][usuario]" value="${data.usuario}">
+                  <input type="hidden" name="usuarios[${index}][nombre]" value="${data.nombre}">
+                </td>
+                <td>
+                  ${data.texto}
+                  <input type="hidden" name="usuarios[${index}][texto]" value="${data.texto}">
+                </td>
+                <td class="text-center">
+                  ${data.obligatorio ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>'}
+                  <input type="hidden" name="usuarios[${index}][obligatorio]" value="${data.obligatorio ? 1 : 0}">
+                </td>
+              </tr>`;
+    }
   </script>
 @endsection

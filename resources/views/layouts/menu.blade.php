@@ -101,6 +101,13 @@
           </a>
         </li>
       @endpermission
+      @permission('requerimiento-material-index')
+        <li>
+          <a href="{{ route('admin.requerimiento.material.index') }}">
+            <i class="fa fa-list-ul"></i> <span class="nav-label">Requerimiento de Materiales</span>
+          </a>
+        </li>
+      @endpermission
       @permission('anticipo-index|anticipo-create')
         <li>
           <a href="#">
@@ -306,24 +313,25 @@
           </ul>
         </li>
       @endpermission
-      @role('empleado')
-        <li>
-          <a href="{{ route('anticipos.create') }}">
-            <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-archive"></i>
-            <span class="nav-label">Solicitudes</span>
-            <span class="fa arrow"></span>
-          </a>
-          <ul class="nav nav-second-level">
+      <li>
+        <a href="{{ route('anticipos.create') }}">
+          <i class="fa fa-level-up"></i> <span class="nav-label">Solicitar anticipo</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <i class="fa fa-archive"></i>
+          <span class="nav-label">Solicitudes</span>
+          <span class="fa arrow"></span>
+        </a>
+        <ul class="nav nav-second-level">
+          @role('empleado')
             <li><a href="{{ route('solicitud.index') }}">Ver solicitudes</a></li>
             <li><a href="{{ route('solicitud.create') }}">Agregar solicitud</a></li>
-          </ul>
-        </li>
-      @endrole
+          @endrole
+          <li><a href="{{ route('requerimiento.material.index') }}">Requerimiento de Materiales</a></li>
+        </ul>
+      </li>
 
       @role('developer|superadmin|empresa')
         <li>
@@ -348,7 +356,7 @@
           <ul class="nav nav-second-level">
             <li><a href="{{ route('admin.manage.empresa.index') }}"><i class="fa fa-building"></i>Empresas</a></li>
             <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-heartbeat"></i>Covid-19</a></li>
-            <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-question-circle"></i>Ayudas</a></li>
+            <li><a href="{{ route('admin.manage.ayuda.index') }}"><i class="fa fa-question-circle"></i>Ayudas</a></li>
           </ul>
         </li>
       @endrole

@@ -297,6 +297,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener los RequisitoMaterial
+     */
+    public function requerimientosMateriales()
+    {
+      return $this->hasMany('App\RequerimientoMaterial');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part

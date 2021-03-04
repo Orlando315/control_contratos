@@ -45,6 +45,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
       'App\Ayuda' => 'App\Policies\AyudaPolicy',
+      'App\RequerimientoMaterial' => 'App\Policies\RequerimientoMaterialPolicy',
     ];
 
     /**

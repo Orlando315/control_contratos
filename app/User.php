@@ -221,6 +221,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener los RequerimientoMaterial solicitados por el User
+     */
+    public function requerimientosMateriales()
+    {
+      return $this->hasMany('App\RequerimientoMaterial', 'solicitante');
+    }
+
+    /**
+     * Obtener los RequerimientoMaterial dirigidos al User
+     */
+    public function requerimientosMaterialesDirigido()
+    {
+      return $this->hasMany('App\RequerimientoMaterial', 'dirigido');
+    }
+
+    /**
+     * Obtener los RequerimientoMaterial donde el User es firmante
+     */
+    public function requerimientosMaterialesFirmante()
+    {
+      return $this->hasMany('App\RequerimientoMaterialFirmante', 'user_id');
+    }
+
+    /**
      * Evaluar si el User es tiene algun role de Administrador
      * 
      * @return bool

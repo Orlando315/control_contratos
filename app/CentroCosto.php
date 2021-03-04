@@ -49,4 +49,12 @@ class CentroCosto extends Model
     {
       return $this->hasMany('App\InventarioV2Egreso');
     }
+
+    /**
+     * Obtener los RequerimientoMaterial
+     */
+    public function requerimientosMateriales()
+    {
+      return $this->hasMany('App\RequerimientoMaterial');
+    }
 }
