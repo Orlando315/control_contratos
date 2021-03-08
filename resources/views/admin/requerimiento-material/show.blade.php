@@ -26,7 +26,7 @@
       @if($requerimiento->isPendiente() && (Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-edit')))
         <a class="btn btn-default btn-sm" href="{{ route('admin.requerimiento.material.edit', ['requerimiento' => $requerimiento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endif
-      <a class="btn btn-default btn-sm" href="{{ route('requerimiento.material.pdf', ['requerimiento' => $requerimiento->id]) }}" target="_blank"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Imprimir</a>
+      <a class="btn btn-default btn-sm" href="{{ route('requerimiento.material.pdf', ['requerimiento' => $requerimiento->id]) }}" target="_blank"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
       @if(Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-delete'))
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif

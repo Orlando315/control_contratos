@@ -213,6 +213,16 @@ class EmpleadosContrato extends Model
     }
 
     /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function sueldo()
+    {
+      return number_format($this->sueldo, 0, ',', '.');
+    }
+
+    /**
      * Obtener las Jornadas disponibles
      * 
      * @return array

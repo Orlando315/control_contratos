@@ -161,6 +161,7 @@ class EmpleadosController extends Controller
       $empleado->load([
         'contrato',
         'banco',
+        'lastContrato',
         'plantillaDocumentos',
         'solicitudes',
         'sueldos',
@@ -492,6 +493,13 @@ class EmpleadosController extends Controller
     public function print(Empleado $empleado)
     {
       $this->authorize('view', $empleado);
+
+      $empleado->load([
+        'contrato',
+        'usuario',
+        'lastContrato',
+        'banco',
+      ]);
 
       return view('admin.empleados.print', compact('empleado'));
     }

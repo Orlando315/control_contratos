@@ -49,13 +49,6 @@ class Empleado extends Model
     protected $guarded = ['empresa_id'];
 
     /**
-     * Ultimo contrato del Empleado
-     * 
-     * @var null
-     */
-    private $_lastContrato = null;
-
-    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -90,18 +83,6 @@ class Empleado extends Model
     }
 
     /**
-     * Obtener el ultimo contrato
-     *
-     * @param  string  $value
-     * @return \App\EmpleadosContrato|null
-     */
-    public function getLastContratoAttribute($value)
-    {
-      $this->_lastContrato = $value ?? $this->contratos()->latest()->first();
-      return $this->_lastContrato;
-    }
-
-    /**
      * Obtener el Usuario al que pertenece
      */
     public function usuario()
@@ -123,6 +104,14 @@ class Empleado extends Model
     public function contratos()
     {
       return $this->hasMany('App\EmpleadosContrato');
+    }
+
+    /**
+     * Obtener los Contratos del Empleado
+     */
+    public function lastContrato()
+    {
+      return $this->hasOne('App\EmpleadosContrato')->latest();
     }
 
     /**

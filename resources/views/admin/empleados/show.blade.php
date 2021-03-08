@@ -161,7 +161,7 @@
                 </li>
                 <li class="list-group-item">
                   <b>Sueldo</b>
-                  <span class="pull-right">{{ number_format($empleado->lastContrato->sueldo, 0, ',', '.') }}</span>
+                  <span class="pull-right">{{ $empleado->lastContrato->sueldo() }}</span>
                 </li>
                 <li class="list-group-item">
                   <b>Inicio</b>
@@ -896,7 +896,7 @@
                       </li>
                       <li class="list-group-item">
                         <b>Sueldo</b>
-                        <span class="pull-right">{{ number_format($contrato->sueldo, 0, ',', '.') }}</span>
+                        <span class="pull-right">{{ $contrato->sueldo() }}</span>
                       </li>
                       <li class="list-group-item">
                         <b>Inicio</b>

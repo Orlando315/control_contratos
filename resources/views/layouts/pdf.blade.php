@@ -110,9 +110,6 @@
         width: 64.666%;
         max-width: 64.666%;
       }
-      .table-bordered tr > td, .table-bordered tr > th{
-        border: 1px solid #dee2e6 !important;
-      }
       .light-background{
         background-color: #f7f7f7;
       }

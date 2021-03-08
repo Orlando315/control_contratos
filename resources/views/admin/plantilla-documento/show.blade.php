@@ -25,6 +25,7 @@
       @permission('plantilla-documento-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
+      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.pdf', ['documento' => $documento->id]) }}"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
       @permission('plantilla-documento-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission

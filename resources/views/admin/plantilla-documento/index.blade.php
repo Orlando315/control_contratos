@@ -57,7 +57,7 @@
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
-                      <th class="text-center">Documento</th>
+                      <th class="text-center">Nombre</th>
                       <th class="text-center">Contrato</th>
                       <th class="text-center">Empleado</th>
                       <th class="text-center">Padre</th>
@@ -68,7 +68,7 @@
                     @foreach($documentos as $documento)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $documento->nombre }}</td>
+                        <td>@nullablestring($documento->nombre)</td>
                         <td>{{ $documento->contrato->nombre }}</td>
                         <td>{{ $documento->empleado->nombre() }}</td>
                         <td>@nullablestring(optional($documento->padre)->nombre)</td>
@@ -86,8 +86,8 @@
                 </table>
               </div>
             </div>
-          @permission('plantilla-index')
           @endpermission
+          @permission('plantilla-index')
             <div id="tab-2" class="tab-pane">
               <div class="panel-body">
                 @permission('plantilla-create')
@@ -110,8 +110,8 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $plantilla->nombre }}</td>
-                        <td>{{ $plantilla->secciones_count }}</td>
-                        <td>{{ $plantilla->documentos_count }}</td>
+                        <td class="text-right">{{ $plantilla->secciones_count }}</td>
+                        <td class="text-right">{{ $plantilla->documentos_count }}</td>
                         <td>
                           @permission('plantilla-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.show', ['plantilla' => $plantilla->id] )}}"><i class="fa fa-search"></i></a>
@@ -217,7 +217,7 @@
             </div>
             <div class="modal-body">
               <h4 class="text-center">Generar variables</h4>
-              <p class="text-center">Se crearán variables estaticas para los Documentos que se sustituirán con la información del Empleado</p>
+              <p class="text-center">Se crearán variables estaticas para los Documentos que se sustituirán con la información del Empleado y/o Contrato</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>

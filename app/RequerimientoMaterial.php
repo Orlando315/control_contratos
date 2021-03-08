@@ -135,16 +135,19 @@ class RequerimientoMaterial extends Model
 
     /**
      * Obtener el atributo formateado
-     * 
+     *
+     * @param  bool  $asText
      * @return string
      */
-    public function status()
+    public function status($asText = false)
     {
       if(is_null($this->status)){
         return '<span class="label label-default">Pendiente</span>';
       }
 
-      return $this->status ? '<span class="label label-primary">Aprobado</span>' : '<span class="label label-danger">Rechazado</span>';
+      $status = $this->status ? '<span class="label label-primary">Aprobado</span>' : '<span class="label label-danger">Rechazado</span>';
+
+      return $asText ? strip_tags($status) : $status;
     }
 
     /**

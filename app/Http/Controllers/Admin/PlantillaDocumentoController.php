@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\{PlantillaDocumento as Documento, Contrato, Empleado, Plantilla, PlantillaVariable};
+use PDF;
 
 class PlantillaDocumentoController extends Controller
 {
@@ -18,7 +19,7 @@ class PlantillaDocumentoController extends Controller
     {
       $this->authorize('viewAny', Documento::class);
 
-      $documentos = Documento::all();
+      $documentos = Documento::with(['contrato', 'empleado', 'padre'])->get();
       $plantillas = Plantilla::withCount(['secciones', 'documentos'])->get();
       $variables = PlantillaVariable::all();
 
@@ -194,5 +195,24 @@ class PlantillaDocumentoController extends Controller
         'flash_class' => 'alert-danger',
         'flash_important' => true
         ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\PlantillaDocumento  $documento
+     * @return \Illuminate\Http\Response
+     */
+    public function pdf(Documento $documento)
+    {
+      $this->authorize('view', $documento);
+
+      $documento->load('plantilla.secciones');
+      $nombre = $documento->nombre ?? ($documento->plantilla->nombre ?? 'doumento');
+
+      PDF::setOptions(['dpi' => 150]);
+      $pdf = PDF::loadView('admin.plantilla-documento.pdf', compact('documento', 'nombre'));
+
+      return $pdf->download($nombre.'.pdf');
     }
 }

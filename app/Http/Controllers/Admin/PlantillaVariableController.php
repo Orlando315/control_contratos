@@ -164,14 +164,24 @@ class PlantillaVariableController extends Controller
         ['variable' => '{{e_nombre_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombre del Banco'],
         ['variable' => '{{e_tipo_de_cuenta_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Tipo de cuenta del Banco'],
         ['variable' => '{{e_cuenta_del_banco}}', 'tipo' => 'empleado', 'nombre' => 'E - Cuenta del Banco'],
+        ['variable' => '{{e_nombre_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Nombre del Contrato pincipal'],
+        ['variable' => '{{e_valor_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Valor del Contrato principal'],
+        ['variable' => '{{e_fecha_de_inicio_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Inicio del Contrato principal'],
+        ['variable' => '{{e_fecha_de_fin_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Fin del Contrato principal'],
+        ['variable' => '{{e_faena_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Faena del Contrato principal'],
+        ['variable' => '{{e_descripcion_del_contrato_principal}}', 'tipo' => 'empleado', 'nombre' => 'E - Descripción del Contrato principal'],
+        ['variable' => '{{e_sueldo_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Sueldo del Contrato de empleado'],
+        ['variable' => '{{e_fecha_de_inicio_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Inicio del Contrato de empleado'],
+        ['variable' => '{{e_fecha_de_fin_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Fin del Contrato de empleado'],
+        ['variable' => '{{e_jornada_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Jornada del Contrato de empleado'],
+        ['variable' => '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Inicio de jornada del Contrato de empleado'],
+        ['variable' => '{{e_descripcion_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Descripción del Contrato de empleado'],
       ];
 
-      $i = 0;
       foreach ($vars as $variable) {
-        if(!PlantillaVariable::where('variable', $variable['variable'])->exists()){
-          Auth::user()->empresa->variables()->create($vars[$i]);
+        if(!Auth::user()->empresa->variables()->where('variable', $variable['variable'])->exists()){
+          Auth::user()->empresa->variables()->create($variable);
         }
-        $i++;
       }
 
       return redirect()->route('admin.plantilla.documento.index')->with([

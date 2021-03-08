@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class PlantillaVariable extends Model
 {
@@ -45,6 +46,18 @@ class PlantillaVariable extends Model
       '{{e_nombre_del_banco}}',
       '{{e_tipo_de_cuenta_del_banco}}',
       '{{e_cuenta_del_banco}}',
+      '{{e_nombre_del_contrato_principal}}',
+      '{{e_valor_del_contrato_principal}} ',
+      '{{e_fecha_de_inicio_del_contrato_principal}} ',
+      '{{e_fecha_de_fin_del_contrato_principal}}',
+      '{{e_faena_del_contrato_principal}}',
+      '{{e_descripcion_del_contrato_principal}}',
+      '{{e_sueldo_del_contrato_de_empleado}}',
+      '{{e_fecha_de_inicio_del_contrato_de_empleado}}',
+      '{{e_fecha_de_fin_del_contrato_de_empleado}}',
+      '{{e_jornada_del_contrato_de_empleado}}',
+      '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}',
+      '{{e_descripcion_del_contrato_de_empleado}}',
     ];
 
     /**
@@ -134,11 +147,6 @@ class PlantillaVariable extends Model
       $id = $this->id ?? false;
       $keepChecking = true;
 
-      // Evaluar si es una variable reservada
-      if(in_array('{{'.$variable.'}}', $this->_reserved)){
-        $count++;
-      }
-
       while($keepChecking){
         $nombre = '{{'.($count < 1 ? $variable : $variable.'_'.$count).'}}';
 
@@ -172,6 +180,12 @@ class PlantillaVariable extends Model
      */
     public static function mappedVariablesToAttributes(Empleado $empleado)
     {
+      $empleado->load([
+        'usuario',
+        'banco',
+        'contrato.faena',
+      ]);
+
       return [
         '{{e_nombres}}' => $empleado->usuario->nombres,
         '{{e_apellidos}}' => $empleado->usuario->apellidos,
@@ -190,6 +204,18 @@ class PlantillaVariable extends Model
         '{{e_nombre_del_banco}}' => $empleado->banco->nombre,
         '{{e_tipo_de_cuenta_del_banco}}' => $empleado->banco->tipo_cuenta,
         '{{e_cuenta_del_banco}}' => $empleado->banco->cuenta,
+        '{{e_nombre_del_contrato_principal}}' => $empleado->contrato->nombre,
+        '{{e_valor_del_contrato_principal}}' => $empleado->contrato->valor,
+        '{{e_fecha_de_inicio_del_contrato_principal}}' => $empleado->contrato->inicio,
+        '{{e_fecha_de_fin_del_contrato_principal}}' => $empleado->contrato->fin,
+        '{{e_faena_del_contrato_principal}}' => optional($empleado->contrato->faena)->nombre,
+        '{{e_descripcion_del_contrato_principal}}' => $empleado->contrato->descripcion,
+        '{{e_sueldo_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->sueldo(),
+        '{{e_fecha_de_inicio_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->inicio,
+        '{{e_fecha_de_fin_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->fin,
+        '{{e_jornada_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->jornada,
+        '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->inicio_jornada,
+        '{{e_descripcion_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->descripcion,
       ];
     }
 }

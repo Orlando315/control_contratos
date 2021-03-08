@@ -36,7 +36,7 @@
         </a>
       </li>
 
-      @permission('contrato-index|contrato-create')
+      @permission('contrato-index|plantilla-documento-index|plantilla-index')
         <li>
           <a href="#">
             <i class="fa fa-clipboard"></i>
@@ -45,27 +45,10 @@
           </a>
           <ul class="nav nav-second-level">
             @permission('contrato-index')
-              <li><a href="{{ route('admin.contratos.index') }}">Ver contratos</a></li>
+              <li><a href="{{ route('admin.contratos.index') }}"><i class="fa fa-clipboard"></i> Contratos</a></li>
             @endpermission
-            @permission('contrato-create')
-              <li><a href="{{ route('admin.contratos.create') }}">Agregar contrato</a></li>
-            @endpermission
-          </ul>
-        </li>
-      @endpermission
-      @permission('plantilla-documento-index|plantilla-documento-create|plantilla-index|plantilla-variable-index|plantilla-variable-view')
-        <li>
-          <a href="#">
-            <i class="fa fa-file-text-o"></i>
-            <span class="nav-label">Documentos</span>
-            <span class="fa arrow"></span>
-          </a>
-          <ul class="nav nav-second-level">
             @permission('plantilla-documento-index')
-              <li><a href="{{ route('admin.plantilla.documento.index') }}">Ver documentos</a></li>
-            @endpermission
-            @permission('plantilla-documento-create')
-              <li><a href="{{ route('admin.plantilla.documento.create') }}">Agregar documento</a></li>
+              <li><a href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-file-text-o"></i> Documentos</a></li>
             @endpermission
           </ul>
         </li>
