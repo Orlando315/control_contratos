@@ -147,8 +147,8 @@ class UsuariosController extends Controller
       }
 
       if(
-        (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador') && $request->role == 'administrador')
-        || (!Auth::user()->hasActiveOrInactiveRole('empresa|administrador|supervisor') && $request->role == 'supervisor')
+        (!Auth::user()->hasActiveOrInactiveRole('developer|administrador|empresa') && $request->role == 'administrador')
+        || (!Auth::user()->hasActiveOrInactiveRole('developer|administrador|empresa|supervisor') && $request->role == 'supervisor')
       ){
         return redirect()->back()->withInput()->with([
           'flash_message' => 'No puedes asignar un role superior al tuyo.',

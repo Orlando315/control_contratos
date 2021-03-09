@@ -106,15 +106,28 @@
               <legend class="form-legend">Permisos</legend>
               <p>Los permisos básicos de los Roles no pueden ser removidos.</p>
 
+              <div class="custom-control custom-checkbox text-center">
+                <input id="modulo-all" class="custom-control-input" type="checkbox">
+                <label class="custom-control-label" for="modulo-all" title="Marcar todos los permisos de todos los modulo">
+                  Todos los permisos
+                </label>
+              </div>
+
               @foreach($modulos as $modulo)
-                <div class="form-group">
-                  <label>{{ $modulo->name() }}:</label>
+                <div class="form-group border-bottom pb-2">
+                  <label for="modulo-{{ $modulo->id }}">{{ $modulo->name() }}:</label>
+                  <div class="custom-control custom-checkbox">
+                    <input id="modulo-{{ $modulo->id }}" class="custom-control-input check-modulo" type="checkbox">
+                    <label class="custom-control-label" for="modulo-{{ $modulo->id }}" title="Marcar todos los permisos del modulo">
+                      Todos
+                    </label>
+                  </div>
 
                   <div class="row">
                     @foreach($modulo->permissions as $permission)
                       <div class="col-md-6">
                         <div class="custom-control custom-checkbox">
-                          <input id="permission-{{ $permission->id }}" class="custom-control-input" type="checkbox" name="permissions[]" value="{{ $permission->id }}"{{ $usuario->permissions->contains($permission->id) ? ' checked' : '' }}>
+                          <input id="permission-{{ $permission->id }}" class="custom-control-input" data-modulo="modulo-{{ $modulo->id }}" type="checkbox" name="permissions[]" value="{{ $permission->id }}"{{ $usuario->permissions->contains($permission->id) ? ' checked' : '' }}>
                           <label class="custom-control-label" for="permission-{{ $permission->id }}" title="{{ $permission->description }}">
                             {{ $permission->display_name ?? 'N/A' }}
                           </label>
@@ -157,10 +170,18 @@
     const OLD_PERMISSIONS = @json($usuario->permissions->pluck('id'));
 
     $(document).ready( function () {
-      $('input[name="role"]').change(function () {
-        let name = $(this).val();
-        let role = ROLES.find(role => (role.name === name));
-        
+      $('input[name="role"]').change(rolesPermissions);
+      $('input[name="role"]').change();
+
+      $('#modulo-all').change(checkAll);
+      $('.check-modulo').change(checkModulo);
+    });
+
+    function rolesPermissions(uncheckAll = true) {
+      let name = $('input[name="role"]:checked').val();
+      let role = ROLES.find(role => (role.name === name));
+
+      if(uncheckAll){
         $.each($('input[id^="permission-"]'), function (k, v) {
           let permission = +$(v).val();
           let exist = OLD_PERMISSIONS.includes(permission);
@@ -168,12 +189,35 @@
           $(v).prop({'checked': exist, 'disabled': false});
         });
 
-        $.each(role.permissions, function (k, v) {
-          $('#permission-'+v.id).prop({'checked': true, 'disabled': true});
-        });
-      });
+        $('#modulo-all').prop('checked', false).trigger('change');
+      }
 
-      $('input[name="role"]').change();
-    });
+      $.each(role.permissions, function (k, v){
+        $('#permission-'+v.id).prop({'checked': true, 'disabled': true});
+      });
+    }
+
+    function checkAll() {
+      let isChecked = $(this).is(':checked');
+      
+      $(`.check-modulo`)
+        .prop('checked', isChecked)
+        .trigger('change');
+
+      if(!isChecked){
+        rolesPermissions(false);
+      }
+    }
+
+    function checkModulo() {
+      let isChecked = $(this).is(':checked');
+      let modulo = $(this).attr('id');
+      
+      $(`.custom-control-input[data-modulo="${modulo}"]`).prop('checked', isChecked);
+
+      if(!isChecked){
+        rolesPermissions(false);
+      }
+    }
   </script>
 @endsection
