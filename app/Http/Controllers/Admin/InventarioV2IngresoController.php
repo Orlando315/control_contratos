@@ -68,6 +68,7 @@ class InventarioV2IngresoController extends Controller
         }
 
         $inventario->addStock($ingreso->cantidad);
+        $ingreso->updateProveedorProducto();
 
         return redirect()->route('admin.inventario.ingreso.show', ['ingreso' => $ingreso->id])->with([
           'flash_message' => 'Ingreso de Stock agregado exitosamente.',

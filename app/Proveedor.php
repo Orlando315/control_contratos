@@ -124,6 +124,14 @@ class Proveedor extends Model
     }
 
     /**
+     * Obtener los Productos
+     */
+    public function productos()
+    {
+      return $this->hasMany('App\ProveedorProducto');
+    }
+
+    /**
      * Evaluar si el proveedor es Empresa
      * 
      * @return bool

@@ -198,6 +198,13 @@ Route::get('proveedor/{proveedor}/contactos', 'ProveedorController@contactos')->
 Route::resource('proveedor', 'ProveedorController')
       ->except(['create', 'store']);
 
+/* --- Proveedores - Productos --- */
+Route::get('proveedor/producto/{proveedor}/create', 'ProveedorProductoController@create')->name('proveedor.producto.create');
+Route::post('proveedor/producto/{proveedor}/create', 'ProveedorProductoController@store')->name('proveedor.producto.store');
+Route::resource('proveedor/producto', 'ProveedorProductoController')
+->names('proveedor.producto')
+->except(['index', 'create', 'store']);
+
 /* --- Cotizaciones --- */
 Route::get('cotizacion/create/{cliente?}', 'CotizacionController@create')->name('cotizacion.create');
 Route::get('cotizacion/{cotizacion}/productos', 'CotizacionController@productos')->name('cotizacion.productos');

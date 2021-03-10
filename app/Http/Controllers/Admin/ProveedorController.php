@@ -267,7 +267,13 @@ class ProveedorController extends Controller
     {
       $this->authorize('view', $proveedor);
 
-      $proveedor->load(['direcciones', 'contactos', 'compras', 'inventariosV2Ingreso.inventario']);
+      $proveedor->load([
+        'direcciones',
+        'contactos',
+        'compras',
+        'inventariosV2Ingreso.inventario',
+        'productos',
+      ]);
 
       return view('admin.proveedor.show', compact('proveedor'));
     }

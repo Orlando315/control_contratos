@@ -105,4 +105,33 @@ class InventarioV2Ingreso extends Model
     {
       return number_format($this->costo, 2, ',', '.');
     }
+
+    /**
+     * Actualizar informacion del Inventario en los Productos del Proveedor
+     * 
+     * @return void
+     */
+    public function updateProveedorProducto()
+    {
+      if(is_null($this->proveedor_id)){
+        return;
+      }
+
+      $producto = $this->proveedor->productos()->where('inventario_id', $this->inventario_id)->first();
+      // Si el producto ya existe entre los productos del inventario, y el costo es mayor al actual, se actualiza
+      // Sino, se crea el producto
+      if($producto){
+        if($this->costo > $producto->costo){
+          $producto->costo = $this->costo;
+          $producto->save();
+        }
+      }else{
+        $this->proveedor->productos()->create([
+          'empresa_id' => $this->empresa_id,
+          'inventario_id' => $this->inventario_id,
+          'nombre' => $this->nombre,
+          'costo' => $this->costo,
+        ]);
+      }
+    }
 }

@@ -85,13 +85,64 @@
     <div class="col-md-9">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
-          <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-map-marker" aria-hidden="true"></i> Direcciones</a></li>
+          <li><a class="nav-link active" href="#tab-3" data-toggle="tab"><i class="fa fa-cubes" aria-hidden="true"></i> Productos</a></li>
+          <li><a class="nav-link" href="#tab-1" data-toggle="tab"><i class="fa fa-map-marker" aria-hidden="true"></i> Direcciones</a></li>
           @if($proveedor->isEmpresa())
             <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-address-book" aria-hidden="false"></i> Contactos</a></li>
           @endif
         </ul>
         <div class="tab-content">
-          <div id="tab-1" class="tab-pane active">
+          <div id="tab-3" class="tab-pane active">
+            <div class="panel-body">
+              <div class="mb-3 text-right">
+                @permission('proveedor-edit')
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.proveedor.producto.create', ['proveedor' => $proveedor->id]) }}">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Nuevo producto
+                  </a>
+                @endpermission
+              </div>
+
+              <table class="table data-table table-bordered table-hover w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Costo</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($proveedor->productos as $producto)
+                    <tr>
+                      <td class="text-center">{{ $loop->iteration }}</td>
+                      <td>{{ $producto->nombre }}</td>
+                      <td class="text-right">{{ $producto->costo() }}</td>
+                      <td class="text-center">
+                        @permission('proveedor-edit')
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('admin.proveedor.producto.edit', ['producto' => $producto->id]) }}">
+                                  <i class="fa fa-pencil"></i> Editar
+                                </a>
+                              </li>
+                              <li>
+                                <a class="dropdown-item text-danger" type="button" data-toggle="modal" data-target="#delDataModal" data-type="producto" data-url="{{ route('admin.proveedor.producto.destroy', ['producto' => $producto->id]) }}">
+                                  <i class="fa fa-times"></i> Eliminar
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        @endpermission
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div><!-- /.tab-pane -->
+          <div id="tab-1" class="tab-pane">
             <div class="panel-body">
               <div class="mb-3 text-right">
                 @permission('proveedor-edit')
@@ -455,7 +506,8 @@
 
             $('.btn-delete-data').prop('disabled', !url);
 
-            let [header, label] = type == 'direccion' ? ['esta Dirección', 'Eliminar Dirección'] : ['este Contacto', 'Eliminar Contacto'];
+            let [header, label] = modalTitles(type);
+
             $('#delDataModalHeader').text(header);
             $('#delDataModalLabel').text(label);
             $('#delDataModalForm').attr('action', url);
@@ -474,7 +526,21 @@
           $('.btn-status').prop('disabled', !url);
           $('#statusModalForm').attr('action', url);
         });
-      })
+      });
+
+      function modalTitles(type) {
+        switch(type){
+          case 'direccion':
+            return ['esta Dirección', 'Eliminar Dirección'];
+          break;
+          case 'contacto':
+            return ['este Contacto', 'Eliminar Contacto'];
+          break;
+          case 'producto':
+            return ['este Producto', 'Eliminar Producto'];
+          break;
+        }
+      }
     </script>
   @endpermission
 @endsection
