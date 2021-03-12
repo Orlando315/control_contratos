@@ -49,17 +49,29 @@ class AnticiposController extends Controller
     {
       $this->authorize('create', Anticipo::class);
       $this->validate($request, [
-        'anticipo' => 'required|numeric|min:1|max:99999999',
+        'solicitud' => 'nullable|boolean',
+        'anticipo' => [
+          function ($attribute, $value, $fail) use ($request) {
+            if($request->solicitud == '1' && is_null($value)){
+              $fail('El elemento anticipo es requerido.');
+            }
+          },
+          'numeric',
+          'min:1',
+          'max:99999999'
+        ],
         'bono' => 'nullable|numeric|min:1|max:99999999',
         'descripcion' => 'nullable|string|max:200',
         'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $anticipo = new Anticipo($request->only('anticipo', 'bono', 'descripcion', 'adjunto'));
+      $anticipo = new Anticipo($request->only('bono', 'descripcion', 'adjunto', 'solicitud'));
+      $anticipo->anticipo = $request->anticipo ?? 0;
       $anticipo->fecha = date('Y-m-d H:i:s');
       $anticipo->empresa_id = Auth::user()->empresa->id;
       $anticipo->contrato_id = Auth::user()->empleado->contrato_id;
-      $anticipo->status = null;
+      $anticipo->solicitud = $request->solicitud == '1';
+      $anticipo->status = $request->solicitud == '1' ? null : true;
 
       if(Auth::user()->empleado->anticipos()->save($anticipo)){
         if($request->hasFile('adjunto')){

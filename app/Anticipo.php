@@ -39,7 +39,8 @@ class Anticipo extends Model
      * @var array
      */
     protected $casts = [
-        'status' => 'boolean',
+      'status' => 'boolean',
+      'solicitud' => 'boolean',
     ];
 
     /**
@@ -255,6 +256,16 @@ class Anticipo extends Model
       }
 
       return $this->status ? '<span class="label label-primary">Aprobado</span>' : '<span class="label label-danger">Rechazado</span>';
+    }
+
+    /**
+     * Obtener el atributo formateado como label
+     *
+     * @return string
+     */
+    public function solicitud()
+    {
+      return $this->solicitud ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
     }
 
     /**

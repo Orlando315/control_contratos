@@ -122,6 +122,7 @@
                           <thead>
                             <tr>
                               <th class="text-center">#</th>
+                              <th class="text-center">Solicitud</th>
                               <th class="text-center">Contrato</th>
                               <th class="text-center">Empleado</th>
                               <th class="text-center">Fecha</th>
@@ -135,6 +136,7 @@
                             @foreach($month->anticipos as $aprobado)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
+                                <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $aprobado->solicitud() !!}</small></td>
                                 <td>
                                   @permission('contrato-view')
                                     <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">

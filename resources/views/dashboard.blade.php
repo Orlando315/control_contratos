@@ -245,6 +245,7 @@
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
+                      <th class="text-center">Solicitud</th>
                       <th class="text-center">Anticipo</th>
                       <th class="text-center">Bono</th>
                       <th class="text-center">Fecha</th>
@@ -257,6 +258,7 @@
                     @foreach(Auth::user()->empleado->anticipos()->get() as $anticipo)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
+                        <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $anticipo->solicitud() !!}</small></td>
                         <td>{{ $anticipo->anticipo() }}</td>
                         <td>{{ $anticipo->bono() }}</td>
                         <td>{{ $anticipo->fecha }}</td>

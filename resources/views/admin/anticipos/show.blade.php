@@ -119,6 +119,12 @@
                 @endif
               </span>
             </li>
+            <li class="list-group-item" title="Si el Empleado solicito o no el Anticipo">
+              <b>Solicitud</b>
+              <span class="pull-right">
+                {!! $anticipo->solicitud() !!}
+              </span>
+            </li>
             <li class="list-group-item">
               <b>Estatus</b>
               <span class="pull-right">
