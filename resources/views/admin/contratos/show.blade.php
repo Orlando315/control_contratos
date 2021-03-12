@@ -371,7 +371,7 @@
                       <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</button>
                       <ul class="dropdown-menu" x-placement="bottom-start">
                         <li><a class="dropdown-item" href="{{ route('admin.empleados.create', ['contrato' => $contrato->id]) }}">Nuevo Empleado</a></li>
-                        <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create', ['contrato' => $contrato->id]) }}">Impotar Empleados</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create', ['contrato' => $contrato->id]) }}">Importar Empleados</a></li>
                       </ul>
                     </div>
                   @endpermission

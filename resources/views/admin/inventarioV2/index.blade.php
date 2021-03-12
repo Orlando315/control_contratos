@@ -46,7 +46,14 @@
               <div class="panel-body">
                 @permission('inventario-v2-create')
                   <div class="mb-3 text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.inventario.v2.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</a>
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.export') }}"><i class="fa fa-download" aria-hidden="true"></i> Exportar</a>
+                    <div class="btn-group">
+                      <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</button>
+                      <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                        <li><a class="dropdown-item" href="{{ route('admin.inventario.v2.create') }}">Nuevo Inventario</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.inventario.v2.import.create') }}">Importar Inventario</a></li>
+                      </ul>
+                    </div>
                   </div>
                 @endpermission
 

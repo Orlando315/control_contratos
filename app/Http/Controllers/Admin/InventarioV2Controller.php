@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
 use App\{InventarioV2, Unidad, Etiqueta};
+use App\Exports\{InventarioV2Export, InventarioV2ImportTemplate};
+use App\Imports\InventarioV2Import;
+use Excel;
 
 class InventarioV2Controller extends Controller
 {
@@ -231,5 +234,66 @@ class InventarioV2Controller extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Mostrar formulario para importar InventarioV2
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function importCreate()
+    {
+      $this->authorize('create', InventarioV2::class);
+
+      return view('admin.inventarioV2.import');
+    }
+
+    /**
+     * Importar InventarioV2 por excel
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function importStore(Request $request)
+    {
+      $this->authorize('create', InventarioV2::class);
+      $this->validate($request, [
+        'archivo' => 'required|file|mimes:xlsx,xls',
+      ]);
+
+      try{
+        $excel = Excel::import(new InventarioV2Import, $request->archivo);
+
+        return redirect()->route('admin.inventario.v2.index')->with([
+          'flash_message' => 'Inventario importado exitosamente.',
+          'flash_class' => 'alert-success'
+        ]);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'Ha ocurrido un error. Revise el formato utilizado o los datos suministrados.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);        
+      }
+    }
+
+    /**
+     * Descargar plantilla para importar InventarioV2
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function importTemplate()
+    {
+      return (new InventarioV2ImportTemplate)->download('importar_inventario.xlsx');
+    }
+
+    /**
+     * Exportar InventariosV2
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function export()
+    {
+      return (new InventarioV2Export)->download('inventario.xlsx');
     }
 }

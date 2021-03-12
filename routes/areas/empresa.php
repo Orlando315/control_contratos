@@ -314,6 +314,10 @@ Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosContr
 Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
 /* --- Inventario V2 ---*/
+Route::get('inventario/v2/import/template', 'InventarioV2Controller@importTemplate')->name('inventario.v2.import.template');
+Route::get('inventario/v2/import', 'InventarioV2Controller@importCreate')->name('inventario.v2.import.create');
+Route::post('inventario/v2/import', 'InventarioV2Controller@importStore')->name('inventario.v2.import.store');
+Route::get('inventario/v2/export', 'InventarioV2Controller@export')->name('inventario.v2.export');
 Route::patch('inventario/v2/{inventario}/ajustar', 'InventarioV2Controller@ajustarStock')->name('inventario.v2.ajustar');
 Route::resource('inventario/v2', 'InventarioV2Controller')
 ->names('inventario.v2')
