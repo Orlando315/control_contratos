@@ -32,13 +32,13 @@
                 @nullablestring(null)
               @endif
             </td>
-            <td><strong>Fecha:</strong> {{ $requerimiento->created_at->format('d-m-Y') }}</td>
+            <td><strong>Requerido para:</strong> {{ optional($requerimiento->created_at)->format('d-m-Y') }}</td>
           </tr>
           <tr>
             <td><strong>Solicitante:</strong> {{ $requerimiento->userSolicitante->nombre() }}</td>
             <td><strong>Dirigido a:</strong> {{ $requerimiento->dirigidoA->nombre() }}</td>
+            <td><strong>Urgencia: </strong> {!! $requerimiento->urgencia(true) !!}</td>
             <td><strong>Estatus: </strong> {!! $requerimiento->status(true) !!}</td>
-            <td>&nbsp;</td>
           </tr>
         </table>
 

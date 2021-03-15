@@ -60,6 +60,8 @@ class RequerimientoMaterialController extends Controller
         'faena' => 'nullable',
         'centro_costo' => 'nullable',
         'dirigido' => 'required',
+        'fecha' => 'nullable|date_format:d-m-Y',
+        'urgencia' => 'nullable|in:normal,urgente',
         'productos' => 'required|min:1',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
@@ -80,6 +82,8 @@ class RequerimientoMaterialController extends Controller
         'centro_costo_id' => $request->centro_costo,
         'solicitante' => Auth::id(),
         'dirigido' => $request->dirigido,
+        'fecha' => $request->fecha,
+        'urgencia' => $request->urgencia,
       ]);
       $requerimiento->empresa_id = Auth::user()->empresa->id;
       $productos = [];
@@ -126,6 +130,9 @@ class RequerimientoMaterialController extends Controller
         'dirigidoA',
         'firmantes',
         'productos.inventario',
+        'logs' => function ($query) {
+          $query->ofType('firmante');
+        },
       ]);
 
       return view('requerimiento-material.show', compact('requerimiento'));
@@ -168,15 +175,27 @@ class RequerimientoMaterialController extends Controller
         'faena' => 'nullable',
         'centro_costo' => 'nullable',
         'dirigido' => 'required',
-        'productos' => 'required|min:1',
+        'fecha' => 'nullable|date_format:d-m-Y',
+        'urgencia' => 'nullable|in:normal,urgente',
+        'productos' => 'nullable|min:0',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
       ]);
+
+      $requerimiento->load([
+        'contrato',
+        'faena',
+        'centroCosto',
+        'dirigidoA',
+      ]);
+      $cloneRequerimiento = $requerimiento->replicate();
 
       $requerimiento->contrato_id = $request->contrato;
       $requerimiento->faena_id = $request->faena;
       $requerimiento->centro_costo_id = $request->centro_costo;
       $requerimiento->dirigido = $request->dirigido;
+      $requerimiento->fecha = $request->fecha;
+      $requerimiento->urgencia = $request->urgencia;
       $productos = [];
 
       foreach(($request->productos ?? []) as $producto){
@@ -188,8 +207,12 @@ class RequerimientoMaterialController extends Controller
       }
 
       if($requerimiento->save()){
+        $requerimiento->refresh();
+        $requerimiento->logAction('update', $cloneRequerimiento);
+
         if(count($productos) > 0){
           $requerimiento->productos()->createMany($productos);
+          $requerimiento->logAction('add', $productos);
         }
 
         return redirect()->route('requerimiento.material.show', ['requerimiento' => $requerimiento->id])->with([
@@ -240,6 +263,8 @@ class RequerimientoMaterialController extends Controller
       $this->authorize('update', $producto->requerimiento);
 
       if($producto->delete()){
+        $producto->requerimiento->logAction('delete', $producto);
+
         return redirect()->back()->with([
           'flash_message' => 'Producto eliminado exitosamente.',
           'flash_class' => 'alert-success'
@@ -266,6 +291,7 @@ class RequerimientoMaterialController extends Controller
 
       $firmante = $requerimiento->sessionFirmante;
       $firmante->status = $request->status == 1;
+      $firmante->observacion = $request->observacion;
 
       if($firmante->save()){
         $requerimiento->updateStatus();

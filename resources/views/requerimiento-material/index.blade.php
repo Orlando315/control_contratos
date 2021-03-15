@@ -8,7 +8,7 @@
       <h2>Requerimiento de Materiales</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('requerimiento.material.index') }}">Solicitudes</a></li>
+        <li class="breadcrumb-item">Solicitudes</li>
         <li class="breadcrumb-item active"><strong>Requerimiento de Materiales</strong></li>
       </ol>
     </div>
@@ -46,6 +46,7 @@
                 <thead>
                   <tr>
                     <th class="text-center">#</th>
+                    <th class="text-center">Urgencia</th>
                     <th class="text-center">Contrato</th>
                     <th class="text-center">Faena</th>
                     <th class="text-center">Centro de Costo</th>
@@ -59,6 +60,7 @@
                   @foreach($requerimientosMateriales as $requerimiento)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
+                      <td class="text-center"><small>{!! $requerimiento->urgencia() !!}</small></td>
                       <td>{{ $requerimiento->contrato->nombre }}</td>
                       <td>
                         @if($requerimiento->faena)

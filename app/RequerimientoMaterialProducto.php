@@ -23,6 +23,16 @@ class RequerimientoMaterialProducto extends Model
       'inventario_id',
       'nombre',
       'cantidad',
+      'added',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'added' => 'boolean',
     ];
 
     /**
@@ -69,5 +79,15 @@ class RequerimientoMaterialProducto extends Model
     public function cantidad()
     {
       return number_format($this->cantidad, 0, ',', '.');
+    }
+
+    /**
+     * Evaluar si el producto fue agregado luego de crear el Requerimiento
+     * 
+     * @return bool
+     */
+    public function wasAdded()
+    {
+      return $this->added;
     }
 }

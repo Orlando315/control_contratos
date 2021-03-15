@@ -3,6 +3,8 @@
 @section('title', 'Requerimiento de Materiales')
 
 @section('head')
+  <!-- Datepicker -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
   <!-- Select2 -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
@@ -14,8 +16,8 @@
       <h2>Requerimiento de Materiales</h2>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('requerimiento.material.index') }}">Solicitudes</a></li>
-        <li class="breadcrumb-item">Requerimiento de Materiales</li>
+        <li class="breadcrumb-item">Solicitudes</li>
+        <li class="breadcrumb-item"><a href="{{ route('requerimiento.material.index') }}">Requerimiento de Materiales</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -87,6 +89,21 @@
                   </select>
                 </div>
               </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
+                  <label for="fecha">Requerido para:</label>
+                  <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha', optional($requerimiento->fecha)->format('d-m-Y')) }}" placeholder="dd-mm-yyyy">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('urgencia') ? ' has-error' : '' }}">
+                  <label for="urgencia">Urgencia:</label>
+                  <select id="urgencia" class="form-control" name="urgencia">
+                    <option value="normal"{{ old('urgencia', $requerimiento->urgencia) == 'normal' ? ' selected' : '' }}>Normal</option>
+                    <option value="urgente"{{ old('urgencia', $requerimiento->urgencia) == 'urgente' ? ' selected' : '' }}>Urgente</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </fieldset>
 
@@ -138,6 +155,8 @@
             <input id="form-faena" type="hidden" name="faena" value="{{ old('faena', $requerimiento->faena_id) }}">
             <input id="form-centro_costo" type="hidden" name="centro_costo" value="{{ old('centro_costo', $requerimiento->centro_costo_id) }}">
             <input id="form-dirigido" type="hidden" name="dirigido" value="{{ old('dirigido', $requerimiento->dirigido) }}">
+            <input id="form-fecha" type="hidden" name="fecha" value="{{ old('fecha', optional($requerimiento->fecha)->format('d-m-Y')) }}">
+            <input id="form-urgencia" type="hidden" name="urgencia" value="{{ old('urgencia', $requerimiento->urgencia) }}">
 
             <table class="table table-bordered">
               <colgroup>
@@ -205,6 +224,9 @@
 @endsection
 
 @section('script')
+  <!-- Datepicker -->
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
@@ -212,17 +234,30 @@
     const BTN_ADD_PRODUCT = $('#btn-add-product');
 
     $(document).ready(function () {
-      $('#dirigido, #contrato, #faena, #centro_costo, #inventario').select2({
+      $('#faena, #centro_costo, #inventario').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
         allowClear: true,
       });
 
-      $('#contrato, #faena, #centro_costo, #dirigido').change(function () {
+      $('#dirigido, #contrato, #urgencia').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+      });
+
+      $('#contrato, #faena, #centro_costo, #dirigido, #fecha, #urgencia').change(function () {
         let field = $(this).attr('id');
         let value = $(this).val();
 
         $(`#form-${field}`).val(value);
+      });
+      $('#contrato, #faena, #centro_costo, #dirigido, #fecha, #urgencia').change();
+
+      $('#fecha').datepicker({
+        format: 'dd-mm-yyyy',
+        language: 'es',
+        keyboardNavigation: false,
+        autoclose: true
       });
 
       $('#inventario').change(selectInventario);

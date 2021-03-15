@@ -70,7 +70,7 @@ class RequerimientoMaterialPolicy
      */
     public function update(User $user, RequerimientoMaterial  $requerimiento)
     {
-      if($user->id == $requerimiento->solicitante && $requerimiento->isPendiente()){
+      if(($user->id == $requerimiento->solicitante || $requerimiento->userIsFirmante()) && $requerimiento->isPendiente()){
         return true;
       }
 

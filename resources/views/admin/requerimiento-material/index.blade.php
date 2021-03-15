@@ -47,6 +47,7 @@
             <thead>
               <tr>
                 <th class="text-center">#</th>
+                <th class="text-center">Urgencia</th>
                 <th class="text-center">Contrato</th>
                 <th class="text-center">Faena</th>
                 <th class="text-center">Centro de Costo</th>
@@ -60,6 +61,7 @@
               @foreach($requerimientosMateriales as $requerimiento)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
+                  <td class="text-center"><small>{!! $requerimiento->urgencia() !!}</small></td>
                   <td>{{ $requerimiento->contrato->nombre }}</td>
                   <td>
                     @if($requerimiento->faena)

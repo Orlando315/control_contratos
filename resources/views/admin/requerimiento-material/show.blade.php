@@ -120,9 +120,15 @@
               </span>
             </li>
             <li class="list-group-item">
-              <b>Fecha</b>
+              <b>Requerido para el</b>
               <span class="pull-right">
-                {{ $requerimiento->created_at->format('d-m-Y') }}
+                @nullablestring(optional($requerimiento->fecha)->format('d-m-Y'))
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Urgencia</b>
+              <span class="pull-right">
+                {!! $requerimiento->urgencia() !!}
               </span>
             </li>
             <li class="list-group-item">
@@ -130,6 +136,9 @@
               <span class="pull-right">
                 {!! $requerimiento->status() !!}
               </span>
+            </li>
+            <li class="list-group-item text-center">
+              <small class="text-muted">{{ $requerimiento->created_at }}</small>
             </li>
           </ul>
         </div><!-- /.box-body -->
@@ -150,43 +159,74 @@
                   @endif
                 </p>
                 {!! $firmante->pivot->status() !!}
+                @if($firmante->pivot->observacion)
+                  <p class="mb-0 mt-1"><small>{{ $firmante->pivot->observacion }}</small></p>
+                @endif
               </div>
             </div>
           </div>
         @endforeach
 
         <div class="col-md-12">
-          <div class="ibox">
-            <div class="ibox-title">
-              <h5>Productos</h5>
-            </div>
-            <div class="ibox-content">
-              <table class="table data-table table-bordered table-hover w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Nombre</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($requerimiento->productos as $producto)
-                    <tr>
-                      <td class="text-center">{{ $loop->iteration }}</td>
-                      <td>{{ $producto->nombre }}</td>
-                      <td class="text-right">{{ $producto->cantidad() }}</td>
-                      <td class="text-center">
-                        @if(Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-edit'))
-                          <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.requerimiento.material.producto.destroy', ['producto' => $producto->id]) }}">
-                            <i class="fa fa-times"></i>
-                          </button>
-                        @endif
-                      </td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
+          <div class="tabs-container">
+            <ul class="nav nav-tabs">
+              <li><a class="nav-link active" href="#tab-1" data-toggle="tab">Productos</a></li>
+              <li><a class="nav-link" href="#tab-2" data-toggle="tab">Historial de cambios</a></li>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="panel-body">
+                  <p class="text-center">Se muestran los cambios realizaddos por los firmantes.</p>
+                  <table class="table data-table table-bordered table-hover w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Nombre</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($requerimiento->productos as $producto)
+                        <tr class="{{ $producto->wasAdded() ? ' table-warning' : '' }}">
+                          <td class="text-center">{{ $loop->iteration }}</td>
+                          <td>{{ $producto->nombre }}</td>
+                          <td class="text-right">{{ $producto->cantidad() }}</td>
+                          <td class="text-center">
+                            @if(Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-edit'))
+                              <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.requerimiento.material.producto.destroy', ['producto' => $producto->id]) }}">
+                                <i class="fa fa-times"></i>
+                              </button>
+                            @endif
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 1%">#</th>
+                        <th class="text-center" style="width: 70%">Mensaje</th>
+                        <th class="text-center" style="width: 29%">Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($requerimiento->logs as $log)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{!! $log->message !!}</td>
+                          <td class="text-center">{{ $log->created_at->format('d-m-Y H:i:s') }}</td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -266,6 +306,11 @@
             </div>
             <div class="modal-body">
               <h4 class="text-center">¿Esta seguro de <span class="modal-title-text"></span> este Requerimiento?</h4>
+
+              <div class="form-group">
+                <label for="observacion">Observación:</label>
+                <input id="observacion" class="form-control" type="text" name="observacion" maxlength="250" placeholder="Observación">
+              </div>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
