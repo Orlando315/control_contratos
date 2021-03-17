@@ -25,6 +25,7 @@
       @permission('compra-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
+      <a class="btn btn-default btn-sm" href="{{ route('admin.compra.pdf', ['compra' => $compra->id]) }}"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
       @permission('compra-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -235,7 +236,7 @@
                 <th class="text-center">Nombre</th>
                 <th class="text-center">Cantidad</th>
                 <th class="text-center">Precio</th>
-                <th class="text-center">Impuesto</br>adicional</th>
+                <th class="text-center">IVA</th>
                 <th class="text-center">Total</th>
                 <th class="text-center">Acción</th>
               </tr>

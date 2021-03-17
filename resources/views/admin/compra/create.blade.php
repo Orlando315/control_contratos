@@ -6,6 +6,14 @@
   <!-- Select2 -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
+  <style type="text/css">
+    .switch .onoffswitch-inner:before{
+      content: 'Total';
+    }
+    .switch .onoffswitch-inner:after{
+      content: 'Neto';
+    }
+  </style>
 @endsection
 
 @section('page-heading')
@@ -24,7 +32,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-10">
+    <div class="col-md-12">
       <div class="ibox">
         <div class="ibox-title">
           <h5>Agregar orden de compra</h5>
@@ -118,16 +126,26 @@
             <fieldset>
               <legend class="form-legend">Productos</legend>
 
-              <div class="row">
+              <div class="row align-items-end">
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="inventario">Inventario:</label>
                     <select id="inventario" class="form-control">
                       <option value="">Seleccione...</option>
                       @foreach($inventarios as $inventario)
-                        <option value="{{ $inventario->id }}" data-precio="{{ $inventario->valor }}">{{ $inventario->nombre }}</option>
+                        <option value="{{ $inventario->id }}">{{ $inventario->nombre }} ({{ $inventario->unidad->nombre }})</option>
                       @endforeach
                     </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                      <input id="check-codigos" class="custom-control-input" type="checkbox" name="requiere_codigo" value="1"{{ old('requiere_codigo', '0') == '1' ? ' checked' : '' }}>
+                      <label class="custom-control-label" for="check-codigos">
+                        Requiere código
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -135,11 +153,34 @@
               <div class="row">
                 <div class="col-md-3">
                   <div class="form-group">
-                    <label for="tipo_codigo">Tipo código:</label>
-                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo código">
+                    <label for="afecto-iva">Afecto a IVA:</label>
+                    <div class="custom-control custom-checkbox">
+                      <input id="afecto-iva" class="custom-control-input" type="checkbox" name="afecto_iva" value="1">
+                      <label class="custom-control-label" for="afecto-iva">Sí</label>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="tipo-precio">Tipo de precio:</label>
+                    <div class="switch mb-3">
+                      <div class="onoffswitch">
+                        <input id="tipo-precio" class="onoffswitch-checkbox" type="checkbox" name="tipo_precio" value="1">
+                        <label class="onoffswitch-label" for="tipo-precio">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 fields-codigos" style="display: none">
+                  <div class="form-group">
+                    <label for="tipo_codigo">Tipo de código:</label>
+                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo de código">
+                  </div>
+                </div>
+                <div class="col-md-3 fields-codigos" style="display: none">
                   <div class="form-group">
                     <label for="codigo">Código:</label>
                     <input id="codigo" class="form-control" type="text" maxlength="50" placeholder="Código">
@@ -148,7 +189,7 @@
               </div>
 
               <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-2">
                   <div class="form-group">
                     <label for="producto-nombre">Nombre: *</label>
                     <input id="producto-nombre" class="form-control" type="text" maxlength="100" placeholder="Nombre del producto" required>
@@ -160,16 +201,28 @@
                     <input id="cantidad" class="form-control" type="number" min="1" max="99999" placeholder="Cantidad" required>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <div class="form-group">
                     <label for="precio">Precio: *</label>
                     <input id="precio" class="form-control" type="number" min="1" max="99999999" step="0.01" placeholder="Precio" required>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <div class="form-group">
-                    <label for="impuesto">Impuesto:</label>
-                    <input id="impuesto" class="form-control" type="number" min="0" max="99999999" step="0.01" placeholder="Impuesto">
+                    <label>Precio Total:</label>
+                    <input id="precio_total" class="form-control-plaintext" type="text" placeholder="Precio Total" readonly>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label>IVA:</label>
+                    <input id="iva" class="form-control-plaintext" type="text" placeholder="IVA" readonly>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label>Total:</label>
+                    <input id="total" class="form-control-plaintext" type="text" placeholder="TOTAL" readonly>
                   </div>
                 </div>
               </div>
@@ -202,14 +255,16 @@
 
             <table class="table table-bordered">
               <colgroup>
-                 <col span="1" style="width: 5%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 35%;">
-                 <col span="1" style="width: 5%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 10%;">
-                 <col span="1" style="width: 15%;">
+                <col span="1" style="width: 5%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 25%;">
+                <col span="1" style="width: 5%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 5%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
               </colgroup>
               <thead>
                 <tr class="text-center">
@@ -219,7 +274,9 @@
                   <th class="align-middle">Nombre</th>
                   <th class="align-middle">Cantidad</th>
                   <th class="align-middle">Precio</th>
-                  <th class="align-middle">Impuesto</br>adicional</th>
+                  <th class="align-middle">Afecto</br>IVA</th>
+                  <th class="align-middle">Precio</br>Total</th>
+                  <th class="align-middle">IVA</th>
                   <th class="align-middle">Total</th>
                 </tr>
               </thead>
@@ -254,9 +311,17 @@
                       {{ number_format($producto['precio'], 2, ',', '.') }}
                       <input type="hidden" name="productos[{{ $index }}][precio]" value="{{ $producto['precio'] }}">
                     </td>
+                    <td class="text-center">
+                      {{ $producto['afecto_iva'] ? 'Sí' : 'No' }}
+                      <input type="hidden" name="productos[{{ $index }}][afecto_iva]" value="{{ $producto['afecto_iva'] }}">
+                    </td>
                     <td class="text-right">
-                      {{ number_format($producto['impuesto'], 2, ',', '.') }}
-                      <input type="hidden" name="productos[{{ $index }}][impuesto]" value="{{ $producto['impuesto'] }}">
+                      {{ number_format($producto['precio_total'], 2, ',', '.') }}
+                      <input type="hidden" name="productos[{{ $index }}][precio_total]" value="{{ $producto['precio_total'] }}">
+                    </td>
+                    <td class="text-right">
+                      {{ number_format($producto['iva'], 2, ',', '.') }}
+                      <input type="hidden" name="productos[{{ $index }}][iva]" value="{{ $producto['iva'] }}">
                     </td>
                     <td class="text-right">
                       {{ number_format($producto['total'], 2, ',', '.') }}
@@ -265,13 +330,13 @@
                   </tr>
                 @empty
                   <tr>
-                    <td class="text-center text-muted" colspan="8">No se han agregado productos.</td>
+                    <td class="text-center text-muted" colspan="10">No se han agregado productos.</td>
                   </tr>
                 @endforelse
               </tbody>
               <tfoot>
                 <tr>
-                  <th class="text-right" colspan="7">TOTAL</th>
+                  <th class="text-right" colspan="9">TOTAL</th>
                   <td id="total-general" class="text-right"></td>
                 </tr>
               </tfoot>
@@ -608,6 +673,12 @@
       $('#inventario').change(selectInventario);
       $('#inventario').change();
 
+      $('#check-codigos').change(function () {
+        let isChecked = $(this).is(':checked');
+        $('.fields-codigos').toggle(isChecked);
+      });
+      $('#check-codigos').change();
+
       $('#add-product-form').submit(addProduct);
       TBODY_PRODUCTOS.on('click', '.btn-delete', deleteProduct);
 
@@ -630,6 +701,10 @@
         $('#form-contacto').val($(this).val());
       });
 
+      $('#tipo-precio, #afecto-iva').change(calculatePrecio);
+      $('#cantidad, #precio').keyup(calculatePrecio);
+
+      calculatePrecio();
       calculateTotal();
     });
 
@@ -654,7 +729,7 @@
         loadProveedorContactos(proveedor); 
         $('#nombre, #telefono, #email').val('');
       }else{
-        BOX_CONTACTOS.empty();
+        BOX_CONTACTOS.html('<div class="col-md-12"><h5 class="text-center text-muted">No hay contactos agregados.</h5></div>');
         $('#nombre, #form-nombre').val(option.data('nombre'));
         $('#telefono, #form-telefono').val(option.data('telefono'));
         $('#email, #form-email').val(option.data('email'));
@@ -760,11 +835,9 @@
       let option = $(this).find(`option[value="${id}"]`);
       let hasValue = id != '';
       let nombre = hasValue ? option.text() : '';
-      let precio = hasValue ? option.data('precio') : '';
 
       $('#producto-nombre').prop('readonly', hasValue).val(nombre);
-      $('#tipo_codigo, #codigo, #cantidad, #impuesto').val('');
-      $('#precio').val(precio);
+      $('#tipo_codigo, #codigo, #cantidad, #precio, #impuesto, #iva, #total').val('');
     }
 
     function addProduct(e){
@@ -774,8 +847,13 @@
 
       let cantidad = +$('#cantidad').val();
       let precio = +$('#precio').val();
-      let impuesto = +$('#impuesto').val();
-      let total = +((cantidad * precio) + impuesto);
+      let hasIva = $('#afecto-iva').is(':checked');
+      let tipoPrecio = $('#tipo-precio').is(':checked');
+      let totalPrecio = precio * cantidad;
+      totalPrecio = +(tipoPrecio ? (totalPrecio / 1.19) : totalPrecio);
+
+      let totalIva = +(hasIva ? calculateIva(totalPrecio) : 0);
+      let total = +(totalPrecio + totalIva);
 
       let data = {
         inventario: $('#inventario').val(),
@@ -784,7 +862,9 @@
         nombre: $('#producto-nombre').val(),
         cantidad: cantidad,
         precio: precio,
-        impuesto: impuesto,
+        precioTotal: totalPrecio,
+        hasIva: hasIva ? 1 : 0  ,
+        iva: totalIva,
         total: total,
         descripcion: $('#descripcion').val(),
       };
@@ -799,6 +879,7 @@
       BTN_ADD_PRODUCT.prop('disabled', false);
       $(this)[0].reset();
       $('#inventario').val(null).trigger('change');
+      $('.fields-codigos').toggle(false);
     }
 
     function calculateTotal(){
@@ -809,6 +890,26 @@
       });
 
       $('#total-general').text(formatNumbers(total));
+    }
+
+    function calculatePrecio(){
+      let precio = +$('#precio').val();
+      let cantidad = +$('#cantidad').val();
+      let hasIva = $('#afecto-iva').is(':checked') ? 1 : 0;
+      let tipoPrecio = $('#tipo-precio').is(':checked');
+      let totalPrecio = precio * cantidad;
+      totalPrecio = +(tipoPrecio ? (totalPrecio / 1.19) : totalPrecio);
+
+      let totalIva = +(hasIva ? calculateIva(totalPrecio) : 0);
+      let total = +(totalPrecio + totalIva);
+
+      $('#iva').val(formatNumbers(totalIva));
+      $('#precio_total').val(formatNumbers(totalPrecio));
+      $('#total').val(formatNumbers(total));
+    }
+
+    function calculateIva(precio, tipoPrecio){
+      return (precio * 19) / 100;
     }
 
     function deleteProduct(){
@@ -859,9 +960,17 @@
                   ${formatNumbers(data.precio)}
                   <input type="hidden" name="productos[${index}][precio]" value="${data.precio}">
                 </td>
+                <td class="text-center">
+                  ${data.hasIva ? 'Sí' : 'No'}
+                  <input type="hidden" name="productos[${index}][afecto_iva]" value="${data.hasIva}">
+                </td>
                 <td class="text-right">
-                  ${formatNumbers(data.impuesto)}
-                  <input type="hidden" name="productos[${index}][impuesto]" value="${data.impuesto}">
+                  ${formatNumbers(data.precioTotal)}
+                  <input type="hidden" name="productos[${index}][precio_total]" value="${data.precioTotal}">
+                </td>
+                <td class="text-right">
+                  ${formatNumbers(data.iva)}
+                  <input type="hidden" name="productos[${index}][iva]" value="${data.iva}">
                 </td>
                 <td class="text-right">
                   ${formatNumbers(data.total)}

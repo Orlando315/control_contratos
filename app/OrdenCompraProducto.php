@@ -26,7 +26,9 @@ class OrdenCompraProducto extends Model
       'descripcion',
       'cantidad',
       'precio',
+      'afecto_iva',
       'impuesto_adicional',
+      'precio_total',
       'total',
     ];
 
@@ -39,6 +41,15 @@ class OrdenCompraProducto extends Model
     ];
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'afecto_iva' => 'boolean',
+    ];
+
+    /**
      * The relationships that should always be loaded.
      *
      * @var array
@@ -47,11 +58,55 @@ class OrdenCompraProducto extends Model
     ];
 
     /**
+     * Establecer el valor del atributo
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setUrgenciaAttribute($value)
+    {
+      $this->attributes['urgencia'] = ($value != 'normal' && $value != 'urgente') ? 'normal' : $value;
+    }
+
+    /**
+     * Establecer el valor del atributo
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setImpuestoAdicionalAttribute($value)
+    {
+      $this->attributes['impuesto_adicional'] = round($value, 2);
+    }
+
+    /**
+     * Establecer el valor del atributo
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPrecioTotalAttribute($value)
+    {
+      $this->attributes['precio_total'] = round($value, 2);
+    }
+
+    /**
+     * Establecer el valor del atributo
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setTotalAttribute($value)
+    {
+      $this->attributes['total'] = round($value, 2);
+    }
+
+    /**
      * Obtener el Inventario
      */
     public function inventario()
     {
-      return $this->belongsTo('App\Inventario');
+      return $this->belongsTo('App\InventarioV2');
     }
 
     /**
@@ -60,6 +115,16 @@ class OrdenCompraProducto extends Model
     public function ordenCompra()
     {
       return $this->belongsTo('App\OrdenCompra');
+    }
+
+    /**
+     * Evaluar si el Producto es afecto a iva
+     * 
+     * @return boolean
+     */
+    public function isAfectoIva()
+    {
+      return $this->afecto_iva;
     }
 
     /**
@@ -80,6 +145,16 @@ class OrdenCompraProducto extends Model
     public function precio()
     {
       return number_format($this->precio, 2, ',', '.');
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function precioTotal()
+    {
+      return number_format($this->precio_total, 2, ',', '.');
     }
 
     /**

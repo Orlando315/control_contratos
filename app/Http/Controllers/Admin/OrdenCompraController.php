@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\{OrdenCompra, Proveedor, Inventario, Contacto};
+use App\{OrdenCompra, Proveedor, InventarioV2, Contacto};
+use PDF;
 
 class OrdenCompraController extends Controller
 {
@@ -34,7 +35,7 @@ class OrdenCompraController extends Controller
       $this->authorize('create', OrdenCompra::class);
 
       $proveedores = Proveedor::all();
-      $inventarios = Inventario::all();
+      $inventarios = InventarioV2::with('unidad')->get();
       $selectedProveedor = $proveedor;
 
       return view('admin.compra.create', compact('proveedores', 'inventarios', 'selectedProveedor'));
@@ -58,7 +59,6 @@ class OrdenCompraController extends Controller
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
         'productos.*.precio' => 'required|numeric|min:1|max:99999999',
-        'productos.*.impuesto' => 'nullable|numeric|min:0|max:99999999',
         'productos.*.descripcion' => 'nullable|string|max:200',
       ]);
 
@@ -88,9 +88,9 @@ class OrdenCompraController extends Controller
       $productos = [];
 
       foreach ($request->productos as $producto){
-        $data = collect($producto)->except('inventario', 'impuesto', 'total')->toArray();
-        $data['impuesto_adicional'] = $producto['impuesto'];
-        $data['total'] = ($producto['cantidad'] * $producto['precio']) + $producto['impuesto'];
+        $data = collect($producto)->except('inventario', 'precio', 'iva')->toArray();
+        $data['precio'] = round($producto['precio_total'] / $producto['cantidad'], 2);
+        $data['impuesto_adicional'] = $producto['iva'];
         $data['inventario_id'] = $producto['inventario'];
         $productos[] = $data;
       }
@@ -138,7 +138,7 @@ class OrdenCompraController extends Controller
 
       $compra->load('productos');
       $proveedores = Proveedor::all();
-      $inventarios = Inventario::all();
+      $inventarios = InventarioV2::with('unidad')->get();
 
       return view('admin.compra.edit', compact('compra', 'proveedores', 'inventarios'));
     }
@@ -162,7 +162,6 @@ class OrdenCompraController extends Controller
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
         'productos.*.precio' => 'required|numeric|min:1|max:99999999',
-        'productos.*.impuesto' => 'nullable|numeric|min:0|max:99999999',
         'productos.*.descripcion' => 'nullable|string|max:200',
       ]);
 
@@ -191,9 +190,9 @@ class OrdenCompraController extends Controller
 
       if($request->has('productos')){
         foreach ($request->productos as $producto){
-          $data = collect($producto)->except('inventario', 'impuesto', 'total')->toArray();
-          $data['impuesto_adicional'] = $producto['impuesto'];
-          $data['total'] = ($producto['cantidad'] * $producto['precio']) + $producto['impuesto'];
+          $data = collect($producto)->except('inventario', 'precio', 'iva')->toArray();
+          $data['precio'] = round($producto['precio_total'] / $producto['cantidad'], 2);
+          $data['impuesto_adicional'] = $producto['iva'];
           $data['inventario_id'] = $producto['inventario'];
           $productos[] = $data;
         }
@@ -250,5 +249,22 @@ class OrdenCompraController extends Controller
     public function productos(OrdenCompra $compra)
     {
       return response()->json(['productos' => $compra->productos]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\OrdenCompra  $compra
+     * @return \Illuminate\Http\Response
+     */
+    public function pdf(OrdenCompra $compra)
+    {
+      $this->authorize('view', $compra);
+
+      $compra->load(['productos']);
+      PDF::setOptions(['dpi' => 150]);
+      $pdf = PDF::loadView('admin.compra.pdf', compact('compra'));
+
+      return $pdf->download('Orden de compra '.$compra->id.'.pdf');
     }
 }

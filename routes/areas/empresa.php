@@ -230,6 +230,7 @@ Route::resource('pago', 'PagoController')
       ->only(['edit', 'update', 'destroy']);
 
 /* --- Ordenes de compra --- */
+Route::get('compra/{compra}/pdf', 'OrdenCompraController@pdf')->name('compra.pdf');
 Route::get('compra/create/{proveedor?}', 'OrdenCompraController@create')->name('compra.create');
 Route::get('compra/{compra}/productos', 'OrdenCompraController@productos')->name('compra.productos');
 Route::resource('compra', 'OrdenCompraController')
