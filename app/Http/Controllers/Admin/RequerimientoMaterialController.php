@@ -124,6 +124,7 @@ class RequerimientoMaterialController extends Controller
       $this->authorize('view', $requerimiento);
 
       $requerimiento->load([
+        'userSolicitante',
         'contrato',
         'faena',
         'centroCosto',
@@ -132,6 +133,9 @@ class RequerimientoMaterialController extends Controller
         'productos.inventario',
         'logs' => function ($query) {
           $query->ofType('firmante');
+        },
+        'compras' => function ($query) {
+          $query->with('proveedor');
         },
       ]);
 

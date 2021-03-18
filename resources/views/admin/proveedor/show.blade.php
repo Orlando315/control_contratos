@@ -226,6 +226,7 @@
                     <th class="text-center">Email</th>
                     <th class="text-center">Cargo</th>
                     <th class="text-center">Descripción</th>
+                    <th class="text-center">Estatus</th>
                     <th class="text-center">Acción</th>
                   </tr>
                 </thead>
@@ -239,10 +240,22 @@
                       <td>@nullablestring($contacto->cargo)</td>
                       <td>@nullablestring($contacto->descripcion)</td>
                       <td class="text-center">
+                        <small>
+                          {!! $contacto->status() !!}
+                        </small>
+                      </td>
+                      <td class="text-center">
                         @permission('proveedor-edit')
                           <div class="btn-group">
                             <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                             <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              @if(!$contacto->isSelected())
+                                <li>
+                                  <a class="dropdown-item" type="button" data-toggle="modal" data-target="#statusModal" data-type="contacto" data-url="{{ route('admin.contacto.status', ['contacto' => $contacto->id]) }}">
+                                    <i class="fa fa-check-circle" aria-hidden="true"></i> Seleccionar
+                                  </a>
+                                </li>
+                              @endif
                               <li>
                                 <a class="dropdown-item" href="{{ route('admin.contacto.edit', ['contacto' => $contacto->id]) }}">
                                   <i class="fa fa-pencil"></i> Editar
@@ -446,8 +459,10 @@
 
               <h4 class="modal-title" id="statusModalLabel">Seleccionar Dirección</h4>
             </div>
-            <div class="modal-body">
-              <h4 class="text-center">¿Esta seguro de marcar esta dirección como Seleccionada?</h4>
+            <div class="modal-body text-center">
+              <h4 class="text-direccion" style="display: none">¿Esta seguro de marcar esta dirección como Seleccionada?</h4>
+              <h4 class="text-contacto" style="display: none">¿Esta seguro de marcar este contaco como Seleccionado?</h4>
+              <p>Se usará por defecto al crear una Orden de Compra.</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
@@ -515,7 +530,8 @@
 
         $('#statusModal').on('show.bs.modal', function (e) {
           let btn = $(e.relatedTarget),
-              url = btn.data('url');
+              url = btn.data('url'),
+              type = btn.data('type');
 
           if(!url){
             setTimeout(function (){
@@ -523,8 +539,15 @@
             }, 500);
           }
 
+          let isContacto = type == 'contacto';
+          let title = isContacto ? 'Seleccionar Contacto' : 'Seleccionar Dirección';
+
+          $('.text-direccion').toggle(!isContacto);
+          $('.text-contacto').toggle(isContacto);
+
           $('.btn-status').prop('disabled', !url);
           $('#statusModalForm').attr('action', url);
+          $('#statusModalLabel').text(title);
         });
       });
 

@@ -104,4 +104,16 @@ class RequerimientoMaterialPolicy
     {
       return $requerimiento->firmantes->contains($user);
     }
+
+    /**
+     * Determinar si el user puede aprobar como firmante
+     *
+     * @param  \App\User  $user
+     * @param  \App\RequerimientoMaterial   $requerimiento
+     * @return mixed
+     */
+    public function compra(User $user, RequerimientoMaterial  $requerimiento)
+    {
+      return $requerimiento->isAprobado() && !$requerimiento->hasCompras();
+    }
 }

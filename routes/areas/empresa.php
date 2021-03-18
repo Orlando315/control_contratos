@@ -187,6 +187,7 @@ Route::resource('cliente/direccion', 'DireccionController')
 /* --- Contactos --- */
 Route::get('contacto/create/{id}/{type}', 'ContactoController@create')->name('contacto.create');
 Route::post('contacto/create/{id}/{type}', 'ContactoController@store')->name('contacto.store');
+Route::patch('contacto/{contacto}/status', 'ContactoController@status')->name('contacto.status');
 Route::resource('contacto', 'ContactoController')
       ->only(['edit', 'update', 'destroy']);
 
@@ -230,6 +231,8 @@ Route::resource('pago', 'PagoController')
       ->only(['edit', 'update', 'destroy']);
 
 /* --- Ordenes de compra --- */
+Route::get('compra/requerimiento/{requerimiento}', 'OrdenCompraController@requerimiento')->name('compra.requerimiento');
+Route::post('compra/requerimiento/{requerimiento}', 'OrdenCompraController@storeRequerimiento');
 Route::get('compra/{compra}/pdf', 'OrdenCompraController@pdf')->name('compra.pdf');
 Route::get('compra/create/{proveedor?}', 'OrdenCompraController@create')->name('compra.create');
 Route::get('compra/{compra}/productos', 'OrdenCompraController@productos')->name('compra.productos');

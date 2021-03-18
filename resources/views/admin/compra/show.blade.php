@@ -130,6 +130,68 @@
       </div>
     </div>
 
+    @if($compra->hasRequerimiento())
+      <div class="col-md-3">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Requerimiento</h5>
+          </div>
+          <div class="ibox-content no-padding">
+            <ul class="list-group">
+              <li class="list-group-item">
+                <b>Requerimiento</b>
+                <span class="pull-right">
+                  @permission('requerimiento-material-view')
+                    <a href="{{ route('admin.requerimiento.material.show', ['requerimiento' => $compra->requerimiento_id]) }}">
+                      {{ $compra->requerimiento->id() }}
+                    </a>
+                  @else
+                    {{ $compra->requerimiento->id() }}
+                  @endpermission
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Solicitante</b>
+                <span class="pull-right">
+                  @permission('user-view')
+                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->solicitante]) }}">
+                      {{ $compra->requerimiento->userSolicitante->nombre() }}
+                    </a>
+                  @else
+                    {{ $compra->requerimiento->userSolicitante->nombre() }}
+                  @endpermission
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Dirigido a</b>
+                <span class="pull-right">
+                  @permission('user-view')
+                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->dirigido]) }}">
+                      {{ $compra->requerimiento->dirigidoA->nombre() }}
+                    </a>
+                  @else
+                    {{ $compra->requerimiento->dirigidoA->nombre() }}
+                  @endpermission
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Requerido para el</b>
+                <span class="pull-right">
+                  @nullablestring(optional($compra->requerimiento->fecha)->format('d-m-Y'))
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Urgencia</b>
+                <span class="pull-right">
+                  {!! $compra->requerimiento->urgencia() !!}
+                </span>
+              </li>
+            </ul>
+          </div><!-- /.box-body -->
+        </div>
+      </div>
+    @endif
+
     <div class="col-md-3">
       @if($compra->facturacion)
         <div class="ibox">

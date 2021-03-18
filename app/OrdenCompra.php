@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
 
 class OrdenCompra extends Model
@@ -20,6 +21,7 @@ class OrdenCompra extends Model
      * @var array
      */
     protected $fillable = [
+      'requerimiento_id',
       'user_id',
       'proveedor_id',
       'contacto',
@@ -154,6 +156,24 @@ class OrdenCompra extends Model
     public function facturacion()
     {
       return $this->hasOne('App\FacturacionCompra');
+    }
+
+    /**
+     * Obtener el Requerimiento de Materiales de donde se genero la Orden de Compra
+     */
+    public function requerimiento()
+    {
+      return $this->belongsTo('App\RequerimientoMaterial', 'requerimiento_id', 'id');
+    }
+
+    /**
+     * Evaluar si la Orden de Compra pertenece a un Requerimiento de Materiales
+     * 
+     * @return bool
+     */
+    public function hasRequerimiento()
+    {
+      return !is_null($this->requerimiento_id);
     }
 
     /**

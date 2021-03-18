@@ -19,6 +19,7 @@ class OrdenCompraProducto extends Model
      * @var array
      */
     protected $fillable = [
+      'producto_id',
       'inventario_id',
       'tipo_codigo',
       'codigo',

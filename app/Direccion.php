@@ -51,6 +51,17 @@ class Direccion extends Model
     ];
 
     /**
+     * Filtrar por las direcciones seleccionadas
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSelected($query)
+    {
+      return $query->where('status', true);
+    }
+
+    /**
      * Obtener el Parent a la que pertenece
      */
     public function direccionable()

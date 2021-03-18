@@ -168,4 +168,33 @@ class ContactoController extends Controller
         'flash_important' => true
         ]);
     }
+
+    /**
+     * Cambiar status del contacto especificada.
+     *
+     * @param  \App\Contacto  $contacto
+     * @return \Illuminate\Http\Response
+     */
+    public function status(Contacto $contacto)
+    {
+      $seleccionado = $contacto->contactable->contactos()->firstWhere('status', true);
+      $contacto->status = true;
+
+      if($contacto->save()){
+        if($seleccionado){
+          $seleccionado->update(['status' => false]);
+        }
+
+        return redirect()->back()->with([
+          'flash_message' => 'Contacto seleccionado exitosamente.',
+          'flash_class' => 'alert-success'
+          ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
+    }
 }

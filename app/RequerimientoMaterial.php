@@ -42,6 +42,15 @@ class RequerimientoMaterial extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'status' => 'boolean',
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -154,6 +163,14 @@ class RequerimientoMaterial extends Model
     }
 
     /**
+     * Obtener los Ordenes de compra
+     */
+    public function compras()
+    {
+      return $this->hasMany('App\OrdenCompra', 'requerimiento_id');
+    }
+
+    /**
      * Evaluar si el Requerimiento esta pendiente de Aprobar/Rechazar
      * 
      * @return bool
@@ -164,6 +181,16 @@ class RequerimientoMaterial extends Model
     }
 
     /**
+     * Evaluar si el Requerimiento fue Aprobado
+     * 
+     * @return bool
+     */
+    public function isAprobado()
+    {
+      return $this->status == true;
+    }
+
+    /**
      * Evaluar si el Requerimiento es urgente
      * 
      * @return bool
@@ -171,6 +198,26 @@ class RequerimientoMaterial extends Model
     public function isUrgente()
     {
       return $this->urgencia == 'urgente';
+    }
+
+    /**
+     * Evaluar si el Requerimiento tiene Compras
+     * 
+     * @return boolean
+     */
+    public function hasCompras()
+    {
+      return $this->compras()->count() > 1;
+    }
+
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function id()
+    {
+      return 'RM - '.$this->id;
     }
 
     /**

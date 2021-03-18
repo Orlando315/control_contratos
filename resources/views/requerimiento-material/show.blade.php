@@ -27,6 +27,9 @@
       @if(Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-delete'))
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endif
+      @if($requerimiento->isAprobado() && Auth::user()->hasPermission('compra-create') && !$requerimiento->hasCompras())
+        <a class="btn btn-primary btn-sm" href="{{ route('admin.compra.requerimiento', ['requerimiento' => $requerimiento->id]) }}"><i class="fa fa-plus-square" aria-hidden="true"></i> Generar Orden de compra</a>
+      @endif
     </div>
   </div>
 

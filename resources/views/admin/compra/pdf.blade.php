@@ -13,6 +13,42 @@
           </tr>
         </table>
 
+        <h2 class="text-center m-0">Orden de compra</h2>
+
+        @if($compra->hasRequerimiento())
+          <table class="table table-bordered table-sm w-100">
+            <tr>
+              <td colspan="4"><strong>Requerimiento:</strong> RM - {{ $compra->requerimiento->id }}</td>
+            </tr>
+            <tr>
+              <td><strong>Contrato:</strong> {{ $compra->requerimiento->contrato->nombre }}</td>
+              <td>
+                <strong>Faena:</strong>
+                @if($compra->requerimiento->faena)
+                  {{ $compra->requerimiento->faena->nombre }}
+                @else
+                  @nullablestring(null)
+                @endif
+              </td>
+              <td>
+                <strong>Centro de costo:</strong>
+                @if($compra->requerimiento->centroCosto)
+                  {{ $compra->requerimiento->centroCosto->nombre }}
+                @else
+                  @nullablestring(null)
+                @endif
+              </td>
+              <td><strong>Requerido para:</strong> {{ optional($compra->requerimiento->created_at)->format('d-m-Y') }}</td>
+            </tr>
+            <tr>
+              <td><strong>Solicitante:</strong> {{ $compra->requerimiento->userSolicitante->nombre() }}</td>
+              <td><strong>Dirigido a:</strong> {{ $compra->requerimiento->dirigidoA->nombre() }}</td>
+              <td><strong>Urgencia: </strong> {!! $compra->requerimiento->urgencia(true) !!}</td>
+              <td><strong>Estatus: </strong> {!! $compra->requerimiento->status(true) !!}</td>
+            </tr>
+          </table>
+        @endif
+
         <table class="table table-bordered table-sm w-100">
           <tr>
             <td><strong>Generado por:</strong> {{ $compra->user->nombre() }}</td>

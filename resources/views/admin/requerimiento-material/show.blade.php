@@ -26,9 +26,12 @@
       @if($requerimiento->isPendiente() && (Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-edit')))
         <a class="btn btn-default btn-sm" href="{{ route('admin.requerimiento.material.edit', ['requerimiento' => $requerimiento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endif
-      <a class="btn btn-default btn-sm" href="{{ route('requerimiento.material.pdf', ['requerimiento' => $requerimiento->id]) }}" target="_blank"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
+      <a class="btn btn-default btn-sm" href="{{ route('requerimiento.material.pdf', ['requerimiento' => $requerimiento->id]) }}" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
       @if(Auth::id() == $requerimiento->solicitante || Auth::user()->hasPermission('requerimiento-material-delete'))
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+      @endif
+      @if($requerimiento->isAprobado() && Auth::user()->hasPermission('compra-create') && !$requerimiento->hasCompras())
+        <a class="btn btn-primary btn-sm" href="{{ route('admin.compra.requerimiento', ['requerimiento' => $requerimiento->id]) }}"><i class="fa fa-plus-square" aria-hidden="true"></i> Generar Orden de compra</a>
       @endif
     </div>
   </div>
@@ -171,12 +174,12 @@
           <div class="tabs-container">
             <ul class="nav nav-tabs">
               <li><a class="nav-link active" href="#tab-1" data-toggle="tab">Productos</a></li>
-              <li><a class="nav-link" href="#tab-2" data-toggle="tab">Historial de cambios</a></li>
+              <li><a class="nav-link" href="#tab-2" data-toggle="tab">Ordenes de compra</a></li>
+              <li><a class="nav-link" href="#tab-3" data-toggle="tab">Historial de cambios</a></li>
             </ul>
             <div class="tab-content">
               <div id="tab-1" class="tab-pane active">
                 <div class="panel-body">
-                  <p class="text-center">Se muestran los cambios realizaddos por los firmantes.</p>
                   <table class="table data-table table-bordered table-hover w-100">
                     <thead>
                       <tr>
@@ -207,6 +210,39 @@
               </div>
               <div id="tab-2" class="tab-pane">
                 <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Código</th>
+                        <th class="text-center">Proveedor</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Facturada</th>
+                        <th class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($requerimiento->compras as $compra)
+                        <tr>
+                          <td class="text-center">{{ $loop->iteration }}</td>
+                          <td class="text-center">{{ $compra->codigo() }}</td>
+                          <td>{{ $compra->proveedor->nombre }}</td>
+                          <td class="text-right">{{ $compra->total() }}</td>
+                          <td class="text-center"><small>{!! $compra->facturacionStatus() !!}</small></td>
+                          <td class="text-center">
+                            @permission('compra-view')
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-search"></i></a>
+                            @endpermission
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="tab-3" class="tab-pane">
+                <div class="panel-body">
+                  <p class="text-center">Se muestran los cambios realizaddos por los firmantes.</p>
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
                       <tr>

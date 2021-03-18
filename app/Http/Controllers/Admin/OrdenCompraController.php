@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\{OrdenCompra, Proveedor, InventarioV2, Contacto};
+use App\{OrdenCompra, Proveedor, InventarioV2, Contacto, RequerimientoMaterial};
 use PDF;
 
 class OrdenCompraController extends Controller
@@ -121,7 +121,15 @@ class OrdenCompraController extends Controller
     {
       $this->authorize('view', $compra);
 
-      $compra->load(['productos']);
+      $compra->load([
+        'productos',
+        'requerimiento' => function ($query) {
+          $query->with([
+            'userSolicitante',
+            'dirigidoA',
+          ]);
+        },
+      ]);
 
       return view('admin.compra.show', compact('compra'));
     }
@@ -267,4 +275,83 @@ class OrdenCompraController extends Controller
 
       return $pdf->download('Orden de compra '.$compra->id.'.pdf');
     }
+
+    /**
+     * Formulario para generar una Orden de Compra en base al
+     * Reuqerimiento de Materiales especificado
+     * 
+     * @param  \App\RequerimientoMaterial  $requerimiento
+     * @return \Illuminate\Http\Response
+     */
+    public function requerimiento(RequerimientoMaterial $requerimiento)
+    {
+      $this->authorize('compra', $requerimiento);
+      $this->authorize('create', OrdenCompra::class);
+
+      $requerimiento->load('productos');
+      $proveedores = Proveedor::all();
+
+      return view('admin.compra.requerimiento', compact('requerimiento', 'proveedores'));
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\RequerimientoMaterial  $requerimiento
+     * @return \Illuminate\Http\Response
+     */
+    public function storeRequerimiento(Request $request, RequerimientoMaterial $requerimiento)
+    {
+      $this->authorize('compra', $requerimiento);
+      $this->authorize('create', OrdenCompra::class);
+      $this->validate($request, [
+        'productos.*.proveedor' => 'required',
+        'productos.*.tipo_codigo' => 'nullable|string|max:20',
+        'productos.*.codigo' => 'nullable|string|max:50',
+        'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
+        'productos.*.precio' => 'required|numeric|min:1|max:99999999',
+        'productos.*.descripcion' => 'nullable|string|max:200',
+      ]);
+
+      $proveedoresIds = collect($request->productos)->pluck('proveedor')->unique()->toArray();
+
+      foreach ($proveedoresIds as $proveedorId) {
+        $proveedor = Proveedor::find($proveedorId);
+
+        if($proveedor->isEmpresa()){
+          $seleccionado = $proveedor->contactos()->selected()->first();
+          $contacto = $seleccionado ? $seleccionado->only('id', 'nombre', 'telefono', 'email', 'cargo', 'descripcion') : [];
+        }else{
+          $contacto = $proveedor->only('nombre', 'telefono', 'email');
+        }
+
+        $compra = new OrdenCompra([
+          'user_id' => Auth::id(),
+          'proveedor_id' => $proveedor->id,
+          'requerimiento_id' => $requerimiento->id,
+          'contacto' => $contacto,
+        ]);
+        $productos = [];
+        $filteredProductos = collect($request->productos)->where('proveedor', $proveedorId);
+
+        foreach ($filteredProductos as $producto){
+          $data = collect($producto)->except('inventario', 'precio', 'iva')->toArray();
+          $data['precio'] = round($producto['precio_total'] / $producto['cantidad'], 2);
+          $data['impuesto_adicional'] = $producto['iva'];
+          $productos[] = $data;
+        }
+
+        if(Auth::user()->empresa->compras()->save($compra)){
+          $compra->productos()->createMany($productos);
+        }
+      }
+
+      return redirect()->route('admin.requerimiento.material.show', ['requerimiento' => $requerimiento->id])->with([
+        'flash_message' => 'Ordenes de compra generadas exitosamente.',
+        'flash_class' => 'alert-success'
+      ]);
+    }
+
 }
