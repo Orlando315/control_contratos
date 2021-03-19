@@ -311,7 +311,7 @@
                   <td>@nullablestring($producto->codigo)</td>
                   <td>
                     @if($producto->inventario && Auth::user()->hasPermission('inventario-view'))
-                      <a href="{{ route('admin.inventarios.show', ['inventario' => $producto->inventario_id]) }}">
+                      <a href="{{ route('admin.inventario.v2.show', ['inventario' => $producto->inventario_id]) }}">
                         {{ $producto->nombre }}
                       </a>
                     @else
@@ -327,9 +327,17 @@
                   <td class="text-right">{{ $producto->total() }}</td>
                   <td class="text-center">
                     @permission('compra-edit')
-                      <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#delProductoModal" data-url="{{ route('admin.compra.producto.destroy', ['producto' => $producto->id]) }}">
-                        <i class="fa fa-times"></i>
-                      </button>
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                          <li>
+                            <a class="dropdown-item" href="{{ route('admin.compra.producto.edit', ['producto' => $producto->id]) }}">
+                              <i class="fa fa-pencil"></i> Editar
+                            </a>
+                          </li>
+                          <li><a class="dropdown-item text-danger" type="button" title="Eliminar producto" data-url="{{ route('admin.compra.producto.destroy', ['producto' => $producto->id]) }}" data-toggle="modal" data-target="#delProductoModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                        </ul>
+                      </div>
                     @endpermission
                   </td>
                 </tr>

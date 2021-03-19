@@ -242,7 +242,7 @@ Route::resource('compra', 'OrdenCompraController')
 /* --- Ordenes de compra - Productos --- */
 Route::resource('compra/producto', 'OrdenCompraProductoController')
       ->names('compra.producto')
-      ->only(['destroy']);
+      ->only(['edit', 'update', 'destroy']);
 
 /* --- Ordenes de compra - Facturaciones --- */
 Route::get('compra/facturacion/create/{compra}', 'OrdenCompraFacturacionController@create')->name('compra.facturacion.create');

@@ -701,7 +701,7 @@
         $('#form-contacto').val($(this).val());
       });
 
-      $('#tipo-precio, #afecto-iva').change(calculatePrecio);
+      $('#tipo-precio, #afecto-iva, #cantidad, #precio').change(calculatePrecio);
       $('#cantidad, #precio').keyup(calculatePrecio);
 
       calculatePrecio();
@@ -863,7 +863,7 @@
         cantidad: cantidad,
         precio: precio,
         precioTotal: totalPrecio,
-        hasIva: hasIva ? 1 : 0  ,
+        hasIva: (hasIva ? 1 : 0),
         iva: totalIva,
         total: total,
         descripcion: $('#descripcion').val(),
