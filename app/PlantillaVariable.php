@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use App\{Empleado, Postulante};
 
 class PlantillaVariable extends Model
 {
@@ -58,6 +59,11 @@ class PlantillaVariable extends Model
       '{{e_jornada_del_contrato_de_empleado}}',
       '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}',
       '{{e_descripcion_del_contrato_de_empleado}}',
+      '{{p_nombres}}',
+      '{{p_apellidos}}',
+      '{{p_rut}}',
+      '{{p_telefono}}',
+      '{{p_email}}',
     ];
 
     /**
@@ -111,6 +117,9 @@ class PlantillaVariable extends Model
       switch ($this->tipo) {
         case 'empleado':
           $tipo = 'Empleado';
+          break;
+        case 'postulante':
+          $tipo = 'Postulante';
           break;
         case 'rut':
           $tipo = 'RUT';
@@ -169,16 +178,29 @@ class PlantillaVariable extends Model
      */
     public function isStatic()
     {
-      return $this->tipo == 'empleado';
+      return $this->tipo == 'empleado' || $this->tipo == 'postulante';
     }
 
     /**
-     * Obtener las variables estaticas con sus valores
+     * Obtener las variables estaticas con sus valores segun el modelo especificado
      *
-     * @param  \App\Empleado $empleado
+     * @param  \App\Empleado|\App\Postulante  $model
      * @return array
      */
-    public static function mappedVariablesToAttributes(Empleado $empleado)
+    public static function mappedVariablesToAttributes($model)
+    {
+      $method = ($model instanceof Empleado ? 'empleado' : 'postulante').'Variables';
+
+      return self::{$method}($model);
+    }
+
+    /**
+     * Obtener las variables del Empleado
+     *
+     * @param  \App\Empleado  $empleado
+     * @return array
+     */
+    private static function empleadoVariables(Empleado $empleado)
     {
       $empleado->load([
         'usuario',
@@ -216,6 +238,24 @@ class PlantillaVariable extends Model
         '{{e_jornada_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->jornada,
         '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->inicio_jornada,
         '{{e_descripcion_del_contrato_de_empleado}}' => optional($empleado->lastContrato)->descripcion,
+      ];
+    }
+
+
+    /**
+     * Obtener las variables del Postulante
+     *
+     * @param  \App\Postulante  $postulante
+     * @return array
+     */
+    private static function postulanteVariables(Postulante $postulante)
+    {
+      return [
+        '{{p_nombres}}' => $postulante->nombres,
+        '{{p_apellidos}}' => $postulante->apellidos,
+        '{{p_rut}}' => $postulante->rut,
+        '{{p_telefono}}' => $postulante->telefono,
+        '{{p_email}}' => $postulante->email,
       ];
     }
 }

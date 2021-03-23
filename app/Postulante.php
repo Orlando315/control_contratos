@@ -45,4 +45,26 @@ class Postulante extends Model
       return $this->nombres.' '.$this->apellidos;
     }
 
+    /**
+     * Obtener las PlantillaDocumento (Documetos)
+     */
+    public function plantillaDocumentos()
+    {
+      return $this->hasMany('App\PlantillaDocumento');
+    }
+
+    /**
+     * Migrar Documentos del Postulante al Empleado
+     * 
+     * @param  \App\Empleado  $empleado
+     * @return void
+     */
+    public function migrateDocumentos(Empleado $empleado)
+    {
+      $this->plantillaDocumentos()->update([
+        'contrato_id' => $empleado->contrato_id,
+        'empleado_id' => $empleado->id,
+        'postulante_id' => null,
+      ]);
+    }
 }

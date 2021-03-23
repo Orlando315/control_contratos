@@ -176,6 +176,11 @@ class PlantillaVariableController extends Controller
         ['variable' => '{{e_jornada_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Jornada del Contrato de empleado'],
         ['variable' => '{{e_fecha_de_inicio_de_jornada_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Fecha de Inicio de jornada del Contrato de empleado'],
         ['variable' => '{{e_descripcion_del_contrato_de_empleado}}', 'tipo' => 'empleado', 'nombre' => 'E - Descripción del Contrato de empleado'],
+        ['variable' => '{{p_nombres}}', 'tipo' => 'postulante', 'nombre' => 'P - Nombres'],
+        ['variable' => '{{p_apellidos}}', 'tipo' => 'postulante', 'nombre' => 'P - Apellidos'],
+        ['variable' => '{{p_rut}}', 'tipo' => 'postulante', 'nombre' => 'P - RUT'],
+        ['variable' => '{{p_telefono}}', 'tipo' => 'postulante', 'nombre' => 'P - Teléfono'],
+        ['variable' => '{{p_email}}', 'tipo' => 'postulante', 'nombre' => 'P - Email'],
       ];
 
       foreach ($vars as $variable) {

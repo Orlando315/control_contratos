@@ -59,25 +59,40 @@
                       <th class="text-center">#</th>
                       <th class="text-center">Nombre</th>
                       <th class="text-center">Contrato</th>
-                      <th class="text-center">Empleado</th>
+                      <th class="text-center">Dirigido a</th>
                       <th class="text-center">Padre</th>
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($documentos as $documento)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>@nullablestring($documento->nombre)</td>
-                        <td>{{ $documento->contrato->nombre }}</td>
-                        <td>{{ $documento->empleado->nombre() }}</td>
+                        <td>@nullablestring(optional($documento->contrato)->nombre)</td>
+                        <td>{{ $documento->model->nombre() }}</td>
                         <td>@nullablestring(optional($documento->padre)->nombre)</td>
-                        <td>
-                          @permission('plantilla-documento-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $documento->id] )}}"><i class="fa fa-search"></i></a>
-                          @endpermission
-                          @permission('plantilla-documento-edit')
-                            <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id] )}}"><i class="fa fa-pencil"></i></a>
+                        <td class="text-center">
+                          @permission('plantilla-documento-view|plantilla-documento-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('plantilla-documento-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.plantilla.documento.show', ['documento' => $documento->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('plantilla-documento-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endpermission
+                              </ul>
+                            </div>
                           @endpermission
                         </td>
                       </tr>
@@ -105,19 +120,34 @@
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($plantillas as $plantilla)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $plantilla->nombre }}</td>
                         <td class="text-right">{{ $plantilla->secciones_count }}</td>
                         <td class="text-right">{{ $plantilla->documentos_count }}</td>
-                        <td>
-                          @permission('plantilla-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.show', ['plantilla' => $plantilla->id] )}}"><i class="fa fa-search"></i></a>
-                          @endpermission
-                          @permission('plantilla-edit')
-                            <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.edit', ['plantilla' => $plantilla->id] )}}"><i class="fa fa-pencil"></i></a>
+                        <td class="text-center">
+                          @permission('plantilla-view|plantilla-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('plantilla-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.plantilla.show', ['plantilla' => $plantilla->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('plantilla-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.plantilla.edit', ['plantilla' => $plantilla->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endpermission
+                              </ul>
+                            </div>
                           @endpermission
                         </td>
                       </tr>
@@ -146,20 +176,35 @@
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($variables as $variable)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $variable->nombre }}</td>
-                        <td>{{ $variable->tipo() }}</td>
-                        <td>{{ $variable->variable }}</td>
-                        <td>
+                        <td class="text-center">{{ $variable->tipo() }}</td>
+                        <td class="text-center">{{ $variable->variable }}</td>
+                        <td class="text-center">
                           @if(!$variable->isStatic())
-                            @permission('plantilla-variable-edit')
-                              <a class="btn btn-primary btn-xs" href="{{ route('admin.variable.edit', ['variable' => $variable->id] )}}"><i class="fa fa-pencil"></i></a>
-                            @endpermission
-                            @permission('plantilla-variable-delete')
-                              <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delModal" data-url="{{ route('admin.variable.destroy', ['variable' => $variable->id]) }}"><i class="fa fa-times" aria-hidden="true"></i></button>
+                            @permission('plantilla-variable-edit|plantilla-variable-delete')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('plantilla-variable-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.variable.edit', ['variable' => $variable->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('plantilla-variable-delete')
+                                    <li>
+                                      <a class="dropdown-item text-danger" type="button" data-toggle="modal" data-target="#delModal" data-url="{{ route('admin.variable.destroy', ['variable' => $variable->id]) }}" data-target="#delProductoModal">
+                                        <i class="fa fa-times" aria-hidden="true"></i> Eliminar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
                           @endif
                         </td>
@@ -213,11 +258,11 @@
                 <span aria-hidden="true">&times;</span>
                 <span class="sr-only">Cerrar</span>
               </button>
-              <h4 class="modal-title" id="generateModalLabel">Generar variables de Empleado</h4>
+              <h4 class="modal-title" id="generateModalLabel">Generar variables de estaticas</h4>
             </div>
             <div class="modal-body">
               <h4 class="text-center">Generar variables</h4>
-              <p class="text-center">Se crearán variables estaticas para los Documentos que se sustituirán con la información del Empleado y/o Contrato</p>
+              <p class="text-center">Se crearán variables estaticas para los Documentos que se sustituirán con la información del Empleado, Contrato y/o Postulante</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>

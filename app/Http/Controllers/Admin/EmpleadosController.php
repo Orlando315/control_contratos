@@ -138,6 +138,7 @@ class EmpleadosController extends Controller
         }
 
         if($postulante){
+          $postulante->migrateDocumentos($empleado);
           $postulante->delete();
         }
         

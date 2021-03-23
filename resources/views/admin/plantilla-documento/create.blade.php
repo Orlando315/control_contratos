@@ -8,6 +8,20 @@
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
   <!-- Datepicker -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
+  <style type="text/css">
+    .switch .onoffswitch-inner:before{
+      content: 'Postulante';
+    }
+    .switch .onoffswitch-inner:after{
+      content: 'Empleado';
+    }
+    .switch .onoffswitch{
+      width: 85px;
+    }
+    .switch .onoffswitch-switch{
+      right: 67px;
+    }
+  </style>
 @endsection
 
 @section('page-heading')
@@ -42,29 +56,61 @@
                   <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre') }}" placeholder="Nombre">
                 </div>
               </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="dirigido">Dirigido a:</label>
+                  <div class="switch mb-3">
+                    <div class="onoffswitch mx-auto">
+                      <input id="check-dirigido" class="onoffswitch-checkbox" type="checkbox" name="dirigido" value="1"{{ old('dirigido', ($postulanteSelected ? '1' : '0')) == '1' ? ' checked' : '' }}>
+                      <label class="onoffswitch-label" for="check-dirigido">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
-                  <label for="contrato">Contrato: *</label>
-                  <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
-                    <option value="">Seleccione...</option>
-                    @foreach($contratos as $contrato)
-                      <option value="{{ $contrato->id }}"{{ old('contrato', optional($selected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
-                    @endforeach
-                  </select>
+            <fieldset id="dirigido-empleado" class="section-dirigido">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                    <label for="contrato">Contrato: *</label>
+                    <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
+                      <option value="">Seleccione...</option>
+                      @foreach($contratos as $contrato)
+                        <option value="{{ $contrato->id }}"{{ old('contrato', optional($selected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('empleado') ? ' has-error' : '' }}">
+                    <label for="empleado">Empleado: *</label>
+                    <select id="empleado" class="form-control" name="empleado" required style="width: 100%" disabled>
+                      <option value="">Seleccione...</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('empleado') ? ' has-error' : '' }}">
-                  <label for="empleado">Empleado: *</label>
-                  <select id="empleado" class="form-control" name="empleado" required style="width: 100%" disabled>
-                    <option value="">Seleccione...</option>
-                  </select>
+            </fieldset>
+
+            <fieldset id="dirigido-postulante" class="section-dirigido" disabled style="display: none">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group{{ $errors->has('postulante') ? ' has-error' : '' }}">
+                    <label for="postulante">Postulante: *</label>
+                    <select id="postulante" class="form-control" name="postulante" required style="width: 100%">
+                      <option value="">Seleccione...</option>
+                      @foreach($postulantes as $postulante)
+                        <option value="{{ $postulante->id }}"{{ old('postulante', optional($postulante)->id) == $postulante->id ? ' selected' : '' }}>{{ $postulante->nombre() }}</option>
+                      @endforeach
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
+            </fieldset>
 
             <div class="row">
               <div class="col-md-6">
@@ -141,8 +187,8 @@
       $.each(seccion.variables, function (k, v){
         let tipo = converType(v.tipo)
         let value = getOldValue(seccion.id, v.variable)
-        let isDisabled = v.tipo == 'empleado' ? ' readonly' : '';
-        let helpText = v.tipo == 'empleado' ? '<small class="text-form text-muted">Se tomará automáticamente la información del Empleado.</small>' : '';
+        let isDisabled = (v.tipo == 'empleado' || v.tipo == 'postulante' ) ? ' readonly' : '';
+        let helpText = v.tipo == 'empleado' ? '<small class="text-form text-muted">Se tomará automáticamente la información del Empleado/Postulante.</small>' : '';
 
         vargGroups += `<div class="form-group row">
                           <label class="col-md-3" for="${v.variable}">${v.nombre}:</label>
@@ -162,15 +208,15 @@
     const oldSectionsValues = @json(old('secciones'));
 
     $(document).ready( function(){
-      $('#contrato, #empleado, #plantilla').select2({
+      $('#contrato, #empleado, #postulante, #plantilla').select2({
         theme: 'bootstrap4',
-        placeholder: 'Seleccionar...',
+        placeholder: 'Seleccione...',
       });
 
       $('#padre').select2({
         allowClear: true,
         theme: 'bootstrap4',
-        placeholder: 'Seleccionar...',
+        placeholder: 'Seleccione...',
       });
 
       $('#caducidad').datepicker({
@@ -213,7 +259,8 @@
       })
 
       $('#plantilla').change(function () {
-        let plantilla = $(this).val()
+        let plantilla = $(this).val();
+        let isEmpleado = !$(this).is(':checked');
 
         if(plantilla < 1){
           return false;
@@ -235,9 +282,18 @@
             sectionVariables.empty().append('<p class="text-center text-muted m-0">No hay variable a completar</p>')
           }
         });
-      })
+      });
 
-      $('#contrato, #plantilla').trigger('change')
+      $('#contrato, #plantilla').trigger('change');
+
+      $('#check-dirigido').change(function () {
+        let isEmpleado = !$(this).is(':checked');
+        let type = isEmpleado ? 'empleado' : 'postulante';
+
+        $('#dirigido-empleado').closest('.section-dirigido').prop('disabled', !isEmpleado).toggle(isEmpleado);
+        $('#dirigido-postulante').closest('.section-dirigido').prop('disabled', isEmpleado).toggle(!isEmpleado);
+      });
+      $('#check-dirigido').change();
     });
 
     function converType(tipo){
@@ -257,6 +313,7 @@
         case 'text':
         case 'rut':
         case 'empleado':
+        case 'postulante':
         default:
           return 'text'
           break;

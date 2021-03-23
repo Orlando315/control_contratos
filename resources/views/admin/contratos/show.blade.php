@@ -310,7 +310,7 @@
                   @foreach($contrato->plantillaDocumentos as $d)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $d->nombre }}</td>
+                      <td>@nullablestring($d->nombre)</td>
                       <td>{{ $d->empleado->nombre() }}</td>
                       <td>@nullablestring(optional($d->padre)->nombre)</td>
                       <td>

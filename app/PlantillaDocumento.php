@@ -22,6 +22,7 @@ class PlantillaDocumento extends Model
     protected $fillable = [
       'contrato_id',
       'empleado_id',
+      'postulante_id',
       'plantilla_id',
       'documento_id',
       'nombre',
@@ -57,6 +58,16 @@ class PlantillaDocumento extends Model
       parent::boot();
 
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Obtener las Empresa a la que pertenece el User y esta usando en session
+     *
+     * @param  \App\Models\Empresa|null
+     */
+    public function getModelAttribute()
+    {
+      return $this->toEmpleado() ? $this->empleado : $this->postulante;
     }
 
     /**
@@ -100,6 +111,34 @@ class PlantillaDocumento extends Model
     }
 
     /**
+     * Obtener el Postulante
+     */
+    public function postulante()
+    {
+      return $this->belongsTo('App\Postulante', 'postulante_id');
+    }
+
+    /**
+     * Evaluar si el Documento es dirigido a un Empleado
+     * 
+     * @return bool
+     */
+    public function toEmpleado()
+    {
+      return !is_null($this->empleado_id);
+    }
+
+    /**
+     * Evaluar si el Documento es dirigido a un Postulante
+     * 
+     * @return bool
+     */
+    public function toPostulante()
+    {
+      return !$this->toEmpleado();
+    }
+
+    /**
      * Asignar la fecha de caducidad en formato datetime.
      */
     public function setCaducidadAttribute($date)
@@ -126,7 +165,7 @@ class PlantillaDocumento extends Model
      */
     private function fillStaticVariables($seccion)
     {
-      $staticMapped = PlantillaVariable::mappedVariablesToAttributes($this->empleado);
+      $staticMapped = PlantillaVariable::mappedVariablesToAttributes($this->model);
       $staticNeeded = array_intersect_key($staticMapped, $seccion);
       return collect($seccion)->merge($staticNeeded)->toArray();
     }

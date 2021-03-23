@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\{PlantillaDocumento as Documento, Contrato, Empleado, Plantilla, PlantillaVariable};
+use App\{PlantillaDocumento as Documento, Contrato, Empleado, Plantilla, PlantillaVariable, Postulante};
 use PDF;
 
 class PlantillaDocumentoController extends Controller
@@ -39,7 +39,7 @@ class PlantillaDocumentoController extends Controller
         $this->authorize('view', $contrato);
       }
 
-      if($contrato){
+      if($empleado){
         $this->authorize('view', $empleado);
       }
 
@@ -47,8 +47,10 @@ class PlantillaDocumentoController extends Controller
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
       $padres = Documento::all();
+      $postulantes = Postulante::all();
+      $postulanteSelected = Postulante::find(request()->postulante);
 
-      return view('admin.plantilla-documento.create', compact('contratos', 'selected', 'plantillas', 'padres', 'empleado'));
+      return view('admin.plantilla-documento.create', compact('contratos', 'selected', 'plantillas', 'padres', 'empleado', 'postulantes', 'postulanteSelected'));
     }
 
     /**
@@ -62,21 +64,23 @@ class PlantillaDocumentoController extends Controller
       $this->authorize('create', Documento::class);
       $this->validate($request, [
         'nombre' => 'nullable|string|max:50',
-        'contrato' => 'required',
-        'empleado' => 'required',
+        'contrato' => 'required_without:dirigido',
+        'empleado' => 'required_without:dirigido',
+        'postulante' => 'required_with:dirigido',
         'plantilla' => 'required',
         'caducidad' => 'nullable|date',
       ]);
 
       $documento = new Documento([
-                                  'contrato_id' => $request->contrato,
-                                  'empleado_id' => $request->empleado,
-                                  'plantilla_id' => $request->plantilla,
-                                  'documento_id' => $request->padre,
-                                  'nombre' => $request->nombre,
-                                  'caducidad' => $request->caducidad,
-                                  'secciones' => $request->secciones
-                                ]);
+        'contrato_id' => $request->contrato,
+        'empleado_id' => $request->empleado,
+        'postulante_id' => $request->postulante,
+        'plantilla_id' => $request->plantilla,
+        'documento_id' => $request->padre,
+        'nombre' => $request->nombre,
+        'caducidad' => $request->caducidad,
+        'secciones' => $request->secciones
+      ]);
 
       if(Auth::user()->empresa->documentos()->save($documento)){
         return redirect()->route('admin.plantilla.documento.show', ['documento' => $documento->id])->with([
@@ -120,8 +124,9 @@ class PlantillaDocumentoController extends Controller
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
       $padres = Documento::all();
+      $postulantes = Postulante::all();
 
-      return view('admin.plantilla-documento.edit', compact('documento', 'contratos', 'plantillas', 'padres'));
+      return view('admin.plantilla-documento.edit', compact('documento', 'contratos', 'plantillas', 'padres', 'postulantes'));
     }
 
     /**
@@ -136,21 +141,23 @@ class PlantillaDocumentoController extends Controller
       $this->authorize('update', $documento);
       $this->validate($request, [
         'nombre' => 'nullable|string|max:50',
-        'contrato' => 'required',
-        'empleado' => 'required',
+        'contrato' => 'required_without:dirigido',
+        'empleado' => 'required_without:dirigido',
+        'postulante' => 'required_with:dirigido',
         'plantilla' => 'required',
         'caducidad' => 'nullable|date',
       ]);
 
       $documento->fill([
-                        'contrato_id' => $request->contrato,
-                        'empleado_id' => $request->empleado,
-                        'plantilla_id' => $request->plantilla,
-                        'documento_id' => $request->padre,
-                        'nombre' => $request->nombre,
-                        'caducidad' => $request->caducidad,
-                        'secciones' => $request->secciones
-                      ]);
+        'contrato_id' => $request->contrato,
+        'empleado_id' => $request->empleado,
+        'postulante_id' => $request->postulante,
+        'plantilla_id' => $request->plantilla,
+        'documento_id' => $request->padre,
+        'nombre' => $request->nombre,
+        'caducidad' => $request->caducidad,
+        'secciones' => $request->secciones
+      ]);
 
       if($documento->save()){
         return redirect()->route('admin.plantilla.documento.show', ['documento' => $documento->id])->with([
@@ -208,7 +215,7 @@ class PlantillaDocumentoController extends Controller
       $this->authorize('view', $documento);
 
       $documento->load('plantilla.secciones');
-      $nombre = $documento->nombre ?? ($documento->plantilla->nombre ?? 'doumento');
+      $nombre = $documento->nombre ?? ($documento->plantilla->nombre ?? 'documento');
 
       PDF::setOptions(['dpi' => 150]);
       $pdf = PDF::loadView('admin.plantilla-documento.pdf', compact('documento', 'nombre'));

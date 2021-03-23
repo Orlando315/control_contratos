@@ -41,30 +41,45 @@
               <b>Nombre</b>
               <span class="pull-right">@nullablestring($documento->nombre)</span>
             </li>
-            <li class="list-group-item">
-              <b>Contrato</b>
-              <span class="pull-right">
-                @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+            @if($documento->toEmpleado())
+              <li class="list-group-item">
+                <b>Contrato</b>
+                <span class="pull-right">
+                  @permission('contrato-view')
+                    <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+                      {{ $documento->contrato->nombre }}
+                    </a>
+                  @else
                     {{ $documento->contrato->nombre }}
-                  </a>
-                @else
-                  {{ $documento->contrato->nombre }}
-                @endpermission
-              </span>
-            </li>
-            <li class="list-group-item">
-              <b>Empleado</b>
-              <span class="pull-right">
-                @permission('empleado-view')
-                  <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                  @endpermission
+                </span>
+              </li>
+              <li class="list-group-item">
+                <b>Empleado</b>
+                <span class="pull-right">
+                  @permission('empleado-view')
+                    <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                      {{ $documento->empleado->nombre() }}
+                    </a>
+                  @else
                     {{ $documento->empleado->nombre() }}
-                  </a>
-                @else
-                  {{ $documento->empleado->nombre() }}
-                @endpermission
-              </span>
-            </li>
+                  @endpermission
+                </span>
+              </li>
+            @else
+              <li class="list-group-item">
+                <b>Postulante</b>
+                <span class="pull-right">
+                  @permission('postulante-view')
+                    <a href="{{ route('admin.postulante.show', ['postulante' => $documento->postulante_id]) }}">
+                      {{ $documento->postulante->nombre() }}
+                    </a>
+                  @else
+                    {{ $documento->postulante->nombre() }}
+                  @endpermission
+                </span>
+              </li>
+            @endif
             <li class="list-group-item">
               <b>Plantilla</b>
               <span class="pull-right">

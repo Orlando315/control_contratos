@@ -74,6 +74,10 @@ class PostulanteController extends Controller
     {
       $this->authorize('view', $postulante);
 
+      $postulante->load([
+        'plantillaDocumentos',
+      ]);
+
       return view('admin.postulante.show', compact('postulante'));
     }
 
