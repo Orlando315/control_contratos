@@ -12,7 +12,7 @@ use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\EmpleadoImport;
-use App\{User, Empleado, Contrato, Role};
+use App\{User, Empleado, Contrato, Role, Postulante};
 
 class EmpleadosController extends Controller
 {
@@ -26,8 +26,9 @@ class EmpleadosController extends Controller
       $this->authorize('viewAny', Empleado::class);
 
       $empleados = Empleado::with('contrato')->get();
+      $postulantes = Postulante::all();
 
-      return view('admin.empleados.index', compact('empleados'));
+      return view('admin.empleados.index', compact('empleados', 'postulantes'));
     }
 
     /**
@@ -35,26 +36,26 @@ class EmpleadosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Contrato $contrato)
+    public function create()
     {
-      $this->authorize('view', $contrato);
       $this->authorize('create', Empleado::class);
 
-      $usuarios = Auth::user()->empresa->users()->doesntHave('empleado')->get();
+      $contratos = Contrato::all();
+      $contratoSelected = Contrato::find(request()->contrato);
+      $postulante = Postulante::find(request()->postulante);
+      $usuarios = $postulante ? Auth::user()->empresa->users()->doesntHave('empleado')->get() : [];
 
-      return view('admin.empleados.create', compact('contrato', 'usuarios'));
+      return view('admin.empleados.create', compact('contratos', 'contratoSelected', 'usuarios', 'postulante'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Contrato $contrato)
+    public function store(Request $request)
     {
-      $this->authorize('view', $contrato);
       $this->authorize('create', Empleado::class);
 
       if($request->filled('usuario')){
@@ -67,8 +68,8 @@ class EmpleadosController extends Controller
       }else{
         // Aplica cuando no se esta creando el Empleado a partir de un Usuario ya existente
         $this->validate($request, [
-          'nombres' => 'required|string',
-          'apellidos' => 'required|string',
+          'nombres' => 'required|string|max:50',
+          'apellidos' => 'nullable|string|max:50',
           'rut' => 'required|regex:/^(\d{4,9}-[\dkK])$/|unique:users,rut',
           'telefono' => 'nullable|string',
           'email' => 'nullable|email|unique:users,email',
@@ -76,6 +77,7 @@ class EmpleadosController extends Controller
       }
 
       $this->validate($request, [
+        'contrato' => 'required',
         'sexo' => 'required',
         'fecha_nacimiento' => 'required|date_format:d-m-Y',
         'direccion' => 'required|string|max:100',
@@ -113,6 +115,9 @@ class EmpleadosController extends Controller
       ));
       $empleado->empresa_id = Auth::user()->empresa->id;
 
+      $contrato = Contrato::findOrFail($request->contrato);
+      $postulante = Postulante::find($request->postulante);
+
       if($contrato->empleados()->save($empleado)){
         $role = Role::firstWhere('name', 'empleado');
 
@@ -130,6 +135,10 @@ class EmpleadosController extends Controller
           $empleado->usuario()->save($usuario);
           $usuario->attachRole($role);
           Auth::user()->empresa->users()->attach($usuario->id);
+        }
+
+        if($postulante){
+          $postulante->delete();
         }
         
         $empleado->contratos()->create($request->only('sueldo', 'inicio', 'fin', 'jornada', 'inicio_jornada', 'descripcion'));

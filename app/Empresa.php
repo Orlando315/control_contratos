@@ -129,6 +129,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener los Postulantes
+     */
+    public function postulantes()
+    {
+      return $this->hasMany('App\Postulante');
+    }
+
+    /**
      * Obtener los Inventarios
      */
     public function inventarios()

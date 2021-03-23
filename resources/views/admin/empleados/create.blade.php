@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Empleados</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -32,24 +32,41 @@
           <h5>Agregar empleado</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.store', ['contrato' => $contrato->id]) }}" method="POST">
+          <form action="{{ route('admin.empleados.store') }}" method="POST">
+            <input type="hidden" name="postulante" value="{{ optional($postulante)->id }}">
             @csrf
 
             <fieldset class="mb-3">
-              <p>¿Agregar un empleado a partir de un Usuario del Sistema?</p>
+              @if($postulante)
+                <p class="text-center">Agregar Empleado a partir del Postulante: <strong>{{ $postulante->nombre() }}</strong></p>
+              @endif
               
               <div class="row">
                 <div class="col-md-4">
-                  <div class="form-group{{ $errors->has('usuario') ? ' has-error' : '' }}">
-                    <label for="usuario">Usuario:</label>
-                    <select id="usuario" class="form-control" name="usuario">
+                  <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                    <label for="contrato">Contrato: *</label>
+                    <select id="contrato" class="form-control" name="contrato" required>
                       <option value="">Seleccione...</option>
-                      @foreach($usuarios as $usuario)
-                        <option value="{{ $usuario->id }}"{{ old('usuario') == $usuario->id ? ' selected' : '' }}>{{ $usuario->nombres }} {{ $usuario->apellidos }}</option>
+                      @foreach($contratos as $contrato)
+                        <option value="{{ $contrato->id }}"{{ old('contrato', optional($contratoSelected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
                       @endforeach
                     </select>
                   </div>
                 </div>
+                @unless($postulante)
+                  <div class="col-md-4">
+                    <div class="form-group{{ $errors->has('usuario') ? ' has-error' : '' }}">
+                      <label for="usuario">Usuario:</label>
+                      <select id="usuario" class="form-control" name="usuario">
+                        <option value="">Seleccione...</option>
+                        @foreach($usuarios as $usuario)
+                          <option value="{{ $usuario->id }}"{{ old('usuario') == $usuario->id ? ' selected' : '' }}>{{ $usuario->nombre() }}</option>
+                        @endforeach
+                      </select>
+                      <small class="form-text">Completar registro a partir de un Usuario existente.</small>
+                    </div>
+                  </div>
+                @endunless
               </div>
             </fieldset>
 
@@ -60,19 +77,19 @@
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
                     <label for="nombres">Nombres: *</label>
-                    <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres') }}" placeholder="Nombres" required>
+                    <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres', optional($postulante)->nombres) }}" placeholder="Nombres" required{{ $postulante ? ' readonly' : '' }}>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('apellidos') ? ' has-error' : '' }}">
-                    <label for="apellidos">Apellidos: *</label>
-                    <input id="apellidos" class="form-control" type="text" name="apellidos" maxlength="50" value="{{ old('apellidos') }}" placeholder="Apellidos" required>
+                    <label for="apellidos">Apellidos:</label>
+                    <input id="apellidos" class="form-control" type="text" name="apellidos" maxlength="50" value="{{ old('apellidos', optional($postulante)->apellidos) }}" placeholder="Apellidos"{{ $postulante ? ' readonly' : '' }}>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                     <label for="rut">RUT: *</label>
-                    <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old('rut') }}" placeholder="RUT" required>
+                    <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old('rut', optional($postulante)->rut) }}" placeholder="RUT" required{{ $postulante ? ' readonly' : '' }}>
                     <small class="form-text">Ejemplo: 00000000-0</small>
                   </div>
                 </div>
@@ -88,13 +105,13 @@
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
                     <label for="telefono">Teléfono:</label>
-                    <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono') }}" placeholder="Teléfono">
+                    <input id="telefono" class="form-control" type="telefono" name="telefono" maxlength="20" value="{{ old('telefono', optional($postulante)->telefono) }}" placeholder="Teléfono"{{ $postulante ? ' readonly' : '' }}>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <label for="email">Email:</label>
-                    <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email') }}" placeholder="Email">
+                    <input id="email" class="form-control" type="text" name="email" maxlength="50" value="{{ old('email', optional($postulante)->email) }}" placeholder="Email"{{ $postulante ? ' readonly' : '' }}>
                   </div>
                 </div>
               </div>
@@ -274,6 +291,8 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
+    const isPostulante = @json(isset($postulante));
+
     $(document).ready( function(){
       var endDate = new Date();
       endDate.setFullYear(new Date().getFullYear()-18);
@@ -293,56 +312,64 @@
         autoclose: true
       });
 
+      $('#contrato').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+      });
+
       $('#usuario, #sexo, #jornada').select2({
         allowClear: true,
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
-      })
+      });
 
-      $('#usuario').change(function () {
-        let user = $(this).val()
+      @unless($postulante)
+        $('#usuario').change(function () {
+          let user = $(this).val()
 
-        if(!user){
-          fillValues([], false)
-          return false;
-        }
+          if(!user){
+              fillValues([], false)
+            return false;
+          }
 
-        $.ajax({
-          type: 'POST',
-          url: `{{ route("admin.usuarios.index") }}/${user}/get`,
-          data: {
-            usuario: user,
-          },
-          dataType: 'json',
-        })
-        .done(function (response) {
-          if(response){
-            fillValues(response)
-          }else{
+          $.ajax({
+            type: 'POST',
+            url: `{{ route("admin.usuarios.index") }}/${user}/get`,
+            data: {
+              usuario: user,
+            },
+            dataType: 'json',
+          })
+          .done(function (response) {
+            if(response){
+              fillValues(response)
+            }else{
 
+              $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
+              $('.alert').slideDown(300).delay(3000).slideUp()
+            }
+          })
+          .fail(function () {
             $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
             $('.alert').slideDown(300).delay(3000).slideUp()
-          }
-        })
-        .fail(function () {
-          $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
-          $('.alert').slideDown(300).delay(3000).slideUp()
 
-          fillValues([], false)
+            fillValues([], false)
+          })
         })
-      })
-
-      $('#usuario').change()
+        $('#usuario').change();
+      @endunless
     });
 
-    // Completar o limpiar los campos de Usuarios registrados
-    // Con su informacion
-    function fillValues(values, fill = true){
-      $('#nombres').prop('readonly', fill).val(fill ? values.nombres : '')
-      $('#apellidos').prop('readonly', fill).val(fill ? values.apellidos : '')
-      $('#rut').prop('readonly', fill).val(fill ? values.rut : '')
-      $('#telefono').prop('readonly', fill).val(fill ? values.telefono : '')
-      $('#email').prop('readonly', fill).val(fill ? values.email : '')
-    }
+    @unless($postulante)
+      // Completar o limpiar los campos de Usuarios registrados
+      // Con su informacion
+      function fillValues(values, fill = true){
+        $('#nombres').prop('readonly', fill).val(fill ? values.nombres : '');
+        $('#apellidos').prop('readonly', fill).val(fill ? values.apellidos : '');
+        $('#rut').prop('readonly', fill).val(fill ? values.rut : '');
+        $('#telefono').prop('readonly', fill).val(fill ? values.telefono : '');
+        $('#email').prop('readonly', fill).val(fill ? values.email : '');
+      }
+    @endunless
   </script>
 @endsection

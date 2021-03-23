@@ -91,6 +91,10 @@ Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' 
       ])
       ->except(['create']);
 
+/* --- Postulante --- */
+Route::resource('postulante', 'PostulanteController')
+->except(['index']);
+
 /* --- Empleados --- */
 Route::get('empleados/{empleado}/print', 'EmpleadosController@print')->name('empleados.print');
 Route::patch('empleados/{empleado}/role', 'EmpleadosController@changeRole')->name('empleados.changeRole');
@@ -98,12 +102,7 @@ Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato
 Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
 Route::get('empleados/{contrato}/import', 'EmpleadosController@importCreate')->name('empleados.import.create');
 Route::post('empleados/{contrato}/import', 'EmpleadosController@importStore')->name('empleados.import.store');
-Route::get('empleados/{contrato}/create', 'EmpleadosController@create')->name('empleados.create');
-Route::post('empleados/{contrato}/create', 'EmpleadosController@store')->name('empleados.store');
-Route::resource('empleados', 'EmpleadosController')->except([
-  'create',
-  'store'
-]);
+Route::resource('empleados', 'EmpleadosController');
 
 /* --- Empleados - Contratos --- */
 Route::patch('empleados/{empleado}/contrato/cambio', 'EmpleadosContratoController@cambio')->name('empleados.contrato.cambio');
