@@ -2,8 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Scopes\EmpresaScope;
+use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\{Empleado, Postulante};
@@ -29,7 +28,7 @@ class PlantillaVariable extends Model
      * 
      * @var array
      */
-    private $_reserved = [
+    private static $_reserved = [
       '{{e_nombres}}',
       '{{e_apellidos}}',
       '{{e_rut}}',
@@ -79,7 +78,23 @@ class PlantillaVariable extends Model
         $variable->setVariableName();
       });
 
-      static::addGlobalScope(new EmpresaScope);
+      static::addGlobalScope('empresaYGlobales', function (Builder $builder) {
+        $builder->where(function ($query) {
+          $query->where('empresa_id', Auth::user()->empresa->id)
+          ->orWhereNull('empresa_id');
+        });
+      });
+    }
+
+    /**
+     * Scope a query to only include popular users.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGlobal($query)
+    {
+      return $query->whereNull('empresa_id');
     }
 
     /**
@@ -178,7 +193,7 @@ class PlantillaVariable extends Model
      */
     public function isStatic()
     {
-      return $this->tipo == 'empleado' || $this->tipo == 'postulante';
+      return $this->tipo == 'empleado' || $this->tipo == 'postulante' || self::isReserved($this->variable);
     }
 
     /**
@@ -241,7 +256,6 @@ class PlantillaVariable extends Model
       ];
     }
 
-
     /**
      * Obtener las variables del Postulante
      *
@@ -257,5 +271,26 @@ class PlantillaVariable extends Model
         '{{p_telefono}}' => $postulante->telefono,
         '{{p_email}}' => $postulante->email,
       ];
+    }
+
+    /**
+     * Obtener las variables reservadas para el sistema
+     * 
+     * @return array
+     */
+    public static function getReservedVariables()
+    {
+      return self::$_reserved;
+    }
+
+    /**
+     * Evaluar si la variable proporcionada, esta reservada para el sistema
+     * 
+     * @param  string $variable
+     * @return bool
+     */
+    public static function isReserved($variable)
+    {
+      return in_array($variable, self::getReservedVariables());
     }
 }

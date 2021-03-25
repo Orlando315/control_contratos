@@ -354,6 +354,7 @@
             <li><a href="{{ route('admin.development.modulo.index') }}"><i class="fa fa-cube" aria-hidden="true"></i>Modulos</a></li>
             <li><a href="{{ route('admin.development.role.index') }}"><i class="fa fa-user-circle" aria-hidden="true"></i>Roles</a></li>
             <li><a href="{{ route('admin.development.permission.index') }}"><i class="fa fa-key" aria-hidden="true"></i>Permissions</a></li>
+            <li><a href="{{ route('admin.development.variable.index') }}"><i class="fa fa-cube" aria-hidden="true"></i>Variables</a></li>
             <li><a href="{{ route('admin.development.fix.index') }}"><i class="fa fa-terminal" aria-hidden="true"></i>Fixes</a></li>
           </ul>
         </li>

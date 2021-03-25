@@ -78,7 +78,6 @@ Route::get('plantilla/{plantilla}/variables', 'PlantillaController@variables')->
 Route::resource('plantilla', 'PlantillaController');
 
 /* --- Variables --- */
-Route::post('variable/generate/statics', 'PlantillaVariableController@generateStatic')->name('variable.generate');
 Route::resource('variable', 'PlantillaVariableController')
       ->except(['index', 'show']);
 

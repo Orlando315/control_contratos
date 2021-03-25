@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Auth};
-use App\{User, Role, Empresa};
+use App\{User, Role, Empresa, PlantillaVariable};
 
 class FixController extends Controller
 {
@@ -169,6 +169,23 @@ class FixController extends Controller
       return response()->json([
         'usuarios' => $usuarios->count(),
         'actualizados' => $actualizados,
+      ]);
+    }
+
+    /**
+     * Eliminar las variables reservadas del sistema, que esten registradas por las Empresas
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    private function fixRemoveStaticVariables()
+    {
+      $deleted = PlantillaVariable::withoutGlobalScopes()
+      ->whereNotNull('empresa_id')
+      ->whereIn('variable', PlantillaVariable::getReservedVariables())
+      ->delete();
+
+      return response()->json([
+        'eliminadas' => $deleted,
       ]);
     }
 }

@@ -69,6 +69,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>5</td>
+                <td>Eliminar las variables estaticas (reservadas) registradas en las Empresas.</td>
+                <td class="text-center">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admin.development.fix.route', ['fix' => 'remove.static.variables']) }}" target="_blank">
+                    <i class="fa fa-play" aria-hidden="false"></i>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

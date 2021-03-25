@@ -23,6 +23,10 @@ Route::group(['middleware' => 'role:developer'], function(){
   /* --- Permissions --- */
   Route::resource('permission', 'PermissionController');
 
+  /* --- Plantillas - Variables --- */
+  Route::post('variable/generate/statics', 'PlantillaVariableController@generate')->name('variable.generate');
+  Route::resource('variable', 'PlantillaVariableController');
+
   /* --- Fixs --- */
   Route::get('fix', 'FixController@index')->name('fix.index');
   Route::get('fix/{fix}', 'FixController@route')->name('fix.route');
