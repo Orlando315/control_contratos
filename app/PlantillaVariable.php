@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\{Model, Builder};
-use Illuminate\Support\Str;
+use Illuminate\Support\{Collection, Str};
 use Illuminate\Support\Facades\Auth;
 use App\{Empleado, Postulante};
 
@@ -95,21 +95,6 @@ class PlantillaVariable extends Model
     public function scopeGlobal($query)
     {
       return $query->whereNull('empresa_id');
-    }
-
-    /**
-     * Obtener las variables como array para los tokens del editor de texto (CKEditor)
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeToFormEditor()
-    {
-      return self::select('nombre', 'variable')
-                  ->get()
-                  ->map(function ($variable) {
-                    return [$variable->nombre, $variable->withoutTokens()];
-                  })->toArray();
     }
 
     /**
@@ -292,5 +277,20 @@ class PlantillaVariable extends Model
     public static function isReserved($variable)
     {
       return in_array($variable, self::getReservedVariables());
+    }
+
+    /**
+     * Obtener las variables como array para los tokens del editor de texto (CKEditor)
+     *
+     * @param  Illuminate\Support\Collection|null  $variables
+     * @return array
+     */
+    public static function toEditor(Collection $variables = null)
+    {
+      $variables = $variables ?? self::all();
+      return $variables
+      ->map(function ($variable) {
+        return [$variable->nombre, $variable->withoutTokens()];
+      })->toArray();
     }
 }

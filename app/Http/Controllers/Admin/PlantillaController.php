@@ -27,7 +27,8 @@ class PlantillaController extends Controller
     public function create()
     {
       $this->authorize('create', Plantilla::class);
-      $variables = PlantillaVariable::toFormEditor();
+
+      $variables = PlantillaVariable::toEditor();
 
       return view('admin.plantilla.create', compact('variables'));
     }
@@ -96,7 +97,7 @@ class PlantillaController extends Controller
       $this->authorize('update', $plantilla);
 
       $plantilla->load('secciones');
-      $variables = PlantillaVariable::toFormEditor();
+      $variables = PlantillaVariable::toEditor();
 
       return view('admin.plantilla.edit', compact('plantilla', 'variables'));
     }

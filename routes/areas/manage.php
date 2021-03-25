@@ -30,4 +30,8 @@ Route::group(['middleware' => 'role:developer|superadmin'], function(){
 
   /* --- Ayuda --- */
   Route::resource('ayuda', 'AyudaController');
+
+  /* --- Plantilla --- */
+  Route::get('plantilla/create', 'PlantillaController@create')->name('plantilla.create');
+  Route::post('plantilla', 'PlantillaController@store')->name('plantilla.store');
 });

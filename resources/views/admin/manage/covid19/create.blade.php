@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Manage</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.manage.empresa.index') }}">Covid-19</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.manage.covid19.index') }}">Covid-19</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
