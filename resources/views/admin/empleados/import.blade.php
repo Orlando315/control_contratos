@@ -2,6 +2,12 @@
 
 @section('title', 'Empleados')
 
+@section('head')
+  <!-- Select2 -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
+@endsection
+
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -9,7 +15,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Empleados</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
         <li class="breadcrumb-item active"><strong>Importar</strong></li>
       </ol>
     </div>
@@ -30,10 +36,21 @@
           </div>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.import.store', ['contrato' => $contrato->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.empleados.import.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row justify-content-center">
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                  <label for="contrato">Contrato: *</label>
+                  <select id="contrato" class="form-control" name="contrato" required>
+                    <option value="">Seleccione...</option>
+                    @foreach($contratos as $c)
+                      <option value="{{ $c->id }}"{{ old('contrato', optional($contrato)->id) == $c->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
               <div class="col-md-6">
                 <div class="form-group{{ $errors->has('archivo') ? ' has-error' : '' }}">
                   <label for="archivo">Archivo: *</label>
@@ -55,7 +72,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -66,6 +83,8 @@
 @endsection
 
 @section('script')
+  <!-- Select2 -->
+  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){
       $('#archivo').change(function () {
@@ -83,7 +102,12 @@
             showAlert('El archivo no es de un tipo admitido.');
           }
         }
-      })
+      });
+
+      $('#contrato').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+      });
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo

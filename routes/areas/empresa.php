@@ -99,8 +99,8 @@ Route::get('empleados/{empleado}/print', 'EmpleadosController@print')->name('emp
 Route::patch('empleados/{empleado}/role', 'EmpleadosController@changeRole')->name('empleados.changeRole');
 Route::post('empleados/contratos/{contrato}', 'EmpleadosController@getByContrato');
 Route::post('empleados/{empleado}/export', 'EmpleadosController@export')->name('empleados.export');
-Route::get('empleados/{contrato}/import', 'EmpleadosController@importCreate')->name('empleados.import.create');
-Route::post('empleados/{contrato}/import', 'EmpleadosController@importStore')->name('empleados.import.store');
+Route::get('empleados/import/{contrato?}', 'EmpleadosController@importCreate')->name('empleados.import.create');
+Route::post('empleados/import', 'EmpleadosController@importStore')->name('empleados.import.store');
 Route::resource('empleados', 'EmpleadosController');
 
 /* --- Empleados - Contratos --- */

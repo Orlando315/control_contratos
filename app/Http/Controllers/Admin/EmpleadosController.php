@@ -520,28 +520,33 @@ class EmpleadosController extends Controller
      * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
-    public function importCreate(Contrato $contrato)
+    public function importCreate(Contrato $contrato = null)
     {
-      $this->authorize('view', $contrato);
+      if($contrato){
+        $this->authorize('view', $contrato); 
+      }
       $this->authorize('create', Empleado::class);
 
-      return view('admin.empleados.import', compact('contrato'));
+      $contratos = Contrato::all();
+
+      return view('admin.empleados.import', compact('contrato', 'contratos'));
     }
 
     /**
-     * Importar Empleados por excel al Contrato proporcionado
+     * Importar Empleados por excel
      * 
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Contrato  $contrato
      * @return \Illuminate\Http\Response
      */
-    public function importStore(Request $request, Contrato $contrato)
+    public function importStore(Request $request)
     {
-      $this->authorize('view', $contrato);
       $this->authorize('create', Empleado::class);
       $this->validate($request, [
+        'contrato' => 'required',
         'archivo' => 'required|file|mimes:xlsx,xls',
       ]);
+
+      $contrato = Contrato::findOrFail($request->contrato);
 
       try{
         $excel = Excel::import(new EmpleadoImport($contrato), $request->archivo);

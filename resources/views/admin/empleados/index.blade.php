@@ -33,7 +33,13 @@
               <div class="panel-body">
                 @permission('empleado-create')
                   <div class="mb-3 text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Empleado</a>
+                    <div class="btn-group">
+                      <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Empleado</button>
+                      <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                        <li><a class="dropdown-item" href="{{ route('admin.empleados.create') }}">Nuevo Empleado</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create') }}">Importar Empleados</a></li>
+                      </ul>
+                    </div>
                   </div>
                 @endpermission
 
