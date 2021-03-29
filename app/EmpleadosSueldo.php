@@ -162,27 +162,31 @@ class EmpleadosSueldo extends Model
     /**
      * Obtener los años de los sueldos registrados por el ID del Contrato proporcionado
      *
-     * @param  int  $contratoId
+     * @param  int|null  $contratoId
      */
-    public static function allYears($contratoId)
+    public static function allYears($contratoId = null)
     {
       return self::selectRaw('YEAR(mes_pago) as year')
-        ->distinct()
-        ->where('contrato_id', $contratoId)
-        ->orderBy('year', 'desc');
+      ->distinct()
+      ->when($contratoId, function ($query, $id) {
+        return $query->where('contrato_id', $id);
+      })
+      ->orderBy('year', 'desc');
     }
 
     /**
      * Obtener los meses que tienen sueldos registradas en el año proporcionado
      * 
-     * @param  int  $contratoId
+     * @param  int|null  $contratoId
      * @param  int  $year
      */
-    public static function getMonthsByYear($contratoId, $year)
+    public static function getMonthsByYear($contratoId = null, $year)
     {
       return self::selectRaw('MONTH(mes_pago) as month')
         ->distinct()
-        ->where('contrato_id', $contratoId)
+        ->when($contratoId, function ($query, $id) {
+          return $query->where('contrato_id', $id);
+        })
         ->whereYear('mes_pago', $year)
         ->orderBy('month', 'desc');
     }
@@ -190,11 +194,11 @@ class EmpleadosSueldo extends Model
     /**
      * Obtener los sueldos agrupados por mes, del contrato y año proporcionado
      *
-     * @param  int  $contratoId
+     * @param  int|null  $contratoId
      * @param  int  $year
      * @return array
      */
-    public static function monthlyGroupedByYear($contratoId, $year)
+    public static function monthlyGroupedByYear($contratoId = null, $year)
     {
       $months = self::getMonthsByYear($contratoId, $year)
         ->get()
@@ -204,7 +208,9 @@ class EmpleadosSueldo extends Model
       $sueldosByMonth = [];
 
       foreach($months as $month){
-        $sueldos = self::where('contrato_id', $contratoId)
+        $sueldos = self::when($contratoId, function ($query, $id) {
+            return $query->where('contrato_id', $id);
+          })
           ->whereYear('mes_pago', $year)
           ->whereMonth('mes_pago', $month)
           ->get();

@@ -77,6 +77,24 @@
           </a>
         </li>
       @endpermission
+      @permission('contrato-index|plantilla-documento-index|plantilla-index')
+        <li>
+          <a href="#">
+            <i class="fa fa-circle-o"></i>
+            <span class="nav-label">RRHH</span>
+            <span class="fa arrow"></span>
+          </a>
+          <ul class="nav nav-second-level">
+            @permission('anticipo-index')
+              <li><a href="{{ route('admin.anticipos.index') }}"><i class="fa fa-level-up"></i> Anticipos</a></li>
+            @endpermission
+            @permission('sueldo-index')
+              <li><a href="{{ route('admin.sueldos.index') }}"><i class="fa fa-money"></i> Sueldos</a></li>
+            @endpermission
+            <li><a href="{{ route('admin.previred.index') }}"><i class="fa fa-circle-o"></i> Previred</a></li>
+          </ul>
+        </li>
+      @endpermission
       @permission('solicitud-index')
         <li>
           <a href="{{ route('admin.solicitud.index') }}">
@@ -91,7 +109,7 @@
           </a>
         </li>
       @endpermission
-      @permission('anticipo-index|anticipo-create')
+      @permission('anticipo-index')
         <li>
           <a href="#">
             <i class="fa fa-level-up"></i>
@@ -99,13 +117,6 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            @permission('anticipo-index')
-              <li><a href="{{ route('admin.anticipos.index') }}">Ver anticipos</a></li>
-            @endpermission
-            @permission('anticipo-create')
-              <li><a href="{{ route('admin.anticipos.individual') }}">Anticipo Individual</a></li>
-              <li><a href="{{ route('admin.anticipos.masivo') }}">Anticipo Masivo</a></li>
-            @endpermission
           </ul>
         </li>
       @endpermission

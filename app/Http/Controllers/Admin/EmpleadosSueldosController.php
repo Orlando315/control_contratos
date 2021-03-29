@@ -12,17 +12,19 @@ class EmpleadosSueldosController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  \App\Contrato  $contrato
+     * @param  \App\Contrato|null  $contrato
      * @return \Illuminate\Http\Response
      */
-    public function index(Contrato $contrato)
+    public function index(Contrato $contrato = null)
     {
-      $this->authorize('view', $contrato);
+      if($contrato){
+        $this->authorize('view', $contrato); 
+      }
       $this->authorize('viewAny', EmpleadosSueldo::class);
 
       $actualYear = request()->year ?? date('Y');
-      $allYears = EmpleadosSueldo::allYears($contrato->id)->get()->pluck('year')->toArray();
-      $monthlyGroupedSueldos = EmpleadosSueldo::monthlyGroupedByYear($contrato->id, $actualYear);
+      $allYears = EmpleadosSueldo::allYears(optional($contrato)->id)->get()->pluck('year')->toArray();
+      $monthlyGroupedSueldos = EmpleadosSueldo::monthlyGroupedByYear(optional($contrato)->id, $actualYear);
 
       return view('admin.sueldos.index', compact('contrato', 'actualYear', 'allYears', 'monthlyGroupedSueldos'));
     }

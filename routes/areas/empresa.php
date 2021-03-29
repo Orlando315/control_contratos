@@ -128,8 +128,14 @@ Route::post('empleados/eventos/{empleado}', 'EmpleadosEventosController@store')-
 Route::delete('empleados/eventos/{evento}', 'EmpleadosEventosController@destroy')->name('eventos.destroy');
 Route::put('empleados/eventos/{evento}/status', 'EmpleadosEventosController@status')->name('eventos.status');
 
+/* --- Previred - Proximamente --- */
+Route::get('previred', function () {
+  return view('admin.previred.index');
+})
+->name('previred.index');
+
 /* --- Sueldos --- */
-Route::get('sueldos/{contrato}', 'EmpleadosSueldosController@index')->name('sueldos.index');
+Route::get('sueldos/{contrato?}', 'EmpleadosSueldosController@index')->name('sueldos.index');
 Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');
 Route::get('sueldos/{contrato}/create', 'EmpleadosSueldosController@create')->name('sueldos.create');
 Route::post('sueldos/{contrato}', 'EmpleadosSueldosController@store')->name('sueldos.store');

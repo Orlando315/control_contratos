@@ -9,8 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
+        <li class="breadcrumb-item">Sueldos</li>
         <li class="breadcrumb-item active"><strong>Sueldos</strong></li>
       </ol>
     </div>
@@ -20,9 +19,9 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      @permission('contrato-view')
+      @if($contrato && Auth::user()->hasPermission('contrato-view'))
         <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @endpermission
+      @endif
     </div>
   </div>
 
@@ -31,7 +30,7 @@
       <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
     </div>
     <div class="col-md-6 text-center text-md-left">
-      <form id="form-years" action="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}">
+      <form id="form-years" action="{{ route('admin.sueldos.index', ['contrato' => optional($contrato)->id]) }}">
         <div class="form-group">
           <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
             <option value="">Seleccione</option>
@@ -51,9 +50,9 @@
           <h5><i class="fa fa-money"></i> Sueldos</h5>
 
           <div class="ibox-tools">
-            @permission('sueldo-create')
+            @if($contrato && Auth::user()->hasPermission('sueldo-create'))
               <a class="btn btn-primary btn-xs" href="{{ route('admin.sueldos.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Realizar Pagos</a>
-            @endpermission
+            @endif
           </div>
         </div>
         <div class="ibox-content">
@@ -71,6 +70,7 @@
                       <thead>
                         <tr>
                           <th class="text-center">#</th>
+                          <th class="text-center">Contrato</th>
                           <th class="text-center">Fecha</th>
                           <th class="text-center">Empleado</th>
                           <th class="text-center">Alcance líquido</th>
@@ -82,6 +82,7 @@
                         @foreach($month->sueldos as $sueldo)
                           <tr>
                             <td>{{ $loop->iteration }}</td>
+                            <td>{{ $sueldo->contrato->nombre }}</td>
                             <td>{{ $sueldo->mesPagado() }}</td>
                             <td>
                               @permission('empleado-view')
