@@ -26,6 +26,9 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('asistencias')
                  ->dailyAt('23:00');
+
+        $schedule->command('facturacion:sync')
+                 ->dailyAt('2:00');
     }
 
     /**

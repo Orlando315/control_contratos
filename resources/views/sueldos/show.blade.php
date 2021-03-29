@@ -1,78 +1,75 @@
-@extends( 'layouts.app' )
+@extends('layouts.app')
 
-@section( 'title', 'Sueldo - '.config( 'app.name' ) )
-@section( 'header', 'Sueldo' )
-@section( 'breadcrumb' )
-	<ol class="breadcrumb">
-	  <li><a href="{{ route( 'dashboard' ) }}"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a></li>
-    <li><a href="{{ route('sueldos.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
-	  <li class="active"> Sueldo </li>
-	</ol>
+@section('title', 'Sueldo')
+
+@section('page-heading')
+  <div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+      <h2>Sueldos</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
+        <li class="breadcrumb-item active"><strong>Sueldo</strong></li>
+      </ol>
+    </div>
+  </div>
 @endsection
-@section( 'content' )
-  <section>
-    <a class="btn btn-flat btn-default" href="{{ route('sueldos.index', ['contrato' => $sueldo->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-  </section>
 
-  <section style="margin-top: 20px">
+@section('content')
+  <div class="row mb-3">
+    <div class="col-12">
+      <a class="btn btn-default btn-sm" href="{{ url()->previous() }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+    </div>
+  </div>
 
-    @include('partials.flash')
-
-    <div class="row">
-      <div class="col-md-3">
-        <div class="box box-danger">
-          <div class="box-body box-profile">
-            <h4 class="profile-username text-center">
-              Datos del sueldo
-            </h4>
-            <p class="text-muted text-center">{{ $sueldo->created_at }}</p>
-
-            <ul class="list-group list-group-unbordered">
-              <li class="list-group-item">
-                <b>Empleado</b>
-                <span class="pull-right">
-                  <a href="{{ route('empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
-                    {{ $sueldo->empleado->usuario->nombres }} {{ $sueldo->empleado->usuario->nombres }}
-                  </a>
-                </span>
-              </li>
-              <li class="list-group-item">
-                <b>Mes pagado</b>
-                <span class="pull-right">{{ $sueldo->mesPagado() }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Alcance liquido</b>
-                <span class="pull-right">{{ $sueldo->alcanceLiquido() }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Asistencias</b>
-                <span class="pull-right">{{ $sueldo->asistencias }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Anticipo</b>
-                <span class="pull-right">{{ $sueldo->anticipo() }}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Bono de reemplazo</b>
-                <span class="pull-right"> {{ $sueldo->bonoReemplazo() }} </span>
-              </li>
-              <li class="list-group-item">
-                <b>Sueldo liquido</b>
-                <span class="pull-right"> {{ $sueldo->sueldoLiquido() }} </span>
-              </li>
-              <li class="list-group-item">
-                <b>Adjunto</b>
-                <span class="pull-right">{!! $sueldo->adjunto() !!}</span>
-              </li>
-              <li class="list-group-item">
-                <b>Recibido</b>
-                <span class="pull-right">{!! $sueldo->recibido() !!}</span>
-              </li>
-            </ul>
-          </div><!-- /.box-body -->
-        </div>
+  <div class="row mb-3">
+    <div class="col-md-3">
+      <div class="ibox">
+        <div class="ibox-content no-padding">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <b>Mes pagado</b>
+              <span class="pull-right">{{ $sueldo->mesPagado() }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Alcance liquido</b>
+              <span class="pull-right">{{ $sueldo->alcanceLiquido() }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Asistencias</b>
+              <span class="pull-right">{{ $sueldo->asistencias }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Anticipo</b>
+              <span class="pull-right">{{ $sueldo->anticipo() }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Bono de reemplazo</b>
+              <span class="pull-right"> {{ $sueldo->bonoReemplazo() }} </span>
+            </li>
+            <li class="list-group-item">
+              <b>Sueldo liquido</b>
+              <span class="pull-right"> {{ $sueldo->sueldoLiquido() }} </span>
+            </li>
+            <li class="list-group-item">
+              <b>Adjunto</b>
+              <span class="pull-right">
+                @if($sueldo->adjunto)
+                  <a href="{{ $sueldo->download }}">Descargar</a>
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Recibido</b>
+              <span class="pull-right">{!! $sueldo->recibido() !!}</span>
+            </li>
+            <li class="list-group-item text-center">
+              <small class="text-muted">{{ $sueldo->created_at }}</small>
+            </li>
+          </ul>
+        </div><!-- /.box-body -->
       </div>
     </div>
-  </section>
-
+  </div>
 @endsection

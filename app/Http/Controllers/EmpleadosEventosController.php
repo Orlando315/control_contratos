@@ -3,14 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\EmpleadosEvento;
-use App\Empleado;
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
-use Carbon\Carbon;
 
 class EmpleadosEventosController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -37,7 +44,7 @@ class EmpleadosEventosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Empleado $empleado)
+    public function store(Request $request)
     {
       $this->validate($request, [
         'tipo' => 'required',
@@ -47,11 +54,12 @@ class EmpleadosEventosController extends Controller
         'fin' => 'nullable|date_format:Y-m-d',
       ]);
 
-      $lastContrato = $empleado->contratos->last();
+      $lastContrato = Auth::user()->empleado->contratos->last();
       $request->merge([
         'jornada' => $lastContrato->jornada,
         'comida' => false,
-        'pago' => false
+        'pago' => ($request->tipo == 3), // Las vacaciones (Evento tipo 3) son pagas. Todo lo demas es false
+        'status' => null,
       ]);
 
       // Si el evento es Despido o Renuncia la fecha del evento se coloca como la fecha del ultimo contrato
@@ -63,19 +71,19 @@ class EmpleadosEventosController extends Controller
       }
 
       // Evaluar si ya hay un evento registrado en el rango de fechas
-      $eventosRepetidos = $empleado->findEvents($request->inicio, $request->fin, false, '!=', 1)->count();
+      $eventosRepetidos = Auth::user()->empleado->findEvents($request->inicio, $request->fin, false, '!=', 1)->count();
 
       if($eventosRepetidos > 0){
         return ['response' => false, 'message' => 'Ya se encuentra un uno o más eventos registrado en las fechas seleciconadas.'];
       }
 
-      if($evento = $empleado->eventos()->create($request->all())){
+      if($evento = Auth::user()->empleado->eventos()->create($request->all())){
 
         // Cualquier otro evento que no sea Vacaciones. Ya que las vacaciones son pagas.
         if($evento->tipo != 3){
           // Buscar si hay un evento de Asistencia registrado en la fecha, o el rango de fecha
           // Si existe, cambiar la comida y el Pago a False.
-          $asistenciasIds = $empleado->findEvents($evento->inicio, $evento->fin)->pluck('id')->toArray();
+          $asistenciasIds = Auth::user()->empleado->findEvents($evento->inicio, $evento->fin)->pluck('id')->toArray();
 
           if(count($asistenciasIds) > 0){
             EmpleadosEvento::whereIn('id', $asistenciasIds)->update(['comida' => false, 'pago' => false]);
@@ -132,63 +140,6 @@ class EmpleadosEventosController extends Controller
      */
     public function destroy(EmpleadosEvento $evento)
     {
-
-      if($evento->delete()){
-        // Buscar si hay un evento de Asistencia registrado en la fecha, o el rango de fecha del evento eliminado
-        // Si existe, cambiar la comida y el Pago a True.
-        $asistenciasIds = Empleado::find($evento->empleado_id)->findEvents($evento->inicio, $evento->fin, false)->pluck('id')->toArray();
-
-        if(count($asistenciasIds) > 0){
-          EmpleadosEvento::whereIn('id', $asistenciasIds)->update(['comida' => true, 'pago' => true]);
-        }
-
-        $response = ['response' => true, 'evento' => $evento];
-      }else{
-        $response = ['response' => false];
-      }
-
-      return $response;
-    }
-    
-    public function exportEventsTotal(Request $request)
-    {
-      $this->exportExcel(EmpleadosEvento::exportAll($request->inicio, $request->fin), 'TotalEventos');
-    }
-
-    protected function exportExcel($data, $nombre)
-    {
-      $writer = WriterFactory::create(Type::XLSX);
-      $writer->openToBrowser("{$nombre}.xlsx");
-      $writer->addRows($data);
-
-      $writer->close(); 
-    }
-
-    public function events()
-    {
-      return view('eventos.events');
-    }
-
-    public function getEvents(Request $request)
-    {
-      $eventos = EmpleadosEvento::exportAll($request->inicio, $request->fin);
-
-      return $eventos;
-    }
-
-    /*
-      Agregar o eliminar si el Empleado comio ese dia
-    */
-    public function toggleComida(Request $request, EmpleadosEvento $evento)
-    {
-      $evento->comida = (bool) $request->comida;
-
-      if($evento->save()){
-        $response = ['response' => true, 'evento' => $evento];
-      }else{
-        $response = ['response' => false];
-      }
-
-      return $response;
+      //
     }
 }
