@@ -6,14 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmpleadosBanco extends Model
 {
-  //
-  protected $table = 'empleados_bancos';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'empleados_bancos';
 
-  protected $fillable = [
-    'nombre',
-    'tipo_cuenta',
-    'cuenta'
-  ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'nombre',
+      'tipo_cuenta',
+      'cuenta'
+    ];
 
-  public $timestamps = false;
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

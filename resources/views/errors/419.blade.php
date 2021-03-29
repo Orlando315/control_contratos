@@ -1,62 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.blank')
 
-        <title>Página expirada | {{ config( 'app.name' ) }}</title>
+@section('title', 'Página expirada')
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+@section('content')
+  <div class="middle-box text-center animated fadeInDown">
+    <center><img class="img-responsive" src="{{ asset( 'images/logo.png' ) }}" alt="Logo" style="height:80px"></center>
+    <h1>419</h1>
+    <h3 class="font-bold">La página ha expirado por inactividad.</h3>
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 36px;
-                padding: 20px;
-            }
-            a{
-              text-decoration: none;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            <div class="content">
-                <div class="title">
-                  La página ha expirado por inactividad.
-                  <br/><br/>
-                  Por favor intente de nuevo o regrese al <a href="{{ route('dashboard') }}" title="Volver al inicio">inicio </a>
-                </div>
-            </div>
-        </div>
-    </body>
-</html>
+    <div class="error-desc">
+      Por favor intente de nuevo o regrese al <a href="{{ route('dashboard') }}" title="Volver al inicio">inicio</a>.
+    </div>
+  </div>
+@endsection

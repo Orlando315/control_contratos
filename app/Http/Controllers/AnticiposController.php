@@ -2,13 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\{Auth, Storage};
 use Illuminate\Http\Request;
 use App\Anticipo;
-use App\Contrato;
 
 class AnticiposController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+      $this->middleware('role:supervisor|empleado');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,9 +26,7 @@ class AnticiposController extends Controller
      */
     public function index()
     {
-      $anticipos = Anticipo::all();
-
-      return view('anticipos.index', ['anticipos' => $anticipos]);
+      //
     }
 
     /**
@@ -28,9 +36,7 @@ class AnticiposController extends Controller
      */
     public function create()
     {
-      $contratos = Contrato::all();
-
-      return view('anticipos.create', ['contratos' => $contratos]);
+      return view('anticipos.create');
     }
 
     /**
@@ -41,29 +47,55 @@ class AnticiposController extends Controller
      */
     public function store(Request $request)
     {
-      $contrato = Contrato::findOrFail($request->contrato);
-
+      $this->authorize('create', Anticipo::class);
       $this->validate($request, [
-        'empleado_id' => 'required',
-        'fecha' => 'required|date_format:d-m-Y',
-        'anticipo' => 'required|numeric',
+        'solicitud' => 'nullable|boolean',
+        'anticipo' => [
+          function ($attribute, $value, $fail) use ($request) {
+            if($request->solicitud == '1' && is_null($value)){
+              $fail('El elemento anticipo es requerido.');
+            }
+          },
+          'numeric',
+          'min:1',
+          'max:99999999'
+        ],
+        'bono' => 'nullable|numeric|min:1|max:99999999',
+        'descripcion' => 'nullable|string|max:200',
+        'adjunto' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $anticipo = new Anticipo($request->all());
-      $anticipo->contrato_id = $contrato->id;
+      $anticipo = new Anticipo($request->only('bono', 'descripcion', 'adjunto', 'solicitud'));
+      $anticipo->anticipo = $request->anticipo ?? 0;
+      $anticipo->fecha = date('Y-m-d H:i:s');
+      $anticipo->empresa_id = Auth::user()->empresa->id;
+      $anticipo->contrato_id = Auth::user()->empleado->contrato_id;
+      $anticipo->solicitud = $request->solicitud == '1';
+      $anticipo->status = $request->solicitud == '1' ? null : true;
 
-      if($anticipo = Auth::user()->empresa->anticipos()->save($anticipo)){
-        return redirect('anticipos/' . $anticipo->id)->with([
-          'flash_message' => 'Anticipo agregado exitosamente.',
+      if(Auth::user()->empleado->anticipos()->save($anticipo)){
+        if($request->hasFile('adjunto')){
+          $directory = $anticipo->directory;
+
+          if(!Storage::exists($directory)){
+            Storage::makeDirectory($directory);
+          }
+
+          $anticipo->adjunto = $request->file('adjunto')->store($directory);
+          $anticipo->save();
+        }
+
+        return redirect()->route('dashboard')->with([
+          'flash_message' => 'Solicitud de Anticipo agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
-      }else{
-        return redirect('anticipos/create')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
       }
+
+      return redirect()->back()->withInput()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+        ]);
     }
 
     /**
@@ -74,7 +106,7 @@ class AnticiposController extends Controller
      */
     public function show(Anticipo $anticipo)
     {
-      return view('anticipos.show', ['anticipo' => $anticipo]);
+      //
     }
 
     /**
@@ -85,7 +117,7 @@ class AnticiposController extends Controller
      */
     public function edit(Anticipo $anticipo)
     {
-      return view('anticipos.edit', ['anticipo' => $anticipo]);
+      //
     }
 
     /**
@@ -97,27 +129,7 @@ class AnticiposController extends Controller
      */
     public function update(Request $request, Anticipo $anticipo)
     {
-      $this->validate($request, [
-        'fecha' => 'required|date_format:d-m-Y',
-        'anticipo' => 'required|numeric',
-      ]);
-
-      $contrato = $anticipo->contrato_id;
-      $anticipo->fill($request->all());
-      $anticipo->contrato_id = $contrato;
-
-      if($anticipo->save()){
-        return redirect('anticipos/' . $anticipo->id)->with([
-          'flash_message' => 'Anticipo modificado exitosamente.',
-          'flash_class' => 'alert-success'
-          ]);
-      }else{
-        return redirect('anticipos/edit')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
-      }
+      //
     }
 
     /**
@@ -128,90 +140,23 @@ class AnticiposController extends Controller
      */
     public function destroy(Anticipo $anticipo)
     {
-      if($anticipo->delete()){
-        return redirect('anticipos')->with([
-          'flash_class'   => 'alert-success',
-          'flash_message' => 'Anticipo eliminado exitosamente.'
-        ]);
-      }else{
-        return redirect('anticipos')->with([
-          'flash_class'     => 'alert-danger',
-          'flash_message'   => 'Ha ocurrido un error.',
-          'flash_important' => true
-        ]);
-      }
+      //
     }
 
     /**
-     *
+     * Descargar el djunto de Anticipo especificado
+     * 
+     * @param  \App\Anticipo $anticipo
      * @return \Illuminate\Http\Response
      */
-    public function masivo()
+    public function download(Anticipo $anticipo)
     {
-      $contratos = Contrato::all();
+      $this->authorize('view', $anticipo);
 
-      return view('anticipos.createMasivo', ['contratos' => $contratos]);
-    }
-
-    public function getEmpleados(Contrato $contrato)
-    {
-      $empleados = $contrato->empleados()
-                            ->select(['id'])
-                            ->with([
-                              'usuario:id,empleado_id,rut,nombres,apellidos',
-                              'latestAnticipo'
-                            ])
-                            ->get()
-                            ->toArray();
-
-      return $empleados;
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function storeMasivo(Request $request)
-    {
-      $contrato = Contrato::findOrFail($request->contrato);
-      
-      $this->validate($request, [
-        'fecha' => 'required|date_format:d-m-Y',
-      ]);
-
-      $data = json_decode($request->empleados, true);
-
-      if(count($data) == 0){
-        return redirect('anticipos/create/masivo')
-                  ->withErrors('No se encontro información de los empleados.')
-                  ->withInput();
+      if(!$anticipo->adjunto || !Storage::exists($anticipo->adjunto)){
+        abort(404);
       }
 
-      $anticipos = [];
-
-      foreach ($data as $id => $anticipo) {
-        $anticipos[] = [
-          'contrato_id' => $contrato->id,
-          'empleado_id' => $id,
-          'fecha' => $request->fecha,
-          'anticipo' => $anticipo
-        ];
-      }
-
-      if(Auth::user()->empresa->anticipos()->createMany($anticipos)){
-        return redirect('anticipos/')->with([
-          'flash_message' => 'Anticipos agregados exitosamente.',
-          'flash_class' => 'alert-success'
-          ]);
-      }else{
-        return redirect('anticipos/create/masivo')->with([
-          'flash_message' => 'Ha ocurrido un error.',
-          'flash_class' => 'alert-danger',
-          'flash_important' => true
-          ]);
-      }
+      return Storage::download($anticipo->adjunto);
     }
-
 }

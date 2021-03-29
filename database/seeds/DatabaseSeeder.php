@@ -11,7 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-      
       App\Empresa::create([
         'nombres' => 'Empresa',
         'representante' => 'Representante',
@@ -93,6 +92,13 @@ class DatabaseSeeder extends Seeder
         'telefono' => '0000000003',
         'usuario' => '111111-3',
         'password' => bcrypt('111111-3')
+      ]);
+
+      $this->call([
+        PlantillaVariableTableSeeder::class,
+        ModuloSeeder::class,
+        RoleSeeder::class,
+        PermissionSeeder::class,
       ]);
     }
 }

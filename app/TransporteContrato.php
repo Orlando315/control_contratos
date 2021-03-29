@@ -6,19 +6,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransporteContrato extends Model
 {
-  protected $table = 'transportes_contratos';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'transportes_contratos';
   
-  protected $fillable = [
-    'contrato_id',
-  ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'contrato_id',
+    ];
 
-  public function transporte()
-  {
-    return $this->belongsTo('App\Transporte');
-  }
+    /**
+     * Obtener el Transporte al que pertenece
+     */
+    public function transporte()
+    {
+      return $this->belongsTo('App\Transporte');
+    }
 
-  public function contrato()
-  {
-    return $this->belongsTo('App\Contrato');
-  }
+    /**
+     * Obtener el Contrato al que pertenece
+     */
+    public function contrato()
+    {
+      return $this->belongsTo('App\Contrato');
+    }
 }
