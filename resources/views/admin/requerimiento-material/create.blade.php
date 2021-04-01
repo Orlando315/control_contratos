@@ -41,7 +41,7 @@
                   <select id="contrato" class="form-control" name="contrato" required>
                     <option value="">Seleccione...</option>
                     @foreach($contratos as $contrato)
-                      <option value="{{ $contrato->id }}"{{ old('contrato') == $contrato->id ? ' selected' : '' }}>
+                      <option value="{{ $contrato->id }}"{{ old('contrato', ($contrato->isMain() ? $contrato->id : '')) == $contrato->id ? ' selected' : '' }}>
                         {{ $contrato->nombre }}
                       </option>
                     @endforeach

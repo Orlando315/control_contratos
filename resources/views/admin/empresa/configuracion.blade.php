@@ -50,7 +50,7 @@
 
                   <div class="row">
                     <div class="col-md-3">
-                      <div class="form-group{{ $errors->general->has('jornada') ? ' has-error' : '' }}">
+                      <div class="form-group{{ $errors->general->has('general.jornada') ? ' has-error' : '' }}">
                         <label for="jornada">Jornada: *</label>
                         <select id="jornada" class="custom-select" name="jornada" required>
                           <option value="">Seleccione...</option>
@@ -67,10 +67,24 @@
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <div class="form-group{{ $errors->general->has('dias_vencimiento') ? ' has-error' : '' }}">
+                      <div class="form-group{{ $errors->general->has('general.dias_vencimiento') ? ' has-error' : '' }}">
                         <label for="dias_vencimiento">Días antes del vencimiento: *</label>
                         <input id="dias_vencimiento" class="form-control" type="number" name="dias_vencimiento" min="1" max="255" value="{{ old('dias_vencimiento', $configuracion->dias_vencimiento) }}" placeholder="Días vencimiento" required>
                         <span class="form-text text-muted">Cantidad de días restantes al vencimiento de un Contrato / Documento</span>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group{{ $errors->general->has('general.contrato_principal') ? ' has-error' : '' }}">
+                        <label for="contrato_principal">Contrato Principal: *</label>
+                        <select id="contrato_principal" class="custom-select" name="contrato_principal" required>
+                          <option value="">Seleccione...</option>
+                          @foreach($contratos as $contrato)
+                            <option value="{{ $contrato->id }}"{{ old('contrato_principal', ($contrato->isMain() ? $contrato->id : null)) == $contrato->id ? ' selected' : '' }}>
+                              {{ $contrato->nombre }}
+                            </option>
+                          @endforeach
+                        </select>
+                        <span class="form-text text-muted">Estará seleccionado por defecto al agregar/importar Empleados.</span>
                       </div>
                     </div>
                   </div>
@@ -359,7 +373,7 @@
         language: 'es',
       });
 
-      $('#firmante').select2({
+      $('#firmante, #contrato_principal').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });

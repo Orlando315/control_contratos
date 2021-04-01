@@ -109,17 +109,6 @@
           </a>
         </li>
       @endpermission
-      @permission('anticipo-index')
-        <li>
-          <a href="#">
-            <i class="fa fa-level-up"></i>
-            <span class="nav-label">Anticipos</span>
-            <span class="fa arrow"></span>
-          </a>
-          <ul class="nav nav-second-level">
-          </ul>
-        </li>
-      @endpermission
       @permission('etiqueta-index|etiqueta-create')
         <li>
           <a href="#">

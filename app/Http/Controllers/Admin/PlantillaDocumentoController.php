@@ -43,14 +43,13 @@ class PlantillaDocumentoController extends Controller
         $this->authorize('view', $empleado);
       }
 
-      $selected = $contrato;
       $contratos = Contrato::all();
       $plantillas = Plantilla::all();
       $padres = Documento::all();
       $postulantes = Postulante::all();
       $postulanteSelected = Postulante::find(request()->postulante);
 
-      return view('admin.plantilla-documento.create', compact('contratos', 'selected', 'plantillas', 'padres', 'empleado', 'postulantes', 'postulanteSelected'));
+      return view('admin.plantilla-documento.create', compact('contratos', 'contrato', 'plantillas', 'padres', 'empleado', 'postulantes', 'postulanteSelected'));
     }
 
     /**

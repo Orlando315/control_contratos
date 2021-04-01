@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\User;
+use App\{User, Contrato};
 
 class ConfiguracionController extends Controller
 {
@@ -28,8 +28,9 @@ class ConfiguracionController extends Controller
     {
       $configuracion = Auth::user()->empresa->configuracion;
       $users = Auth::user()->empresa->users;
+      $contratos = Contrato::all();
 
-      return view('admin.empresa.configuracion', compact('configuracion', 'users'));
+      return view('admin.empresa.configuracion', compact('configuracion', 'users', 'contratos'));
     }
 
     /**
@@ -43,11 +44,15 @@ class ConfiguracionController extends Controller
       $this->validateWithBag('general', $request, [
         'jornada' => 'required',
         'dias_vencimiento' => 'nullable|integer|min:1|max:255',
+        'contrato_principal' => 'required',
       ]);
 
+      $contrato = Contrato::find($request->contrato_principal);
       Auth::user()->empresa->configuracion->fill($request->only('jornada', 'dias_vencimiento'));
 
       if(Auth::user()->empresa->push()){
+        $contrato->setAsMain();
+
         return redirect()->back()->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Configuracion modificada exitosamente.',

@@ -70,7 +70,11 @@
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
-              <span class="pull-right"> {{ $contrato->descripcion }} </span>
+              <span class="pull-right">@nullablestring($contrato->descripcion)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Principal</b>
+              <span class="pull-right"> {!! $contrato->principal() !!}</span>
             </li>
           </ul>
         </div>

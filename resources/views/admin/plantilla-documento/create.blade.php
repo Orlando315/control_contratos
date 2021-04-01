@@ -79,8 +79,8 @@
                     <label for="contrato">Contrato: *</label>
                     <select id="contrato" class="form-control" name="contrato" required style="width: 100%">
                       <option value="">Seleccione...</option>
-                      @foreach($contratos as $contrato)
-                        <option value="{{ $contrato->id }}"{{ old('contrato', optional($selected)->id) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                      @foreach($contratos as $c)
+                        <option value="{{ $c->id }}"{{ old('contrato', ($contrato ? $contrato->id : ($c->isMain() ? $c->id : ''))) == $c->id ? ' selected' : '' }}>{{ $c->nombre }}</option>
                       @endforeach
                     </select>
                   </div>
