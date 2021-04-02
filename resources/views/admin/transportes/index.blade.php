@@ -43,35 +43,46 @@
         <div class="ibox-content">
           <table class="table data-table table-bordered table-hover table-sm w-100">
             <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Faena</th>
-                <th class="text-center">Supervisor</th>
-                <th class="text-center">Vehiculo</th>
-                <th class="text-center">Patente</th>
-                <th class="text-center">Acción</th>
+              <tr class="text-center">
+                <th>#</th>
+                <th>Patente</th>
+                <th>Descripción</th>
+                <th>Modelo</th>
+                <th>Marca</th>
+                <th>Color</th>
+                <th>Acción</th>
               </tr>
             </thead>
-            <tbody class="text-center">
+            <tbody>
               @foreach($transportes as $transporte)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
-                  <td>
-                    @if($transporte->faena)
-                      {{ $transporte->faena->nombre }}
-                    @else
-                      @nullablestring(null)
-                    @endif
-                  </td>
-                  <td>{{ $transporte->usuario->nombre() }}</td>
-                  <td>{{ $transporte->vehiculo }}</td>
                   <td>{{ $transporte->patente }}</td>
-                  <td>
-                    @permission('transporte-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                    @permission('transporte-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil"></i></a>
+                  <td>@nullablestring($transporte->vehiculo)</td>
+                  <td>@nullablestring($transporte->modelo)</td>
+                  <td>@nullablestring($transporte->marca)</td>
+                  <td>@nullablestring($transporte->color)</td>
+                  <td class="text-center">
+                    @permission('transporte-view|transporte-edit')
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                          @permission('transporte-view')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                          @endpermission
+                          @permission('transporte-edit')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                          @endpermission
+                        </ul>
+                      </div>
                     @endpermission
                   </td>
                 </tr>

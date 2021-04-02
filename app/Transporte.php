@@ -22,6 +22,9 @@ class Transporte extends Model
     protected $fillable = [
       'vehiculo',
       'patente',
+      'modelo',
+      'marca',
+      'color',
     ];
 
     /**
@@ -33,14 +36,6 @@ class Transporte extends Model
     {
       parent::boot();
       static::addGlobalScope(new EmpresaScope);
-    }
-
-    /**
-     * Obtener el Usuario
-     */
-    public function usuario()
-    {
-      return $this->belongsTo('App\User', 'user_id');
     }
 
     /**
@@ -56,7 +51,23 @@ class Transporte extends Model
      */
     public function parentContratos()
     {
-      return $this->belongsToMany('App\Contrato', 'transportes_contratos', 'transporte_id', 'contrato_id');
+      return $this->belongsToMany('App\Contrato', 'transportes_contratos', 'transporte_id', 'contrato_id')->withTimestamps();
+    }
+
+    /**
+     * Obtener los supervisores
+     */
+    public function supervisores()
+    {
+      return $this->belongsToMany('App\User', 'transportes_supervisores', 'transporte_id', 'user_id')->withTimestamps();
+    }
+
+    /**
+     * Obtener los faenas
+     */
+    public function faenas()
+    {
+      return $this->belongsToMany('App\Faena', 'transportes_faenas', 'transporte_id', 'faena_id')->withTimestamps();
     }
 
     /**
@@ -81,14 +92,6 @@ class Transporte extends Model
     public function documentos()
     {
       return $this->morphMany('App\Documento', 'documentable');
-    }
-
-    /**
-     * Obtener la Faena
-     */
-    public function faena()
-    {
-      return $this->belongsTo('App\Faena');
     }
 
     /**
@@ -124,5 +127,21 @@ class Transporte extends Model
       });
 
       return $requisitos;
+    }
+
+    /**
+     * Obtener las Faenas como Tags
+     * 
+     * @return string
+     */
+    public function faenasTags()
+    {
+      $faenas = $this->faenas
+      ->transform(function ($faena){
+        return $faena->asTag();
+      })
+      ->toArray();
+
+      return implode(' ', $faenas);
     }
 }

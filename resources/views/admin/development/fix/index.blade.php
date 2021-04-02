@@ -78,6 +78,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>6</td>
+                <td>Migrar la relacion de Supervisor y Faena de Transporte a belongsToMany.</td>
+                <td class="text-center">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admin.development.fix.route', ['fix' => 'migrate.transporte.data']) }}" target="_blank">
+                    <i class="fa fa-play" aria-hidden="false"></i>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

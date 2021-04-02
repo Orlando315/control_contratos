@@ -84,9 +84,7 @@ class FaenaController extends Controller
         'contratos' => function ($query){
           $query->withCount('empleados');
         },
-        'transportes' => function ($query){
-          $query->with('usuario');
-        },
+        'transportes',
         'inventariosV2Egreso' => function ($query) {
           $query->with('inventario');
         },

@@ -421,10 +421,8 @@
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
-                      <th class="text-center">Supervisor</th>
-                      <th class="text-center">Vehiculo</th>
                       <th class="text-center">Patente</th>
-                      <th class="text-center">Agregado</th>
+                      <th class="text-center">Descripción</th>
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
@@ -432,18 +430,8 @@
                     @foreach($contrato->transportes as $transporte)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @permission('user-view')
-                            <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
-                              {{ $transporte->usuario->nombre() }}
-                            </a>
-                          @else
-                            {{ $transporte->usuario->nombre() }}
-                          @endpermission
-                        </td>
-                        <td>{{ $transporte->vehiculo }}</td>
                         <td>{{ $transporte->patente }}</td>
-                        <td>{{ $transporte->created_at }}</td>
+                        <td>{{ $transporte->vehiculo }}</td>
                         <td>
                           @permission('transporte-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id] )}}"><i class="fa fa-search"></i></a>

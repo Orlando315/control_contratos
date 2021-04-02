@@ -224,21 +224,11 @@
           </ul>
         </li>
       @endpermission
-      @permission('transporte-index|transporte-create')
+      @permission('transporte-index')
         <li>
-          <a href="#">
-            <i class="fa fa-car"></i>
-            <span class="nav-label">Transportes</span>
-            <span class="fa arrow"></span>
+          <a href="{{ route('admin.transportes.index') }}">
+            <i class="fa fa-car"></i> <span class="nav-label">Transportes</span>
           </a>
-          <ul class="nav nav-second-level">
-            @permission('transporte-index')
-              <li><a href="{{ route('admin.transportes.index') }}">Ver transportes</a></li>
-            @endpermission
-            @permission('transporte-create')
-              <li><a href="{{ route('admin.transportes.create') }}">Agregar transporte</a></li>
-            @endpermission
-          </ul>
         </li>
       @endpermission
       @permission('cliente-index|cliente-create')

@@ -47,7 +47,7 @@ class Faena extends Model
      */
     public function transportes()
     {
-      return $this->hasMany('App\Transporte');
+      return $this->belongsToMany('App\Transporte', 'transportes_faenas', 'faena_id', 'transporte_id')->withTimestamps();
     }
 
     /**
@@ -64,5 +64,15 @@ class Faena extends Model
     public function requerimientosMateriales()
     {
       return $this->hasMany('App\RequerimientoMaterial');
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @return string
+     */
+    public function asTag()
+    {
+      return '<small class="label label-default">'.$this->nombre.'</small>';
     }
 }

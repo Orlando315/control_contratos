@@ -166,8 +166,12 @@ Route::resource('transportes', 'TransportesController')->except([
   'index',
   'show'
 ]);
+/* --- Transportes - Contratos --- */
 Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.contratos.store');
 Route::delete('transportes/contratos/{contrato}', 'TransportesController@destroyContratos')->name('transportes.contratos.destroy');
+
+/* --- Transportes - Supervisores --- */
+Route::delete('transportes/supervisor/{transporte}/{supervisor}', 'TransportesController@destroySupervisor')->name('transportes.supervisor.destroy');
 
 /* --- Inventarios --- */
 Route::patch('inventarios/clone/{inventario}', 'InventariosController@clone')->name('inventarios.clone');
