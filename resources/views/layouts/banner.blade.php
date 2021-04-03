@@ -4,7 +4,7 @@
   </div>
 @endif
 
-@if(Auth::user()->empresa->configuracion->hasActiveCovid19Encuesta() && Auth::user()->haventAnsweredCovid19Today())
+@if(Auth::user()->hasRole('empelado') && Auth::user()->empresa->configuracion->hasActiveCovid19Encuesta() && Auth::user()->haventAnsweredCovid19Today())
   <a href="{{ route('covid19') }}" class="btn btn-danger btn-rounded fixed-bottom btn-covid19" title="Encuesta Covid-19">
     <i class="fa fa-heartbeat"></i>
     </br>

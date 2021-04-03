@@ -23,7 +23,7 @@
           <h5>Facturaciones</h5>
         </div>
         <div class="ibox-content">
-          <h2><i class="fa fa-tasks"></i> {{ count($facturaciones) }}</h2>
+          <h2><i class="fa fa-sticky-note"></i> {{ count($facturaciones) }}</h2>
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="col-md-12">
       <div class="ibox">
         <div class="ibox-title">
-          <h5><i class="fa fa-tasks" aria-hidden="true"></i> Facturaciones</h5>
+          <h5><i class="fa fa-sticky-note" aria-hidden="true"></i> Facturaciones</h5>
           <div class="ibox-tools">
             @permission('cotizacion-facturacion-create')
               <a class="btn btn-primary btn-xs" href="{{ route('admin.cotizacion.facturacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Facturación</a>
