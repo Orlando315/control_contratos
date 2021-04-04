@@ -23,6 +23,7 @@ class InventarioV2 extends Model
     protected $fillable = [
       'empresa_id',
       'unidad_id',
+      'bodega_id',
       'nombre',
       'descripcion',
       'codigo',
@@ -102,6 +103,14 @@ class InventarioV2 extends Model
     public function egresos()
     {
       return $this->hasMany('App\InventarioV2Egreso', 'inventario_id', 'id');
+    }
+
+    /**
+     * Obtener la Bodega
+     */
+    public function bodega()
+    {
+      return $this->belongsTo('App\Bodega');
     }
 
     /**

@@ -343,6 +343,12 @@ Route::resource('unidad', 'UnidadController')
   'index',
 ]);
 
+/* --- Inventario V2 - Bodega ---*/
+Route::resource('bodega', 'BodegaController')
+->except([
+  'index',
+]);
+
 /* --- Inventario V2 - Ingresos de Stock ---*/
 Route::get('inventario/v2/ingreso/create/{inventario}', 'InventarioV2IngresoController@create')->name('inventario.ingreso.create');
 Route::post('inventario/v2/ingreso/create/{inventario}', 'InventarioV2IngresoController@store')->name('inventario.ingreso.store');

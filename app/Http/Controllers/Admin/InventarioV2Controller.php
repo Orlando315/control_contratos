@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{InventarioV2, Unidad, Etiqueta};
+use App\{InventarioV2, Unidad, Etiqueta, Bodega};
 use App\Exports\{InventarioV2Export, InventarioV2ImportTemplate};
 use App\Imports\InventarioV2Import;
 use Excel;
@@ -23,8 +23,9 @@ class InventarioV2Controller extends Controller
 
       $inventarios = InventarioV2::all();
       $unidades = Unidad::withCount('inventariosV2')->get();
+      $bodegas = Bodega::withCount('inventariosV2')->get();
 
-      return view('admin.inventarioV2.index', compact('inventarios', 'unidades'));
+      return view('admin.inventarioV2.index', compact('inventarios', 'unidades', 'bodegas'));
     }
 
     /**
@@ -38,8 +39,9 @@ class InventarioV2Controller extends Controller
 
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
+      $bodegas = Bodega::all();
 
-      return view('admin.inventarioV2.create', compact('unidades', 'categorias'));
+      return view('admin.inventarioV2.create', compact('unidades', 'categorias', 'bodegas'));
     }
 
     /**
@@ -55,6 +57,7 @@ class InventarioV2Controller extends Controller
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
         'codigo' => 'nullable|string|max:50',
+        'bodega' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'categorias' => 'nullable',
         'descripcion' => 'nullable|string|max:250',
@@ -63,6 +66,7 @@ class InventarioV2Controller extends Controller
 
       $inventario = new InventarioV2($request->only('nombre', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
+      $inventario->bodega_id = $request->bodega;
 
       if(Auth::user()->empresa->inventariosV2()->save($inventario)){
         if($request->hasFile('foto')){
@@ -102,7 +106,12 @@ class InventarioV2Controller extends Controller
     {
       $this->authorize('view', $inventario);
 
-      $inventario->load('unidad', 'categorias', 'ingresos.proveedor');
+      $inventario->load([
+        'unidad',
+        'bodega',
+        'categorias',
+        'ingresos.proveedor'
+      ]);
 
       return view('admin.inventarioV2.show', compact('inventario'));
     }
@@ -120,8 +129,9 @@ class InventarioV2Controller extends Controller
       $inventario->load('categorias');
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
+      $bodegas = Bodega::all();
 
-      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias'));
+      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias', 'bodegas'));
     }
 
     /**
@@ -138,6 +148,7 @@ class InventarioV2Controller extends Controller
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
         'codigo' => 'nullable|string|max:50',
+        'bodega' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'descripcion' => 'nullable|string|max:250',
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
@@ -145,6 +156,7 @@ class InventarioV2Controller extends Controller
 
       $inventario->fill($request->only('nombre', 'compact', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
+      $inventario->bodega_id = $request->bodega;
 
       if($inventario->save()){
         if($request->hasFile('foto')){

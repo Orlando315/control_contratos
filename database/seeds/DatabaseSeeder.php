@@ -99,6 +99,7 @@ class DatabaseSeeder extends Seeder
         ModuloSeeder::class,
         RoleSeeder::class,
         PermissionSeeder::class,
+        BodegaSeeder::class,
       ]);
     }
 }

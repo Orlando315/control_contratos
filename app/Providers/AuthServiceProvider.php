@@ -42,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\InventarioV2Ingreso' => 'App\Policies\Admin\InventarioV2IngresoPolicy',
       'App\InventarioV2Egreso' => 'App\Policies\Admin\InventarioV2EgresoPolicy',
       'App\Unidad' => 'App\Policies\Admin\UnidadPolicy',
+      'App\Bodega' => 'App\Policies\Admin\BodegaPolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
       'App\Ayuda' => 'App\Policies\AyudaPolicy',

@@ -52,12 +52,28 @@
               <b>Unidad</b>
               <span class="pull-right">
                 @permission('inventario-unidad-view')
-                  <a href="{{ route('admin.unidad.show', ['unidad' => $inventario->unidad->id]) }}">
+                  <a href="{{ route('admin.unidad.show', ['unidad' => $inventario->unidad_id]) }}">
                     {{ $inventario->unidad->nombre }}
                   </a>
                 @else
                   {{ $inventario->unidad->nombre }}
                 @endpermission
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Bodega</b>
+              <span class="pull-right">
+                @if($inventario->bodega)
+                  @permission('bodega-view')
+                    <a href="{{ route('admin.bodega.show', ['bodega' => $inventario->bodega_id]) }}">
+                      {{ $inventario->bodega->nombre }}
+                    </a>
+                  @else
+                    {{ $inventario->bodega->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
               </span>
             </li>
             <li class="list-group-item">

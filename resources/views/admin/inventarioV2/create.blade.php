@@ -49,7 +49,7 @@
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('unidad') ? ' has-error' : '' }}">
                   <label for="unidad">Unidad: *</label>
-                  <select id="unidad" class="form-control" name="unidad">
+                  <select id="unidad" class="form-control" name="unidad" required>
                     <option value="">Seleccione...</option>
                     @foreach($unidades as $unidad)
                       <option value="{{ $unidad->id }}"{{ old('unidad') == $unidad->id ? ' selected' : '' }}>{{ $unidad->nombre }}</option>
@@ -64,6 +64,21 @@
             </div>
 
             <div class="row">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('bodega') ? ' has-error' : '' }}">
+                  <label for="bodega">Bodega:</label>
+                  <select id="bodega" class="form-control" name="bodega" required>
+                    <option value="">Seleccione...</option>
+                    @foreach($bodegas as $bodega)
+                      <option value="{{ $bodega->id }}"{{ old('bodega') == $bodega->id ? ' selected' : '' }}>{{ $bodega->nombre }}</option>
+                    @endforeach
+                  </select>
+
+                  @permission('bodega-create')
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="bodega"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Bodega</button>
+                  @endpermission
+                </div>
+              </div>
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('stock_minimo') ? ' has-error' : '' }}">
                   <label for="stock_minimo">Stock mínimo:</label>
@@ -80,7 +95,7 @@
                   </select>
 
                   @permission('etiqueta-create')
-                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="categorias"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Unidad</button>
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="categorias"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Categoría</button>
                   @endpermission
                 </div>
               </div>
@@ -170,13 +185,13 @@
   <script type="text/javascript">
     let defaultImge = @json(asset('images/default.jpg'));
 
-    @permission('inventario-unidad-create|etiqueta-create')
+    @permission('inventario-unidad-create|etiqueta-create|bodega-create')
       const alertOption = $('.alert-option');
       const optionSubmit = $('.option-submit');
     @endpermission
 
     $(document).ready(function(){
-      $('#unidad, #categorias').select2({
+      $('#unidad, #bodega, #categorias').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
@@ -208,13 +223,14 @@
         }
       });
 
-      @permission('inventario-unidad-create|etiqueta-create')
+      @permission('inventario-unidad-create|etiqueta-create|bodega-create')
         $('#optionModal').on('show.bs.modal', function (e){
           let option = $(e.relatedTarget).data('option');
 
-          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : '{{ route("admin.etiquetas.store") }}';
+          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : (option == 'categorias' ? '{{ route("admin.etiquetas.store") }}' : '{{ route("admin.bodega.store") }}');
+          let title = option == 'unidad' ? 'Unidad' : (option == 'categorias' ? 'Categoría' : 'Bodega');
 
-          $('#optionModalLabel').text(option == 'unidad' ? 'Agregar Unidad' : 'Agregar Categoría');
+          $('#optionModalLabel').text(`Agregar ${title}`);
           $('#option-form').attr('action', url);
           optionSubmit.data('option', option);
         });
@@ -227,7 +243,7 @@
           let form = $(this),
               action = form.attr('action'),
               option = optionSubmit.data('option'),
-              field = (option == 'unidad') ? 'nombre' : 'etiqueta';
+              field = (option == 'unidad' || option == 'bodega') ? 'nombre' : 'etiqueta';
           let data = {
             _token: '{{ csrf_token() }}',
             [field]: $('#option-nombre').val()
@@ -241,8 +257,9 @@
           })
           .done(function (response) {
             if(response.response){
-              let value = (option == 'unidad') ? response.unidad.id : response.etiqueta.id;
-              let nombre = (option == 'unidad') ? response.unidad.nombre : response.etiqueta.etiqueta;
+              let indexName = option != 'categorias' ? option : 'etiqueta';
+              let value = response[indexName].id;
+              let nombre = option != 'categorias' ? response[indexName].nombre : response.etiqueta.etiqueta;
 
               $(`#${option}`).append(`<option value="${value}">${nombre}</option`);
 
