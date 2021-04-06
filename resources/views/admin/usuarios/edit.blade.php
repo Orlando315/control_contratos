@@ -18,7 +18,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
           <h5>Editar usuario</h5>
@@ -32,7 +32,7 @@
               <label>Role: *</label>
               <div class="row">
                 @if($usuario->isEmpresa())
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <div class="custom-control custom-radio">
                       <input id="role-empresa" class="custom-control-input" type="radio" name="role" value="empresa"{{ $usuario->hasActiveOrInactiveRole('empresa') ? '' : ' checked' }} required>
                       <label for="role-empresa" class="custom-control-label">Empresa</label>
@@ -43,7 +43,7 @@
                 @foreach($roles as $role)
                   @continue(!Auth::user()->isAdmin() && $role->name == 'administrador')
 
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <div class="custom-control custom-radio">
                       <input id="role-{{ $role->name }}" class="custom-control-input" type="radio" name="role" value="{{ $role->name }}"{{ $usuario->hasActiveOrInactiveRole($role->name) ? ' checked' : '' }} required>
                       <label for="role-{{ $role->name }}" class="custom-control-label">{{ $role->name() }}</label>
@@ -52,7 +52,7 @@
                 @endforeach
 
                 @if($usuario->isEmpleado())
-                  <div class="col-md-6">
+                  <div class="col-md-4">
                     <div class="custom-control custom-radio">
                       <input id="role-empleado" class="custom-control-input" type="radio" name="role" value="empleado"{{ $usuario->hasActiveOrInactiveRole('administrador|supervisor') ? '' : ' checked' }} required>
                       <label for="role-empleado" class="custom-control-label">Empleado</label>
@@ -63,22 +63,19 @@
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
                   <label for="nombres">Nombres: *</label>
                   <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres', $usuario->nombres) }}" placeholder="Nombres" required>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('apellidos') ? ' has-error' : '' }}">
                   <label for="apellidos">Apellidos: *</label>
                   <input id="apellidos" class="form-control" type="text" name="apellidos" maxlength="50" value="{{ old('apellidos', $usuario->apellidos) }}" placeholder="Apellidos" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                   <label for="rut">RUT: *</label>
                   <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dk])$" value="{{ old('rut', $usuario->rut) }}" placeholder="RUT" required>
@@ -88,13 +85,13 @@
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('telefono') ? ' has-error' : '' }}">
                   <label for="telefono">Teléfono:</label>
                   <input id="telefono" class="form-control" type="text" name="telefono" maxlength="20" value="{{ old('telefono', $usuario->telefono) }}" placeholder="Teléfono">
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                   <label for="email">Email:</label>
                   <input id="email" class="form-control" type="email" name="email" maxlength="50" value="{{ old('email', $usuario->email) }}" placeholder="Email">
@@ -125,7 +122,7 @@
 
                   <div class="row">
                     @foreach($modulo->permissions as $permission)
-                      <div class="col-md-6">
+                      <div class="col-md-4">
                         <div class="custom-control custom-checkbox">
                           <input id="permission-{{ $permission->id }}" class="custom-control-input" data-modulo="modulo-{{ $modulo->id }}" type="checkbox" name="permissions[]" value="{{ $permission->id }}"{{ $usuario->permissions->contains($permission->id) ? ' checked' : '' }}>
                           <label class="custom-control-label" for="permission-{{ $permission->id }}" title="{{ $permission->description }}">

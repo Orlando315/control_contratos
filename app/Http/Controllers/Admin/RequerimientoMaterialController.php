@@ -36,7 +36,7 @@ class RequerimientoMaterialController extends Controller
      */
     public function create()
     {
-      $this->authorize('create', RequermientoMaterial::class);
+      $this->authorize('create', RequerimientoMaterial::class);
 
       $contratos = Auth::user()->empresa->contratos;
       $faenas = Auth::user()->empresa->faenas;
