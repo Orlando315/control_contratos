@@ -66,6 +66,27 @@
                 @endpermission
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                <label for="contrato">Contrato:</label>
+                <select id="contrato" class="form-control">
+                  <option value="">Seleccione...</option>
+                  @foreach($contratos as $contrato)
+                    <option value="{{ $contrato->id }}"{{ old('contrato', ($compra->partida ? $compra->partida->contrato_id : ($contrato->isMain() ? $contrato->id : ''))) == $contrato->id ? ' selected' : '' }}>
+                      {{ $contrato->nombre }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group{{ $errors->has('partida') ? ' has-error' : '' }}">
+                <label for="partida">Partida:</label>
+                <select id="partida" class="form-control" disabled>
+                  <option value="">Seleccione...</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <fieldset>
@@ -248,6 +269,7 @@
             @method('PATCH')
             @csrf
             <input id="form-proveedor" type="hidden" name="proveedor" value="{{ old('proveedor', $compra->id) }}">
+            <input id="form-partida" type="hidden" name="partida" value="{{ old('partida', $compra->partida_id) }}">
             <input id="form-contacto" type="hidden" name="contacto" value="{{ old('contacto', optional($compra->contacto)->id) }}">
             <input id="form-notas" type="hidden" name="notas" value="{{ old('notas', $compra->notas) }}">
             <input id="form-nombre" type="hidden" name="nombre" value="{{ old('nombre', optional($compra->contacto)->nombre) }}">
@@ -693,16 +715,19 @@
       $('#notas').keyup(countCharacters);
       $('#notas').keyup();
 
-      $('#inventario').select2({
+      $('#inventario, #contrato, #partida').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
         allowClear: true,
       });
 
+      $('#contrato').change(searchPartidas)
+      $('#contrato').change();
+
       $('#proveedor').change(loadProveedor);
       $('#proveedor').change();
 
-      $('#nombre, #telefono, #email').change(function () {
+      $('#partida, #nombre, #telefono, #email').change(function () {
         let field = $(this).attr('id');
         let value = $(this).val();
 
@@ -1137,6 +1162,39 @@
       })
       .always(function () {
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);
+      });
+    }
+
+    function searchPartidas() {
+      let contrato = $(this).val();
+
+      if(!contrato){
+        return false;
+      }
+
+      let url = '{{ route("admin.contratos.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
+
+      $('#partida').empty().prop('disabled', true);
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json'
+      })
+      .done(function (response) {
+        $('#partida').empty();
+
+        $.each(response, function (k, partida) {
+          let oldSelected = @json(old('partida', $compra->partida_id)) == partida.id;
+          $('#partida').append(`<option value="${partida.id}"${oldSelected ? ' selected' : ''}>${partida.codigo}</option>`);
+        });
+      })
+      .fail(function () {
+        $('#partida').empty().prop('disabled', true);
+      })
+      .always(function () {
+        $('#partida').prop('disabled', false);
       });
     }
   </script>

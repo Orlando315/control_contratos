@@ -294,6 +294,14 @@ class Contrato extends Model
     }
 
     /**
+     * Obtener las Partidas
+     */
+    public function partidas()
+    {
+      return $this->hasMany('App\Partida');
+    }
+
+    /**
      * Obtener los Requisitos (Documetos/Carpetas) en el Contrato
      */
     public function requisitosWithDocumentos()

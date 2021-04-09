@@ -21,6 +21,7 @@ class Factura extends Model
      */
     protected $fillable = [
       'contrato_id',
+      'partida_id',
       'etiqueta_id',
       'tipo',
       'nombre',
@@ -102,6 +103,14 @@ class Factura extends Model
     public function etiqueta()
     {
       return $this->belongsTo('App\Etiqueta');
+    }
+
+    /**
+     * Obtener la Partida (De Contratos)
+     */
+    public function partida()
+    {
+      return $this->belongsTo('App\Partida');
     }
 
     /**

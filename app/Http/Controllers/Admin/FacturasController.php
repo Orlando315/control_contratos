@@ -46,7 +46,9 @@ class FacturasController extends Controller
     {
       $this->authorize('create', Factura::class);
       $this->validate($request, [
-        'contrato_id' => 'required',
+        'contrato' => 'required',
+        'partida' => 'nullable',
+        'etiqueta' => 'nullable',
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
         'realizada_para' => 'required|string',
@@ -59,7 +61,19 @@ class FacturasController extends Controller
         'adjunto2' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $factura = new Factura($request->all());
+      $factura = new Factura($request->only([
+        'tipo',
+        'nombre',
+        'realizada_para',
+        'realizada_por',
+        'fecha',
+        'valor',
+        'pago_fecha',
+        'pago_estado'
+      ]));
+      $factura->contrato_id = $request->contrato;
+      $factura->partida_id = $request->partida;
+      $factura->etiqueta_id = $request->etiqueta;
       $factura->user_id = Auth::user()->id;
 
       if($factura = Auth::user()->empresa->facturas()->save($factura)){
@@ -114,7 +128,10 @@ class FacturasController extends Controller
     {
       $this->authorize('update', $factura);
 
-      return view('admin.facturas.edit', compact('factura'));
+      $contratos = Contrato::all();
+      $etiquetas = Etiqueta::all();
+
+      return view('admin.facturas.edit', compact('factura', 'contratos', 'etiquetas'));
     }
 
     /**
@@ -128,6 +145,9 @@ class FacturasController extends Controller
     {
       $this->authorize('update', $factura);
       $this->validate($request, [
+        'contrato' => 'required',
+        'partida' => 'nullable',
+        'etiqueta' => 'nullable',
         'tipo' => 'required|in:1,2',
         'nombre' => 'required|string',
         'realizada_para' => 'required|string',
@@ -140,7 +160,19 @@ class FacturasController extends Controller
         'adjunto2' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $factura->fill($request->all());
+      $factura->fill($request->only([
+        'tipo',
+        'nombre',
+        'realizada_para',
+        'realizada_por',
+        'fecha',
+        'valor',
+        'pago_fecha',
+        'pago_estado'
+      ]));
+      $factura->contrato_id = $request->contrato;
+      $factura->partida_id = $request->partida;
+      $factura->etiqueta_id = $request->etiqueta;
 
       if($factura->save()){
         $directory = $factura->directory();

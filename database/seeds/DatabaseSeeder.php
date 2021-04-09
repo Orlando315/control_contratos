@@ -100,6 +100,7 @@ class DatabaseSeeder extends Seeder
         RoleSeeder::class,
         PermissionSeeder::class,
         BodegaSeeder::class,
+        PartidaSeeder::class,
       ]);
     }
 }

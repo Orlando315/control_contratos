@@ -26,7 +26,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10">
       <div class="ibox">
         <div class="ibox-title">
           <h5>Agregar factura</h5>
@@ -36,24 +36,32 @@
             @csrf
 
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('contrato_id') ? ' has-error' : '' }}">
-                  <label for="contrato_id">Contrato: *</label>
-                  <select id="contrato_id" class="form-control" name="contrato_id" required>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                  <label for="contrato">Contrato: *</label>
+                  <select id="contrato" class="form-control" name="contrato" required>
                     <option value="">Seleccione...</option>
                     @foreach($contratos as $contrato)
-                      <option value="{{ $contrato->id }}"{{ old('contrato_id', ($contrato->isMain() ? $contrato->id : '')) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
+                      <option value="{{ $contrato->id }}"{{ old('contrato', ($contrato->isMain() ? $contrato->id : '')) == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
                     @endforeach
                   </select>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('etiqueta_id') ? ' has-error' : '' }}">
-                  <label for="etiqueta_id">Etiqueta:</label>
-                  <select id="etiqueta_id" class="form-control" name="etiqueta_id">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('partida') ? ' has-error' : '' }}">
+                  <label for="partida">Partida:</label>
+                  <select id="partida" class="form-control" name="partida" disabled>
+                    <option value="">Seleccione...</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('etiqueta') ? ' has-error' : '' }}">
+                  <label for="etiqueta">Etiqueta:</label>
+                  <select id="etiqueta" class="form-control" name="etiqueta">
                     <option value="">Seleccione...</option>
                     @foreach($etiquetas as $etiqueta)
-                      <option value="{{ $etiqueta->id }}"{{ old('etiqueta_id') == $etiqueta->id ? ' selected' : '' }}>{{ $etiqueta->etiqueta }}</option>
+                      <option value="{{ $etiqueta->id }}"{{ old('etiqueta') == $etiqueta->id ? ' selected' : '' }}>{{ $etiqueta->etiqueta }}</option>
                     @endforeach
                   </select>
                 </div>
@@ -61,7 +69,7 @@
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('tipo') ? ' has-error' : '' }}">
                   <label for="tipo">Tipo: *</label>
                   <select id="tipo" class="form-control" name="tipo" required>
@@ -71,37 +79,34 @@
                   </select>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
                   <label for="nombre">Nombre: *</label>
                   <input id="nombre" class="form-control" type="text" name="nombre" maxlength="30" value="{{ old('nombre') }}" placeholder="Nombre" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('realizada_por') ? ' has-error' : '' }}">
                   <label for="realizada_por">Realizada por: *</label>
                   <input id="realizada_por" class="form-control" type="text" name="realizada_por" maxlength="50" value="{{ old('realizada_por') }}" placeholder="Realizada Por" required>
                 </div>
               </div>
-              <div class="col-md-6">
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('realizada_para') ? ' has-error' : '' }}">
                   <label for="realizada_para">Realizada para: *</label>
                   <input id="realizada_para" class="form-control" type="text" name="realizada_para" maxlength="50" value="{{ old('realizada_para') }}" placeholder="Realizada Para" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
                   <label for="fecha">Fecha: *</label>
                   <input id="fecha" class="form-control" type="text" name="fecha" value="{{ old('fecha') }}" placeholder="dd-mm-yyyy" required>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('valor') ? ' has-error' : '' }}">
                   <label for="valor">Valor: *</label>
                   <input id="valor" class="form-control" type="number" step="1" min="1" maxlength="999999999999999" name="valor" value="{{ old('valor') }}" placeholder="Valor" required>
@@ -110,13 +115,13 @@
             </div>
 
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('pago_fecha') ? ' has-error' : '' }}">
                   <label for="pago_fecha">Fecha del pago: *</label>
                   <input id="pago_fecha" class="form-control" type="text" name="pago_fecha" value="{{ old('pago_fecha') }}" placeholder="dd-mm-yyyy" required>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('pago_estado') ? ' has-error' : '' }}">
                   <label for="pago_estado">Estado del pago: *</label>
                   <select id="pago_estado" class="form-control" name="pago_estado" required>
@@ -126,10 +131,7 @@
                   </select>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('adjunto1') ? ' has-error' : '' }}">
                   <label for="adjunto1">Adjunto #1: </label>
                   <div class="custom-file">
@@ -138,7 +140,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
+            </div>
+            <div class="row">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('adjunto2') ? ' has-error' : '' }}">
                   <label for="adjunto2">Adjunto #2: </label>
                   <div class="custom-file">
@@ -183,9 +187,18 @@
         autoclose: true
       });
       
-      $('#contrato_id, #etiqueta_id, #tipo, #pago_estado').select2({
+      $('#contrato, #tipo, #pago_estado').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
+      });
+
+      $('#contrato').change(searchPartidas);
+      $('#contrato').change();
+      
+      $('#partida, #etiqueta').select2({
+        theme: 'bootstrap4',
+        placeholder: 'Seleccione...',
+        allowClear: true,
       });
 
       $('.custom-file-input').change(function () {
@@ -222,6 +235,39 @@
     function showAlert(error = 'Ha ocurrido un error'){
       $('.alert ul').empty().append(`<li>${error}</li>`)
       $('.alert').show().delay(5000).hide('slow')
+    }
+
+    function searchPartidas() {
+      let contrato = $(this).val();
+
+      if(!contrato){
+        return false;
+      }
+
+      let url = '{{ route("admin.contratos.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
+
+      $('#partida').empty().prop('disabled', true);
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json'
+      })
+      .done(function (response) {
+        $('#partida').empty();
+
+        $.each(response, function (k, partida) {
+          let oldSelected = @json(old('partida')) == partida.id;
+          $('#partida').append(`<option value="${partida.id}"${oldSelected ? ' selected' : ''}>${partida.codigo}</option>`);
+        });
+      })
+      .fail(function () {
+        $('#partida').empty().prop('disabled', true);
+      })
+      .always(function () {
+        $('#partida').prop('disabled', false);
+      });
     }
   </script>
 @endsection

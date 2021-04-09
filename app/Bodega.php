@@ -39,7 +39,7 @@ class Bodega extends Model
      */
     public function empresa()
     {
-      return $this->hasMany('App\Empresa');
+      return $this->belongsTo('App\Empresa');
     }
 
     /**

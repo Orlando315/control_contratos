@@ -60,6 +60,17 @@ Route::resource('requisito', 'RequisitoController')
 Route::get('requisito/{contrato}/{type}', 'RequisitoController@create')->name('requisito.create');
 Route::post('requisito/{contrato}/{type}', 'RequisitoController@store')->name('requisito.store');
 
+/* --- Partida --- */
+Route::get('partida/create/{contrato}', 'PartidaController@create')->name('partida.create');
+Route::post('partida/create/{contrato}', 'PartidaController@store')->name('partida.store');
+Route::get('partida/tipo/{contrato}/{tipo}', 'PartidaController@tipo')->name('partida.tipo');
+Route::resource('partida', 'PartidaController')
+->except([
+  'index',
+  'create',
+  'store',
+]);
+
 /* --- Contratos / Documentos por expirar --- */
 Route::get('expiration/{type}/{days}', 'HomeController@aboutToExpire')->name('expiration');
 
@@ -288,6 +299,7 @@ Route::resource('contratos', 'ContratosController')->only([
 ]);
 Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
 Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
+Route::get('contratos/partidas/{contrato}', 'ContratosController@partidas')->name('contratos.partidas');
 
 /* --- Carpetas --- */
 Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');

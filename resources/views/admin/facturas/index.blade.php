@@ -44,33 +44,48 @@
         <div class="ibox-content">
           <table class="table data-table table-bordered table-hover table-sm w-100">
             <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Contrato</th>
-                <th class="text-center">Tipo</th>
-                <th class="text-center">Nombre</th>
-                <th class="text-center">Valor</th>
-                <th class="text-center">Fecha</th>
-                <th class="text-center">Pago</th>
-                <th class="text-center">Acción</th>
+              <tr class="text-center">
+                <th>#</th>
+                <th>Contrato</th>
+                <th>Tipo</th>
+                <th>Nombre</th>
+                <th>Valor</th>
+                <th>Fecha</th>
+                <th>Pago</th>
+                <th>Acción</th>
               </tr>
             </thead>
-            <tbody class="text-center">
+            <tbody>
               @foreach($facturas as $factura)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $factura->contrato->nombre }}</td>
                   <td>{{ $factura->tipo() }}</td>
                   <td>{{ $factura->nombre }}</td>
-                  <td>{{ $factura->valor() }}</td>
-                  <td>{{ $factura->fecha }}</td>
-                  <td>{!! $factura->pago() !!}</td>
-                  <td>
-                    @permission('factura-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                    @permission('factura-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
+                  <td class="text-right">{{ $factura->valor() }}</td>
+                  <td class="text-center">{{ $factura->fecha }}</td>
+                  <td class="text-center"><small>{!! $factura->pago() !!}</small></td>
+                  <td class="text-center">
+                    @permission('factura-view|factura-edit')
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                          @permission('factura-view')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.facturas.show', ['factura' => $factura->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                          @endpermission
+                          @permission('factura-edit')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                          @endpermission
+                        </ul>
+                      </div>
                     @endpermission
                   </td>
                 </tr>
