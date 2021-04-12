@@ -113,7 +113,7 @@
             <fieldset>
               <legend class="form-legend">Productos</legend>
 
-              <div class="row">
+              <div class="row align-items-end">
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="inventario">Inventario:</label>
@@ -123,6 +123,31 @@
                         <option value="{{ $inventario->id }}">{{ $inventario->nombre }}</option>
                       @endforeach
                     </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                      <input id="check-codigos" class="custom-control-input" type="checkbox" name="requiere_codigo" value="1"{{ old('requiere_codigo', '0') == '1' ? ' checked' : '' }}>
+                      <label class="custom-control-label" for="check-codigos">
+                        Requiere código
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-3 fields-codigos" style="display: none">
+                  <div class="form-group">
+                    <label for="tipo_codigo">Tipo de código:</label>
+                    <input id="tipo_codigo" class="form-control" type="text" maxlength="6" placeholder="Tipo de código">
+                  </div>
+                </div>
+                <div class="col-md-3 fields-codigos" style="display: none">
+                  <div class="form-group">
+                    <label for="codigo">Código:</label>
+                    <input id="codigo" class="form-control" type="text" maxlength="8" placeholder="Código">
                   </div>
                 </div>
               </div>
@@ -162,12 +187,16 @@
             <table class="table table-bordered">
               <colgroup>
                 <col span="1" style="width: 5%;">
-                <col span="1" style="width: 80%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 60%;">
                 <col span="1" style="width: 15%;">
               </colgroup>
               <thead>
                 <tr class="text-center">
                   <th class="align-middle">-</th>
+                  <th class="align-middle">Tipo</br>código</th>
+                  <th class="align-middle">Código</th>
                   <th class="align-middle">Nombre</th>
                   <th class="align-middle">Cantidad</th>
                 </tr>
@@ -178,6 +207,15 @@
                     <td class="text-center align-middle">
                       <button class="btn btn-danger btn-xs btn-delete m-0" type="button" role="button" data-id="{{ $index }}"><i class="fa fa-trash"></i></button>
                     </td>
+                    <td>
+                      {{ $producto['tipo_codigo'] }}
+                      <input type="hidden" name="productos[{{ $index }}][tipo_codigo]" value="{{ $producto['tipo_codigo'] }}">
+                    </td>
+                    <td>
+                      {{ $producto['codigo'] }}
+                      <input type="hidden" name="productos[{{ $index }}][codigo]" value="{{ $producto['codigo'] }}">
+                    </td>
+                    <td>
                       {{ $producto['nombre'] }}
                       <input type="hidden" name="productos[{{ $index }}][inventario]" value="{{ $producto['inventario'] }}">
                       <input type="hidden" name="productos[{{ $index }}][nombre]" value="{{ $producto['nombre'] }}">
@@ -189,7 +227,7 @@
                   </tr>
                 @empty
                   <tr>
-                    <td class="text-center text-muted" colspan="3">No se han agregado productos.</td>
+                    <td class="text-center text-muted" colspan="5">No se han agregado productos.</td>
                   </tr>
                 @endforelse
               </tbody>
@@ -236,6 +274,12 @@
         placeholder: 'Seleccione...',
       });
 
+      $('#check-codigos').change(function () {
+        let isChecked = $(this).is(':checked');
+        $('.fields-codigos').toggle(isChecked);
+      });
+      $('#check-codigos').change();
+
       $('#contrato, #faena, #centro_costo, #dirigido, #fecha, #urgencia').change(function () {
         let field = $(this).attr('id');
         let value = $(this).val();
@@ -277,6 +321,8 @@
 
       let data = {
         inventario: $('#inventario').val(),
+        tipoCodigo: $('#tipo_codigo').val(),
+        codigo: $('#codigo').val(),
         nombre: $('#producto-nombre').val(),
         cantidad: cantidad,
       };
@@ -290,6 +336,7 @@
       BTN_ADD_PRODUCT.prop('disabled', false);
       $(this)[0].reset();
       $('#inventario').val(null).trigger('change');
+      $('.fields-codigos').toggle(false);
     }
 
     function deleteProduct(){
@@ -301,7 +348,7 @@
       if(productos == 0){
         TBODY_PRODUCTOS
           .addClass('is-empty')
-          .append('<tr class="tr-empty"><td class="text-center text-muted" colspan="3">No se han agregado productos.</td></tr>');
+          .append('<tr class="tr-empty"><td class="text-center text-muted" colspan="5">No se han agregado productos.</td></tr>');
       }
     }
 
@@ -310,6 +357,14 @@
       return `<tr id="tr-${index}" class="tr-producto">
                 <td class="text-center align-middle">
                   <button class="btn btn-danger btn-xs btn-delete m-0" type="button" role="button" data-id="${index}"><i class="fa fa-trash"></i></button>
+                </td>
+                <td>
+                  ${data.tipoCodigo}
+                  <input type="hidden" name="productos[${index}][tipo_codigo]" value="${data.tipoCodigo}">
+                </td>
+                <td>
+                  ${data.codigo}
+                  <input type="hidden" name="productos[${index}][codigo]" value="${data.codigo}">
                 </td>
                 <td>
                   ${data.nombre}

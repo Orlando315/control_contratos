@@ -26,6 +26,7 @@ class InventarioV2 extends Model
       'bodega_id',
       'nombre',
       'descripcion',
+      'tipo_codigo',
       'codigo',
       'foto',
       'stock',

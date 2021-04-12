@@ -42,12 +42,6 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-group{{ $errors->has('codigo') ? ' has-error' : '' }}">
-                  <label for="codigo">Código:</label>
-                  <input id="codigo" class="form-control" type="text" name="codigo" maxlength="50" value="{{ old('codigo', $inventario->codigo) }}" placeholder="Código">
-                </div>
-              </div>
-              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('unidad') ? ' has-error' : '' }}">
                   <label for="unidad">Unidad: *</label>
                   <select id="unidad" class="form-control" name="unidad" required>
@@ -62,13 +56,39 @@
                   @endpermission
                 </div>
               </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="">&nbsp;</label>
+                  <div class="custom-control custom-checkbox">
+                    <input id="check-codigos" class="custom-control-input" type="checkbox" name="requiere_codigo" value="1"{{ old('requiere_codigo', ($inventario->tipo_codigo || $inventario->codigo)) == '1' ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="check-codigos">
+                      Requiere código
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 fields-codigos" style="display: none">
+                <div class="form-group">
+                  <label for="tipo_codigo">Tipo de código:</label>
+                  <input id="tipo_codigo" class="form-control" type="text" name="tipo_codigo" maxlength="6" value="{{ old('tipo_codigo', $inventario->tipo_codigo) }}" placeholder="Tipo de código">
+                </div>
+              </div>
+              <div class="col-md-4 fields-codigos" style="display: none">
+                <div class="form-group">
+                  <label for="codigo">Código:</label>
+                  <input id="codigo" class="form-control" type="text" name="codigo" maxlength="8" value="{{ old('codigo', $inventario->codigo) }}" placeholder="Código">
+                </div>
+              </div>
             </div>
 
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('bodega') ? ' has-error' : '' }}">
                   <label for="bodega">Bodega:</label>
-                  <select id="bodega" class="form-control" name="bodega" required>
+                  <select id="bodega" class="form-control" name="bodega">
                     <option value="">Seleccione...</option>
                     @foreach($bodegas as $bodega)
                       <option value="{{ $bodega->id }}"{{ old('bodega', $inventario->bodega_id) == $bodega->id ? ' selected' : '' }}>{{ $bodega->nombre }}</option>
@@ -197,6 +217,15 @@
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
+
+      $('#check-codigos').change(function () {
+        let isChecked = $(this).is(':checked');
+        $('.fields-codigos').toggle(isChecked);
+        if(!isChecked){
+          $('.fields-codigos input').val(null); 
+        }
+      });
+      $('#check-codigos').change();
 
       $('#foto-link').click(function (e) {
         e.preventDefault();

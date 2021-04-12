@@ -198,13 +198,13 @@
                 <div class="col-md-3 fields-codigos" style="display: none">
                   <div class="form-group">
                     <label for="tipo_codigo">Tipo de código:</label>
-                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo de código">
+                    <input id="tipo_codigo" class="form-control" type="text" maxlength="6" placeholder="Tipo de código">
                   </div>
                 </div>
                 <div class="col-md-3 fields-codigos" style="display: none">
                   <div class="form-group">
                     <label for="codigo">Código:</label>
-                    <input id="codigo" class="form-control" type="text" maxlength="50" placeholder="Código">
+                    <input id="codigo" class="form-control" type="text" maxlength="8" placeholder="Código">
                   </div>
                 </div>
               </div>

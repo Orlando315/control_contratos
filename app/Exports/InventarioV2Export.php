@@ -45,6 +45,7 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
     {
       return [
         'Nombre',
+        'Tipo código',
         'Código',
         'Stock',
         'Stock mínimo',
@@ -77,9 +78,10 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
         'A' => 30,
         'B' => 10,
         'C' => 10,
-        'D' => 16,
+        'D' => 10,
         'E' => 16,
-        'F' => 30,
+        'F' => 16,
+        'G' => 30,
       ];
     }
 
@@ -92,6 +94,7 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
     {
       return [
         'Nombre' => $inventario->nombre,
+        'Tipo código' => $inventario->tipo_codigo,
         'Código' => $inventario->codigo,
         'Stock' => $inventario->stock ?? 0,
         'Stock mínimo' => $inventario->stock_minimo,

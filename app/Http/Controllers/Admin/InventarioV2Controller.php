@@ -56,7 +56,8 @@ class InventarioV2Controller extends Controller
       $this->validate($request, [
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
-        'codigo' => 'nullable|string|max:50',
+        'tipo_codigo' => 'nullable|string|max:6',
+        'codigo' => 'nullable|string|max:8',
         'bodega' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'categorias' => 'nullable',
@@ -64,7 +65,7 @@ class InventarioV2Controller extends Controller
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
       ]);
 
-      $inventario = new InventarioV2($request->only('nombre', 'codigo', 'stock_minimo', 'descripcion'));
+      $inventario = new InventarioV2($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
       $inventario->bodega_id = $request->bodega;
 
@@ -147,14 +148,15 @@ class InventarioV2Controller extends Controller
       $this->validate($request, [
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
-        'codigo' => 'nullable|string|max:50',
+        'tipo_codigo' => 'nullable|string|max:6',
+        'codigo' => 'nullable|string|max:8',
         'bodega' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'descripcion' => 'nullable|string|max:250',
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
       ]);
 
-      $inventario->fill($request->only('nombre', 'compact', 'stock_minimo', 'descripcion'));
+      $inventario->fill($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
       $inventario->bodega_id = $request->bodega;
 

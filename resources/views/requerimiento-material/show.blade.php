@@ -151,6 +151,8 @@
                     <thead>
                       <tr>
                         <th class="text-center">#</th>
+                        <th class="text-center">Tipo</br>código</th>
+                        <th class="text-center">Código</th>
                         <th class="text-center">Nombre</th>
                         <th class="text-center">Cantidad</th>
                         <th class="text-center">Acción</th>
@@ -160,6 +162,8 @@
                       @foreach($requerimiento->productos as $producto)
                         <tr class="{{ $producto->wasAdded() ? ' table-warning' : '' }}">
                           <td class="text-center">{{ $loop->iteration }}</td>
+                          <td>@nullablestring($producto->tipo_codigo)</td>
+                          <td>@nullablestring($producto->codigo)</td>
                           <td>{{ $producto->nombre }}</td>
                           <td class="text-right">{{ $producto->cantidad() }}</td>
                           <td class="text-center">

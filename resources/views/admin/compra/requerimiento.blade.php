@@ -71,7 +71,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <div class="custom-control custom-checkbox">
-                        <input id="check-codigos-{{ $producto->id }}" class="custom-control-input" type="checkbox" name="productos[{{ $producto->id }}][requiere_codigo]" value="1"{{ old('productos.'.$producto->id.'.requiere_codigo', '0') == '1' ? ' checked' : '' }}>
+                        <input id="check-codigos-{{ $producto->id }}" class="custom-control-input" type="checkbox" name="productos[{{ $producto->id }}][requiere_codigo]" value="1"{{ old('productos.'.$producto->id.'.requiere_codigo',  ($producto->tipo_codigo || $producto->codigo)) == '1' ? ' checked' : '' }}>
                         <label class="custom-control-label" for="check-codigos-{{ $producto->id }}">
                           Requiere código
                         </label>
@@ -107,13 +107,13 @@
                   <div class="col-md-3 fields-codigos-{{ $producto->id }}" style="display: none">
                     <div class="form-group">
                       <label for="tipo_codigo-{{ $producto->id }}">Tipo de código:</label>
-                      <input id="tipo_codigo-{{ $producto->id }}" class="form-control" type="text" name="productos[{{ $producto->id }}][tipo_codigo]" value="{{ old('productos.'.$producto->id.'.tipo_codigo') }}" maxlength="20" placeholder="Tipo de código">
+                      <input id="tipo_codigo-{{ $producto->id }}" class="form-control" type="text" maxlength="6" name="productos[{{ $producto->id }}][tipo_codigo]" value="{{ old('productos.'.$producto->id.'.tipo_codigo', $producto->tipo_codigo) }}" placeholder="Tipo de código">
                     </div>
                   </div>
                   <div class="col-md-3 fields-codigos-{{ $producto->id }}" style="display: none">
                     <div class="form-group">
                       <label for="codigo-{{ $producto->id }}">Código:</label>
-                      <input id="codigo-{{ $producto->id }}" class="form-control" type="text" maxlength="50" name="productos[{{ $producto->id }}][codigo]" value="{{ old('productos.'.$producto->id.'.codigo') }}" placeholder="Código">
+                      <input id="codigo-{{ $producto->id }}" class="form-control" type="text" maxlength="8" name="productos[{{ $producto->id }}][codigo]" value="{{ old('productos.'.$producto->id.'.codigo', $producto->codigo) }}" placeholder="Código">
                     </div>
                   </div>
                 </div>

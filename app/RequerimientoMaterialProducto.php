@@ -21,6 +21,8 @@ class RequerimientoMaterialProducto extends Model
     protected $fillable = [
       'requerimiento_id',
       'inventario_id',
+      'tipo_codigo',
+      'codigo',
       'nombre',
       'cantidad',
       'added',

@@ -49,6 +49,14 @@
               <span class="pull-right">{{ $inventario->nombre }}</span>
             </li>
             <li class="list-group-item">
+              <b>Tipo código</b>
+              <span class="pull-right">@nullablestring($inventario->tipo_codigo)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Código</b>
+              <span class="pull-right">@nullablestring($inventario->codigo)</span>
+            </li>
+            <li class="list-group-item">
               <b>Unidad</b>
               <span class="pull-right">
                 @permission('inventario-unidad-view')
