@@ -67,6 +67,14 @@ class Faena extends Model
     }
 
     /**
+     * Obtener las Facturas
+     */
+    public function facturas()
+    {
+      return $this->hasMany('App\Factura');
+    }
+
+    /**
      * Obtener el atributo formateado
      *
      * @return string

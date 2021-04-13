@@ -96,6 +96,7 @@ class FaenaController extends Controller
           ])
           ->withCount('productos');
         },
+        'facturas',
       ]);
 
       return view('admin.faena.show', compact('faena'));

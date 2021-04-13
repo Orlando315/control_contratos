@@ -132,6 +132,14 @@ class Proveedor extends Model
     }
 
     /**
+     * Obtener las Facturas
+     */
+    public function facturas()
+    {
+      return $this->hasMany('App\Factura');
+    }
+
+    /**
      * Evaluar si el proveedor es Empresa
      * 
      * @return bool

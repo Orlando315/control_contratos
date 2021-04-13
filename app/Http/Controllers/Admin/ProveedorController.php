@@ -273,6 +273,7 @@ class ProveedorController extends Controller
         'compras',
         'inventariosV2Ingreso.inventario',
         'productos',
+        'facturas',
       ]);
 
       return view('admin.proveedor.show', compact('proveedor'));

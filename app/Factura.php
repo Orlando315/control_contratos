@@ -114,6 +114,30 @@ class Factura extends Model
     }
 
     /**
+     * Obtener la Faena
+     */
+    public function faena()
+    {
+      return $this->belongsTo('App\Faena');
+    }
+
+    /**
+     * Obtener la Proveedor
+     */
+    public function proveedor()
+    {
+      return $this->belongsTo('App\Proveedor');
+    }
+
+    /**
+     * Obtener la CentroCosto
+     */
+    public function centroCosto()
+    {
+      return $this->belongsTo('App\CentroCosto');
+    }
+
+    /**
      * Obtener el atributo formateado
      *
      * @return string

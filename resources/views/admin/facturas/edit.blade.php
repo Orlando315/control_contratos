@@ -71,19 +71,49 @@
 
             <div class="row">
               <div class="col-md-4">
-                <div class="form-group{{ $errors->has('tipo') ? ' has-error' : '' }}">
-                  <label for="tipo">Tipo: *</label>
-                  <select id="tipo" class="form-control" name="tipo" required>
+                <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
+                  <label for="faena">Faena:</label>
+                  <select id="faena" class="form-control" name="faena">
                     <option value="">Seleccione...</option>
-                    <option value="1" {{ old('tipo', $factura->tipo) == '1' ? ' selected' : '' }}>Ingreso</option>
-                    <option value="2" {{ old('tipo', $factura->tipo) == '2' ? ' selected' : '' }}>Egreso</option>
+                    @foreach($faenas as $faena)
+                      <option value="{{ $faena->id }}"{{ old('faena', $factura->faena_id) == $faena->id ? ' selected' : '' }}>{{ $faena->nombre }}</option>
+                    @endforeach
                   </select>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-group{{ $errors->has('nombre') ? ' has-error' : '' }}">
-                  <label for="nombre">Nombre: *</label>
-                  <input id="nombre" class="form-control" type="text" name="nombre" maxlength="30" value="{{ old('nombre', $factura->nombre) }}" placeholder="Nombre" required>
+                <div class="form-group{{ $errors->has('proveedor') ? ' has-error' : '' }}">
+                  <label for="proveedor">Proveedor:</label>
+                  <select id="proveedor" class="form-control" name="proveedor">
+                    <option value="">Seleccione...</option>
+                    @foreach($proveedores as $proveedor)
+                      <option value="{{ $proveedor->id }}"{{ old('proveedor', $factura->proveedor_id) == $proveedor->id ? ' selected' : '' }}>
+                        {{ $proveedor->rut }} | {{ $proveedor->nombre }}
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('centro_costo') ? ' has-error' : '' }}">
+                  <label for="centro_costo">Centro de costo:</label>
+                  <select id="centro_costo" class="form-control" name="centro_costo">
+                    <option value="">Seleccione...</option>
+                    @foreach($centrosCosto as $centroCosto)
+                      <option value="{{ $centroCosto->id }}"{{ old('centro_costo', $factura->centro_costo_id) == $centroCosto->id ? ' selected' : '' }}>
+                        {{ $centroCosto->nombre }}
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('folio') ? ' has-error' : '' }}">
+                  <label for="folio">Folio: *</label>
+                  <input id="folio" class="form-control" type="text" name="folio" maxlength="30" value="{{ old('folio', $factura->nombre) }}" placeholder="Folio" required>
                 </div>
               </div>
               <div class="col-md-4">
@@ -92,15 +122,15 @@
                   <input id="realizada_por" class="form-control" type="text" name="realizada_por" maxlength="50" value="{{ old('realizada_por', $factura->realizada_por) }}" placeholder="Realizada Por" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('realizada_para') ? ' has-error' : '' }}">
                   <label for="realizada_para">Realizada para: *</label>
                   <input id="realizada_para" class="form-control" type="text" name="realizada_para" maxlength="50" value="{{ old('realizada_para', $factura->realizada_para) }}" placeholder="Realizada Para" required>
                 </div>
               </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('fecha') ? ' has-error' : '' }}">
                   <label for="fecha">Fecha: *</label>
@@ -113,15 +143,15 @@
                   <input id="valor" class="form-control" type="number" step="1" min="1" maxlength="999999999999999" name="valor" value="{{ old('valor', $factura->valor) }}" placeholder="Valor" required>
                 </div>
               </div>
-            </div>
-
-            <div class="row">
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('pago_fecha') ? ' has-error' : '' }}">
                   <label for="pago_fecha">Fecha del pago: *</label>
                   <input id="pago_fecha" class="form-control" type="text" name="pago_fecha" value="{{ old('pago_fecha', $factura->pago_fecha) }}" placeholder="dd-mm-yyyy" required>
                 </div>
               </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-4">
                 <div class="form-group{{ $errors->has('pago_estado') ? ' has-error' : '' }}">
                   <label for="pago_estado">Estado del pago: *</label>
@@ -189,7 +219,7 @@
         autoclose: true
       });
 
-      $('#contrato, #tipo, #pago_estado').select2({
+      $('#contrato, #pago_estado').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
@@ -197,7 +227,7 @@
       $('#contrato').change(searchPartidas);
       $('#contrato').change();
 
-      $('#partida, #etiqueta').select2({
+      $('#partida, #etiqueta, #faena, #proveedor, #centro_costo').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
         allowClear: true,

@@ -57,4 +57,12 @@ class CentroCosto extends Model
     {
       return $this->hasMany('App\RequerimientoMaterial');
     }
+
+    /**
+     * Obtener las Facturas
+     */
+    public function facturas()
+    {
+      return $this->hasMany('App\Factura');
+    }
 }

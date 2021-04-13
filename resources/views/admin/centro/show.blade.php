@@ -60,6 +60,9 @@
             @permission('requerimiento-material-index')
               <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-list-ul"></i> Requerimiento de Materiales</a></li>
             @endpermission
+            @permission('factura-index')
+              <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-clipboard"></i> Facturas</a></li>
+            @endpermission
           </ul>
           <div class="tab-content">
             @permission('inventario-egreso-index')
@@ -171,6 +174,62 @@
                                   @permission('requerimiento-material-edit')
                                     <li>
                                       <a class="dropdown-item" href="{{ route('admin.requerimiento.material.edit', ['requerimiento' => $requerimiento->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
+                            @endpermission
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
+            @permission('factura-index')
+              <div id="tab-3" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Contrato</th>
+                        <th>Tipo</th>
+                        <th>Folio</th>
+                        <th>Valor</th>
+                        <th>Fecha</th>
+                        <th>Pago</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($centro->facturas as $factura)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $factura->contrato->nombre }}</td>
+                          <td>{{ $factura->tipo() }}</td>
+                          <td>{{ $factura->nombre }}</td>
+                          <td class="text-right">{{ $factura->valor() }}</td>
+                          <td class="text-center">{{ $factura->fecha }}</td>
+                          <td class="text-center"><small>{!! $factura->pago() !!}</small></td>
+                          <td class="text-center">
+                            @permission('factura-view|factura-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('factura-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.facturas.show', ['factura' => $factura->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('factura-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}">
                                         <i class="fa fa-pencil"></i> Editar
                                       </a>
                                     </li>

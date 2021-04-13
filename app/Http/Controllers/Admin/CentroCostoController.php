@@ -88,6 +88,7 @@ class CentroCostoController extends Controller
           ])
           ->withCount('productos');
         },
+        'facturas',
       ]);
 
       return view('admin.centro.show', compact('centro'));

@@ -37,7 +37,15 @@
           
           <div class="ibox-tools">
             @permission('factura-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Factura</a>
+              <div class="mb-3 text-right">
+                <div class="btn-group">
+                  <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Factura</button>
+                  <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                    <li><a class="dropdown-item" href="{{ route('admin.facturas.create', ['tipo' => 'ingreso']) }}">Agregar factura de Venta</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.facturas.create', ['tipo' => 'egreso']) }}">Agregar factura de Compra</a></li>
+                  </ul>
+                </div>
+              </div>
             @endpermission
           </div>
         </div>
@@ -48,7 +56,7 @@
                 <th>#</th>
                 <th>Contrato</th>
                 <th>Tipo</th>
-                <th>Nombre</th>
+                <th>Folio</th>
                 <th>Valor</th>
                 <th>Fecha</th>
                 <th>Pago</th>

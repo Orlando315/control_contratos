@@ -81,6 +81,54 @@
               </span>
             </li>
             <li class="list-group-item">
+              <b>Faena</b>
+              <span class="pull-right">
+                @if($factura->faena)
+                  @permission('faena-view')
+                    <a href="{{ route('admin.faena.show', ['faena' => $factura->faena_id]) }}">
+                      {{ $factura->faena->nombre }}
+                    </a>
+                  @else
+                    {{ $factura->faena->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Centro de costo</b>
+              <span class="pull-right">
+                @if($factura->centroCosto)
+                  @permission('centro-costo-view')
+                    <a href="{{ route('admin.centro.show', ['centro' => $factura->centro_costo_id]) }}">
+                      {{ $factura->centroCosto->nombre }}
+                    </a>
+                  @else
+                    {{ $factura->centroCosto->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
+              <b>Proveedor</b>
+              <span class="pull-right">
+                @if($factura->proveedor)
+                  @permission('proveedor-view')
+                    <a href="{{ route('admin.proveedor.show', ['proveedor' => $factura->proveedor_id]) }}">
+                      {{ $factura->proveedor->nombre }}
+                    </a>
+                  @else
+                    {{ $factura->proveedor->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Tipo</b>
               <span class="pull-right">{{ $factura->tipo() }}</span>
             </li>
