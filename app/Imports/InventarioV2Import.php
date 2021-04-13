@@ -2,28 +2,47 @@
 
 namespace App\Imports;
 
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 use Illuminate\Support\Facades\Auth;
-use App\{InventarioV2, Unidad};
+use App\{InventarioV2, Unidad, Etiqueta};
 
-class InventarioV2Import implements ToModel, WithHeadingRow
+class InventarioV2Import implements OnEachRow, WithHeadingRow
 {
     /**
-    * @param array $row
-    *
+    * @param \Maatwebsite\Excel\Row  $row
     * @return \Illuminate\Database\Eloquent\Model|null
     */
-    public function model(array $row)
+    public function onRow(Row $row)
     {
-      // Los datos que no cumplan con los campos requeridos, no sera tomados en cuenta
-      if(!isset($row['nombre']) || !isset($row['unidad_id']) || !Unidad::find($row['unidad_id'])){
+      $collection = $row->toCollection();
+      $data = $collection->only([
+        'nombre',
+        'tipo_codigo',
+        'codigo',
+        'unidad_id',
+        'stock_minimo',
+        'descripcion',
+      ]);
+      $categoriaIds = $collection->only([
+        'categoria_1',
+        'categoria_2',
+        'categoria_3',
+        'categoria_4',
+        'categoria_5',
+        'categoria_6',
+      ]);
+      $categorias = Etiqueta::find($categoriaIds);
+
+      // Las filas que no cumplan con los campos requeridos, no seran tomadas en cuenta
+      if(!isset($data['nombre']) || !isset($data['unidad_id']) || !Unidad::find($data['unidad_id'])){
         return null;
       }
 
-      $row['empresa_id'] = Auth::user()->empresa->id;
-
-      return new InventarioV2($row);
+      $data['empresa_id'] = Auth::user()->empresa->id;
+      $inventario = InventarioV2::create($data->toArray());
+      $inventario->categorias()->attach($categorias);
     }
 
     /**

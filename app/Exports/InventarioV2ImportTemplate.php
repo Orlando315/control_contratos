@@ -4,7 +4,7 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use App\Exports\Sheets\{InventarioSheet, UnidadesSheet};
+use App\Exports\Sheets\{InventarioSheet, UnidadesSheet, CategoriasSheet};
 
 class InventarioV2ImportTemplate implements WithMultipleSheets
 {
@@ -19,6 +19,7 @@ class InventarioV2ImportTemplate implements WithMultipleSheets
     {
       $sheets[0] = new InventarioSheet;
       $sheets[1] = new UnidadesSheet;
+      $sheets[2] = new CategoriasSheet;
 
       return $sheets;
     }
