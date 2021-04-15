@@ -63,7 +63,7 @@
                           <option value="{{ $usuario->id }}"{{ old('usuario') == $usuario->id ? ' selected' : '' }}>{{ $usuario->nombre() }}</option>
                         @endforeach
                       </select>
-                      <small class="form-text">Completar registro a partir de un Usuario existente.</small>
+                      <small class="form-text text-muted">Completar registro a partir de un Usuario existente.</small>
                     </div>
                   </div>
                 @endunless
@@ -71,7 +71,7 @@
             </fieldset>
 
             <fieldset class="mb-3">
-              <legend>Datos del empleado</legend>
+              <legend class="form-legend">Datos del empleado</legend>
 
               <div class="row">
                 <div class="col-md-4">
@@ -90,7 +90,7 @@
                   <div class="form-group{{ $errors->has('rut') ? ' has-error' : '' }}">
                     <label for="rut">RUT: *</label>
                     <input id="rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dkK])$" value="{{ old('rut', optional($postulante)->rut) }}" placeholder="RUT" required{{ $postulante ? ' readonly' : '' }}>
-                    <small class="form-text">Ejemplo: 00000000-0</small>
+                    <small class="form-text text-muted">Ejemplo: 00000000-0</small>
                   </div>
                 </div>
               </div>
@@ -164,7 +164,7 @@
             </fieldset>
 
             <fieldset class="mb-3">
-              <legend>Contacto de emergencia</legend>
+              <legend class="form-legend">Contacto de emergencia</legend>
 
               <div class="row">
                 <div class="col-md-4">
@@ -183,7 +183,7 @@
             </fieldset>
 
             <fieldset class="mb-3">
-              <legend>Datos bancarios</legend>
+              <legend class="form-legend">Datos bancarios</legend>
 
               <div class="row">
                 <div class="col-md-4">
@@ -208,7 +208,7 @@
             </fieldset>
 
             <fieldset class="mb-3">
-              <legend>Contrato</legend>
+              <legend class="form-legend">Contrato</legend>
 
               <div class="row">
                 <div class="col-md-4">
@@ -253,7 +253,7 @@
                       <option value="7x14" {{ old('jornada') == '7x14' ? 'selected' : '' }}>7x14</option>
                       <option value="14x14" {{ old('jornada') == '14x14' ? 'selected' : '' }}>14x14</option>
                     </select>
-                    <small class="form-text">Si no se selecciona, se colocara la jornada de la empresa</small>
+                    <small class="form-text text-muted">Si no se selecciona, se colocara la jornada de la empresa</small>
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -263,6 +263,34 @@
                   </div>
                 </div>
               </div>
+            </fieldset>
+
+            <fieldset>
+              <legend class="form-legend">Contraseña</legend>
+              <p class="text-center">Si no se establece una contraseña, se colocará el RUT como contraseña por defecto. La contraseña puede ser cambiada luego.</p>
+
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input id="check-password" class="custom-control-input" type="checkbox" name="contraseña_personalizada" value="1"{{ old('contraseña_personalizada') == '1' ? ' checked' : '' }}>
+                  <label class="custom-control-label" for="check-password">
+                    Establecer contraseña
+                  </label>
+                </div>
+              </div>
+              <fieldset id="password-fields" class="row" disabled style="display: none">
+                <div class="col-md-4">
+                  <div class="form-group{{ $errors->has('contraseña') ? ' has-error' : '' }}">
+                    <label for="contraseña">Contraseña: *</label>
+                    <input id="contraseña" class="form-control" type="password" name="contraseña" minlength="6" placeholder="Contraseña" required>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group{{ $errors->has('contraseña_confirmation') ? ' has-error' : '' }}">
+                    <label for="contraseña_confirmation">Verificar contraseña: *</label>
+                    <input id="contraseña_confirmation" class="form-control" type="password" name="contraseña_confirmation" minlength="6" placeholder="Verificar contraseña" required>
+                  </div>
+                </div>
+              </fieldset>
             </fieldset>
 
             <div class="alert alert-danger alert-important"{!! count($errors) > 0 ? '' : ' style="display:none"' !!}>
@@ -323,12 +351,22 @@
         placeholder: 'Seleccione...',
       });
 
+      $('#check-password').change(function () {
+        let isChecked = $(this).is(':checked');
+
+        $('#password-fields').prop('disabled', !isChecked).toggle(isChecked);
+      });
+      $('#check-password').change();
+
       @unless($postulante)
         $('#usuario').change(function () {
-          let user = $(this).val()
+          let user = $(this).val();
+          let wasSelected = !!('{{ old("usuario") }}');
 
           if(!user){
-              fillValues([], false)
+            if(wasSelected){
+              fillValues([], false);
+            }
             return false;
           }
 
@@ -344,7 +382,6 @@
             if(response){
               fillValues(response)
             }else{
-
               $('.alert ul').empty().append('<li>Ha ocurrido un error inesperado</li>')
               $('.alert').slideDown(300).delay(3000).slideUp()
             }

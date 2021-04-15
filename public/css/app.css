@@ -129,9 +129,6 @@
 .main-expiration-clocks:hover{
   cursor: pointer;
 }
-.main-expiration-clocks i{
-  font-size: 32px;
-}
 .main-expiration-clocks p{
   font-size: 16px;
 }

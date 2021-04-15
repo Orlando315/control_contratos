@@ -104,7 +104,7 @@
                     <select id="postulante" class="form-control" name="postulante" required style="width: 100%">
                       <option value="">Seleccione...</option>
                       @foreach($postulantes as $postulante)
-                        <option value="{{ $postulante->id }}"{{ old('postulante', optional($postulante)->id) == $postulante->id ? ' selected' : '' }}>{{ $postulante->nombre() }}</option>
+                        <option value="{{ $postulante->id }}"{{ old('postulante', optional($postulanteSelected)->id) == $postulante->id ? ' selected' : '' }}>{{ $postulante->nombre() }}</option>
                       @endforeach
                     </select>
                   </div>
