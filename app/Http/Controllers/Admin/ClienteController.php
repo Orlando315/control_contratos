@@ -162,8 +162,12 @@ class ClienteController extends Controller
         'proveedor' => 'nullable|boolean',
       ]);
 
-      if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
-        return redirect()->back()->withInput()->withErrors('!Error! Integración incompleta.');
+      if(sii()->isInactive()){
+        return redirect()->back()->withInput()->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => '¡Integración no disponible! Comuniquese con el administrador.',
+          'flash_important' => true
+        ]);
       }
 
       $createProveedor = $request->has('proveedor') && $request->proveedor == '1';
@@ -178,7 +182,7 @@ class ClienteController extends Controller
         return redirect()->back()->withInput()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
-      [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->digito_validador);
+      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->digito_validador);
 
       if(!$response){
         return redirect()->back()->withInput()->withErrors($data);
@@ -387,7 +391,7 @@ class ClienteController extends Controller
      */
     public function busquedaSii(Request $request)
     {
-      [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->dv);
+      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->dv);
 
       if(!$response){
         return response()->json(['response' => false, 'data' => $data]);

@@ -12,36 +12,43 @@ use App\Empresa;
 
 class FacturacionSii
 {
-    private $sandbox = null;
-    private $url = '';
-    private $sii_clave;
-    private $sii_clave_certificado;
-    private $rut;
-    private $dv;
+    private $sandbox = false;
+    private $baseUrl = '';
+    private $siiApiKey = null;
+    private $siiRut;
+    private $siiDv;
+    private $siiClave;
     private $token = null;
-    private $firma = null;
 
-    public function __construct(Empresa $empresa = null)
+    public function __construct()
     {
-      $empresa = $empresa ?? Auth::user()->empresa;
-      $this->rut = $empresa->getRut();
-      $this->dv = $empresa->getRutDv();
       $this->sandbox = config('integraciones.sii.sandbox');
-      $this->url = $this->sandbox ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
-      $this->sii_clave = $empresa->configuracion->sii_clave;
-      $this->sii_clave_certificado = $empresa->configuracion->sii_clave_certificado;
-      $this->firma = $empresa->configuracion->firma;
+      $this->baseUrl = $this->sandbox ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
+      $this->siiApiKey = config('integraciones.sii.api_key');
+      $this->siiRut = config('integraciones.sii.rut');
+      $this->siiDv = config('integraciones.sii.dv');
+      $this->siiClave = config('integraciones.sii.clave');
       $this->setApiToken();
     }
 
     /**
-     * Evaluar si es posible conectarse con Paypal
+     * Evaluar si es posible conectarse con la API
      * 
      * @return bool
      */
     public function isActive()
     {
       return !is_null($this->token);
+    }
+
+    /**
+     * Evaluar si no es posible conectarse con la API
+     * 
+     * @return bool
+     */
+    public function isInactive()
+    {
+      return !$this->isActive();
     }
 
     /**
@@ -54,12 +61,12 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('login');
 
       $response = Http::WithHeaders([
-        'api-key' => $this->sii_clave_certificado,
+        'api-key' => $this->getApiKey(),
       ])
       ->post($endpoint, [
-        'rut' => $this->rut,
-        'dv' => $this->dv,
-        'clave' => $this->sii_clave,
+        'rut' => $this->siiRut,
+        'dv' => $this->siiDv,
+        'clave' => $this->siiClave,
       ]);
 
       if($response->successful()){
@@ -68,21 +75,21 @@ class FacturacionSii
         Log::channel('integrations')
           ->info('Error de autenticación con SII', [
             'user' => Auth::id(),
-            'rut' => $this->rut,
-            'dv' => $this->dv,
+            'rut' => $this->siiRut,
+            'dv' => $this->siiDv,
             'response' => $response->json(),
           ]);
       }
     }
 
     /**
-     * Obtener clave de certificado de Sii
+     * Obtener el api-key
      * 
      * @return string
      */
-    private function getSiiClave()
+    private function getApiKey()
     {
-      return $this->sii_clave_certificado;
+      return $this->siiApiKey;
     }
 
     /**
@@ -96,16 +103,6 @@ class FacturacionSii
     }
 
     /**
-     * Obtener la firma
-     * 
-     * @return string
-     */
-    private function getFirma()
-    {
-      return $this->firma;
-    }
-
-    /**
      * Construir la url con el endpoint especificado
      * 
      * @param  string  $endpoint
@@ -113,7 +110,7 @@ class FacturacionSii
      */
     private function buildEndpoint(string $endpoint)
     {
-      $baseUrl = Str::finish($this->url, '/');
+      $baseUrl = Str::finish($this->baseUrl, '/');
       $endpoint = Str::startsWith($endpoint, '/') ? mb_substr($endpoint, 1) : $endpoint;
 
       return $baseUrl.$endpoint;
@@ -131,7 +128,7 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('receptor/buscar/'.$rut.'/'.$dv);
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->get($endpoint);
@@ -158,7 +155,7 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('factura/cargar');
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->get($endpoint);
@@ -195,7 +192,7 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('factura/'.$data.'/receptor/'.$rut.'/'.$dv);
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->get($endpoint);
@@ -234,7 +231,7 @@ class FacturacionSii
       $dataFactura['firma'] = $this->getFirma();
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->post($endpoint, $dataFactura);
@@ -262,7 +259,7 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('facturas/recibidas/'.$page);
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->get($endpoint);
@@ -290,7 +287,7 @@ class FacturacionSii
       $endpoint = $this->buildEndpoint('facturas/recibidas/ver/'.$codigo);
 
       $response = Http::withHeaders([
-        'api-key' => $this->getSiiClave(),
+        'api-key' => $this->getApiKey(),
       ])
       ->withToken($this->getToken())
       ->get($endpoint);

@@ -161,10 +161,10 @@ class ProveedorController extends Controller
         'contactos.*.descripcion' => 'sometimes|nullable|string|max:100',
       ]);
 
-      if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
+      if(sii()->isInactive()){
         return redirect()->back()->withInput()->with([
           'flash_class'     => 'alert-danger',
-          'flash_message'   => '!Error! Integración incompleta.',
+          'flash_message'   => '¡Integración no disponible! Comuniquese con el administrador.',
           'flash_important' => true
         ]);
       }
@@ -181,7 +181,7 @@ class ProveedorController extends Controller
         ]);
       }
 
-      [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->digito_validador);
+      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->digito_validador);
 
       if(!$response){
         return redirect()->back()->withInput()->with([
@@ -391,7 +391,7 @@ class ProveedorController extends Controller
      */
     public function busquedaSii(Request $request)
     {
-      [$response, $data] = Auth::user()->empresa->configuracion->getEmpresaFromSii($request->rut, $request->dv);
+      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->dv);
 
       if(!$response){
         return response()->json(['response' => false, 'data' => $data]);

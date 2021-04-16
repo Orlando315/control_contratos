@@ -19,9 +19,9 @@
 @section('content')
   <div class="row justify-content-center">
     <div class="col-md-6">
-      @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii'))
+      @if(sii()->isInactive())
         <div class="alert alert-danger alert-important">
-          <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder agregar un proveedor Empresa. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
+          <p class="m-0">¡Integración no disponible! Comuniquese con el administrador.</p>
         </div>
       @endif
 
@@ -91,7 +91,7 @@
                       <button class="btn btn-danger btn-xs btn-delete-contacto" type="button" data-index="{{ $index }}">
                         <i class="fa fa-times" aria-hidden="true"></i>
                       </button>
-                       | Contacto #<span class="contacto-index">{{ $loop->iteration }}-{{$index}}</span>
+                      | Contacto #<span class="contacto-index">{{ $loop->iteration }}</span>
                      </h4>
 
                     <div class="row">
@@ -171,7 +171,7 @@
     const BTN_SUBMIT = $('.btn-submit');
     const BTN_CONSULTAR = $('.btn-consultar');
     const ALERT = $('.alert-empresa');
-    const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'));
+    const INTEGRATION_COMPLETE = @json(sii()->isActive());
 
     $(document).ready(function () {
       BTN_CONSULTAR.click(function () {
