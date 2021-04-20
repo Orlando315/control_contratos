@@ -27,10 +27,11 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4>Importar inventario V2</h4>
+          <h4 class="mb-4">Importar inventario V2</h4>
 
           <div class="ibox-tools">
             <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.import.template') }}"><i class="fa fa-download" aria-hidden="true"></i> Descargar formato</a>
+            <p class="m-0 text-muted"><small>Actualizado: 04/20/2021</small></p>
           </div>
         </div>
         <div class="ibox-content">

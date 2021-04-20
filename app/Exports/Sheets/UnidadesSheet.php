@@ -40,8 +40,16 @@ class UnidadesSheet implements FromQuery, WithTitle, WithHeadings, WithStyles, W
     public function headings(): array
     {
       return [
-        'ID',
-        'Nombre',
+        [
+          ' '
+        ],
+        [
+          'Se debe colocar solo el número ID.'
+        ],
+        [
+          'ID',
+          'Nombre',
+        ]
       ];
     }
 
@@ -54,7 +62,9 @@ class UnidadesSheet implements FromQuery, WithTitle, WithHeadings, WithStyles, W
     public function styles(Worksheet $sheet)
     {
       return [
-        1 => ['font' => ['bold' => true, 'size' => 12]],
+        1 => ['font' => ['color' => ['argb' => 'FFFF0000']]],
+        2 => ['font' => ['color' => ['argb' => 'FFFF0000']]],
+        3 => ['font' => ['bold' => true, 'size' => 12]],
       ];
     }
 

@@ -22,9 +22,13 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow
         'tipo_codigo',
         'codigo',
         'unidad_id',
+        'stock',
         'stock_minimo',
         'descripcion',
-      ]);
+      ])
+      ->toArray();
+      $data['stock'] = $data['stock'] ?? 0;
+
       $categoriaIds = $collection->only([
         'categoria_1',
         'categoria_2',
@@ -41,7 +45,7 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow
       }
 
       $data['empresa_id'] = Auth::user()->empresa->id;
-      $inventario = InventarioV2::create($data->toArray());
+      $inventario = InventarioV2::create($data);
       $inventario->categorias()->attach($categorias);
     }
 

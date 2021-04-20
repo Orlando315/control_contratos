@@ -51,6 +51,7 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
           'Tipo código',
           'Código',
           'Unidad ID *',
+          'Stock',
           'Stock mínimo',
           'Descripción',
           'Categoría #1',
@@ -87,17 +88,18 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
     {
       return [
         'A' => 30,
-        'B' => 10,
+        'B' => 12,
         'C' => 10,
         'D' => 13,
-        'E' => 16,
-        'F' => 30,
-        'G' => 15,
+        'E' => 18,
+        'F' => 16,
+        'G' => 30,
         'H' => 15,
         'I' => 15,
         'J' => 15,
         'K' => 15,
         'L' => 15,
+        'M' => 15,
 
       ];
     }
