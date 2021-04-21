@@ -66,7 +66,7 @@ class UnidadPolicy
      */
     public function update(User $user, Unidad $unidad)
     {
-      return $user->hasPermission('inventario-unidad-edit');
+      return $user->hasPermission('inventario-unidad-edit') && $unidad->isNotGlobal();
     }
 
     /**
@@ -78,7 +78,7 @@ class UnidadPolicy
      */
     public function delete(User $user, Unidad $unidad)
     {
-      return $user->hasPermission('inventario-unidad-delete');
+      return $user->hasPermission('inventario-unidad-delete') && $unidad->isNotGlobal();
     }
 
     /**

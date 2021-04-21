@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Support\{Collection, Str};
 use Illuminate\Support\Facades\Auth;
 use App\{Empleado, Postulante};
+use App\Scopes\EmpresaWithGlobalScope;
 
 class PlantillaVariable extends Model
 {
@@ -77,17 +78,11 @@ class PlantillaVariable extends Model
       static::saving(function ($variable) {
         $variable->setVariableName();
       });
-
-      static::addGlobalScope('empresaYGlobales', function (Builder $builder) {
-        $builder->where(function ($query) {
-          $query->where('empresa_id', Auth::user()->empresa->id)
-          ->orWhereNull('empresa_id');
-        });
-      });
+      static::addGlobalScope(new EmpresaWithGlobalScope);
     }
 
     /**
-     * Scope a query to only include popular users.
+     * Incluir solo los registros globales (Que no pertenecen a una Empresa).
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder

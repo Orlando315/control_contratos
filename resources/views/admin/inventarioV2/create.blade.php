@@ -46,7 +46,7 @@
                   <select id="unidad" class="form-control" name="unidad" required>
                     <option value="">Seleccione...</option>
                     @foreach($unidades as $unidad)
-                      <option value="{{ $unidad->id }}"{{ old('unidad') == $unidad->id ? ' selected' : '' }}>{{ $unidad->nombre }}</option>
+                      <option value="{{ $unidad->id }}"{{ old('unidad', $unidad->isPredeterminada() ? $unidad->id : '') == $unidad->id ? ' selected' : '' }}>{{ $unidad->nombre }}</option>
                     @endforeach
                   </select>
 

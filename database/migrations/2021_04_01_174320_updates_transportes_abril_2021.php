@@ -31,7 +31,7 @@ class UpdatesTransportesAbril2021 extends Migration
     {
         Schema::table('transportes', function (Blueprint $table) {
             $table->string('vehiculo')->nullable(false)->change();
-            $table->string('user_id')->nullable(false)->change();
+            $table->unsignedInteger('user_id')->nullable(false)->change();
             $table->dropColumn(['modelo', 'marca', 'color']);
         });
     }

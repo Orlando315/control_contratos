@@ -165,13 +165,13 @@
                                     </a>
                                   </li>
                                 @endpermission
-                                @permission('inventario-unidad-edit')
+                                @if(Auth::user()->hasPermission('inventario-unidad-edit') && $unidad->isNotGlobal())
                                   <li>
                                     <a class="dropdown-item" href="{{ route('admin.unidad.edit', ['unidad' => $unidad->id]) }}">
                                       <i class="fa fa-pencil"></i> Editar
                                     </a>
                                   </li>
-                                @endpermission
+                                @endif
                               </ul>
                             </div>
                           @endpermission

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Manage;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,7 +16,16 @@ class UnidadController extends Controller
      */
     public function index()
     {
-        //
+      $unidades = Unidad::withoutGlobalScopes()
+      ->global()
+      ->withCount([
+        'inventariosV2' => function ($query){
+          return $query->withoutGlobalScopes();
+        }
+      ])
+      ->get();
+
+      return view('admin.manage.unidad.index', compact('unidades'));
     }
 
     /**
@@ -26,9 +35,7 @@ class UnidadController extends Controller
      */
     public function create()
     {
-      $this->authorize('create', Unidad::class);
-
-      return view('admin.unidad.create');
+      return view('admin.manage.unidad.create');
     }
 
     /**
@@ -39,26 +46,17 @@ class UnidadController extends Controller
      */
     public function store(Request $request)
     {
-      $this->authorize('create', Unidad::class);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
 
       $unidad = new Unidad($request->only('nombre'));
 
-      if(Auth::user()->empresa->unidades()->save($unidad)){
-        if($request->ajax()){
-          return response()->json(['response' =>  true, 'unidad' => $unidad]);
-        }
-
-        return redirect()->route('admin.unidad.show', ['unidad' => $unidad->id])->with([
+      if($unidad->save()){
+        return redirect()->route('admin.manage.unidad.show', ['unidad' => $unidad->id])->with([
           'flash_message' => 'Unidad agregada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
-      }
-
-      if($request->ajax()){
-        return response()->json(['response' =>  false]);
       }
 
       return redirect()->back()->withInput()->with([
@@ -76,11 +74,13 @@ class UnidadController extends Controller
      */
     public function show(Unidad $unidad)
     {
-      $this->authorize('view', $unidad);
-      
-      $unidad->load('inventariosV2.unidad');
+      $unidad->loadCount([
+        'inventariosV2' => function ($query){
+          return $query->withoutGlobalScopes();
+        }
+      ]);
 
-      return view('admin.unidad.show', compact('unidad'));
+      return view('admin.manage.unidad.show', compact('unidad'));
     }
 
     /**
@@ -91,9 +91,7 @@ class UnidadController extends Controller
      */
     public function edit(Unidad $unidad)
     {
-      $this->authorize('update', $unidad);
-
-      return view('admin.unidad.edit', compact('unidad'));
+      return view('admin.manage.unidad.edit', compact('unidad'));
     }
 
     /**
@@ -105,7 +103,6 @@ class UnidadController extends Controller
      */
     public function update(Request $request, Unidad $unidad)
     {
-      $this->authorize('update', $unidad);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
@@ -113,7 +110,7 @@ class UnidadController extends Controller
       $unidad->nombre = $request->nombre;
 
       if($unidad->save()){
-        return redirect()->route('admin.unidad.show', ['unidad' => $unidad->id])->with([
+        return redirect()->route('admin.manage.unidad.show', ['unidad' => $unidad->id])->with([
           'flash_message' => 'Unidad modificada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -134,9 +131,7 @@ class UnidadController extends Controller
      */
     public function destroy(Unidad $unidad)
     {
-      $this->authorize('delete', $unidad);
-
-      if($unidad->inventariosV2()->count() > 0){
+      if($unidad->inventariosV2()->withoutGlobalScopes()->count() > 0){
         return redirect()->back()->with([
           'flash_message' => 'Esta Unidad tiene Inventarios V2 agregados.',
           'flash_class' => 'alert-danger',
@@ -145,7 +140,7 @@ class UnidadController extends Controller
       }
 
       if($unidad->delete()){
-        return redirect()->route('admin.inventario.v2.index')->with([
+        return redirect()->route('admin.manage.unidad.index')->with([
           'flash_message' => 'Unidad eliminada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -156,5 +151,34 @@ class UnidadController extends Controller
         'flash_class' => 'alert-danger',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Cambiar status de la Unidad proporcionada
+     * 
+     * @param  \App\Unidad  $unidad
+     * @return \Illuminate\Http\Response
+     */
+    public function status(Unidad $unidad)
+    {
+      Unidad::withoutGlobalScopes()
+      ->global()
+      ->update([
+        'status' => false,
+      ]);
+      $unidad->status = true;
+
+      if($unidad->save()){
+        return redirect()->route('admin.manage.unidad.show', ['unidad' => $unidad->id])->with([
+          'flash_message' => 'Unidad establecida como predeterminada exitosamente.',
+          'flash_class' => 'alert-success'
+        ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_message' => 'Ha ocurrido un error.',
+        'flash_class' => 'alert-danger',
+        'flash_important' => true
+      ]); 
     }
 }

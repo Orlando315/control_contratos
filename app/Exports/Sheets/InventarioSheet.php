@@ -50,7 +50,7 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
           'Nombre *',
           'Tipo código',
           'Código',
-          'Unidad ID *',
+          'Unidad ID',
           'Stock',
           'Stock mínimo',
           'Descripción',

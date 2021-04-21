@@ -257,6 +257,7 @@
             <li><a href="{{ route('admin.manage.covid19.index') }}"><i class="fa fa-heartbeat"></i>Covid-19</a></li>
             <li><a href="{{ route('admin.manage.ayuda.index') }}"><i class="fa fa-question-circle"></i>Ayudas</a></li>
             <li><a href="{{ route('admin.manage.plantilla.create') }}"><i class="fa fa-object-group"></i> Plantillas</a></li>
+            <li><a href="{{ route('admin.manage.unidad.index') }}"><i class="fa fa-file-text-o"></i> Unidades</a></li>
           </ul>
         </li>
       @endrole

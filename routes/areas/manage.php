@@ -34,4 +34,8 @@ Route::group(['middleware' => 'role:developer|superadmin'], function(){
   /* --- Plantilla --- */
   Route::get('plantilla/create', 'PlantillaController@create')->name('plantilla.create');
   Route::post('plantilla', 'PlantillaController@store')->name('plantilla.store');
+
+  /* --- Inventario V2 - Unidad ---*/
+  Route::patch('unidad/{unidad}/status', 'UnidadController@status')->name('unidad.status');
+  Route::resource('unidad', 'UnidadController');
 });
