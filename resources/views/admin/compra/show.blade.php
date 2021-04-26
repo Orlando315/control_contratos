@@ -71,6 +71,22 @@
               </span>
             </li>
             <li class="list-group-item">
+              <b>Partida</b>
+              <span class="pull-right">
+                @if($compra->partida)
+                  @permission('partida-view')
+                    <a href="{{ route('admin.partida.show', ['partida' => $compra->partida_id]) }}">
+                      {{ $compra->partida->codigo }}
+                    </a>
+                  @else
+                    {{ $compra->partida->codigo }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Total</b>
               <span class="pull-right">{{ $compra->total() }}</span>
             </li>

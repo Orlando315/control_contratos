@@ -38,10 +38,10 @@ class UnidadPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Unidad  $inventario
+     * @param  \App\Unidad  $unidad
      * @return mixed
      */
-    public function view(User $user, Unidad $inventario)
+    public function view(User $user, Unidad $unidad)
     {
       return $user->hasPermission('inventario-unidad-view');
     }
@@ -61,34 +61,34 @@ class UnidadPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Unidad  $inventario
+     * @param  \App\Unidad  $unidad
      * @return mixed
      */
-    public function update(User $user, Unidad $inventario)
+    public function update(User $user, Unidad $unidad)
     {
-      return $user->hasPermission('inventario-unidad-edit');
+      return $user->hasPermission('inventario-unidad-edit') && $unidad->isNotGlobal();
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Unidad  $inventario
+     * @param  \App\Unidad  $unidad
      * @return mixed
      */
-    public function delete(User $user, Unidad $inventario)
+    public function delete(User $user, Unidad $unidad)
     {
-      return $user->hasPermission('inventario-unidad-delete');
+      return $user->hasPermission('inventario-unidad-delete') && $unidad->isNotGlobal();
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Unidad  $inventario
+     * @param  \App\Unidad  $unidad
      * @return mixed
      */
-    public function restore(User $user, Unidad $inventario)
+    public function restore(User $user, Unidad $unidad)
     {
         //
     }
@@ -97,10 +97,10 @@ class UnidadPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\Unidad  $inventario
+     * @param  \App\Unidad  $unidad
      * @return mixed
      */
-    public function forceDelete(User $user, Unidad $inventario)
+    public function forceDelete(User $user, Unidad $unidad)
     {
         //
     }

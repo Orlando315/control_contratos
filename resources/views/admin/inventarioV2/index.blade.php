@@ -39,6 +39,9 @@
           @permission('unidad-index')
             <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-file-text-o"></i> Unidades</a></li>
           @endpermission
+          @permission('bodega-index')
+            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-cube"></i> Bodegas</a></li>
+          @endpermission
         </ul>
         <div class="tab-content">
           @permission('inventario-v2-index')
@@ -47,6 +50,7 @@
                 @permission('inventario-v2-create')
                   <div class="mb-3 text-right">
                     <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.export') }}"><i class="fa fa-download" aria-hidden="true"></i> Exportar</a>
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.mass.edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> Editar masivo</a>
                     <div class="btn-group">
                       <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</button>
                       <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
@@ -59,30 +63,24 @@
 
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Nombre</th>
-                      <th class="text-center">Unidad</th>
-                      <th class="text-center">Stock</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Bodega</th>
+                      <th>Ubicación</th>
+                      <th>Stock</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($inventarios as $inventario)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @permission('inventario-v2-view')
-                            <a href="{{ route('admin.inventario.v2.show', ['inventario' => $inventario->id]) }}">
-                              {{ $inventario->nombre }}  
-                            </a>
-                          @else
-                            {{ $inventario->nombre }}
-                          @endif
-                        </td>
-                        <td>{{ $inventario->unidad->nombre }}</td>
+                        <td>{{ $inventario->nombre }}</td>
+                        <td>@nullablestring(optional($inventario->bodega)->nombre)</td>
+                        <td>@nullablestring(optional($inventario->ubicacion)->nombre)</td>
                         <td class="text-right">{{ $inventario->stock() }}</td>
-                        <td>
+                        <td class="text-center">
                           @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')
                             <div class="btn-group">
                               <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
@@ -137,20 +135,20 @@
 
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Unidad</th>
-                      <th class="text-center">Inventarios V2</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Inventarios V2</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($unidades as $unidad)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $unidad->nombre }}</td>
                         <td class="text-right">{{ $unidad->inventarios_v2_count }}</td>
-                        <td>
+                        <td class="text-center">
                           @permission('inventario-unidad-view|inventario-unidad-edit')
                             <div class="btn-group">
                               <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
@@ -162,9 +160,65 @@
                                     </a>
                                   </li>
                                 @endpermission
-                                @permission('inventario-unidad-edit')
+                                @if(Auth::user()->hasPermission('inventario-unidad-edit') && $unidad->isNotGlobal())
                                   <li>
                                     <a class="dropdown-item" href="{{ route('admin.unidad.edit', ['unidad' => $unidad->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endif
+                              </ul>
+                            </div>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
+          @permission('bodega-index')
+            <div id="tab-3" class="tab-pane">
+              <div class="panel-body">
+                @permission('bodega-create')
+                  <div class="mb-3 text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.bodega.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Bodega</a>
+                  </div>
+                @endpermission
+
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Ubicaciones</th>
+                      <th>Inventarios V2</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($bodegas as $bodega)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $bodega->nombre }}</td>
+                        <td class="text-right">{{ $bodega->ubicaciones_count }}</td>
+                        <td class="text-right">{{ $bodega->inventarios_v2_count }}</td>
+                        <td class="text-center">
+                          @permission('bodega-view|bodega-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('bodega-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.bodega.show', ['bodega' => $bodega->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('bodega-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.bodega.edit', ['bodega' => $bodega->id]) }}">
                                       <i class="fa fa-pencil"></i> Editar
                                     </a>
                                   </li>

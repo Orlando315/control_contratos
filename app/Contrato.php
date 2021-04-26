@@ -29,6 +29,16 @@ class Contrato extends Model
       'fin',
       'valor',
       'descripcion',
+      'main',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'main' => 'boolean',
     ];
 
     /**
@@ -68,6 +78,17 @@ class Contrato extends Model
       $plusDays = date('Y-m-d H:i:s', strtotime("{$now} +{$days} days"));
 
       return $query->whereNotNull('fin')->whereBetween('fin', [$now, $plusDays]);
+    }
+
+    /**
+     * Filtro para obtener los registros con el campo main = true
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMain($query)
+    {
+      return $query->where('main', true);
     }
 
     /**
@@ -270,6 +291,14 @@ class Contrato extends Model
     public function requerimientosMateriales()
     {
       return $this->hasMany('App\RequerimientoMaterial');
+    }
+
+    /**
+     * Obtener las Partidas
+     */
+    public function partidas()
+    {
+      return $this->hasMany('App\Partida');
     }
 
     /**
@@ -577,5 +606,39 @@ class Contrato extends Model
         'lessThan7' => $lessThan7,
         'lessThan21' => $lessThan21,
       ];
+    }
+
+    /**
+     * Evaluar si el Contrato esta seleccionado como Principal
+     * 
+     * @return bool
+     */
+    public function isMain()
+    {
+      return $this->main;
+    }
+
+    /**
+     * Establecer el Contrato como Principal
+     */
+    public function setAsMain()
+    {
+      if($this->isMain()){
+        return false;
+      }
+
+      $this->empresa->contratos()->main()->update(['main' => false]);
+      $this->main = true;
+      $this->save();
+    }
+
+    /**
+     * Obtener el atributo formateado como label
+     *
+     * @return string
+     */
+    public function principal()
+    {
+      return $this->isMain() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
     }
 }

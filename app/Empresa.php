@@ -313,6 +313,14 @@ class Empresa extends Model
     }
 
     /**
+     * Obtener las Bodegas
+     */
+    public function bodegas()
+    {
+      return $this->hasMany('App\Bodega');
+    }
+
+    /**
      * Obtener una parte especifica del rut
      *
      * @param  int  $part

@@ -22,12 +22,14 @@
       @permission('inventario-v2-index')
         <a class="btn btn-default btn-sm" href="{{ route('admin.inventario.v2.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
-      @permission('inventario-unidad-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.unidad.edit', ['unidad' => $unidad->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-      @endpermission
-      @permission('inventario-unidad-delete')
-        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
-      @endpermission
+      @if($unidad->isNotGlobal())
+        @permission('inventario-unidad-edit')
+          <a class="btn btn-default btn-sm" href="{{ route('admin.unidad.edit', ['unidad' => $unidad->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        @endpermission
+        @permission('inventario-unidad-delete')
+          <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
+        @endpermission
+      @endif
     </div>
   </div>
 
@@ -121,7 +123,7 @@
     </div>
   @endpermission
 
-  @permission('inventario-unidad-delete')
+  @if(Auth::user()->hasPermission('inventario-unidad-delete') && $unidad->isNotGlobal())
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -146,5 +148,5 @@
         </div>
       </div>
     </div>
-  @endpermission
+  @endif
 @endsection

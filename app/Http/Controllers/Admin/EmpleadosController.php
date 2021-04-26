@@ -96,6 +96,7 @@ class EmpleadosController extends Controller
         'fin' => 'nullable|date_format:d-m-Y',
         'jornada' => 'nullable',
         'descripcion' => 'nullable|string|max:200',
+        'contraseña' => 'required_with:contraseña_personalizada|min:6|confirmed',
       ]);
 
       if(!$request->jornada){
@@ -131,7 +132,7 @@ class EmpleadosController extends Controller
         }else{
           $usuario = new User($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
           $usuario->usuario  = $request->rut;
-          $usuario->password = bcrypt($request->rut);
+          $usuario->password = $request->has('contraseña_personalizada') ? $request->input('contraseña') : bcrypt($request->rut);
           $empleado->usuario()->save($usuario);
           $usuario->attachRole($role);
           Auth::user()->empresa->users()->attach($usuario->id);

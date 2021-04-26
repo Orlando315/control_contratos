@@ -66,6 +66,27 @@
                 @endpermission
               </div>
             </div>
+            <div class="col-md-3">
+              <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
+                <label for="contrato">Contrato:</label>
+                <select id="contrato" class="form-control">
+                  <option value="">Seleccione...</option>
+                  @foreach($contratos as $contrato)
+                    <option value="{{ $contrato->id }}"{{ old('contrato', ($contrato->isMain() ? $contrato->id : '')) == $contrato->id ? ' selected' : '' }}>
+                      {{ $contrato->nombre }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group{{ $errors->has('partida') ? ' has-error' : '' }}">
+                <label for="partida">Partida:</label>
+                <select id="partida" class="form-control" disabled>
+                  <option value="">Seleccione...</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <fieldset>
@@ -177,13 +198,13 @@
                 <div class="col-md-3 fields-codigos" style="display: none">
                   <div class="form-group">
                     <label for="tipo_codigo">Tipo de código:</label>
-                    <input id="tipo_codigo" class="form-control" type="text" maxlength="20" placeholder="Tipo de código">
+                    <input id="tipo_codigo" class="form-control" type="text" maxlength="6" placeholder="Tipo de código">
                   </div>
                 </div>
                 <div class="col-md-3 fields-codigos" style="display: none">
                   <div class="form-group">
                     <label for="codigo">Código:</label>
-                    <input id="codigo" class="form-control" type="text" maxlength="50" placeholder="Código">
+                    <input id="codigo" class="form-control" type="text" maxlength="8" placeholder="Código">
                   </div>
                 </div>
               </div>
@@ -247,6 +268,7 @@
           <form action="{{ route('admin.compra.store') }}" method="POST">
             @csrf
             <input id="form-proveedor" type="hidden" name="proveedor" value="{{ old('proveedor') }}">
+            <input id="form-partida" type="hidden" name="partida" value="{{ old('partida') }}">
             <input id="form-contacto" type="hidden" name="contacto" value="{{ old('contacto') }}">
             <input id="form-notas" type="hidden" name="notas" value="{{ old('notas') }}">
             <input id="form-nombre" type="hidden" name="nombre" value="{{ old('nombre') }}">
@@ -654,16 +676,19 @@
       $('#notas').keyup(countCharacters);
       $('#notas').keyup();
 
-      $('#inventario').select2({
+      $('#inventario, #contrato, #partida').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
         allowClear: true,
       });
 
+      $('#contrato').change(searchPartidas)
+      $('#contrato').change();
+
       $('#proveedor').change(loadProveedor);
       $('#proveedor').change();
 
-      $('#nombre, #telefono, #email').change(function () {
+      $('#partida, #nombre, #telefono, #email').change(function () {
         let field = $(this).attr('id');
         let value = $(this).val();
 
@@ -1098,6 +1123,39 @@
       })
       .always(function () {
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);
+      });
+    }
+
+    function searchPartidas() {
+      let contrato = $(this).val();
+
+      if(!contrato){
+        return false;
+      }
+
+      let url = '{{ route("admin.contratos.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
+
+      $('#partida').empty().prop('disabled', true);
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json'
+      })
+      .done(function (response) {
+        $('#partida').empty();
+
+        $.each(response, function (k, partida) {
+          let oldSelected = @json(old('partida')) == partida.id;
+          $('#partida').append(`<option value="${partida.id}"${oldSelected ? ' selected' : ''}>${partida.codigo}</option>`);
+        });
+      })
+      .fail(function () {
+        $('#partida').empty().prop('disabled', true);
+      })
+      .always(function () {
+        $('#partida').prop('disabled', false);
       });
     }
   </script>

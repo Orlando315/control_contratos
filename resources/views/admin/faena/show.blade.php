@@ -58,10 +58,13 @@
             <li><a class="nav-link{{ !Auth::user()->hasPermission('contrato-view') ? ' active' : '' }}" href="#tab-2" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
           @endpermission
           @permission('inventario-egreso-index')
-            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-level-up"></i> Egresos (Inventarios V2)</a></li>
+            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos (Inventarios V2)</a></li>
           @endpermission
           @permission('requerimiento-material-index')
             <li><a class="nav-link" href="#tab-4" data-toggle="tab"><i class="fa fa-list-ul"></i> Requerimiento de Materiales</a></li>
+          @endpermission
+          @permission('factura-index')
+            <li><a class="nav-link" href="#tab-5" data-toggle="tab"><i class="fa fa-clipboard"></i> Facturas</a></li>
           @endpermission
         </ul>
         <div class="tab-content">
@@ -78,9 +81,7 @@
                       <th class="text-center">Fin</th>
                       <th class="text-center">Valor</th>
                       <th class="text-center">Empleados</th>
-                      @permission('contrato-view')
-                        <th class="text-center">Acción</th>
-                      @endpermission
+                      <th class="text-center">Acción</th>
                     </tr>
                   </thead>
                   <tbody class="text-center">
@@ -93,11 +94,11 @@
                         <td>{{ $contrato->fin }}</td>
                         <td>{{ $contrato->valor() }}</td>
                         <td class="text-right">{{ $contrato->empleados_count }}</td>
-                        @permission('contrato-view')
-                          <td>
-                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
-                          </td>
-                        @endpermission
+                        <td>
+                          @permission('contrato-view')
+                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-search"></i></a>
+                          @endpermission
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>
@@ -112,26 +113,22 @@
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
-                      <th class="text-center">Supervisor</th>
-                      <th class="text-center">Vehiculo</th>
                       <th class="text-center">Patente</th>
-                      @permission('transporte-view')
-                        <th class="text-center">Acción</th>
-                      @endpermission
+                      <th class="text-center">Descripción</th>
+                      <th class="text-center">Acción</th>
                     </tr>
                   </thead>
                   <tbody class="text-center">
                     @foreach($faena->transportes as $transporte)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $transporte->usuario->nombre() }}</td>
-                        <td>{{ $transporte->vehiculo }}</td>
                         <td>{{ $transporte->patente }}</td>
-                        @permission('transporte-view')
-                          <td>
+                        <td>{{ $transporte->vehiculo }}</td>
+                        <td>
+                          @permission('transporte-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}"><i class="fa fa-search"></i></a>
-                          </td>
-                        @endpermission
+                          @endpermission
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>
@@ -144,16 +141,18 @@
               <div class="panel-body">
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Inventario</th>
-                      <th class="text-center">Cantidad</th>
-                      <th class="text-center">Costo</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Inventario</th>
+                      <th>Dirigido a</th>
+                      <th>Tipo</th>
+                      <th>Cantidad</th>
+                      <th>Costo</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
-                    @foreach($faena->inventariosV2Egreso as $egreso)
+                  <tbody>
+                    @foreach($contrato->inventariosV2Egreso as $egreso)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>
@@ -165,6 +164,28 @@
                             {{ $egreso->inventario->nombre }}
                           @endpermission
                         </td>
+                        <td>
+                          @if($egreso->cliente)
+                            @permission('cliente-view')
+                              <a href="{{ route('admin.cliente.show', ['cliente' => $egreso->cliente_id]) }}">
+                                {{ $egreso->cliente->nombre }}
+                              </a>
+                            @else
+                              {{ $egreso->cliente->nombre }}
+                            @endpermission
+                          @elseif($egreso->user)
+                            @permission('user-view')
+                              <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                                {{ $egreso->user->nombre() }}
+                              </a>
+                            @else
+                              {{ $egreso->user->nombre() }}
+                            @endpermission
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td class="text-center">{{ $egreso->tipo() }}</td>
                         <td class="text-right">{{ $egreso->cantidad() }}</td>
                         <td class="text-right">
                           @if($egreso->costo)
@@ -173,7 +194,7 @@
                             @nullablestring(null)
                           @endif
                         </td>
-                        <td>
+                        <td class="text-center">
                           @permission('inventario-egreso-view|inventario-egreso-edit')
                             <div class="btn-group">
                               <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
@@ -248,6 +269,62 @@
                                 @permission('requerimiento-material-edit')
                                   <li>
                                     <a class="dropdown-item" href="{{ route('admin.requerimiento.material.edit', ['requerimiento' => $requerimiento->id]) }}">
+                                      <i class="fa fa-pencil"></i> Editar
+                                    </a>
+                                  </li>
+                                @endpermission
+                              </ul>
+                            </div>
+                          @endpermission
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
+          @permission('factura-index')
+            <div id="tab-5" class="tab-pane">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Contrato</th>
+                      <th>Tipo</th>
+                      <th>Folio</th>
+                      <th>Valor</th>
+                      <th>Fecha</th>
+                      <th>Pago</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($faena->facturas as $factura)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $factura->contrato->nombre }}</td>
+                        <td>{{ $factura->tipo() }}</td>
+                        <td>{{ $factura->nombre }}</td>
+                        <td class="text-right">{{ $factura->valor() }}</td>
+                        <td class="text-center">{{ $factura->fecha }}</td>
+                        <td class="text-center"><small>{!! $factura->pago() !!}</small></td>
+                        <td class="text-center">
+                          @permission('factura-view|factura-edit')
+                            <div class="btn-group">
+                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                @permission('factura-view')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.facturas.show', ['factura' => $factura->id]) }}">
+                                      <i class="fa fa-search"></i> Ver
+                                    </a>
+                                  </li>
+                                @endpermission
+                                @permission('factura-edit')
+                                  <li>
+                                    <a class="dropdown-item" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}">
                                       <i class="fa fa-pencil"></i> Editar
                                     </a>
                                   </li>

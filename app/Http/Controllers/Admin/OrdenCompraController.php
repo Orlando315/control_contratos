@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\{OrdenCompra, Proveedor, InventarioV2, Contacto, RequerimientoMaterial};
+use App\{OrdenCompra, Proveedor, InventarioV2, Contacto, RequerimientoMaterial, Contrato};
 use PDF;
 
 class OrdenCompraController extends Controller
@@ -34,11 +34,12 @@ class OrdenCompraController extends Controller
     {
       $this->authorize('create', OrdenCompra::class);
 
+      $contratos = Contrato::all();
       $proveedores = Proveedor::all();
       $inventarios = InventarioV2::with('unidad')->get();
       $selectedProveedor = $proveedor;
 
-      return view('admin.compra.create', compact('proveedores', 'inventarios', 'selectedProveedor'));
+      return view('admin.compra.create', compact('contratos', 'proveedores', 'inventarios', 'selectedProveedor'));
     }
 
     /**
@@ -52,6 +53,7 @@ class OrdenCompraController extends Controller
       $this->authorize('create', OrdenCompra::class);
       $this->validate($request, [
         'proveedor' => 'required',
+        'partida' => 'nullable',
         'notas' => 'nullable|string|max:350',
         'productos' => 'required|min:1',
         'productos.*.tipo_codigo' => 'nullable|string|max:20',
@@ -82,6 +84,7 @@ class OrdenCompraController extends Controller
       $compra = new OrdenCompra([
         'user_id' => Auth::id(),
         'proveedor_id' => $proveedor->id,
+        'partida_id' => $request->partida,
         'contacto' => $contacto,
         'notas' => $request->notas,
       ]);
@@ -122,6 +125,9 @@ class OrdenCompraController extends Controller
       $this->authorize('view', $compra);
 
       $compra->load([
+        'user',
+        'proveedor',
+        'partida',
         'productos',
         'requerimiento' => function ($query) {
           $query->with([
@@ -129,6 +135,7 @@ class OrdenCompraController extends Controller
             'dirigidoA',
           ]);
         },
+        'facturacion',
       ]);
 
       return view('admin.compra.show', compact('compra'));
@@ -144,11 +151,15 @@ class OrdenCompraController extends Controller
     {
       $this->authorize('update', $compra);
 
-      $compra->load('productos');
+      $compra->load([
+        'partida',
+        'productos'
+      ]);
+      $contratos = Contrato::all();
       $proveedores = Proveedor::all();
       $inventarios = InventarioV2::with('unidad')->get();
 
-      return view('admin.compra.edit', compact('compra', 'proveedores', 'inventarios'));
+      return view('admin.compra.edit', compact('contratos', 'compra', 'proveedores', 'inventarios'));
     }
 
     /**
@@ -163,6 +174,7 @@ class OrdenCompraController extends Controller
       $this->authorize('update', $compra);
       $this->validate($request, [
         'proveedor' => 'required',
+        'partida' => 'nullable',
         'notas' => 'nullable|string|max:350',
         'productos' => 'nullable',
         'productos.*.tipo_codigo' => 'nullable|string|max:20',
@@ -172,7 +184,6 @@ class OrdenCompraController extends Controller
         'productos.*.precio' => 'required|numeric|min:1|max:99999999',
         'productos.*.descripcion' => 'nullable|string|max:200',
       ]);
-
 
       $proveedor = Proveedor::findOrFail($request->proveedor);
 
@@ -192,6 +203,7 @@ class OrdenCompraController extends Controller
       }
 
       $compra->proveedor_id = $request->proveedor;
+      $compra->partida_id = $request->partida;
       $compra->contacto = $contacto;
       $compra->notas = $request->notas;
       $productos = [];

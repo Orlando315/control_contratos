@@ -44,14 +44,24 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
           'Los campos con asterisco (*), son obligatorios. De no contenerlo, no se guardará la información de ese Pruducto.'
         ],
         [
-          'El ID de las Unidades se puede observar en la hoja llamada "Unidades", se debe colocar solo el número ID.'
+          'El ID de la Unidad, Bodega, Ubicación y Categorías se puede observar en la hojas con dichos nombres. Se debe colocar solo el número ID.'
         ],
         [
           'Nombre *',
+          'Tipo código',
           'Código',
-          'Unidad ID *',
+          'Unidad ID',
+          'Bodega ID',
+          'Ubicación ID',
+          'Stock',
           'Stock mínimo',
-          'Descripción'
+          'Descripción',
+          'Categoría #1',
+          'Categoría #2',
+          'Categoría #3',
+          'Categoría #4',
+          'Categoría #5',
+          'Categoría #6',
         ]
       ];
     }
@@ -80,10 +90,20 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
     {
       return [
         'A' => 30,
-        'B' => 10,
-        'C' => 13,
-        'D' => 16,
-        'E' => 30,
+        'B' => 12,
+        'C' => 10,
+        'D' => 13,
+        'E' => 13,
+        'F' => 13,
+        'G' => 18,
+        'H' => 16,
+        'I' => 30,
+        'J' => 17,
+        'K' => 17,
+        'L' => 17,
+        'M' => 17,
+        'N' => 17,
+        'O' => 17,
       ];
     }
 }

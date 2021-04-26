@@ -2,11 +2,11 @@
 
 namespace App\Policies\Admin;
 
-use App\InventarioV2Egreso;
+use App\Partida;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class InventarioV2EgresoPolicy
+class PartidaPolicy
 {
     use HandlesAuthorization;
 
@@ -22,7 +22,6 @@ class InventarioV2EgresoPolicy
         return true;
       }
     }
-
     /**
      * Determine whether the user can view any models.
      *
@@ -31,19 +30,19 @@ class InventarioV2EgresoPolicy
      */
     public function viewAny(User $user)
     {
-      return $user->hasPermission('inventario-egreso-index');
+      return $user->hasPermission('partida-index');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
+     * @param  \App\Partida  $partida
      * @return mixed
      */
-    public function view(User $user, InventarioV2Egreso $egreso)
+    public function view(User $user, Partida $partida)
     {
-      return $user->hasPermission('inventario-egreso-view');
+      return $user->hasPermission('partida-view');
     }
 
     /**
@@ -54,41 +53,41 @@ class InventarioV2EgresoPolicy
      */
     public function create(User $user)
     {
-      return $user->hasPermission('inventario-egreso-create');
+      return $user->hasPermission('partida-create');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
+     * @param  \App\Partida  $partida
      * @return mixed
      */
-    public function update(User $user, InventarioV2Egreso $egreso)
+    public function update(User $user, Partida $partida)
     {
-      return $user->hasPermission('inventario-egreso-edit');
+      return $user->hasPermission('partida-edit');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
+     * @param  \App\Partida  $partida
      * @return mixed
      */
-    public function delete(User $user, InventarioV2Egreso $egreso)
+    public function delete(User $user, Partida $partida)
     {
-      return $user->hasPermission('inventario-egreso-delete');
+      return $user->hasPermission('partida-delete');
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
+     * @param  \App\Partida  $partida
      * @return mixed
      */
-    public function restore(User $user, InventarioV2Egreso $egreso)
+    public function restore(User $user, Partida $partida)
     {
         //
     }
@@ -97,10 +96,10 @@ class InventarioV2EgresoPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
+     * @param  \App\Partida  $partida
      * @return mixed
      */
-    public function forceDelete(User $user, InventarioV2Egreso $egreso)
+    public function forceDelete(User $user, Partida $partida)
     {
         //
     }

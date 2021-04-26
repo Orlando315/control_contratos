@@ -43,40 +43,28 @@
         <div class="ibox-content no-padding">
           <ul class="list-group">
             <li class="list-group-item">
-              <b>Faena</b>
-              <span class="pull-right">
-                @if($transporte->faena)
-                  @permission('faena-view')
-                    <a href="{{ route('admin.faena.show', ['faena' => $transporte->faena_id]) }}">
-                      {{ $transporte->faena->nombre }}
-                    </a>
-                  @else
-                    {{ $transporte->faena->nombre }}
-                  @endpermission
-                @else
-                  @nullablestring(null)
-                @endif
-              </span>
-            </li>
-            <li class="list-group-item">
-              <b>Supervisor</b>
-              <span class="pull-right">
-                @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
-                    {{ $transporte->usuario->nombre() }}
-                  </a>
-                @else
-                  {{ $transporte->usuario->nombre() }}
-                @endpermission
-              </span>
-            </li>
-            <li class="list-group-item">
-              <b>Vehículo</b>
-              <span class="pull-right">{{ $transporte->vehiculo }}</span>
-            </li>
-            <li class="list-group-item">
               <b>Patente</b>
               <span class="pull-right">{{ $transporte->patente }}</span>
+            </li>
+            <li class="list-group-item">
+              <b>Descripción</b>
+              <span class="pull-right">@nullablestring($transporte->vehiculo)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Marca</b>
+              <span class="pull-right">@nullablestring($transporte->marca)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Modelo</b>
+              <span class="pull-right">@nullablestring($transporte->modelo)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Color</b>
+              <span class="pull-right">@nullablestring($transporte->color)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Faenas</b>
+              <span class="pull-right">{!! $transporte->faenasTags() !!}</span>
             </li>
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $transporte->created_at }}</small>
@@ -85,7 +73,6 @@
         </div><!-- /.box-body -->
       </div>
     </div>
-
     <div class="col-md-9">
       <div class="tabs-container mb-3">
         <ul class="nav nav-tabs">
@@ -199,29 +186,32 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
+  <div class="row">
+    <div class="col-12">
       <div class="tabs-container">
         <ul class="nav nav-tabs">
           <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-clipboard"></i> Contratos</a></li>
-          <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-file-text-o"></i> Consumos</a></li>
+          <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-user"></i> Supervisores</a></li>
+          <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-file-text-o"></i> Consumos</a></li>
         </ul>
         <div class="tab-content">
           <div id="tab-1" class="tab-pane active">
             <div class="panel-body">
-              <div class="mb-3">
-                @permission('transporte-edit')
-                  <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus" aria-hidden="true"></i> Agregar a Contrato</button>
-                @endpermission
-              </div>
+              @permission('transporte-edit')
+                <div class="text-right mb-3">
+                  <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Contrato</button>
+                </div>
+              @endpermission
               <table class="table table-bordered data-table table-hover table-sm w-100">
                 <thead>
                   <tr>
                     <th class="text-center">#</th>
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Agregado</th>
-                    @permission('transporte-edit')
-                      <th class="text-center">Acción</th>
-                    @endpermission
+                    <th class="text-center">Acción</th>
                   </tr>
                 </thead>
                 <tbody class="text-center">
@@ -238,11 +228,13 @@
                         @endpermission
                       </td>
                       <td>{{ $contrato->created_at }}</td>
-                      @permission('transporte-edit')
-                        <td>
-                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delContratoModal"><i class="fa fa-times" aria-hidden="true"></i></button>
-                        </td>
-                      @endpermission
+                      <td>
+                        @permission('transporte-edit')
+                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delDataModal" data-type="contrato">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                          </button>
+                        @endpermission
+                      </td>
                     </tr>
                   @endforeach
                 </tbody>
@@ -251,9 +243,47 @@
           </div>
           <div id="tab-2" class="tab-pane">
             <div class="panel-body">
+              <table class="table table-bordered data-table table-hover table-sm w-100">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">RUT</th>
+                    <th class="text-center">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach($transporte->supervisores as $supervisor)
+                    <tr>
+                      <td>{{ $loop->iteration }}</td>
+                      <td>
+                        @permission('user-view')
+                          <a href="{{ route('admin.usuarios.show', ['usuario' => $supervisor->id]) }}">
+                            {{ $supervisor->nombre() }}
+                          </a>
+                        @else
+                          {{ $supervisor->nombre() }}
+                        @endpermission
+                      </td>
+                      <td>{{ $supervisor->rut }}</td>
+                      <td class="text-center">
+                        @permission('transporte-edit')
+                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.supervisor.destroy', ['transporte' => $transporte->id, 'supervisor' => $supervisor->id]) }}" data-type="supervisor" data-toggle="modal" data-target="#delDataModal"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        @endpermission
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="tab-3" class="tab-pane">
+            <div class="panel-body">
               <div class="mb-3">
                 @permission('transporte-consumo-create')
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.consumos.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
+                  <div class="text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.consumos.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
+                  </div>
                 @endpermission
               </div>
               <table id="tableConsumos" class="table table-bordered data-table table-hover table-sm w-100">
@@ -332,7 +362,7 @@
       </div>
     </div>
 
-    <div id="delContratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delContratoModalLabel">
+    <div id="delDataModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delDataModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <form id="destroyContrato" action="#" method="POST">
@@ -343,10 +373,10 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span>
               </button>
-              <h4 class="modal-title" id="delContratoModalLabel">Eliminar Contrato</h4>
+              <h4 class="modal-title" id="delDataModalLabel">Eliminar <span class="modal-data-text"></span></h4>
             </div>
             <div class="modal-body">
-              <h4 class="text-center">¿Esta seguro de eliminar este Contrato?</h4>
+              <h4 class="text-center">¿Esta seguro de eliminar este <span class="modal-data-text"></span>?</h4>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
@@ -423,14 +453,19 @@
           placeholder: 'Seleccione...',
         });
 
-          $('#delContratoModal').on('show.bs.modal', function(e){
+        @permission('transporte-edit')
+          $('#delDataModal').on('show.bs.modal', function(e){
             let btn = $(e.relatedTarget),
-                action = btn.data('url');
+                action = btn.data('url'),
+                type = btn.data('type');
 
             if(!action){ return false; }
 
-            $('#destroyContrato').attr('action', action)
+            let title = (type.charAt(0).toUpperCase() + type.slice(1));
+            $('.modal-data-text').text(title);
+            $('#destroyContrato').attr('action', action);
           });
+        @endpermission
 
         $('#delFileModal').on('show.bs.modal', function(e){
           let button = $(e.relatedTarget),

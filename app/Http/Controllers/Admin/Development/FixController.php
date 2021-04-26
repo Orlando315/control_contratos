@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Auth};
-use App\{User, Role, Empresa, PlantillaVariable};
+use App\{User, Role, Empresa, PlantillaVariable, Transporte};
 
 class FixController extends Controller
 {
@@ -186,6 +186,33 @@ class FixController extends Controller
 
       return response()->json([
         'eliminadas' => $deleted,
+      ]);
+    }
+
+    /**
+     * Migrar informacion de supervisor y feana a la nueva relacion belongsToMany
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function fixMigrateTransporteData()
+    {
+      $transportes = Transporte::withoutGlobalScopes()
+      ->where(function ($query) {
+        return $query->whereNotNull('user_id')
+        ->orWhereNotNull('faena_id');
+      })
+      ->get();
+
+      foreach($transportes as $transporte){
+        $transporte->supervisores()->attach($transporte->user_id);
+        $transporte->faenas()->attach($transporte->faena_id ?? []);
+        $transporte->user_id = null;
+        $transporte->faena_id = null;
+        $transporte->save();
+      }
+
+      return response()->json([
+        'transportes' => $transportes->count(),
       ]);
     }
 }

@@ -60,6 +60,17 @@ Route::resource('requisito', 'RequisitoController')
 Route::get('requisito/{contrato}/{type}', 'RequisitoController@create')->name('requisito.create');
 Route::post('requisito/{contrato}/{type}', 'RequisitoController@store')->name('requisito.store');
 
+/* --- Partida --- */
+Route::get('partida/create/{contrato}', 'PartidaController@create')->name('partida.create');
+Route::post('partida/create/{contrato}', 'PartidaController@store')->name('partida.store');
+Route::get('partida/tipo/{contrato}/{tipo}', 'PartidaController@tipo')->name('partida.tipo');
+Route::resource('partida', 'PartidaController')
+->except([
+  'index',
+  'create',
+  'store',
+]);
+
 /* --- Contratos / Documentos por expirar --- */
 Route::get('expiration/{type}/{days}', 'HomeController@aboutToExpire')->name('expiration');
 
@@ -166,8 +177,12 @@ Route::resource('transportes', 'TransportesController')->except([
   'index',
   'show'
 ]);
+/* --- Transportes - Contratos --- */
 Route::post('transportes/{transporte}/add/', 'TransportesController@storeContratos')->name('transportes.contratos.store');
 Route::delete('transportes/contratos/{contrato}', 'TransportesController@destroyContratos')->name('transportes.contratos.destroy');
+
+/* --- Transportes - Supervisores --- */
+Route::delete('transportes/supervisor/{transporte}/{supervisor}', 'TransportesController@destroySupervisor')->name('transportes.supervisor.destroy');
 
 /* --- Inventarios --- */
 Route::patch('inventarios/clone/{inventario}', 'InventariosController@clone')->name('inventarios.clone');
@@ -284,6 +299,7 @@ Route::resource('contratos', 'ContratosController')->only([
 ]);
 Route::get('contratos/calendar/{contrato}', 'ContratosController@calendar')->name('contratos.calendar');
 Route::post('contratos/export/{contrato}', 'ContratosController@exportJornadas')->name('contratos.exportJornadas');
+Route::get('contratos/partidas/{contrato}', 'ContratosController@partidas')->name('contratos.partidas');
 
 /* --- Carpetas --- */
 Route::get('carpeta/create/{type}/{id}/{carpeta?}', 'CarpetaController@create')->name('carpeta.create');
@@ -322,6 +338,9 @@ Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosContr
 Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
 /* --- Inventario V2 ---*/
+Route::get('inventario/v2/mass/template', 'InventarioV2Controller@massTemplate')->name('inventario.v2.mass.template');
+Route::get('inventario/v2/mass/edit', 'InventarioV2Controller@massEdit')->name('inventario.v2.mass.edit');
+Route::post('inventario/v2/mass/edit', 'InventarioV2Controller@massUpdate')->name('inventario.v2.mass.update');
 Route::get('inventario/v2/import/template', 'InventarioV2Controller@importTemplate')->name('inventario.v2.import.template');
 Route::get('inventario/v2/import', 'InventarioV2Controller@importCreate')->name('inventario.v2.import.create');
 Route::post('inventario/v2/import', 'InventarioV2Controller@importStore')->name('inventario.v2.import.store');
@@ -337,6 +356,23 @@ Route::resource('inventario/v2', 'InventarioV2Controller')
 Route::resource('unidad', 'UnidadController')
 ->except([
   'index',
+]);
+
+/* --- Inventario V2 - Bodega ---*/
+Route::get('bodega/{bodega}/ubicaciones', 'BodegaController@ubicaciones')->name('bodega.ubicaciones');
+Route::resource('bodega', 'BodegaController')
+->except([
+  'index',
+]);
+
+/* --- Inventario V2 - Bodega - Ubicación ---*/
+Route::get('ubicacion/create/{bodega}', 'UbicacionController@create')->name('ubicacion.create');
+Route::post('ubicacion/create/{bodega}', 'UbicacionController@store')->name('ubicacion.store');
+Route::resource('ubicacion', 'UbicacionController')
+->except([
+  'index',
+  'create',
+  'store',
 ]);
 
 /* --- Inventario V2 - Ingresos de Stock ---*/

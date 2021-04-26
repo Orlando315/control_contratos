@@ -41,24 +41,70 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-group{{ $errors->has('codigo') ? ' has-error' : '' }}">
-                  <label for="codigo">Código:</label>
-                  <input id="codigo" class="form-control" type="text" name="codigo" maxlength="50" value="{{ old('codigo') }}" placeholder="Código">
-                </div>
-              </div>
-              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('unidad') ? ' has-error' : '' }}">
                   <label for="unidad">Unidad: *</label>
-                  <select id="unidad" class="form-control" name="unidad">
+                  <select id="unidad" class="form-control" name="unidad" required>
                     <option value="">Seleccione...</option>
                     @foreach($unidades as $unidad)
-                      <option value="{{ $unidad->id }}"{{ old('unidad') == $unidad->id ? ' selected' : '' }}>{{ $unidad->nombre }}</option>
+                      <option value="{{ $unidad->id }}"{{ old('unidad', $unidad->isPredeterminada() ? $unidad->id : '') == $unidad->id ? ' selected' : '' }}>{{ $unidad->nombre }}</option>
                     @endforeach
                   </select>
 
                   @permission('inventario-unidad-create')
                     <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="unidad"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Unidad</button>
                   @endpermission
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="">&nbsp;</label>
+                  <div class="custom-control custom-checkbox">
+                    <input id="check-codigos" class="custom-control-input" type="checkbox" name="requiere_codigo" value="1"{{ old('requiere_codigo', '0') == '1' ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="check-codigos">
+                      Requiere código
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 fields-codigos" style="display: none">
+                <div class="form-group">
+                  <label for="tipo_codigo">Tipo de código:</label>
+                  <input id="tipo_codigo" class="form-control" type="text" name="tipo_codigo" maxlength="6" value="{{ old('tipo_codigo') }}" placeholder="Tipo de código">
+                </div>
+              </div>
+              <div class="col-md-4 fields-codigos" style="display: none">
+                <div class="form-group">
+                  <label for="codigo">Código:</label>
+                  <input id="codigo" class="form-control" type="text" name="codigo" maxlength="8" value="{{ old('codigo') }}" placeholder="Código">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('bodega') ? ' has-error' : '' }}">
+                  <label for="bodega">Bodega:</label>
+                  <select id="bodega" class="form-control" name="bodega">
+                    <option value="">Seleccione...</option>
+                    @foreach($bodegas as $bodega)
+                      <option value="{{ $bodega->id }}"{{ old('bodega') == $bodega->id ? ' selected' : '' }}>{{ $bodega->nombre }}</option>
+                    @endforeach
+                  </select>
+
+                  @permission('bodega-create')
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="bodega"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Bodega</button>
+                  @endpermission
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('ubicacion') ? ' has-error' : '' }}">
+                  <label for="ubicacion">Ubicación:</label>
+                  <select id="ubicacion" class="form-control" name="ubicacion" disabled>
+                    <option value="">Seleccione...</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -80,7 +126,7 @@
                   </select>
 
                   @permission('etiqueta-create')
-                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="categorias"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Unidad</button>
+                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="categorias"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Categoría</button>
                   @endpermission
                 </div>
               </div>
@@ -170,16 +216,28 @@
   <script type="text/javascript">
     let defaultImge = @json(asset('images/default.jpg'));
 
-    @permission('inventario-unidad-create|etiqueta-create')
+    @permission('inventario-unidad-create|etiqueta-create|bodega-create')
       const alertOption = $('.alert-option');
       const optionSubmit = $('.option-submit');
     @endpermission
 
     $(document).ready(function(){
-      $('#unidad, #categorias').select2({
+      $('#unidad, #bodega, #ubicacion, #categorias').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
+
+      $('#bodega').change(searchUbicaciones)
+      $('#bodega').change();
+
+      $('#check-codigos').change(function () {
+        let isChecked = $(this).is(':checked');
+        $('.fields-codigos').toggle(isChecked);
+        if(!isChecked){
+          $('.fields-codigos input').val(null); 
+        }
+      });
+      $('#check-codigos').change();
 
       $('#foto-link').click(function (e) {
         e.preventDefault();
@@ -208,13 +266,14 @@
         }
       });
 
-      @permission('inventario-unidad-create|etiqueta-create')
+      @permission('inventario-unidad-create|etiqueta-create|bodega-create')
         $('#optionModal').on('show.bs.modal', function (e){
           let option = $(e.relatedTarget).data('option');
 
-          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : '{{ route("admin.etiquetas.store") }}';
+          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : (option == 'categorias' ? '{{ route("admin.etiquetas.store") }}' : '{{ route("admin.bodega.store") }}');
+          let title = option == 'unidad' ? 'Unidad' : (option == 'categorias' ? 'Categoría' : 'Bodega');
 
-          $('#optionModalLabel').text(option == 'unidad' ? 'Agregar Unidad' : 'Agregar Categoría');
+          $('#optionModalLabel').text(`Agregar ${title}`);
           $('#option-form').attr('action', url);
           optionSubmit.data('option', option);
         });
@@ -227,7 +286,7 @@
           let form = $(this),
               action = form.attr('action'),
               option = optionSubmit.data('option'),
-              field = (option == 'unidad') ? 'nombre' : 'etiqueta';
+              field = (option == 'unidad' || option == 'bodega') ? 'nombre' : 'etiqueta';
           let data = {
             _token: '{{ csrf_token() }}',
             [field]: $('#option-nombre').val()
@@ -241,8 +300,9 @@
           })
           .done(function (response) {
             if(response.response){
-              let value = (option == 'unidad') ? response.unidad.id : response.etiqueta.id;
-              let nombre = (option == 'unidad') ? response.unidad.nombre : response.etiqueta.etiqueta;
+              let indexName = option != 'categorias' ? option : 'etiqueta';
+              let value = response[indexName].id;
+              let nombre = option != 'categorias' ? response[indexName].nombre : response.etiqueta.etiqueta;
 
               $(`#${option}`).append(`<option value="${value}">${nombre}</option`);
 
@@ -290,6 +350,39 @@
       $('.alert ul').empty().append(`<li>${error}</li>`);
       $('.alert').show().delay(5000).hide('slow');
       $('#foto').val('');
+    }
+
+    function searchUbicaciones() {
+      let bodega = $(this).val();
+
+      if(!bodega){
+        return false;
+      }
+
+      let url = '{{ route("admin.bodega.ubicaciones", ["bodega" => ":id"]) }}'.replace(':id', bodega);
+
+      $('#ubicacion').empty().prop('disabled', true);
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json'
+      })
+      .done(function (response) {
+        $('#ubicacion').empty();
+
+        $.each(response, function (k, ubicacion) {
+          let oldSelected = @json(old('ubicacion')) == ubicacion.id;
+          $('#ubicacion').append(`<option value="${ubicacion.id}"${oldSelected ? ' selected' : ''}>${ubicacion.nombre}</option>`);
+        });
+      })
+      .fail(function () {
+        $('#ubicacion').empty().prop('disabled', true);
+      })
+      .always(function () {
+        $('#ubicacion').prop('disabled', false);
+      });
     }
   </script>
 @endsection

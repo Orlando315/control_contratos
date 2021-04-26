@@ -134,7 +134,7 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group{{ $errors->has('nombres') ? ' has-error' : '' }}">
-                      <label for="nombres">Nombres:</label>
+                      <label for="nombres">Nombres: *</label>
                       <input id="nombres" class="form-control" type="text" name="nombres" maxlength="50" value="{{ old('nombres') }}" placeholder="Nombres" required>
                     </div>
                   </div>
@@ -171,7 +171,7 @@
               </div>
 
               <div class="text-right">
-                <a class="btn btn-default btn-sm" href="{{ route('login.auth') }}"><i class="fa fa-reply"></i> Atras</a>
+                <a class="btn btn-default btn-sm" href="{{ route('login.view') }}"><i class="fa fa-reply"></i> Atras</a>
                 <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Registrarse</button>
               </div>
             </form>

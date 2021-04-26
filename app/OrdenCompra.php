@@ -24,6 +24,7 @@ class OrdenCompra extends Model
       'requerimiento_id',
       'user_id',
       'proveedor_id',
+      'partida_id',
       'contacto',
       'notas',
       'status',
@@ -164,6 +165,14 @@ class OrdenCompra extends Model
     public function requerimiento()
     {
       return $this->belongsTo('App\RequerimientoMaterial', 'requerimiento_id', 'id');
+    }
+
+    /**
+     * Obtener la Partida (De Contratos)
+     */
+    public function partida()
+    {
+      return $this->belongsTo('App\Partida');
     }
 
     /**

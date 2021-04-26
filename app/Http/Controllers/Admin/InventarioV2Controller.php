@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{InventarioV2, Unidad, Etiqueta};
-use App\Exports\{InventarioV2Export, InventarioV2ImportTemplate};
-use App\Imports\InventarioV2Import;
+use App\{InventarioV2, Unidad, Etiqueta, Bodega};
+use App\Exports\{InventarioV2Export, InventarioV2ImportTemplate, InventarioV2UpdateTemplate};
+use App\Imports\{InventarioV2Import, InventarioV2Update};
 use Excel;
 
 class InventarioV2Controller extends Controller
@@ -21,10 +21,17 @@ class InventarioV2Controller extends Controller
     {
       $this->authorize('viewAny', InventarioV2::class);
 
-      $inventarios = InventarioV2::all();
+      $inventarios = InventarioV2::with([
+        'bodega',
+        'ubicacion',
+      ])->get();
       $unidades = Unidad::withCount('inventariosV2')->get();
+      $bodegas = Bodega::withCount([
+        'inventariosV2',
+        'ubicaciones',
+      ])->get();
 
-      return view('admin.inventarioV2.index', compact('inventarios', 'unidades'));
+      return view('admin.inventarioV2.index', compact('inventarios', 'unidades', 'bodegas'));
     }
 
     /**
@@ -38,8 +45,9 @@ class InventarioV2Controller extends Controller
 
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
+      $bodegas = Bodega::all();
 
-      return view('admin.inventarioV2.create', compact('unidades', 'categorias'));
+      return view('admin.inventarioV2.create', compact('unidades', 'categorias', 'bodegas'));
     }
 
     /**
@@ -54,15 +62,20 @@ class InventarioV2Controller extends Controller
       $this->validate($request, [
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
-        'codigo' => 'nullable|string|max:50',
+        'tipo_codigo' => 'nullable|string|max:6',
+        'codigo' => 'nullable|string|max:8',
+        'bodega' => 'nullable',
+        'ubicacion' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'categorias' => 'nullable',
         'descripcion' => 'nullable|string|max:250',
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
       ]);
 
-      $inventario = new InventarioV2($request->only('nombre', 'codigo', 'stock_minimo', 'descripcion'));
+      $inventario = new InventarioV2($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
+      $inventario->bodega_id = $request->bodega;
+      $inventario->ubicacion_id = $request->ubicacion;
 
       if(Auth::user()->empresa->inventariosV2()->save($inventario)){
         if($request->hasFile('foto')){
@@ -102,7 +115,19 @@ class InventarioV2Controller extends Controller
     {
       $this->authorize('view', $inventario);
 
-      $inventario->load('unidad', 'categorias', 'ingresos.proveedor');
+      $inventario->load([
+        'unidad',
+        'bodega',
+        'ubicacion',
+        'categorias',
+        'ingresos.proveedor',
+        'egresos' => function ($query) {
+          $query->with([
+            'cliente',
+            'user',
+          ]);
+        },
+      ]);
 
       return view('admin.inventarioV2.show', compact('inventario'));
     }
@@ -120,8 +145,9 @@ class InventarioV2Controller extends Controller
       $inventario->load('categorias');
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
+      $bodegas = Bodega::all();
 
-      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias'));
+      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias', 'bodegas'));
     }
 
     /**
@@ -137,14 +163,19 @@ class InventarioV2Controller extends Controller
       $this->validate($request, [
         'unidad' => 'required',
         'nombre' => 'required|string|max:50',
-        'codigo' => 'nullable|string|max:50',
+        'tipo_codigo' => 'nullable|string|max:6',
+        'codigo' => 'nullable|string|max:8',
+        'bodega' => 'nullable',
+        'ubicacion' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'descripcion' => 'nullable|string|max:250',
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
       ]);
 
-      $inventario->fill($request->only('nombre', 'compact', 'stock_minimo', 'descripcion'));
+      $inventario->fill($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
+      $inventario->bodega_id = $request->bodega;
+      $inventario->ubicacion_id = $request->ubicacion;
 
       if($inventario->save()){
         if($request->hasFile('foto')){
@@ -273,7 +304,7 @@ class InventarioV2Controller extends Controller
           'flash_message' => 'Ha ocurrido un error. Revise el formato utilizado o los datos suministrados.',
           'flash_class' => 'alert-danger',
           'flash_important' => true
-        ]);        
+        ]);
       }
     }
 
@@ -284,6 +315,8 @@ class InventarioV2Controller extends Controller
      */
     public function importTemplate()
     {
+      $this->authorize('create', InventarioV2::class);
+
       return (new InventarioV2ImportTemplate)->download('importar_inventario.xlsx');
     }
 
@@ -295,5 +328,57 @@ class InventarioV2Controller extends Controller
     public function export()
     {
       return (new InventarioV2Export)->download('inventario.xlsx');
+    }
+
+    /**
+     * Mostrar formulario para editar masivamente InventarioV2
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function massEdit()
+    {
+      $this->authorize('create', InventarioV2::class);
+
+      return view('admin.inventarioV2.massEdit');
+    }
+
+    /**
+     * Actualizar InventarioV2 con el excel proporcionado
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function massUpdate(Request $request)
+    {
+      $this->authorize('create', InventarioV2::class);
+      $this->validate($request, [
+        'archivo' => 'required|file|mimes:xlsx,xls',
+      ]);
+
+      try{
+        $excel = Excel::import(new InventarioV2Update, $request->archivo);
+
+        return redirect()->route('admin.inventario.v2.index')->with([
+          'flash_message' => 'Inventario actualizado exitosamente.',
+          'flash_class' => 'alert-success'
+        ]);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'Ha ocurrido un error. Revise el formato utilizado o los datos suministrados.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
+    }
+
+    /**
+     * Descargar plantilla para actualizar InventarioV2 de forma masiva
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function massTemplate()
+    {
+      $this->authorize('create', InventarioV2::class);
+
+      return (new InventarioV2UpdateTemplate)->download('actualizar_inventario.xlsx');
     }
 }

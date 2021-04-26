@@ -57,17 +57,32 @@
               @foreach($compras as $compra)
                 <tr>
                   <td class="text-center">{{ $loop->iteration }}</td>
-                  <td class="text-center">{{ $compra->codigo() }}</td>
+                  <td>{{ $compra->codigo() }}</td>
                   <td>{{ $compra->proveedor->nombre }}</td>
                   <td class="text-right">{{ $compra->total() }}</td>
                   <td class="text-center"><small>{!! $compra->facturacionStatus() !!}</small></td>
                   <td class="text-center">{{ $compra->created_at->format('d-m-Y H:i:s') }}</td>
                   <td class="text-center">
-                    @permission('compra-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                    @permission('compra-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}"><i class="fa fa-pencil"></i></a>
+                    @permission('compra-view|compra-edit')
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                          @permission('compra-view')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                          @endpermission
+                          @permission('compra-edit')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.compra.edit', ['compra' => $compra->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                          @endpermission
+                        </ul>
+                      </div>
                     @endpermission
                   </td>
                 </tr>

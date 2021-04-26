@@ -117,7 +117,6 @@ class UserController extends Controller
       $role = Role::where('name', $request->role)->firstOrFail();
       $user = $user->fill($request->only('nombres', 'apellidos', 'rut', 'telefono', 'email'));
       $user->usuario = $request->rut;
-      $user->password = bcrypt($request->password);
 
       if($user->save()){
         $user->assignRole($role);

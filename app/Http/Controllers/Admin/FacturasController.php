@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{Factura, Contrato, Etiqueta};
+use App\{Factura, Contrato, Etiqueta, CentroCosto, Faena, Proveedor};
 
 class FacturasController extends Controller
 {
@@ -30,10 +30,19 @@ class FacturasController extends Controller
     public function create()
     {
       $this->authorize('create', Factura::class);
+
+      $tipo = request()->tipo;
+      if($tipo != 'ingreso' && $tipo != 'egreso'){
+        abort(404);
+      }
+
       $contratos = Contrato::all();
       $etiquetas = Etiqueta::all();
+      $centrosCosto = CentroCosto::all();
+      $faenas = Faena::all();
+      $proveedores = Proveedor::all();
 
-      return view('admin.facturas.create', compact('contratos', 'etiquetas'));
+      return view('admin.facturas.create', compact('tipo', 'contratos', 'etiquetas', 'centrosCosto', 'faenas', 'proveedores'));
     }
 
     /**
@@ -46,9 +55,14 @@ class FacturasController extends Controller
     {
       $this->authorize('create', Factura::class);
       $this->validate($request, [
-        'contrato_id' => 'required',
-        'tipo' => 'required|in:1,2',
-        'nombre' => 'required|string',
+        'contrato' => 'required',
+        'partida' => 'nullable',
+        'etiqueta' => 'nullable',
+        'faena' => 'nullable',
+        'proveedor' => 'nullable',
+        'centro_costo' => 'nullable',
+        'tipo' => 'required|in:ingreso,egreso',
+        'folio' => 'required|string',
         'realizada_para' => 'required|string',
         'realizada_por' => 'required|string',
         'fecha' => 'required|date_format:d-m-Y',
@@ -59,8 +73,23 @@ class FacturasController extends Controller
         'adjunto2' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $factura = new Factura($request->all());
+      $factura = new Factura($request->only([
+        'realizada_para',
+        'realizada_por',
+        'fecha',
+        'valor',
+        'pago_fecha',
+        'pago_estado'
+      ]));
+      $factura->contrato_id = $request->contrato;
+      $factura->partida_id = $request->partida;
+      $factura->etiqueta_id = $request->etiqueta;
       $factura->user_id = Auth::user()->id;
+      $factura->tipo = ($request->tipo == 'ingreso' ? 1 : 2);
+      $factura->nombre = $request->folio;
+      $factura->faena_id = $request->faena;
+      $factura->proveedor_id = $request->proveedor;
+      $factura->centro_costo_id = $request->centro_costo;
 
       if($factura = Auth::user()->empresa->facturas()->save($factura)){
         $directory = $factura->directory();
@@ -101,6 +130,15 @@ class FacturasController extends Controller
     {
       $this->authorize('view', $factura);
 
+      $factura->load([
+        'contrato',
+        'partida',
+        'etiqueta',
+        'faena',
+        'centroCosto',
+        'proveedor',
+      ]);
+
       return view('admin.facturas.show', compact('factura'));
     }
 
@@ -114,7 +152,13 @@ class FacturasController extends Controller
     {
       $this->authorize('update', $factura);
 
-      return view('admin.facturas.edit', compact('factura'));
+      $contratos = Contrato::all();
+      $etiquetas = Etiqueta::all();
+      $centrosCosto = CentroCosto::all();
+      $faenas = Faena::all();
+      $proveedores = Proveedor::all();
+
+      return view('admin.facturas.edit', compact('factura', 'contratos', 'etiquetas', 'centrosCosto', 'faenas', 'proveedores'));
     }
 
     /**
@@ -128,8 +172,13 @@ class FacturasController extends Controller
     {
       $this->authorize('update', $factura);
       $this->validate($request, [
-        'tipo' => 'required|in:1,2',
-        'nombre' => 'required|string',
+        'contrato' => 'required',
+        'partida' => 'nullable',
+        'etiqueta' => 'nullable',
+        'faena' => 'nullable',
+        'proveedor' => 'nullable',
+        'centro_costo' => 'nullable',
+        'folio' => 'required|string',
         'realizada_para' => 'required|string',
         'realizada_por' => 'required|string',
         'fecha' => 'required|date_format:d-m-Y',
@@ -140,7 +189,21 @@ class FacturasController extends Controller
         'adjunto2' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ]);
 
-      $factura->fill($request->all());
+      $factura->fill($request->only([
+        'realizada_para',
+        'realizada_por',
+        'fecha',
+        'valor',
+        'pago_fecha',
+        'pago_estado'
+      ]));
+      $factura->contrato_id = $request->contrato;
+      $factura->partida_id = $request->partida;
+      $factura->etiqueta_id = $request->etiqueta;
+      $factura->nombre = $request->folio;
+      $factura->faena_id = $request->faena;
+      $factura->proveedor_id = $request->proveedor;
+      $factura->centro_costo_id = $request->centro_costo;
 
       if($factura->save()){
         $directory = $factura->directory();

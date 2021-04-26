@@ -70,7 +70,11 @@
             </li>
             <li class="list-group-item">
               <b>Descripción</b>
-              <span class="pull-right"> {{ $contrato->descripcion }} </span>
+              <span class="pull-right">@nullablestring($contrato->descripcion)</span>
+            </li>
+            <li class="list-group-item">
+              <b>Principal</b>
+              <span class="pull-right"> {!! $contrato->principal() !!}</span>
             </li>
           </ul>
         </div>
@@ -86,6 +90,9 @@
             @endpermission
             <li><a class="nav-link{{ !Auth::user()->hasPermission('requisito-index') ? ' active' : '' }}" href="#tab-11" data-toggle="tab"><i class="fa fa-paperclip"></i> Adjuntos</a></li>
             <li><a class="nav-link" href="#tab-12" data-toggle="tab"><i class="fa fa-file-text-o"></i> Documentos</a></li>
+            @permission('partida-index')
+              <li><a class="nav-link" href="#tab-14" data-toggle="tab"><i class="fa fa-ellipsis-v"></i> Partidas</a></li>
+            @endpermission
           </ul>
           <div class="ibox-tools">
             <a class="collapse-link" href="#" data-toggle="collapse" data-target="#panels-tab-1" aria-expanded="true">
@@ -258,12 +265,12 @@
           @endpermission
           <div class="tab-pane{{ !Auth::user()->hasPermission('requisito-index') ? ' active' : '' }}" id="tab-11">
             <div class="panel-body">
-              <div class="mb-3">
-                @if($contrato->documentos()->count() < 10 && Auth::user()->hasPermission('contrato-edit'))
+              @if($contrato->documentos()->count() < 10 && Auth::user()->hasPermission('contrato-edit'))
+                <div class="mb-3 text-right">
                   <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                   <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-                @endif
-              </div>
+                </div>
+              @endif
               <div class="row icons-box icons-folder">
                 @foreach($contrato->carpetas()->main()->get() as $carpeta)
                   <div class="col-md-3 col-xs-4 infont mb-3">
@@ -291,11 +298,11 @@
           </div>
           <div class="tab-pane" id="tab-12">
             <div class="panel-body">
-              <div class="mb-3">
-                @permission('plantilla-documento-create')
+              @permission('plantilla-documento-create')
+                <div class="mb-3 text-right">
                   <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Documento</a>
-                @endpermission
-              </div>
+                </div>
+              @endpermission
               <table class="table data-table table-bordered table-hover table-sm w-100">
                 <thead>
                   <tr>
@@ -327,6 +334,57 @@
               </table>
             </div>
           </div>
+          @permission('partida-index')
+            <div class="tab-pane" id="tab-14">
+              <div class="panel-body">
+                @permission('partida-create')
+                  <div class="mb-3 text-right">
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.partida.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Partida</a>
+                  </div>
+                @endpermission
+
+                <div class="row mb-3">
+                  <div class="col">
+                    <canvas id="partidaTipoChart" width="200" height="100"></canvas>
+                  </div>
+                </div>
+
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Tipo</th>
+                      <th>Partidas</th>
+                      <th>Total</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($partidasTipos as $tipo)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $tipo->tipo() }}</td>
+                        <td class="text-right">{{ $tipo->count }}</td>
+                        <td class="text-right">{{ $tipo->monto() }}</td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('admin.partida.tipo', ['contrato' => $contrato->id, 'tipo' => $tipo->tipo]) }}">
+                                  <i class="fa fa-search"></i> Ver
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          @endpermission
         </div>
       </div>
     </div>    
@@ -345,7 +403,7 @@
             @endpermission
             <li><a class="nav-link{{ !Auth::user()->hasPermission('empleado-index|transporte-index') ? ' active' : '' }}" href="#tab-23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
             @permission('inventario-egreso-index')
-              <li><a class="nav-link" href="#tab-24" data-toggle="tab"><i class="fa fa-level-up"></i> Egresos (Inventarios V2)</a></li>
+              <li><a class="nav-link" href="#tab-24" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos (Inventarios V2)</a></li>
             @endpermission
             @permission('requerimiento-material-index')
               <li><a class="nav-link" href="#tab-25" data-toggle="tab"><i class="fa fa-list-ul"></i> Requerimiento de Materiales</a></li>
@@ -417,10 +475,8 @@
                   <thead>
                     <tr>
                       <th class="text-center">#</th>
-                      <th class="text-center">Supervisor</th>
-                      <th class="text-center">Vehiculo</th>
                       <th class="text-center">Patente</th>
-                      <th class="text-center">Agregado</th>
+                      <th class="text-center">Descripción</th>
                       <th class="text-center">Acción</th>
                     </tr>
                   </thead>
@@ -428,18 +484,8 @@
                     @foreach($contrato->transportes as $transporte)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @permission('user-view')
-                            <a href="{{ route('admin.usuarios.show', ['usuario' => $transporte->user_id]) }}">
-                              {{ $transporte->usuario->nombre() }}
-                            </a>
-                          @else
-                            {{ $transporte->usuario->nombre() }}
-                          @endpermission
-                        </td>
-                        <td>{{ $transporte->vehiculo }}</td>
                         <td>{{ $transporte->patente }}</td>
-                        <td>{{ $transporte->created_at }}</td>
+                        <td>{{ $transporte->vehiculo }}</td>
                         <td>
                           @permission('transporte-view')
                             <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id] )}}"><i class="fa fa-search"></i></a>
@@ -495,15 +541,17 @@
               <div class="panel-body">
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Inventario</th>
-                      <th class="text-center">Cantidad</th>
-                      <th class="text-center">Costo</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Inventario</th>
+                      <th>Dirigido a</th>
+                      <th>Tipo</th>
+                      <th>Cantidad</th>
+                      <th>Costo</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($contrato->inventariosV2Egreso as $egreso)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
@@ -516,6 +564,28 @@
                             {{ $egreso->inventario->nombre }}
                           @endpermission
                         </td>
+                        <td>
+                          @if($egreso->cliente)
+                            @permission('cliente-view')
+                              <a href="{{ route('admin.cliente.show', ['cliente' => $egreso->cliente_id]) }}">
+                                {{ $egreso->cliente->nombre }}
+                              </a>
+                            @else
+                              {{ $egreso->cliente->nombre }}
+                            @endpermission
+                          @elseif($egreso->user)
+                            @permission('user-view')
+                              <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                                {{ $egreso->user->nombre() }}
+                              </a>
+                            @else
+                              {{ $egreso->user->nombre() }}
+                            @endpermission
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td class="text-center">{{ $egreso->tipo() }}</td>
                         <td class="text-right">{{ $egreso->cantidad() }}</td>
                         <td class="text-right">
                           @if($egreso->costo)
@@ -524,7 +594,7 @@
                             @nullablestring(null)
                           @endif
                         </td>
-                        <td>
+                        <td class="text-center">
                           @permission('inventario-egreso-view|inventario-egreso-edit')
                             <div class="btn-group">
                               <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
@@ -684,6 +754,60 @@
 
 @section('script')
   @include('partials.preview-pdf')
+
+  <!-- Charts.js -->
+  <script type="text/javascript" src="{{ asset('js/plugins/chartJs/Chart.min.js') }}"></script>
+  <script type="text/javascript">
+    const partidasTipos = @json($partidasTipos);
+    const colors = [
+      '#4bc0c0',
+      '#36a2eb',
+      '#ff6384',
+      '#ff9f40',
+      '#ffcd56',
+      '#23c6c8',
+    ]
+    let chartData = {
+      labels: [],
+      datasets: [],
+      colors: [],
+    }
+
+    $.each(partidasTipos, function (k, partida){
+      let title = partida.tipo.charAt(0).toUpperCase() + partida.tipo.slice(1);
+
+      chartData.labels.push(title);
+      chartData.datasets.push(partida.monto);
+      chartData.colors.push(colors[k]);
+    })
+
+    $(document).ready(function () {
+      var chartCanvas = document.getElementById('partidaTipoChart').getContext('2d');
+      const config = {
+        type: 'pie',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            data: chartData.datasets,
+            backgroundColor: chartData.colors
+          }],
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Chart.js Pie Chart'
+            }
+          }
+        }
+      };
+      
+      new Chart(chartCanvas, config);
+    });
+  </script>
 
   @permission('contrato-edit|requisito-delete')
     <script type="text/javascript">

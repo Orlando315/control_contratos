@@ -2,12 +2,6 @@
 
 @section('title', 'Inventarios V2')
 
-@section('head')
-  <!-- Select2 -->
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
-@endsection
-
 @section('page-heading')
   <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
@@ -27,10 +21,11 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4>Importar inventario V2</h4>
+          <h4 class="mb-4">Importar inventario V2</h4>
 
           <div class="ibox-tools">
             <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.import.template') }}"><i class="fa fa-download" aria-hidden="true"></i> Descargar formato</a>
+            <p class="m-0 text-muted"><small>Actualizado: 04/22/2021</small></p>
           </div>
         </div>
         <div class="ibox-content">
@@ -70,8 +65,6 @@
 @endsection
 
 @section('script')
-  <!-- Select2 -->
-  <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){
       $('#archivo').change(function () {

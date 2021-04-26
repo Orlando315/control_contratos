@@ -166,23 +166,6 @@ class ConfiguracionEmpresa extends Model
     }
 
     /**
-     * Obtener informacion de la empresa de la API de Facturacion Sii
-     * con el rut y digito validador (dv) especificado
-     * 
-     * @param  string  $rut
-     * @param  string  $dv
-     * @return array
-     */
-    public function getEmpresaFromSii($rut, $dv)
-    {
-      if($this->isIntegrationIncomplete('sii')){
-        return [false, 'Debe completar los datos para la integración con Facturación Sii.'];
-      }
-
-      return (new FacturacionSii)->busquedaReceptor($rut, $dv);
-    }
-
-    /**
      * Evaluar si los terminos y condiciones estan activos
      *
      * @param  bool  $asTag

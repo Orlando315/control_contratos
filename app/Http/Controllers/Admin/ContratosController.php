@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\Color;
-use App\{Contrato, Faena, CentroCosto};
+use App\{Contrato, Faena, CentroCosto, Partida};
 
 class ContratosController extends Controller
 {
@@ -114,7 +114,13 @@ class ContratosController extends Controller
         'plantillaDocumentos',
         'empleados',
         'transportes',
-        'inventariosV2Egreso',
+        'inventariosV2Egreso' => function ($query) {
+          $query->with([
+            'inventario',
+            'cliente',
+            'user',
+          ]);
+        },
         'requerimientosMateriales' => function ($query){
           $query->with([
             'faena',
@@ -123,9 +129,11 @@ class ContratosController extends Controller
           ])
           ->withCount('productos');
         },
+        'partidas',
       ]);
+      $partidasTipos = Partida::tiposByContrato($contrato->id);
 
-      return view('admin.contratos.show', compact('contrato'));
+      return view('admin.contratos.show', compact('contrato', 'partidasTipos'));
     }
 
     /**
@@ -309,5 +317,18 @@ class ContratosController extends Controller
       $writer->openToBrowser("{$nombre}.xlsx")
         ->addRows($rows->all())
         ->close();
+    }
+
+    /**
+     * Obtener las Partidas del Contrato proporcionado
+     * 
+     * @param  \App\Contrato  $contrato
+     * @return \Illuminate\Http\Response
+     */
+    public function partidas(Contrato $contrato)
+    {
+      $this->authorize('view', $contrato);
+
+      return response()->json($contrato->partidas);
     }
 }

@@ -19,7 +19,7 @@ class TransportesController extends Controller
     {
       $this->authorize('viewAny', Transporte::class);
 
-      $transportes = Transporte::with('faena')->get();
+      $transportes = Transporte::all();
 
       return view('admin.transportes.index', compact('transportes'));
     }
@@ -50,19 +50,31 @@ class TransportesController extends Controller
     {
       $this->authorize('create', Transporte::class);
       $this->validate($request, [
-        'supervisor' => 'required',
-        'vehiculo' => 'required|string|max:50',
         'patente' => 'required|string|max:50',
+        'contratos' => 'nullable',
+        'supervisores' => 'nullable',
+        'faenas' => 'nullable',
+        'modelo' => 'nullable|string|max:50',
+        'marca' => 'nullable|string|max:50',
+        'color' => 'nullable|string|max:50',
+        'descripcion' => 'nullable|string|max:100',
       ]);
 
-      $contrato = Contrato::findOrFail($request->contrato);
-      $supervisor = User::findOrFail($request->supervisor);
-      $transporte = new Transporte($request->only('vehiculo', 'patente'));
-      $transporte->user_id = $supervisor->id;
-      $transporte->faena_id = $request->faena;
+      $transporte = new Transporte($request->only('patente', 'modelo', 'marca', 'color'));
+      $transporte->vehiculo = $request->descripcion;
 
       if(Auth::user()->empresa->transportes()->save($transporte)){
-        $transporte->contratos()->create(['contrato_id' => $contrato->id]);
+        if($request->has('contratos')){
+          $transporte->parentContratos()->attach($request->contratos);
+        }
+
+        if($request->has('supervisores')){
+          $transporte->supervisores()->attach($request->supervisores);
+        }
+
+        if($request->has('faenas')){
+          $transporte->faenas()->attach($request->faenas);
+        }
 
         return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
           'flash_message' => 'Transporte agregado exitosamente.',
@@ -87,7 +99,11 @@ class TransportesController extends Controller
     {
       $this->authorize('view', $transporte);
 
-      $transporte->load('faena');
+      $transporte->load([
+        'contratos',
+        'supervisores',
+        'faenas',
+      ]);
       $contratosIds = $transporte->contratos()->pluck('contrato_id')->toArray();
       $otherContratos = Contrato::select('id', 'nombre')->whereNotIn('id', $contratosIds)->get();
 
@@ -104,10 +120,17 @@ class TransportesController extends Controller
     {
       $this->authorize('update', $transporte);
 
+      $transporte->load([
+        'contratos',
+        'supervisores',
+        'faenas',
+      ]);
+
+      $contratos = Contrato::all();
       $supervisores = User::supervisores()->get();
       $faenas = Faena::all();
 
-      return view('admin.transportes.edit', compact('transporte', 'supervisores', 'faenas'));
+      return view('admin.transportes.edit', compact('transporte', 'contratos', 'supervisores', 'faenas'));
     }
 
     /**
@@ -121,16 +144,24 @@ class TransportesController extends Controller
     {
       $this->authorize('update', $transporte);
       $this->validate($request, [
-        'supervisor' => 'required',
-        'vehiculo' => 'required|string|max:50',
         'patente' => 'required|string|max:50',
+        'contratos' => 'nullable',
+        'supervisores' => 'nullable',
+        'faenas' => 'nullable',
+        'modelo' => 'nullable|string|max:50',
+        'marca' => 'nullable|string|max:50',
+        'color' => 'nullable|string|max:50',
+        'descripcion' => 'nullable|string|max:100',
       ]);
 
-      $transporte->fill($request->only('vehiculo', 'patente'));
-      $transporte->user_id = $request->supervisor;
-      $transporte->faena_id = $request->faena;
+      $transporte->fill($request->only('patente', 'modelo', 'marca', 'color'));
+      $transporte->vehiculo = $request->descripcion;
 
       if($transporte->save()){
+        $transporte->parentContratos()->sync($request->contratos ?? []);
+        $transporte->supervisores()->sync($request->supervisores ?? []);
+        $transporte->faenas()->sync($request->faenas ?? []);
+
         return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
           'flash_message' => 'Transporte modificado exitosamente.',
           'flash_class' => 'alert-success'
@@ -197,17 +228,41 @@ class TransportesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Transporte  $transporte
+     * @param  \App\TransporteContrato  $contrato
      * @return \Illuminate\Http\Response
      */
-    public function destroyContratos(Transporte $transporte, TransporteContrato $contrato)
+    public function destroyContratos(TransporteContrato $contrato)
     {
-      $this->authorize('update', $transporte);
+      $this->authorize('update', $contrato->transporte);
 
       if($contrato->delete()){
         return redirect()->back()->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contrato eliminado exitosamente.'
+        ]);
+      }
+
+      return redirect()->back()->with([
+        'flash_class'     => 'alert-danger',
+        'flash_message'   => 'Ha ocurrido un error.',
+        'flash_important' => true
+      ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Supervisor  $supervisor
+     * @return \Illuminate\Http\Response
+     */
+    public function destroySupervisor(Transporte $transporte, User $supervisor)
+    {
+      $this->authorize('update', $transporte);
+
+      if($transporte->supervisores()->detach($supervisor->id)){
+        return redirect()->back()->with([
+          'flash_class'   => 'alert-success',
+          'flash_message' => 'Supervisor eliminado exitosamente.'
         ]);
       }
 

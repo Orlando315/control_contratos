@@ -84,11 +84,13 @@ class FaenaController extends Controller
         'contratos' => function ($query){
           $query->withCount('empleados');
         },
-        'transportes' => function ($query){
-          $query->with('usuario');
-        },
+        'transportes',
         'inventariosV2Egreso' => function ($query) {
-          $query->with('inventario');
+          $query->with([
+            'inventario',
+            'user',
+            'cliente'
+          ]);
         },
         'requerimientosMateriales' => function ($query){
           $query->with([
@@ -98,6 +100,7 @@ class FaenaController extends Controller
           ])
           ->withCount('productos');
         },
+        'facturas',
       ]);
 
       return view('admin.faena.show', compact('faena'));

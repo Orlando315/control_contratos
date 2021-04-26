@@ -385,7 +385,7 @@ class RequerimientoMaterial extends Model
 
         $logs[] = [
           'type' => $type,
-          'message' => $message.'actualizado la información: '.join($changes, ', '),
+          'message' => $message.'actualizado la información: '.join(', ', $changes),
         ];
       }
 

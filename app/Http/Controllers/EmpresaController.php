@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\{User, Empresa, ConfiguracionEmpresa, Role};
+use Carbon\Carbon;
 
 class EmpresaController extends Controller
 {
@@ -74,6 +75,17 @@ class EmpresaController extends Controller
           $empresa->logo = $request->file('logo')->store($directory);
           $empresa->save();
         }
+
+        // Contrato
+        $inicio = Carbon::now();
+        $fin = $inicio->copy()->addYears(1);
+        $empresa->contratos()->create([
+          'nombre' => 'Casa matriz',
+          'valor' => 0,
+          'incio' => $inicio->format('Y-m-d'),
+          'fin' => $fin->format('Y-m-d'),
+          'main' => true,
+        ]);
 
         return redirect()->route('login.view')->with([
           'flash_message' => 'Registro completado con exito.',

@@ -14,35 +14,89 @@
 @endsection
 
 @section('content')
-  <div class="row mt-3">
-    @permission('contrato-index')
-      <div class="col-6 col-md-3">
-        <div class="ibox ">
-          <div class="ibox-title">
-            <h5>Contratos</h5>
-          </div>
-          <div class="ibox-content">
-            <h2><i class="fa fa-clipboard"></i> {{ $contratos }}</h2>
+  <div class="row mb-3">
+    <div class="col-12">
+      @permission('contrato-create')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
+      @endpermission
+
+      @permission('empleado-create')
+        <div class="btn-group">
+          <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Empleado</button>
+          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+            <li><a class="dropdown-item" href="{{ route('admin.empleados.create') }}">Nuevo Empleado</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create') }}">Importar Empleados</a></li>
+          </ul>
+        </div>
+      @endpermission
+
+      @permission('cotizacion-create')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.cotizacion.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Cotización</a>
+      @endpermission
+
+      @permission('compra-create')
+        <a class="btn btn-default btn-sm" href="{{ route('admin.compra.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Orden de compra</a>
+      @endpermission
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-3">
+      @permission('contrato-index')
+        <div class="ibox mb-3">
+          <div class="ibox-content p-0">
+            <div class="widget style1">
+              <div class="row align-items-end">
+                <div class="col-4 text-center">
+                  <i class="fa fa-clipboard fa-3x"></i>
+                </div>
+                <div class="col-8 text-right">
+                  <span>Contratos</span>
+                  <h2 class="font-bold">{{ $contratos }}</h2>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    @endpermission
+      @endpermission
 
-    @permission('inventario-index')
-      <div class="col-6 col-md-3">
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5>Inventarios</h5>
-          </div>
-          <div class="ibox-content">
-            <h2><i class="fa fa-cubes"></i> {{ $inventarios }}</h2>
+      @permission('inventario-index')
+        <div class="ibox mb-3">
+          <div class="ibox-content p-0">
+            <div class="widget style1">
+              <div class="row align-items-end">
+                <div class="col-4 text-center">
+                  <i class="fa fa-cubes fa-3x"></i>
+                </div>
+                <div class="col-8 text-right">
+                  <span>Inventarios V2</span>
+                  <h2 class="font-bold">{{ $inventarios }}</h2>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    @endpermission
+      @endpermission
 
-    @permission('contrato-index|empleado-index|transporte-index')
-      <div class="col-12 col-md-6">
+      @permission('solicitud-index')
+        <div class="ibox mb-3">
+          <div class="ibox-content p-0">
+            <div class="widget style1">
+              <div class="row align-items-end">
+                <div class="col-4 text-center">
+                  <i class="fa fa-archive fa-3x"></i>
+                </div>
+                <div class="col-8 text-right">
+                  <span>Solicitudes</span>
+                  <h2 class="font-bold">{{ $solicitudes }}</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      @endpermission
+    </div>
+    <div class="col-md-9">
+      @permission('contrato-index|empleado-index|transporte-index')
         <div class="ibox">
           <div class="ibox-title">
             <h5>Contratos / Documentos por vencer</h5>
@@ -56,9 +110,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}#vencidos" title="Contratos {{ $contratosPorVencer->vencidos }} / Documentos {{ $documentosContratosPorVencer->vencidos }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $contratosPorVencer->vencidos }}/{{ $documentosContratosPorVencer->vencidos }}</p>
+                      <p class="m-0"><span class="label">{{ $contratosPorVencer->vencidos }} Contratos</span> <span class="label">{{ $documentosContratosPorVencer->vencidos }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>Vencidos</small>
@@ -66,9 +120,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 3]) }}" title="Contratos {{ $contratosPorVencer->lessThan3 }} / Documentos {{ $documentosContratosPorVencer->lessThan3 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $contratosPorVencer->lessThan3 }}/{{ $documentosContratosPorVencer->lessThan3 }}</p>
+                      <p class="m-0"><span class="label">{{ $contratosPorVencer->lessThan3 }} Contratos</span> <span class="label">{{ $documentosContratosPorVencer->lessThan3 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>3 días</small>
@@ -76,9 +130,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 7]) }}" title="Contratos {{ $contratosPorVencer->lessThan7 }} / Documentos {{ $documentosContratosPorVencer->lessThan7 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $contratosPorVencer->lessThan7 }}/{{ $documentosContratosPorVencer->lessThan7 }}</p>
+                      <p class="m-0"><span class="label">{{ $contratosPorVencer->lessThan7 }} Contratos</span> <span class="label">{{ $documentosContratosPorVencer->lessThan7 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>7 días</small>
@@ -86,9 +140,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'contratos', 'days' => 21]) }}" title="Contratos {{ $contratosPorVencer->lessThan21 }} / Documentos {{ $documentosContratosPorVencer->lessThan21 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $contratosPorVencer->lessThan21 }}/{{ $documentosContratosPorVencer->lessThan21 }}</p>
+                      <p class="m-0"><span class="label">{{ $contratosPorVencer->lessThan21 }} Contratos</span> <span class="label">{{ $documentosContratosPorVencer->lessThan21 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>21 días</small>
@@ -105,9 +159,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}#vencidos" title="Contratos {{ $empleadosContratosPorVencer->vencidos }} / Documentos {{ $documentosEmpleadosPorVencer->vencidos }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $empleadosContratosPorVencer->vencidos }}/{{ $documentosEmpleadosPorVencer->vencidos }}</p>
+                      <p class="m-0"><span class="label">{{ $empleadosContratosPorVencer->vencidos }} Contratos</span> <span class="label">{{ $documentosEmpleadosPorVencer->vencidos }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>Vencidos</small>
@@ -115,9 +169,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 3]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan3 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan3 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan3 }}/{{ $documentosEmpleadosPorVencer->lessThan3 }}</p>
+                      <p class="m-0"><span class="label">{{ $empleadosContratosPorVencer->lessThan3 }} Contratos</span> <span class="label">{{ $documentosEmpleadosPorVencer->lessThan3 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>3 días</small>
@@ -125,9 +179,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 7]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan7 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan7 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan7 }}/{{ $documentosEmpleadosPorVencer->lessThan7 }}</p>
+                      <p class="m-0"><span class="label">{{ $empleadosContratosPorVencer->lessThan7 }} Contratos</span> <span class="label">{{ $documentosEmpleadosPorVencer->lessThan7 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>7 días</small>
@@ -135,9 +189,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'empleados', 'days' => 21]) }}" title="Contratos {{ $empleadosContratosPorVencer->lessThan21 }} / Documentos {{ $documentosEmpleadosPorVencer->lessThan21 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $empleadosContratosPorVencer->lessThan21 }}/{{ $documentosEmpleadosPorVencer->lessThan21 }}</p>
+                      <p class="m-0"><span class="label">{{ $empleadosContratosPorVencer->lessThan21 }} Contratos</span> <span class="label">{{ $documentosEmpleadosPorVencer->lessThan21 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>21 días</small>
@@ -154,9 +208,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-muted" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}#vencidos" title="Documentos {{ $documentosTransportesPorVencer->vencidos }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $documentosTransportesPorVencer->vencidos }}</p>
+                      <p class="m-0"><span class="label">{{ $documentosTransportesPorVencer->vencidos }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>Vencidos</small>
@@ -164,9 +218,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-danger" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 3]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan3 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan3 }}</p>
+                      <p class="m-0"><span class="label">{{ $documentosTransportesPorVencer->lessThan3 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>3 días</small>
@@ -174,9 +228,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-warning" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 7]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan7 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan7 }}</p>
+                      <p class="m-0"><span class="label">{{ $documentosTransportesPorVencer->lessThan7 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>7 días</small>
@@ -184,9 +238,9 @@
                 <div class="col-6 col-md-3 text-center">
                   <a class="main-expiration-clocks text-primary" href="{{ route('admin.expiration', ['type' => 'transportes', 'days' => 21]) }}" title="Documentos {{ $documentosTransportesPorVencer->lessThan21 }}">
                     <div class="w-100">
-                      <i class="fa fa-clock-o"></i>
+                      <i class="fa fa-clock-o fa-4x"></i>
                       <br>
-                      <p class="m-0">{{ $documentosTransportesPorVencer->lessThan21 }}</p>
+                      <p class="m-0"><span class="label">{{ $documentosTransportesPorVencer->lessThan21 }} Documentos</span></p>
                     </div>
                   </a>
                   <small class=text-muted>21 días</small>
@@ -195,8 +249,8 @@
             </div>
           @endpermission
         </div>
-      </div>
-    @endpermission
+      @endpermission
+    </div>
   </div>
 
   @role('empleado')
@@ -206,29 +260,39 @@
           <ul class="nav nav-tabs">
             <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-money"></i> Sueldos</a></li>
             <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
+            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos (Inventario V2)</a></li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane active" id="tab-1">
+            <div id="tab-1" class="tab-pane active">
               <div class="panel-body">
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Alcance líquido</th>
-                    <th class="text-center">Sueldo líquido</th>
-                    <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Alcance líquido</th>
+                    <th>Sueldo líquido</th>
+                    <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
-                    @foreach(Auth::user()->sueldos as $d)
+                  <tbody>
+                    @foreach(Auth::user()->sueldos as $sueldo)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $d->created_at }}</td>
-                        <td>{{ $d->alcanceLiquido() }}</td>
-                        <td>{{ $d->sueldoLiquido() }}</td>
-                        <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['sueldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <td class="text-center">{{ $sueldo->created_at }}</td>
+                        <td class="text-right">{{ $sueldo->alcanceLiquido() }}</td>
+                        <td class="text-right">{{ $sueldo->sueldoLiquido() }}</td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('sueldos.show', ['sueldo' => $sueldo->id]) }}">
+                                  <i class="fa fa-search"></i> Ver
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
                         </td>
                       </tr>
                     @endforeach
@@ -236,41 +300,80 @@
                 </table>
               </div>
             </div>
-            <div class="tab-pane" id="tab-2">
+            <div id="tab-2" class="tab-pane">
               <div class="panel-body">
                 <div class="mb-3 text-right">
                   <a class="btn btn-primary btn-xs" href="{{ route('anticipos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Solicitar anticipo</a>
                 </div>
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Solicitud</th>
-                      <th class="text-center">Anticipo</th>
-                      <th class="text-center">Bono</th>
-                      <th class="text-center">Fecha</th>
-                      <th class="text-center">Descripción</th>
-                      <th class="text-center">Adjunto</th>
-                      <th class="text-center">Estatus</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Solicitud</th>
+                      <th>Anticipo</th>
+                      <th>Bono</th>
+                      <th>Fecha</th>
+                      <th>Descripción</th>
+                      <th>Adjunto</th>
+                      <th>Estatus</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach(Auth::user()->empleado->anticipos()->get() as $anticipo)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $anticipo->solicitud() !!}</small></td>
-                        <td>{{ $anticipo->anticipo() }}</td>
-                        <td>{{ $anticipo->bono() }}</td>
-                        <td>{{ $anticipo->fecha }}</td>
+                        <td class="text-center" title="Si el Empleado solicito o no el Anticipo"><small>{!! $anticipo->solicitud() !!}</small></td>
+                        <td class="text-right">{{ $anticipo->anticipo() }}</td>
+                        <td class="text-right">{{ $anticipo->bono() }}</td>
+                        <td class="text-center">{{ $anticipo->fecha }}</td>
                         <td>@nullablestring($anticipo->descripcion)</td>
-                        <td>
+                        <td class="text-center">
                           @if($anticipo->adjunto)
                             <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
                           @else
                             @nullablestring(null)
                           @endif
                         </td>
-                        <td><small>{!! $anticipo->status() !!}</small></td>
+                        <td class="text-center"><small>{!! $anticipo->status() !!}</small></td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="tab-3" class="tab-pane">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Inventario</th>
+                      <th>Contrato</th>
+                      <th>Cantidad</th>
+                      <th>Descripción</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach(Auth::user()->egresos->with(['inventario', 'contrato'])->get() as $egreso)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>@nullablestring(optional($egreso->inventario)->nombre)</td>
+                        <td>@nullablestring(optional($egreso->contrato)->nombre)</td>
+                        <td class="text-right">{{ $egreso->cantidad() }}</td>
+                        <td>@nullablestring($egreso->descripcion)</td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('inventario.egreso.show', ['egreso' => $egreso->id]) }}">
+                                  <i class="fa fa-search"></i> Ver
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>

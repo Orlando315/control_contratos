@@ -139,7 +139,8 @@ class UnidadController extends Controller
       if($unidad->inventariosV2()->count() > 0){
         return redirect()->back()->with([
           'flash_message' => 'Esta Unidad tiene Inventarios V2 agregados.',
-          'flash_class' => 'alert-success'
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
         ]);
       }
 

@@ -24,7 +24,7 @@
 
 @section('content')
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
           <h4>Agregar transporte</h4>
@@ -33,34 +33,20 @@
           <form action="{{ route('admin.transportes.store') }}" method="POST">
             @csrf
 
-            <div class="form-group{{ $errors->has('contrato') ? ' has-error' : '' }}">
-              <label for="contrato">Contrato: *</label>
-              <select id="contrato" class="form-control" name="contrato" required>
-                <option value="">Seleccione...</option>
-                @foreach($contratos as $contrato)
-                  <option value="{{ $contrato->id }}"{{ old('contrato') == $contrato->id ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <div class="form-group{{ $errors->has('supervisor') ? ' has-error' : '' }}">
-              <label for="supervisor">Supervisor: *</label>
-              <select id="supervisor" class="form-control" name="supervisor" required>
-                <option value="">Seleccione...</option>
-                @foreach($supervisores as $supervisor)
-                  <option value="{{ $supervisor->id }}"{{ old('supervisor') == $supervisor->id ? ' selected' : '' }}>{{ $supervisor->rut }} | {{ $supervisor->nombre() }}</option>
-                @endforeach
-              </select>
-            </div>
-
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group{{ $errors->has('faena') ? ' has-error' : '' }}">
-                  <label for="faena">Faena:</label>
-                  <select id="faena" class="form-control" name="faena">
+                <div class="form-group{{ $errors->has('patente') ? ' has-error' : '' }}">
+                  <label for="patente">Patente: *</label>
+                  <input id="patente" class="form-control" type="text" name="patente" maxlength="50" value="{{ old('patente') }}" placeholder="Patente" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('contratos') ? ' has-error' : '' }}">
+                  <label for="contratos">Contratos:</label>
+                  <select id="contratos" class="form-control" name="contratos[]" multiple="multiple">
                     <option value="">Seleccione...</option>
-                    @foreach($faenas as $faena)
-                      <option value="{{ $faena->id }}"{{ old('faena') == $faena->id ? ' selected' : '' }}>{{ $faena->nombre }}</option>
+                    @foreach($contratos as $contrato)
+                      <option value="{{ $contrato->id }}"{{ in_array($contrato->id, old('contratos', [])) ? ' selected' : '' }}>{{ $contrato->nombre }}</option>
                     @endforeach
                   </select>
                 </div>
@@ -69,17 +55,53 @@
 
             <div class="row">
               <div class="col-md-6">
-              <div class="form-group{{ $errors->has('vehiculo') ? ' has-error' : '' }}">
-                <label for="vehiculo">Vehiculo: *</label>
-                <input id="vehiculo" class="form-control" type="text" name="vehiculo" maxlength="50" value="{{ old('vehiculo') }}" placeholder="Vehiculo" required>
-              </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group{{ $errors->has('patente') ? ' has-error' : '' }}">
-                  <label for="patente">Patente: *</label>
-                  <input id="patente" class="form-control" type="text" name="patente" maxlength="50" value="{{ old('patente') }}" placeholder="Patente" required>
+                <div class="form-group{{ $errors->has('supervisores') ? ' has-error' : '' }}">
+                  <label for="supervisores">Supervisores:</label>
+                  <select id="supervisores" class="form-control" name="supervisores[]" multiple="multiple">
+                    <option value="">Seleccione...</option>
+                    @foreach($supervisores as $supervisor)
+                      <option value="{{ $supervisor->id }}"{{ in_array($supervisor->id, old('supervisores', [])) ? ' selected' : '' }}>{{ $supervisor->rut }} | {{ $supervisor->nombre() }}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
+              <div class="col-md-6">
+                <div class="form-group{{ $errors->has('faenas') ? ' has-error' : '' }}">
+                  <label for="faenas">Faenas:</label>
+                  <select id="faenas" class="form-control" name="faenas[]" multiple="multiple">
+                    <option value="">Seleccione...</option>
+                    @foreach($faenas as $faena)
+                      <option value="{{ $faena->id }}"{{ in_array($faena->id, old('faenas', [])) ? ' selected' : '' }}>{{ $faena->nombre }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('modelo') ? ' has-error' : '' }}">
+                  <label for="modelo">Modelo:</label>
+                  <input id="modelo" class="form-control" type="text" name="modelo" maxlength="50" value="{{ old('modelo') }}" placeholder="Modelo">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('marca') ? ' has-error' : '' }}">
+                  <label for="marca">Marca:</label>
+                  <input id="marca" class="form-control" type="text" name="marca" maxlength="50" value="{{ old('marca') }}" placeholder="Marca">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group{{ $errors->has('color') ? ' has-error' : '' }}">
+                  <label for="color">Color:</label>
+                  <input id="color" class="form-control" type="text" name="color" maxlength="50" value="{{ old('color') }}" placeholder="Color">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group{{ $errors->has('descripcion') ? ' has-error' : '' }}">
+              <label for="descripcion">Descripción:</label>
+              <input id="descripcion" class="form-control" type="text" name="descripcion" maxlength="100" value="{{ old('descripcion') }}" placeholder="Descripción">
             </div>
 
             @if(count($errors) > 0)
@@ -108,7 +130,7 @@
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){
-      $('#contrato, #supervisor, #faena').select2({
+      $('#contratos, #supervisores, #faenas').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       })

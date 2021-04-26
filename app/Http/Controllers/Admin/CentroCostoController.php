@@ -79,7 +79,13 @@ class CentroCostoController extends Controller
       $this->authorize('view', $centro);
 
       $centro->load([
-        'inventariosV2Egreso',
+        'inventariosV2Egreso' => function () {
+          $query->with([
+            'inventario',
+            'cliente',
+            'user',
+          ]);
+        },
         'requerimientosMateriales' => function ($query){
           $query->with([
             'faena',
@@ -88,6 +94,7 @@ class CentroCostoController extends Controller
           ])
           ->withCount('productos');
         },
+        'facturas.contrato',
       ]);
 
       return view('admin.centro.show', compact('centro'));

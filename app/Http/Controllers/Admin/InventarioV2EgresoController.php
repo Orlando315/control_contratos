@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{InventarioV2Egreso, InventarioV2, User, Cliente, Contrato, Faena, CentroCosto};
+use App\{InventarioV2Egreso, InventarioV2, Cliente, Contrato, Faena, CentroCosto};
 
 class InventarioV2EgresoController extends Controller
 {
@@ -104,7 +104,14 @@ class InventarioV2EgresoController extends Controller
     {
       $this->authorize('view', $egreso);
 
-      $egreso->load('inventario', 'cliente', 'contrato', 'faena', 'centroCosto');
+      $egreso->load([
+        'inventario',
+        'user',
+        'cliente',
+        'contrato',
+        'faena',
+        'centroCosto',
+      ]);
 
       return view('admin.inventarioV2.egreso.show', compact('egreso'));
     }

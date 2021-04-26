@@ -63,6 +63,8 @@ class RequerimientoMaterialController extends Controller
         'fecha' => 'nullable|date_format:d-m-Y',
         'urgencia' => 'nullable|in:normal,urgente',
         'productos' => 'required|min:1',
+        'productos.*.tipo_codigo' => 'nullable|string|max:6',
+        'productos.*.codigo' => 'nullable|string|max:8',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
       ]);
@@ -91,6 +93,8 @@ class RequerimientoMaterialController extends Controller
       foreach ($request->productos as $producto){
         $productos[] = [
           'inventario_id' => $producto['inventario'],
+          'tipo_codigo' => $producto['tipo_codigo'],
+          'codigo' => $producto['codigo'],
           'nombre' => $producto['nombre'],
           'cantidad' => $producto['cantidad'],
         ];
@@ -178,6 +182,8 @@ class RequerimientoMaterialController extends Controller
         'fecha' => 'nullable|date_format:d-m-Y',
         'urgencia' => 'nullable|in:normal,urgente',
         'productos' => 'nullable|min:0',
+        'productos.*.tipo_codigo' => 'nullable|string|max:6',
+        'productos.*.codigo' => 'nullable|string|max:8',
         'productos.*.nombre' => 'required|max:100',
         'productos.*.cantidad' =>  'required|integer|min:1|max:99999',
       ]);
@@ -201,6 +207,8 @@ class RequerimientoMaterialController extends Controller
       foreach(($request->productos ?? []) as $producto){
         $productos[] = [
           'inventario_id' => $producto['inventario'],
+          'tipo_codigo' => $producto['tipo_codigo'],
+          'codigo' => $producto['codigo'],
           'nombre' => $producto['nombre'],
           'cantidad' => $producto['cantidad'],
         ];
