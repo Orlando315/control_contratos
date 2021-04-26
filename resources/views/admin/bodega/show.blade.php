@@ -49,72 +49,137 @@
     </div>
   </div><!-- .row -->
 
-  @permission('inventario-v2-index')
-    <div class="row mb-3">
+  @permission('inventario-v2-index|inventario-egreso-index')
+    <div class="row">
       <div class="col-md-12">
-        <div class="ibox">
-          <div class="ibox-title">
-            <h5><i class="fa fa-tasks"></i> Inventarios V2</h5>
-          </div>
-          <div class="ibox-content">
-            <table class="table data-table table-bordered table-hover table-sm w-100">
-              <thead>
-                <tr class="text-center">
-                  <th>#</th>
-                  <th>Nombre</th>
-                  <th>Unidad</th>
-                  <th>Stock</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($bodega->inventariosV2 as $inventario)
-                  <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $inventario->nombre }}</td>
-                    <td>{{ $inventario->unidad->nombre }}</td>
-                    <td class="text-right">{{ $inventario->stock() }}</td>
-                    <td class="text-center">
-                      @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')
-                        <div class="btn-group">
-                          <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                          <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                            @permission('inventario-v2-view')
-                              <li>
-                                <a class="dropdown-item" href="{{ route('admin.inventario.v2.show', ['inventario' => $inventario->id]) }}">
-                                  <i class="fa fa-search"></i> Ver
-                                </a>
-                              </li>
+        <div class="tabs-container">
+          <ul class="nav nav-tabs">
+            @permission('inventario-v2-index')
+              <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-tasks"></i> Inventarios V2</a></li>
+            @endpermission
+            @permission('ubicacion-index')
+              <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-sitemap"></i> Ubicación</a></li>
+            @endpermission
+          </ul>
+          <div class="tab-content">
+            @permission('inventario-ingreso-index')
+              <div id="tab-1" class="tab-pane active">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Unidad</th>
+                        <th>Stock</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($bodega->inventariosV2 as $inventario)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $inventario->nombre }}</td>
+                          <td>{{ $inventario->unidad->nombre }}</td>
+                          <td class="text-right">{{ $inventario->stock() }}</td>
+                          <td class="text-center">
+                            @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('inventario-v2-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.v2.show', ['inventario' => $inventario->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-v2-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.v2.edit', ['inventario' => $inventario->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-ingreso-create')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.create', ['inventario' => $inventario->id]) }}" title="Ingreso de Stock">
+                                        <i class="fa fa-plus"></i> Nuevo Ingreso
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-egreso-create')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.egreso.create', ['inventario' => $inventario->id]) }}" title="Egreso de Stock">
+                                        <i class="fa fa-plus"></i> Nuevo Egreso
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
-                            @permission('inventario-v2-edit')
-                              <li>
-                                <a class="dropdown-item" href="{{ route('admin.inventario.v2.edit', ['inventario' => $inventario->id]) }}">
-                                  <i class="fa fa-pencil"></i> Editar
-                                </a>
-                              </li>
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
+            @permission('ubicacion-index')
+              <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+                  @permission('ubicacion-create')
+                    <div class="mb-3 text-right">
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.ubicacion.create', ['bodega' => $bodega->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Ubicación</a>
+                    </div>
+                  @endpermission
+
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Inventarios V2</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($bodega->ubicaciones as $ubicacion)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $ubicacion->nombre }}</td>
+                          <td class="text-right">{{ $ubicacion->inventarios_v2_count }}</td>
+                          <td class="text-center">
+                            @permission('ubicacion-view|ubicacion-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('ubicacion-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.ubicacion.show', ['ubicacion' => $ubicacion->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('ubicacion-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.ubicacion.edit', ['ubicacion' => $ubicacion->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
-                            @permission('inventario-ingreso-create')
-                              <li>
-                                <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.create', ['inventario' => $inventario->id]) }}" title="Ingreso de Stock">
-                                  <i class="fa fa-plus"></i> Nuevo Ingreso
-                                </a>
-                              </li>
-                            @endpermission
-                            @permission('inventario-egreso-create')
-                              <li>
-                                <a class="dropdown-item" href="{{ route('admin.inventario.egreso.create', ['inventario' => $inventario->id]) }}" title="Egreso de Stock">
-                                  <i class="fa fa-plus"></i> Nuevo Egreso
-                                </a>
-                              </li>
-                            @endpermission
-                          </ul>
-                        </div>
-                      @endpermission
-                    </td>
-                  </tr>
-                @endforeach
-              </tbody>
-            </table>
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
           </div>
         </div>
       </div>
@@ -137,6 +202,7 @@
             </div>
             <div class="modal-body">
               <h4 class="text-center">¿Esta seguro de eliminar esta Bodega?</h4>
+              <p class="text-center">Se eliminará toda la información relacionada a la Bodega</p>
             </div>
             <div class="modal-footer">
               <button class="btn btn-default" type="button" data-dismiss="modal">Cerrar</button>

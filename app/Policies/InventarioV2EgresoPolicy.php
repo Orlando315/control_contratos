@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\InventarioV2Egreso;
 use App\User;
@@ -43,7 +43,7 @@ class InventarioV2EgresoPolicy
      */
     public function view(User $user, InventarioV2Egreso $egreso)
     {
-      return $user->hasPermission('inventario-egreso-view');
+      return $user->hasPermission('inventario-egreso-view') || ($user->id == $egreso->user_id);
     }
 
     /**
@@ -82,26 +82,14 @@ class InventarioV2EgresoPolicy
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Evaluar si e User puede marcar como recibido el Egreso de InventarioV2.
      *
      * @param  \App\User  $user
      * @param  \App\InventarioV2Egreso  $egreso
      * @return mixed
      */
-    public function restore(User $user, InventarioV2Egreso $egreso)
+    public function accept(User $user, InventarioV2Egreso $egreso)
     {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\InventarioV2Egreso  $egreso
-     * @return mixed
-     */
-    public function forceDelete(User $user, InventarioV2Egreso $egreso)
-    {
-        //
+      return $user->id == $egreso->user_id;
     }
 }

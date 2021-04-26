@@ -114,7 +114,13 @@ class ContratosController extends Controller
         'plantillaDocumentos',
         'empleados',
         'transportes',
-        'inventariosV2Egreso',
+        'inventariosV2Egreso' => function ($query) {
+          $query->with([
+            'inventario',
+            'cliente',
+            'user',
+          ]);
+        },
         'requerimientosMateriales' => function ($query){
           $query->with([
             'faena',

@@ -24,6 +24,7 @@ class InventarioV2 extends Model
       'empresa_id',
       'unidad_id',
       'bodega_id',
+      'ubicacion_id',
       'nombre',
       'descripcion',
       'tipo_codigo',
@@ -112,6 +113,14 @@ class InventarioV2 extends Model
     public function bodega()
     {
       return $this->belongsTo('App\Bodega');
+    }
+
+    /**
+     * Obtener la Ubicacion
+     */
+    public function ubicacion()
+    {
+      return $this->belongsTo('App\Ubicacion');
     }
 
     /**

@@ -101,6 +101,11 @@ Route::group(['middleware' => 'auth'], function () {
   Route::resource('ayuda', 'AyudaController')
         ->only(['index', 'show']);
 
+  /* --- Inventario V2 - Egresos de Stock ---*/
+  Route::get('inventario/v2/egreso/{egreso}/pdf', 'InventarioV2EgresoController@pdf')->name('inventario.egreso.pdf');
+  Route::patch('inventario/v2/egreso/{egreso}/accept', 'InventarioV2EgresoController@accept')->name('inventario.egreso.accept');
+  Route::get('inventario/v2/egreso/{egreso}', 'InventarioV2EgresoController@show')->name('inventario.egreso.show');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

@@ -260,29 +260,39 @@
           <ul class="nav nav-tabs">
             <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-money"></i> Sueldos</a></li>
             <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
+            <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos (Inventario V2)</a></li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane active" id="tab-1">
+            <div id="tab-1" class="tab-pane active">
               <div class="panel-body">
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Alcance líquido</th>
-                    <th class="text-center">Sueldo líquido</th>
-                    <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Alcance líquido</th>
+                    <th>Sueldo líquido</th>
+                    <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
-                    @foreach(Auth::user()->sueldos as $d)
+                  <tbody>
+                    @foreach(Auth::user()->sueldos as $sueldo)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $d->created_at }}</td>
-                        <td>{{ $d->alcanceLiquido() }}</td>
-                        <td>{{ $d->sueldoLiquido() }}</td>
-                        <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('sueldos.show', ['sueldo' => $d->id] )}}"><i class="fa fa-search"></i></a>
+                        <td class="text-center">{{ $sueldo->created_at }}</td>
+                        <td class="text-right">{{ $sueldo->alcanceLiquido() }}</td>
+                        <td class="text-right">{{ $sueldo->sueldoLiquido() }}</td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('sueldos.show', ['sueldo' => $sueldo->id]) }}">
+                                  <i class="fa fa-search"></i> Ver
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
                         </td>
                       </tr>
                     @endforeach
@@ -290,41 +300,80 @@
                 </table>
               </div>
             </div>
-            <div class="tab-pane" id="tab-2">
+            <div id="tab-2" class="tab-pane">
               <div class="panel-body">
                 <div class="mb-3 text-right">
                   <a class="btn btn-primary btn-xs" href="{{ route('anticipos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Solicitar anticipo</a>
                 </div>
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Solicitud</th>
-                      <th class="text-center">Anticipo</th>
-                      <th class="text-center">Bono</th>
-                      <th class="text-center">Fecha</th>
-                      <th class="text-center">Descripción</th>
-                      <th class="text-center">Adjunto</th>
-                      <th class="text-center">Estatus</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Solicitud</th>
+                      <th>Anticipo</th>
+                      <th>Bono</th>
+                      <th>Fecha</th>
+                      <th>Descripción</th>
+                      <th>Adjunto</th>
+                      <th>Estatus</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach(Auth::user()->empleado->anticipos()->get() as $anticipo)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $anticipo->solicitud() !!}</small></td>
-                        <td>{{ $anticipo->anticipo() }}</td>
-                        <td>{{ $anticipo->bono() }}</td>
-                        <td>{{ $anticipo->fecha }}</td>
+                        <td class="text-center" title="Si el Empleado solicito o no el Anticipo"><small>{!! $anticipo->solicitud() !!}</small></td>
+                        <td class="text-right">{{ $anticipo->anticipo() }}</td>
+                        <td class="text-right">{{ $anticipo->bono() }}</td>
+                        <td class="text-center">{{ $anticipo->fecha }}</td>
                         <td>@nullablestring($anticipo->descripcion)</td>
-                        <td>
+                        <td class="text-center">
                           @if($anticipo->adjunto)
                             <a href="{{ $anticipo->adjunto_download }}" title="Descargar adjunto">Descargar</a>
                           @else
                             @nullablestring(null)
                           @endif
                         </td>
-                        <td><small>{!! $anticipo->status() !!}</small></td>
+                        <td class="text-center"><small>{!! $anticipo->status() !!}</small></td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="tab-3" class="tab-pane">
+              <div class="panel-body">
+                <table class="table data-table table-bordered table-hover table-sm w-100">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Inventario</th>
+                      <th>Contrato</th>
+                      <th>Cantidad</th>
+                      <th>Descripción</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach(Auth::user()->egresos->with(['inventario', 'contrato'])->get() as $egreso)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>@nullablestring(optional($egreso->inventario)->nombre)</td>
+                        <td>@nullablestring(optional($egreso->contrato)->nombre)</td>
+                        <td class="text-right">{{ $egreso->cantidad() }}</td>
+                        <td>@nullablestring($egreso->descripcion)</td>
+                        <td class="text-center">
+                          <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                              <li>
+                                <a class="dropdown-item" href="{{ route('inventario.egreso.show', ['egreso' => $egreso->id]) }}">
+                                  <i class="fa fa-search"></i> Ver
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        </td>
                       </tr>
                     @endforeach
                   </tbody>

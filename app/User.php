@@ -245,6 +245,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener los Egresos de Inventario
+     */
+    public function egresos()
+    {
+      return $this->hasMany('App\InventarioV2Egreso');
+    }
+
+    /**
      * Evaluar si el User es tiene algun role de Administrador
      * 
      * @return bool

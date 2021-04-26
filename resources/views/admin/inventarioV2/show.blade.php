@@ -85,6 +85,22 @@
               </span>
             </li>
             <li class="list-group-item">
+              <b>Ubicación</b>
+              <span class="pull-right">
+                @if($inventario->ubicacion)
+                  @permission('ubicacion-view')
+                    <a href="{{ route('admin.ubicacion.show', ['ubicacion' => $inventario->ubicacion_id]) }}">
+                      {{ $inventario->ubicacion->nombre }}
+                    </a>
+                  @else
+                    {{ $inventario->ubicacion->nombre }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Stock</b>
               <span class="pull-right">
                 {{ $inventario->stock() }}
@@ -125,164 +141,175 @@
   @permission('inventario-ingreso-index|inventario-egreso-index')
     <div class="row">
       <div class="col-md-12">
-      <div class="tabs-container">
-        <ul class="nav nav-tabs">
-          @permission('inventario-ingreso-index')
-            <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-level-down"></i> Ingresos</a></li>
-          @endpermission
-          @permission('inventario-egreso-index')
-            <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Egresos</a></li>
-          @endpermission
-        </ul>
-        <div class="tab-content">
-          @permission('inventario-ingreso-index')
-            <div id="tab-1" class="tab-pane active">
-              <div class="panel-body">
-                @permission('inventario-ingreso-create')
-                  <div class="mb-3 text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.inventario.ingreso.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Ingreso</a>
-                  </div>
-                @endpermission
+        <div class="tabs-container">
+          <ul class="nav nav-tabs">
+            @permission('inventario-ingreso-index')
+              <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-long-arrow-down"></i> Ingresos</a></li>
+            @endpermission
+            @permission('inventario-egreso-index')
+              <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos</a></li>
+            @endpermission
+          </ul>
+          <div class="tab-content">
+            @permission('inventario-ingreso-index')
+              <div id="tab-1" class="tab-pane active">
+                <div class="panel-body">
+                  @permission('inventario-ingreso-create')
+                    <div class="mb-3 text-right">
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.inventario.ingreso.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Ingreso</a>
+                    </div>
+                  @endpermission
 
-                <table class="table data-table table-bordered table-hover table-sm w-100">
-                  <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Proveedor</th>
-                      <th class="text-center">Cantidad</th>
-                      <th class="text-center">Costo</th>
-                      <th class="text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody class="text-center">
-                    @foreach($inventario->ingresos as $ingreso)
-                      <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @if($ingreso->proveedor)
-                            @permission('proveedor-view')
-                              <a href="{{ route('admin.proveedor.show', ['proveedor' => $ingreso->proveedor_id]) }}">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Proveedor</th>
+                        <th>Cantidad</th>
+                        <th>Costo</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($inventario->ingresos as $ingreso)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>
+                            @if($ingreso->proveedor)
+                              @permission('proveedor-view')
+                                <a href="{{ route('admin.proveedor.show', ['proveedor' => $ingreso->proveedor_id]) }}">
+                                  {{ $ingreso->proveedor->nombre }}
+                                </a>
+                              @else
                                 {{ $ingreso->proveedor->nombre }}
-                              </a>
+                              @endpermission
                             @else
-                              {{ $ingreso->proveedor->nombre }}
+                              @nullablestring(null)
+                            @endif
+                          </td>
+                          <td class="text-right">{{ $ingreso->cantidad() }}</td>
+                          <td class="text-right">
+                            @if($ingreso->costo)
+                              {{ $ingreso->costo() }}
+                            @else
+                              @nullablestring(null)
+                            @endif
+                          </td>
+                          <td class="text-center">
+                            @permission('inventario-ingreso-view|inventario-ingreso-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('inventario-ingreso-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.show', ['ingreso' => $ingreso->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-ingreso-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.edit', ['ingreso' => $ingreso->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
-                          @else
-                            @nullablestring(null)
-                          @endif
-                        </td>
-                        <td class="text-right">{{ $ingreso->cantidad() }}</td>
-                        <td class="text-right">
-                          @if($ingreso->costo)
-                            {{ $ingreso->costo() }}
-                          @else
-                            @nullablestring(null)
-                          @endif
-                        </td>
-                        <td>
-                          @permission('inventario-ingreso-view|inventario-ingreso-edit')
-                            <div class="btn-group">
-                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                                @permission('inventario-ingreso-view')
-                                  <li>
-                                    <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.show', ['ingreso' => $ingreso->id]) }}">
-                                      <i class="fa fa-search"></i> Ver
-                                    </a>
-                                  </li>
-                                @endpermission
-                                @permission('inventario-ingreso-edit')
-                                  <li>
-                                    <a class="dropdown-item" href="{{ route('admin.inventario.ingreso.edit', ['ingreso' => $ingreso->id]) }}">
-                                      <i class="fa fa-pencil"></i> Editar
-                                    </a>
-                                  </li>
-                                @endpermission
-                              </ul>
-                            </div>
-                          @endpermission
-                        </td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                </table>
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          @endpermission
-          @permission('inventario-egreso-index')
-            <div id="tab-2" class="tab-pane">
-              <div class="panel-body">
-                @permission('inventario-egreso-create')
-                  <div class="mb-3 text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.inventario.egreso.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Egreso</a>
-                  </div>
-                @endpermission
+            @endpermission
+            @permission('inventario-egreso-index')
+              <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+                  @permission('inventario-egreso-create')
+                    <div class="mb-3 text-right">
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.inventario.egreso.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Egreso</a>
+                    </div>
+                  @endpermission
 
-                <table class="table data-table table-bordered table-hover table-sm w-100">
-                  <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Cliente</th>
-                      <th class="text-center">Cantidad</th>
-                      <th class="text-center">Costo</th>
-                      <th class="text-center">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody class="text-center">
-                    @foreach($inventario->egresos as $egreso)
-                      <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @if($egreso->cliente)
-                            @permission('cliente-view')
-                              <a href="{{ route('admin.cliente.show', ['cliente' => $egreso->cliente_id]) }}">
-                                {{ $egreso->cliente->nombre }}
-                              </a>
-                            @else
-                              {{ $egreso->cliente->nombre }}
-                            @endpermission
-                          @else
-                            @nullablestring(null)
-                          @endif
-                        </td>
-                        <td class="text-right">{{ $egreso->cantidad() }}</td>
-                        <td class="text-right">
-                          @if($egreso->costo)
-                            {{ $egreso->costo() }}
-                          @else
-                            @nullablestring(null)
-                          @endif
-                        </td>
-                        <td>
-                          @permission('inventario-egreso-view|inventario-egreso-edit')
-                            <div class="btn-group">
-                              <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
-                              <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                                @permission('inventario-egreso-view')
-                                  <li>
-                                    <a class="dropdown-item" href="{{ route('admin.inventario.egreso.show', ['egreso' => $egreso->id]) }}">
-                                      <i class="fa fa-search"></i> Ver
-                                    </a>
-                                  </li>
-                                @endpermission
-                                @permission('inventario-egreso-edit')
-                                  <li>
-                                    <a class="dropdown-item" href="{{ route('admin.inventario.egreso.edit', ['egreso' => $egreso->id]) }}">
-                                      <i class="fa fa-pencil"></i> Editar
-                                    </a>
-                                  </li>
-                                @endpermission
-                              </ul>
-                            </div>
-                          @endpermission
-                        </td>
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Dirigido a</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Costo</th>
+                        <th>Acción</th>
                       </tr>
-                    @endforeach
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      @foreach($inventario->egresos as $egreso)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>
+                            @if($egreso->cliente)
+                              @permission('cliente-view')
+                                <a href="{{ route('admin.cliente.show', ['cliente' => $egreso->cliente_id]) }}">
+                                  {{ $egreso->cliente->nombre }}
+                                </a>
+                              @else
+                                {{ $egreso->cliente->nombre }}
+                              @endpermission
+                            @elseif($egreso->user)
+                              @permission('user-view')
+                                <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                                  {{ $egreso->user->nombre() }}
+                                </a>
+                              @else
+                                {{ $egreso->user->nombre() }}
+                              @endpermission
+                            @else
+                              @nullablestring(null)
+                            @endif
+                          </td>
+                          <td class="text-center">{{ $egreso->tipo() }}</td>
+                          <td class="text-right">{{ $egreso->cantidad() }}</td>
+                          <td class="text-right">
+                            @if($egreso->costo)
+                              {{ $egreso->costo() }}
+                            @else
+                              @nullablestring(null)
+                            @endif
+                          </td>
+                          <td class="text-center">
+                            @permission('inventario-egreso-view|inventario-egreso-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('inventario-egreso-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.egreso.show', ['egreso' => $egreso->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('inventario-egreso-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.inventario.egreso.edit', ['egreso' => $egreso->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
+                            @endpermission
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          @endpermission
+            @endpermission
+          </div>
         </div>
       </div>
     </div>

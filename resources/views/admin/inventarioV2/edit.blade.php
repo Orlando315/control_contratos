@@ -101,6 +101,17 @@
                 </div>
               </div>
               <div class="col-md-4">
+                <div class="form-group{{ $errors->has('ubicacion') ? ' has-error' : '' }}">
+                  <label for="ubicacion">Ubicación:</label>
+                  <select id="ubicacion" class="form-control" name="ubicacion" disabled>
+                    <option value="">Seleccione...</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('stock_minimo') ? ' has-error' : '' }}">
                   <label for="stock_minimo">Stock mínimo:</label>
                   <input id="stock_minimo" class="form-control" type="number" step="0.01" min="0" max="9999" name="stock_minimo" value="{{ old('stock_minimo', $inventario->stock_minimo) }}" placeholder="Stock mínimo">
@@ -213,10 +224,13 @@
     @endpermission
 
     $(document).ready(function(){
-      $('#unidad, #bodega, #categorias').select2({
+      $('#unidad, #bodega, #ubicacion, #categorias').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
       });
+
+      $('#bodega').change(searchUbicaciones)
+      $('#bodega').change();
 
       $('#check-codigos').change(function () {
         let isChecked = $(this).is(':checked');
@@ -338,6 +352,39 @@
       $('.alert ul').empty().append(`<li>${error}</li>`);
       $('.alert').show().delay(5000).hide('slow');
       $('#foto').val('');
+    }
+
+    function searchUbicaciones() {
+      let bodega = $(this).val();
+
+      if(!bodega){
+        return false;
+      }
+
+      let url = '{{ route("admin.bodega.ubicaciones", ["bodega" => ":id"]) }}'.replace(':id', bodega);
+
+      $('#ubicacion').empty().prop('disabled', true);
+
+      $.ajax({
+        type: 'GET',
+        url: url,
+        data: {},
+        dataType: 'json'
+      })
+      .done(function (response) {
+        $('#ubicacion').empty();
+
+        $.each(response, function (k, ubicacion) {
+          let oldSelected = @json(old('ubicacion', $inventario->ubicacion_id)) == ubicacion.id;
+          $('#ubicacion').append(`<option value="${ubicacion.id}"${oldSelected ? ' selected' : ''}>${ubicacion.nombre}</option>`);
+        });
+      })
+      .fail(function () {
+        $('#ubicacion').empty().prop('disabled', true);
+      })
+      .always(function () {
+        $('#ubicacion').prop('disabled', false);
+      });
     }
   </script>
 @endsection

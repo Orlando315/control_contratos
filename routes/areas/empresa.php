@@ -338,6 +338,9 @@ Route::get('transportes/consumos/create/{transporte}', 'TransportesConsumosContr
 Route::post('transportes/consumos/{transporte}', 'TransportesConsumosController@store')->name('consumos.store');
 
 /* --- Inventario V2 ---*/
+Route::get('inventario/v2/mass/template', 'InventarioV2Controller@massTemplate')->name('inventario.v2.mass.template');
+Route::get('inventario/v2/mass/edit', 'InventarioV2Controller@massEdit')->name('inventario.v2.mass.edit');
+Route::post('inventario/v2/mass/edit', 'InventarioV2Controller@massUpdate')->name('inventario.v2.mass.update');
 Route::get('inventario/v2/import/template', 'InventarioV2Controller@importTemplate')->name('inventario.v2.import.template');
 Route::get('inventario/v2/import', 'InventarioV2Controller@importCreate')->name('inventario.v2.import.create');
 Route::post('inventario/v2/import', 'InventarioV2Controller@importStore')->name('inventario.v2.import.store');
@@ -356,9 +359,20 @@ Route::resource('unidad', 'UnidadController')
 ]);
 
 /* --- Inventario V2 - Bodega ---*/
+Route::get('bodega/{bodega}/ubicaciones', 'BodegaController@ubicaciones')->name('bodega.ubicaciones');
 Route::resource('bodega', 'BodegaController')
 ->except([
   'index',
+]);
+
+/* --- Inventario V2 - Bodega - Ubicación ---*/
+Route::get('ubicacion/create/{bodega}', 'UbicacionController@create')->name('ubicacion.create');
+Route::post('ubicacion/create/{bodega}', 'UbicacionController@store')->name('ubicacion.store');
+Route::resource('ubicacion', 'UbicacionController')
+->except([
+  'index',
+  'create',
+  'store',
 ]);
 
 /* --- Inventario V2 - Ingresos de Stock ---*/

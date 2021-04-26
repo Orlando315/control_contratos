@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Row;
 use Illuminate\Support\Facades\Auth;
 use App\{InventarioV2, Unidad, Etiqueta};
 
-class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheets
+class InventarioV2Update implements OnEachRow, WithHeadingRow, WithMultipleSheets
 {
     /**
     * @param \Maatwebsite\Excel\Row  $row
@@ -18,6 +18,13 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheet
     public function onRow(Row $row)
     {
       $collection = $row->toCollection();
+      $inventario = InventarioV2::find($collection['id'] ?? null);
+
+      // Si el inventario no existe, se salta
+      if(!$inventario){
+        return null;
+      }
+
       $data = $collection->only([
         'nombre',
         'tipo_codigo',
@@ -58,9 +65,8 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheet
       }
 
       $data['unidad_id'] = $unidad ? $unidad->id : $unidadPredeterminada->id;
-      $data['empresa_id'] = Auth::user()->empresa->id;
-      $inventario = InventarioV2::create($data);
-      $inventario->categorias()->attach($categorias);
+      $inventario->update($data);
+      $inventario->categorias()->sync($categorias);
     }
 
     /**
