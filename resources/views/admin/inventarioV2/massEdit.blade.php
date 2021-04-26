@@ -10,7 +10,7 @@
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
         <li class="breadcrumb-item"><a href="{{ route('admin.inventario.v2.index') }}">Inventarios V2</a></li>
-        <li class="breadcrumb-item active"><strong>Importar</strong></li>
+        <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
   </div>
@@ -21,15 +21,14 @@
     <div class="col-md-8">
       <div class="ibox">
         <div class="ibox-title">
-          <h4 class="mb-4">Importar inventario V2</h4>
+          <h4>Editar inventario V2</h4>
 
           <div class="ibox-tools">
-            <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.import.template') }}"><i class="fa fa-download" aria-hidden="true"></i> Descargar formato</a>
-            <p class="m-0 text-muted"><small>Actualizado: 04/22/2021</small></p>
+            <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.mass.template') }}"><i class="fa fa-download" aria-hidden="true"></i> Exportar Inventario</a>
           </div>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.inventario.v2.import.store') }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.inventario.v2.mass.update') }}" method="POST" enctype="multipart/form-data">
             @csrf()
 
             <div class="row justify-content-center">

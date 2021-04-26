@@ -2,24 +2,29 @@
 
 namespace App\Exports\Sheets;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use App\Unidad;
+use App\InventarioV2;
 
-class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithStyles, WithColumnWidths
+class InventarioUpdateSheet implements FromQuery, WithTitle, WithHeadings, WithStyles, WithColumnWidths, WithMapping, WithStrictNullComparison
 {
+    use Exportable;
+
     /**
-     * Collection con la informacion a exportar
+     * Query con la informacion a exportar
      * 
      * @return Builder
      */
-    public function collection()
+    public function query()
     {
-      return collect();
+      return InventarioV2::with('unidad');
     }
 
     /**
@@ -44,9 +49,10 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
           'Los campos con asterisco (*), son obligatorios. De no contenerlo, no se guardará la información de ese Pruducto.'
         ],
         [
-          'El ID de la Unidad, Bodega, Ubicación y Categorías se puede observar en la hojas con dichos nombres. Se debe colocar solo el número ID.'
+          'El ID de las Unidades, Bodega, Ubicación y Categorías se puede observar en la hojas con dichos nombres. Se debe colocar solo el número ID.'
         ],
         [
+          'ID',
           'Nombre *',
           'Tipo código',
           'Código',
@@ -89,21 +95,47 @@ class InventarioSheet implements FromCollection, WithTitle, WithHeadings, WithSt
     public function columnWidths(): array
     {
       return [
-        'A' => 30,
-        'B' => 12,
-        'C' => 10,
-        'D' => 13,
+        'A' => 5,
+        'B' => 30,
+        'C' => 12,
+        'D' => 10,
         'E' => 13,
         'F' => 13,
-        'G' => 18,
-        'H' => 16,
-        'I' => 30,
-        'J' => 17,
+        'G' => 13,
+        'H' => 10,
+        'I' => 16,
+        'J' => 30,
         'K' => 17,
         'L' => 17,
         'M' => 17,
         'N' => 17,
         'O' => 17,
+        'P' => 17,
       ];
+    }
+
+    /**
+     * Mapear los datos de cada modelo a exportar como array
+     * 
+    * @param App\InventarioV2  $inventario
+    */
+    public function map($inventario): array
+    {
+      $dataInventario = [
+        $inventario->id,
+        $inventario->nombre,
+        $inventario->tipo_codigo,
+        $inventario->codigo,
+        $inventario->unidad_id,
+        $inventario->bodega_id,
+        $inventario->ubicacion_id,
+        $inventario->stock ?? 0,
+        $inventario->stock_minimo,
+        $inventario->descripcion,
+      ];
+
+      $categorias = $inventario->categorias->pluck('id')->toArray();
+
+      return array_merge($dataInventario, $categorias);
     }
 }

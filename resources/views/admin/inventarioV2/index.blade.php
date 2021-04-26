@@ -50,6 +50,7 @@
                 @permission('inventario-v2-create')
                   <div class="mb-3 text-right">
                     <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.export') }}"><i class="fa fa-download" aria-hidden="true"></i> Exportar</a>
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.inventario.v2.mass.edit') }}"><i class="fa fa-edit" aria-hidden="true"></i> Editar masivo</a>
                     <div class="btn-group">
                       <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</button>
                       <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
@@ -62,28 +63,22 @@
 
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Nombre</th>
-                      <th class="text-center">Unidad</th>
-                      <th class="text-center">Stock</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Bodega</th>
+                      <th>Ubicación</th>
+                      <th>Stock</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody>
                     @foreach($inventarios as $inventario)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>
-                          @permission('inventario-v2-view')
-                            <a href="{{ route('admin.inventario.v2.show', ['inventario' => $inventario->id]) }}">
-                              {{ $inventario->nombre }}  
-                            </a>
-                          @else
-                            {{ $inventario->nombre }}
-                          @endif
-                        </td>
-                        <td>{{ $inventario->unidad->nombre }}</td>
+                        <td>{{ $inventario->nombre }}</td>
+                        <td>@nullablestring(optional($inventario->bodega)->nombre)</td>
+                        <td>@nullablestring(optional($inventario->ubicacion)->nombre)</td>
                         <td class="text-right">{{ $inventario->stock() }}</td>
                         <td class="text-center">
                           @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')
@@ -140,11 +135,11 @@
 
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Nombre</th>
-                      <th class="text-center">Inventarios V2</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Nombre</th>
+                      <th>Inventarios V2</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -197,6 +192,7 @@
                     <tr class="text-center">
                       <th>#</th>
                       <th>Nombre</th>
+                      <th>Ubicaciones</th>
                       <th>Inventarios V2</th>
                       <th>Acción</th>
                     </tr>
@@ -206,6 +202,7 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $bodega->nombre }}</td>
+                        <td class="text-right">{{ $bodega->ubicaciones_count }}</td>
                         <td class="text-right">{{ $bodega->inventarios_v2_count }}</td>
                         <td class="text-center">
                           @permission('bodega-view|bodega-edit')

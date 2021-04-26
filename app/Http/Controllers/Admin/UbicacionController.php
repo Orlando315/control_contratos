@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Bodega;
+use App\{Ubicacion, Bodega};
 
-class BodegaController extends Controller
+class UbicacionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,43 +22,36 @@ class BodegaController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \App\Bodega  $bodega
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Bodega $bodega)
     {
-      $this->authorize('create', Bodega::class);
-
-      return view('admin.bodega.create');
+      return view('admin.bodega.ubicacion.create', compact('bodega'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
+     * @param  \App\Bodega  $bodega
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Bodega $bodega)
     {
-      $this->authorize('create', Bodega::class);
+      $this->authorize('create', Ubicacion::class);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
 
-      $bodega = new Bodega($request->only('nombre'));
+      $ubicacion = new Ubicacion($request->only('nombre'));
+      $ubicacion->empresa_id = Auth::user()->empresa->id;
 
-      if(Auth::user()->empresa->bodegas()->save($bodega)){
-        if($request->ajax()){
-          return response()->json(['response' =>  true, 'bodega' => $bodega]);
-        }
-
-        return redirect()->route('admin.bodega.show', ['bodega' => $bodega->id])->with([
-          'flash_message' => 'Bodega agregada exitosamente.',
+      if($bodega->ubicaciones()->save($ubicacion)){
+        return redirect()->route('admin.ubicacion.show', ['ubicacion' => $ubicacion->id])->with([
+          'flash_message' => 'Ubicación agregada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
-      }
-
-      if($request->ajax()){
-        return response()->json(['response' =>  false]);
       }
 
       return redirect()->back()->withInput()->with([
@@ -71,53 +64,53 @@ class BodegaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Bodega  $bodega
+     * @param  \App\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function show(Bodega $bodega)
+    public function show(Ubicacion $ubicacion)
     {
-      $this->authorize('view', $bodega);
+      $this->authorize('view', $ubicacion);
       
-      $bodega->load([
+      $ubicacion->load([
+        'bodega',
         'inventariosV2.unidad',
-        'ubicaciones.inventariosV2',
       ]);
 
-      return view('admin.bodega.show', compact('bodega'));
+      return view('admin.bodega.ubicacion.show', compact('ubicacion'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Bodega  $bodega
+     * @param  \App\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function edit(Bodega $bodega)
+    public function edit(Ubicacion $ubicacion)
     {
-      $this->authorize('update', $bodega);
+      $this->authorize('update', $ubicacion);
 
-      return view('admin.bodega.edit', compact('bodega'));
+      return view('admin.bodega.ubicacion.edit', compact('ubicacion'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Bodega  $bodega
+     * @param  \App\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Bodega $bodega)
+    public function update(Request $request, Ubicacion $ubicacion)
     {
-      $this->authorize('update', $bodega);
+      $this->authorize('update', $ubicacion);
       $this->validate($request, [
         'nombre' => 'required|max:50',
       ]);
 
-      $bodega->nombre = $request->nombre;
+      $ubicacion->nombre = $request->nombre;
 
-      if($bodega->save()){
-        return redirect()->route('admin.bodega.show', ['bodega' => $bodega->id])->with([
-          'flash_message' => 'Bodega modificada exitosamente.',
+      if($ubicacion->save()){
+        return redirect()->route('admin.ubicacion.show', ['ubicacion' => $ubicacion->id])->with([
+          'flash_message' => 'Ubicación modificada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
       }
@@ -132,16 +125,16 @@ class BodegaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Bodega  $bodega
+     * @param  \App\Ubicacion  $ubicacion
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Bodega $bodega)
+    public function destroy(Ubicacion $ubicacion)
     {
-      $this->authorize('delete', $bodega);
+      $this->authorize('delete', $ubicacion);
 
-      if($bodega->delete()){
-        return redirect()->route('admin.inventario.v2.index')->with([
-          'flash_message' => 'Bodega eliminada exitosamente.',
+      if($ubicacion->delete()){
+        return redirect()->route('admin.bodega.show', ['bodega' => $ubicacion->bodega_id])->with([
+          'flash_message' => 'Ubicación eliminada exitosamente.',
           'flash_class' => 'alert-success'
         ]);
       }
@@ -151,18 +144,5 @@ class BodegaController extends Controller
         'flash_class' => 'alert-danger',
         'flash_important' => true
       ]);
-    }
-
-    /**
-     * Obtener las Ubicaciones de la Bodega proporcionada
-     * 
-     * @param  \App\Bodega  $bodega
-     * @return \Illuminate\Http\Response
-     */
-    public function ubicaciones(Bodega $bodega)
-    {
-      $this->authorize('view', $bodega);
-
-      return response()->json($bodega->ubicaciones);
     }
 }

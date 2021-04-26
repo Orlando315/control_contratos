@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 
-class Bodega extends Model
+class Ubicacion extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'bodegas';
+    protected $table = 'ubicaciones';
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +20,7 @@ class Bodega extends Model
      * @var array
      */
     protected $fillable = [
+      'bodega_id',
       'nombre',
     ];
 
@@ -43,18 +44,18 @@ class Bodega extends Model
     }
 
     /**
+     * Obtener los Bodega
+     */
+    public function bodega()
+    {
+      return $this->belongsTo('App\Bodega');
+    }
+
+    /**
      * Obtener los Inventarios V2
      */
     public function inventariosV2()
     {
       return $this->hasMany('App\InventarioV2');
-    }
-
-    /**
-     * Obtener las Ubicaciones
-     */
-    public function ubicaciones()
-    {
-      return $this->hasMany('App\Ubicacion');
     }
 }

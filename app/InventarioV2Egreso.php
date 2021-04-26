@@ -31,6 +31,16 @@ class InventarioV2Egreso extends Model
       'costo',
       'descripcion',
       'foto',
+      'recibido',
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+      'recibido',
     ];
 
     /**
@@ -42,6 +52,17 @@ class InventarioV2Egreso extends Model
     {
       parent::boot();
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Incluir solo los registros pendintes
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePendiente($query)
+    {
+      return $query->whereNull('recibido');
     }
 
     /**
@@ -153,6 +174,26 @@ class InventarioV2Egreso extends Model
     }
 
     /**
+     * Evaluar si el Egreso fue marcado como recibido
+     * 
+     * @return bool
+     */
+    public function isRecibido()
+    {
+      return !$this->isPending();
+    }
+
+    /**
+     * Evaluar si el Egreso no ha sido marcado como recibido
+     * 
+     * @return bool
+     */
+    public function isPending()
+    {
+      return is_null($this->recibido);
+    }
+
+    /**
      * Obtener el atributo formateado
      *
      * @return string
@@ -180,9 +221,21 @@ class InventarioV2Egreso extends Model
     public function tipo()
     {
       if($this->isEmpty()){
-        return '';
+        return null;
       }
 
-      return $this->isCliente() ? 'cliente' : 'usuario';
+      return $this->isCliente() ? 'Cliente' : 'Usuario';
+    }
+
+    /**
+     * Obtener el atributo formateado
+     *
+     * @param  bool  $asText
+     */
+    public function recibido($asText = false)
+    {
+      $recibido = $this->isPending() ? '<span class="label label-default">Pendiente</span>' : '<span class="label label-primary">Recibido</span>';
+
+      return $asText ? strip_tags($recibido) : $recibido;
     }
 }

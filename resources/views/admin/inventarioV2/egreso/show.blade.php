@@ -26,6 +26,7 @@
       @permission('inventario-egreso-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.inventario.egreso.edit', ['egreso' => $egreso->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
+      <a class="btn btn-default btn-sm" href="{{ route('inventario.egreso.pdf', ['egreso' => $egreso->id]) }}"><i class="fa fa-file-pdf-o"></i> Descargar</a>
       @permission('inventario-egreso-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -123,7 +124,7 @@
               </span>
             </li>
             <li class="list-group-item">
-              <b>Centro costo</b>
+              <b>Centro de costo</b>
               <span class="pull-right">
                 @if($egreso->centroCosto)
                   @permission('centro-costo-view')
@@ -156,6 +157,12 @@
               <b>Descripción</b>
               <span class="pull-right">@nullablestring($egreso->descripcion)</span>
             </li>
+            @if($egreso->isUser())
+              <li class="list-group-item">
+                <b>Recibido</b>
+                <span class="pull-right">{!! $egreso->recibido() !!}</span>
+              </li>
+            @endif
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $egreso->created_at }}</small>
             </li>

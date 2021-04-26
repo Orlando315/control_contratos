@@ -8,11 +8,12 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use App\InventarioV2;
 
-class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyles, WithColumnWidths, WithMapping
+class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyles, WithColumnWidths, WithMapping, WithStrictNullComparison
 {
     use Exportable;
 
@@ -23,7 +24,11 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
      */
     public function query()
     {
-      return InventarioV2::with('unidad');
+      return InventarioV2::with([
+        'unidad',
+        'bodega',
+        'ubicacion',
+      ]);
     }
 
     /**
@@ -47,10 +52,13 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
         'Nombre',
         'Tipo código',
         'Código',
+        'Unidad',
+        'Bodega',
+        'Ubicación',
         'Stock',
         'Stock mínimo',
-        'Unidad',
         'Descripción',
+        'Categorías',
       ];
     }
 
@@ -74,14 +82,17 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
      */
     public function columnWidths(): array
     {
-      return [
+      return [        
         'A' => 30,
-        'B' => 10,
+        'B' => 12,
         'C' => 10,
-        'D' => 10,
-        'E' => 16,
-        'F' => 16,
-        'G' => 30,
+        'D' => 13,
+        'E' => 13,
+        'F' => 13,
+        'G' => 18,
+        'H' => 16,
+        'I' => 30,
+        'J' => 17,
       ];
     }
 
@@ -93,13 +104,16 @@ class InventarioV2Export implements FromQuery, WithTitle, WithHeadings, WithStyl
     public function map($inventario): array
     {
       return [
-        'Nombre' => $inventario->nombre,
-        'Tipo código' => $inventario->tipo_codigo,
-        'Código' => $inventario->codigo,
-        'Stock' => $inventario->stock ?? 0,
-        'Stock mínimo' => $inventario->stock_minimo,
-        'Unidad' => $inventario->unidad->nombre,
-        'Descripción' => $inventario->descripcion,
+        $inventario->nombre,
+        $inventario->tipo_codigo,
+        $inventario->codigo,
+        optional($inventario->unidad)->nombre,
+        optional($inventario->bodega)->nombre,
+        optional($inventario->ubicacion)->nombre,
+        $inventario->stock ?? 0,
+        $inventario->stock_minimo,
+        $inventario->descripcion,
+        implode(', ', $inventario->categorias->pluck('etiqueta')->toArray()),
       ];
     }
 }

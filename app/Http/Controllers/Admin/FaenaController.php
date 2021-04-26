@@ -86,7 +86,11 @@ class FaenaController extends Controller
         },
         'transportes',
         'inventariosV2Egreso' => function ($query) {
-          $query->with('inventario');
+          $query->with([
+            'inventario',
+            'user',
+            'cliente'
+          ]);
         },
         'requerimientosMateriales' => function ($query){
           $query->with([
