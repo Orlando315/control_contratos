@@ -45,6 +45,9 @@ Route::get('cronjob/asistencias/create', 'HomeController@cronjobAsistencias');
 /* --- Solo usuarios autenticados --- */
 Route::group(['middleware' => 'auth'], function () {
 
+  /* --- Welcome --- */
+  Route::get('welcome', 'HomeController@welcome')->name('welcome');
+
   /* --- Dashboard --- */
   Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 

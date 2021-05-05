@@ -1,16 +1,7 @@
 <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i></a>
-    @if(Auth::user()->hasInactiveRole('empresa|administrador|supervisor|empleado'))
-      <form class="float-left" action="{{ route('role.toggle') }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <button class="minimalize-styl-2 btn btn-default" type="submit">
-          Cambiar a {{ Auth::user()->inactiveRole()->name() }}
-        </button>
-      </form>
-    @endif
+    <a class="minimalize-styl-2 btn btn-default" href="{{ route('welcome') }}"><i class="fa fa-external-link"></i> Pantalla de bienvenida</a>
   </div>
   <ul class="nav navbar-top-links navbar-right">
     <li{{ Auth::user()->empresa->logo ? '' : ' style="padding: 20px"' }}>

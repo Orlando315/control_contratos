@@ -396,7 +396,7 @@ class User extends Authenticatable
      */
     public function nombre()
     {
-      return $this->nombres.' '.$this->apellidos;
+      return trim($this->nombres.' '.$this->apellidos);
     }
 
     /**
