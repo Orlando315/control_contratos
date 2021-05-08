@@ -25,7 +25,7 @@
       @permission('plantilla-documento-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.edit', ['documento' => $documento->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
-      <a class="btn btn-default btn-sm" href="{{ route('admin.plantilla.documento.pdf', ['documento' => $documento->id]) }}"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
+      <a class="btn btn-default btn-sm" href="{{ route('plantilla.documento.pdf', ['documento' => $documento->id]) }}"><i class="fa fa fa-file-pdf-o" aria-hidden="true"></i> Descargar</a>
       @permission('plantilla-documento-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -108,6 +108,12 @@
               <b>Caducidad</b>
               <span class="pull-right">@nullablestring(optional($documento->caducidad)->format('d-m-Y'))</span>
             </li>
+            @if($documento->toEmpleado())
+              <li class="list-group-item" title="Establece si el Empleado puede o no puede ver el Documento">
+                <b>Visible</b>
+                <span class="pull-right">{!! $documento->isVisible(true) !!}</span>
+              </li>
+            @endif
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $documento->created_at->format('d-m-Y H:i:s') }}</small>
             </li>

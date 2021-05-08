@@ -27,7 +27,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Transporte' => 'App\Policies\Admin\TransportePolicy',
       'App\TransporteConsumo' => 'App\Policies\Admin\TransporteConsumoPolicy',
       'App\Plantilla' => 'App\Policies\PlantillaPolicy',
-      'App\PlantillaDocumento' => 'App\Policies\Admin\PlantillaDocumentoPolicy',
+      'App\PlantillaDocumento' => 'App\Policies\PlantillaDocumentoPolicy',
       'App\PlantillaVariable' => 'App\Policies\Admin\PlantillaVariablePolicy',
       'App\Cliente' => 'App\Policies\Admin\ClientePolicy',
       'App\Proveedor' => 'App\Policies\Admin\ProveedorPolicy',
@@ -45,10 +45,13 @@ class AuthServiceProvider extends ServiceProvider
       'App\Bodega' => 'App\Policies\Admin\BodegaPolicy',
       'App\Ubicacion' => 'App\Policies\Admin\UbicacionPolicy',
       'App\Partida' => 'App\Policies\Admin\PartidaPolicy',
+      'App\Postulante' => 'App\Policies\Admin\PostulantePolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
       'App\Ayuda' => 'App\Policies\AyudaPolicy',
       'App\RequerimientoMaterial' => 'App\Policies\RequerimientoMaterialPolicy',
+      'App\Carpeta' => 'App\Policies\CarpetaPolicy',
+      'App\Documento' => 'App\Policies\DocumentoPolicy',
     ];
 
     /**

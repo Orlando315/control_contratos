@@ -84,6 +84,18 @@
               <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, pdf, txt, xlsx, docx</small>
             </div>
 
+            @if($type == 'empleados')
+              <div class="form-group{{ $errors->has('visibilidad') ? ' has-error' : '' }}">
+                <label for="visibilidad">Visibilidad:</label>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="visibilidad" class="custom-control-input" type="checkbox" name="visibilidad" value="1"{{ old('visibilidad') ? ' checked' : '' }}>
+                  <label class="custom-control-label" for="visibilidad"><i class="icon-visibilidad fa fa-eye-slash" aria-hidden="true"></i> Permitir visibilidad</label>
+                </div>
+                <span class="form-text text-muted">Determina si el Empleado puede o no ver el Documento desde su perfil.</span>
+              </div>
+            @endif
+
             <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
               <ul class="m-0">
                 @foreach($errors->all() as $error)
@@ -157,7 +169,17 @@
             return false;
           }
         }
-      })
+      });
+
+      @if($type == 'empleados')
+        $('#visibilidad').change(function () {
+          let isChecked = $(this).is(':checked');
+
+          $('.icon-visibilidad').toggleClass('fa-eye', isChecked);
+          $('.icon-visibilidad').toggleClass('fa-eye-slash', !isChecked);
+        });
+        $('#visibilidad').change();
+      @endif
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo

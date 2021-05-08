@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\PlantillaDocumento;
 use App\User;
@@ -43,7 +43,7 @@ class PlantillaDocumentoPolicy
      */
     public function view(User $user, PlantillaDocumento $documento)
     {
-      return $user->hasPermission('plantilla-documento-view');
+      return $user->hasPermission('plantilla-documento-view') || ($documento->isVisible() && $documento->empleado_id == $user->empleado_id);
     }
 
     /**

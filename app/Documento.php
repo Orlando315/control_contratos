@@ -30,8 +30,18 @@ class Documento extends Model
       'path',
       'mime',
       'vencimiento',
+      'visibilidad',
       'created_at',
       'updated_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'visibilidad' => 'boolean',
     ];
 
     /**
@@ -42,7 +52,6 @@ class Documento extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
@@ -122,6 +131,18 @@ class Documento extends Model
     }
 
     /**
+     * Incluir solo los Documentos que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
+    }
+
+    /**
      * Establecer la fecha de vencimiento en el formato requerido
      * 
      * @param  string  $value
@@ -183,13 +204,23 @@ class Documento extends Model
     }
 
     /**
-     * Obtener el Link de descarga directa
+     * Obtener el Link del documento
      * 
      * @return string
      */
-    public function getDownloadUrlAttribute()
+    public function getAssetUrlAttribute()
     {
       return asset('storage/'.$this->path);
+    }
+
+    /**
+     * Obtener el Link de descarga del documento
+     * 
+     * @return string
+     */
+    public function getDownloadAttribute()
+    {
+      return route('documentos.download', ['documento' => $this->id]);
     }
 
     /**
@@ -229,6 +260,30 @@ class Documento extends Model
     public function isPdf()
     {
       return $this->mime == 'application/pdf';
+    }
+
+    /**
+     * Evaluar si el Documento es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la Carpeta es de tipo Empleado
+     * 
+     * @return bool
+     */
+    public function isTypeEmpleado()
+    {
+      return $this->isType('App\Empleado');
     }
 
     /**
@@ -308,5 +363,52 @@ class Documento extends Model
     public function getExtension()
     {
       return explode('.', $this->path)[1];
+    }
+
+    /**
+     * Evaluar si el User autenticado puede descarga el Documento
+     * 
+     * @return bool
+     */
+    public function canUserDownload()
+    {
+      if(
+        Auth::user()->hasPermission($this->getRequiredPermission()) ||
+        (Auth::user()->hasRole('empleado') && $this->isTypeEmpleado() && $this->isVisible() && Auth::user()->empleado_id == $this->documentable_id)
+      ){
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Obtener el tipo de permiso necesario para acceder al Documento
+     * 
+     * @return string
+     */
+    private function getRequiredPermission()
+    {
+      switch ($this->documentable_type) {
+        case 'App\Contrato':
+          return 'contrato-view';
+          break;
+
+        case 'App\Empleado':
+          return 'empleado-view';
+          break;
+
+        case 'App\TransporteConsumo':
+          return 'transporte-consumo-view';
+          break;
+
+        case 'App\Transporte':
+          return 'transporte-view';
+          break;
+
+        case 'App\Inventario':
+          return 'inventario-view';
+          break;
+      }
     }
 }

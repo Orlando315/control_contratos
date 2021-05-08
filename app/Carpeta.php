@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
 
 class Carpeta extends Model
@@ -23,6 +24,16 @@ class Carpeta extends Model
       'empresa_id',
       'carpeta_id',
       'nombre',
+      'visibilidad',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'visibilidad' => 'boolean',
     ];
 
     /**
@@ -57,6 +68,18 @@ class Carpeta extends Model
     public function scopeRequisito($query, $isRequisito = true)
     {
       return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
+    }
+
+    /**
+     * Incluir solo las Carpetas que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
     }
 
     /**
@@ -113,8 +136,8 @@ class Carpeta extends Model
     public function getBackUrlAttribute()
     {
       $varName = substr($this->type(), 0, -1);
-      $backModel = route('admin.'.$this->type().'.show', [$varName => $this->carpetable_id]);
-      return $this->carpeta_id ? route('admin.carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
+      $backModel = Auth::user()->hasRole('empleado') ? route('perfil') : route('admin.'.$this->type().'.show', [$varName => $this->carpetable_id]);
+      return $this->carpeta_id ? route((Auth::user()->hasRole('empleado') ? 'carpeta.show' : 'admin.carpeta.show'), ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 
     /**
@@ -126,6 +149,45 @@ class Carpeta extends Model
     public function isType($type)
     {
       return $this->carpetable_type == $type;
+    }
+
+    /**
+     * Evaluar si la carpeta es un requisito
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isRequisito($asTag = false)
+    {
+      if(!$asTag){
+        return !is_null($this->requisito); 
+      }
+
+      return $this->isRequisito() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la carpeta es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la Carpeta es de tipo Empleado
+     * 
+     * @return bool
+     */
+    public function isTypeEmpleado()
+    {
+      return $this->isType('App\Empleado');
     }
 
     /**
@@ -204,20 +266,5 @@ class Carpeta extends Model
     public static function getRouteVarNameByType($type)
     {
       return substr($type, 0, -1);
-    }
-
-    /**
-     * Evaluar si la carpeta es un requisito
-     *
-     * @param  string  $asTag
-     * @return bool
-     */
-    public function isRequisito($asTag = false)
-    {
-      if(!$asTag){
-        return !is_null($this->requisito); 
-      }
-
-      return $this->isRequisito() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
     }
 }

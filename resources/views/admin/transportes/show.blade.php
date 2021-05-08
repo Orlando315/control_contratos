@@ -119,7 +119,7 @@
                                       @if($requisito->isFile())
                                         @if($requisito->documento->isPdf())
                                           <li>
-                                            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->download_url }}">
+                                            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->asset_url }}">
                                               <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
                                             </a>
                                           </li>

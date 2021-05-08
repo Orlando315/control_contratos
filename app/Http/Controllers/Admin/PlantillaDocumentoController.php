@@ -68,6 +68,7 @@ class PlantillaDocumentoController extends Controller
         'postulante' => 'required_with:dirigido',
         'plantilla' => 'required',
         'caducidad' => 'nullable|date',
+        'visibilidad' => 'nullable|boolean',
       ]);
 
       $documento = new Documento([
@@ -80,19 +81,20 @@ class PlantillaDocumentoController extends Controller
         'caducidad' => $request->caducidad,
         'secciones' => $request->secciones
       ]);
+      $documento->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       if(Auth::user()->empresa->documentos()->save($documento)){
         return redirect()->route('admin.plantilla.documento.show', ['documento' => $documento->id])->with([
           'flash_message' => 'Documento registrado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -157,26 +159,27 @@ class PlantillaDocumentoController extends Controller
         'caducidad' => $request->caducidad,
         'secciones' => $request->secciones
       ]);
+      $documento->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       if($documento->save()){
         return redirect()->route('admin.plantilla.documento.show', ['documento' => $documento->id])->with([
           'flash_message' => 'Documento registrado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       if($documento->save()){
         return redirect()->route('admin.plantilla.documento.show', ['documento' => $documento->id])->with([
           'flash_message' => 'Plantilla modificada exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -193,32 +196,13 @@ class PlantillaDocumentoController extends Controller
         return redirect()->route('admin.plantilla.documento.index')->with([
           'flash_message' => 'Documento eliminado exitosamente.',
           'flash_class' => 'alert-success'
-          ]); 
+        ]); 
       }
 
       return redirect()->back()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\PlantillaDocumento  $documento
-     * @return \Illuminate\Http\Response
-     */
-    public function pdf(Documento $documento)
-    {
-      $this->authorize('view', $documento);
-
-      $documento->load('plantilla.secciones');
-      $nombre = $documento->nombre ?? ($documento->plantilla->nombre ?? 'documento');
-
-      PDF::setOptions(['dpi' => 150]);
-      $pdf = PDF::loadView('admin.plantilla-documento.pdf', compact('documento', 'nombre'));
-
-      return $pdf->download($nombre.'.pdf');
+      ]);
     }
 }

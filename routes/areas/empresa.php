@@ -93,7 +93,6 @@ Route::resource('variable', 'PlantillaVariableController')
       ->except(['index', 'show']);
 
 /* --- Documento plantillas --- */
-Route::get('documento/plantilla/{documento}/pdf', 'PlantillaDocumentoController@pdf')->name('plantilla.documento.pdf');
 Route::get('documento/plantilla/create/{contrato?}/{empleado?}', 'PlantillaDocumentoController@create')->name('plantilla.documento.create');
 Route::resource('documento/plantilla', 'PlantillaDocumentoController', ['names' => 'plantilla.documento'])
       ->parameters([

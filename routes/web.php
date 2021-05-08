@@ -109,6 +109,16 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('inventario/v2/egreso/{egreso}/accept', 'InventarioV2EgresoController@accept')->name('inventario.egreso.accept');
   Route::get('inventario/v2/egreso/{egreso}', 'InventarioV2EgresoController@show')->name('inventario.egreso.show');
 
+  /* --- Carpetas --- */
+  Route::get('carpeta/{carpeta}', 'CarpetaController@show')->name('carpeta.show');
+ 
+  /* Documentos - Descarga */
+  Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
+
+  /* --- Documento plantillas --- */
+  Route::get('documento/plantilla/{documento}', 'PlantillaDocumentoController@show')->name('plantilla.documento.show');
+  Route::get('documento/plantilla/{documento}/pdf', 'PlantillaDocumentoController@pdf')->name('plantilla.documento.pdf');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

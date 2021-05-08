@@ -37,6 +37,28 @@ class PerfilController extends Controller
      */
     public function perfil()
     {
+      Auth::user()->load([
+        'empleado' => function ($query){
+          $query->with([
+            'contrato',
+            'banco',
+            'lastContrato',
+            'banco',
+            'carpetas' => function ($query) {
+              $query->main()->visible()->get();
+            },
+            'documentos' => function ($query) {
+              $query->main()->visible()->get();
+            },
+            'plantillaDocumentos' => function ($query){
+              $query->visible()->with('padre');
+            },
+            'solicitudes',
+            'contratos',
+          ]);
+        },
+      ]);
+
       return view('usuario.perfil');
     }
 

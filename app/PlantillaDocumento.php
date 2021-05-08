@@ -28,6 +28,7 @@ class PlantillaDocumento extends Model
       'nombre',
       'caducidad',
       'secciones',
+      'visibilidad',
     ];
 
     /**
@@ -36,7 +37,8 @@ class PlantillaDocumento extends Model
      * @var array
      */
     protected $casts = [
-        'secciones' => 'array',
+      'secciones' => 'array',
+      'visibilidad' => 'boolean',
     ];
 
     /**
@@ -56,8 +58,19 @@ class PlantillaDocumento extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Incluir solo los Documentos que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
     }
 
     /**
@@ -116,6 +129,20 @@ class PlantillaDocumento extends Model
     public function postulante()
     {
       return $this->belongsTo('App\Postulante', 'postulante_id');
+    }
+
+    /**
+     * Evaluar si el Documento es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
     }
 
     /**

@@ -267,7 +267,7 @@
                                         @if($requisito->isFile())
                                           @if($requisito->documento->isPdf())
                                             <li>
-                                              <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->download_url }}">
+                                              <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->asset_url }}">
                                                 <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
                                               </a>
                                             </li>
@@ -299,19 +299,27 @@
               <div class="tab-pane" id="tab-11">
                 <div class="panel-body">
                   @permission('empleado-edit')
-                    <div class="mb-3">
-                      @if($empleado->documentos()->count() < 10)
+                    @if($empleado->documentos()->count() < 10)
+                      <div class="mb-3 text-right">
                         <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-                      @endif
-                    </div>
+                      </div>
+                    @endif
                   @endpermission
+
                   <div class="row icons-box icons-folder">
                     @foreach($empleado->carpetas()->main()->get() as $carpeta)
                       <div class="col-md-3 col-xs-4 infont mb-3">
                         <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
-                          @if($carpeta->isRequisito())
-                            <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                          @if($carpeta->isRequisito() || $carpeta->isTypeEmpleado())
+                            <span class="pull-left text-muted">
+                              @if($carpeta->isRequisito())
+                                <i class="fa fa-asterisk" aria-hidden="true" title="Requisito" style="font-size: 12px"></i>
+                              @endif
+                              @if($carpeta->isTypeEmpleado() && $carpeta->isVisible())
+                                <i class="fa fa-eye" aria-hidden="true" title="Visible para el Empleado" style="font-size: 12px"></i>
+                              @endif
+                            </span>
                           @endif
                           <i class="fa fa-folder" aria-hidden="true"></i>
                           <p class="m-0">{{ $carpeta->nombre }}</p>
@@ -335,34 +343,50 @@
               </div>
               <div class="tab-pane" id="tab-12">
                 <div class="panel-body">
-                  <div class="mb-3">
-                    @permission('plantilla-documento-create')
+                  @permission('plantilla-documento-create')
+                    <div class="mb-3 text-right">
                       <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
-                    @endpermission
-                  </div>
+                   </div>
+                  @endpermission
+
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Documento</th>
-                        <th class="text-center">Padre</th>
-                        <th class="text-center">Caducidad</th>
-                        <th class="text-center">Acción</th>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Documento</th>
+                        <th>Padre</th>
+                        <th>Caducidad</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody>
                       @foreach($empleado->plantillaDocumentos as $plantillaDocumento)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
                           <td>@nullablestring($plantillaDocumento->nombre)</td>
                           <td>@nullablestring(optional($plantillaDocumento->padre)->nombre)</td>
-                          <td>@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
-                          <td>
-                            @permission('plantilla-documento-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
-                            @endpermission
-                            @permission('plantilla-documento-edit')
-                              <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
+                          <td class="text-center">@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
+                          <td class="text-center">
+                            @permission('plantilla-documento-view|plantilla-documento-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('plantilla-documento-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('plantilla-documento-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
                           </td>
                         </tr>
@@ -375,32 +399,43 @@
                 <div class="panel-body">
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Tipo</th>
-                        <th class="text-center">Descripción</th>
-                        <th class="text-center">Estatus</th>
-                        <th class="text-center">Adjunto</th>
-                        <th class="text-center">Acción</th>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Estatus</th>
+                        <th>Adjunto</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody>
                       @foreach($empleado->solicitudes as $solicitud)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td>{{ $solicitud->tipo() }}</td>
+                          <td class="text-center">{{ $solicitud->tipo() }}</td>
                           <td>@nullablestring($solicitud->descripcion)</td>
-                          <td>{!! $solicitud->status() !!}</td>
-                          <td>
+                          <td class="text-center">{!! $solicitud->status() !!}</td>
+                          <td class="text-center">
                             @if($solicitud->adjunto)
                               <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
                             @else
                               @nullablestring(null)
                             @endif
                           </td>
-                          <td>
+                          <td class="text-center">
                             @permission('solicitud-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('solicitud-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
                           </td>
                         </tr>
@@ -904,11 +939,11 @@
                       </li>
                       <li class="list-group-item">
                         <b>Inicio de Jornada</b>
-                        <span class="pull-right"> {{$contrato->inicio_jornada}} </span>
+                        <span class="pull-right">{{ $contrato->inicio_jornada }}</span>
                       </li>
                       <li class="list-group-item">
                         <b>Fin</b>
-                        <span class="pull-right"> {!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                        <span class="pull-right">{!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!}</span>
                       </li>
                       <li class="list-group-item">
                         <b>Descripción</b>

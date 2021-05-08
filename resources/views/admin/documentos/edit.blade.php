@@ -77,6 +77,18 @@
               <input id="observacion" class="form-control" type="text" name="observacion" maxlength="100" value="{{ old('observacion', $documento->observacion) }}" placeholder="Observación">
             </div>
 
+            @if($documento->isTypeEmpleado())
+              <div class="form-group{{ $errors->has('visibilidad') ? ' has-error' : '' }}">
+                <label for="visibilidad">Visibilidad:</label>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="visibilidad" class="custom-control-input" type="checkbox" name="visibilidad" value="1"{{ old('visibilidad', $documento->visibilidad) ? ' checked' : '' }}>
+                  <label class="custom-control-label" for="visibilidad"><i class="icon-visibilidad fa fa-eye-slash" aria-hidden="true"></i> Permitir visibilidad</label>
+                </div>
+                <span class="form-text text-muted">Determina si el Empleado puede o no ver el Documento desde su perfil.</span>
+              </div>
+            @endif
+
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
                 <ul class="m-0">
@@ -128,6 +140,16 @@
         })
 
         $('#requisito').change()
+      @endif
+
+      @if($documento->isTypeEmpleado())
+        $('#visibilidad').change(function () {
+          let isChecked = $(this).is(':checked');
+
+          $('.icon-visibilidad').toggleClass('fa-eye', isChecked);
+          $('.icon-visibilidad').toggleClass('fa-eye-slash', !isChecked);
+        });
+        $('#visibilidad').change();
       @endif
     });
   </script>
