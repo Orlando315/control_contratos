@@ -63,17 +63,17 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Serie</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Serie</th>
+                              <th>Contrato</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->series as $serie)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -82,7 +82,7 @@
                                 <td>{{ $serie->fecha }}</td>
                                 <td class="text-right">{{ $serie->anticipo() }}</td>
                                 <td class="text-right">{{ $serie->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-index')
                                     <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
@@ -90,6 +90,21 @@
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->series->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->series->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -120,23 +135,23 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Solicitud</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Agregado</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Solicitud</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Agregado</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $aprobado)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $aprobado->solicitud() !!}</small></td>
+                                <td class="text-center" title="Si el Empleado solicito o no el Anticipo"><small>{!! $aprobado->solicitud() !!}</small></td>
                                 <td>
                                   @permission('contrato-view')
                                     <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">
@@ -159,7 +174,7 @@
                                 <td class="text-right">{{ $aprobado->anticipo() }}</td>
                                 <td class="text-right">{{ $aprobado->bono() }}</td>
                                 <td>{{ optional($aprobado->created_at)->format('d-m-Y H:i:s') }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
                                     <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
@@ -170,6 +185,23 @@
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -194,17 +226,17 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $pendiente)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -229,7 +261,7 @@
                                 <td>{{ $pendiente->fecha }}</td>
                                 <td class="text-right">{{ $pendiente->anticipo() }}</td>
                                 <td class="text-right">{{ $pendiente->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
                                     <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $pendiente->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
@@ -237,6 +269,21 @@
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -259,19 +306,38 @@
                     </div>
                     <div id="collapse-rechazados-{{ $month->month }}" class="collapse" aria-labelledby="heading-rechazados-{{ $month->month }}" data-parent="#accordion-anticipos-rechazados">
                       <div class="card-body">
+                        <div class="row justify-content-center pb-3 mb-3 border-bottom">
+                          <div class="col-md-3">
+                            <div class="card">
+                              <div class="card-body text-center">
+                                <h3>{{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}</h3>
+                                <p class="text-muted m-0">TOTAL BONO</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="card">
+                              <div class="card-body text-center">
+                                <h3>{{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}</h3>
+                                <p class="text-muted m-0">TOTAL ANTICIPO</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $rechazado)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -296,7 +362,7 @@
                                 <td>{{ $rechazado->fecha }}</td>
                                 <td class="text-right">{{ $rechazado->anticipo() }}</td>
                                 <td class="text-right">{{ $rechazado->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
                                     <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
@@ -304,6 +370,21 @@
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>

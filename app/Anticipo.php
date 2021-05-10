@@ -331,6 +331,10 @@ class Anticipo extends Model
       foreach($months as $month){
         $anticipos = self::where('status', $status)
           ->individual()
+          ->with([
+            'contrato',
+            'empleado.usuario',
+          ])
           ->whereYear('fecha', $year)
           ->whereMonth('fecha', $month)
           ->get();
@@ -365,6 +369,7 @@ class Anticipo extends Model
       foreach($months as $month){
         $series = self::selectRaw('contrato_id, serie, fecha, SUM(anticipo) as anticipo, SUM(bono) as bono')
           ->serie()
+          ->with('contrato')
           ->whereYear('fecha', $year)
           ->whereMonth('fecha', $month)
           ->get();

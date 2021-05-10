@@ -75,22 +75,22 @@
         <div class="ibox-content">
           <table class="table data-table table-bordered table-hover table-sm w-100">
             <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Empleado</th>
-                <th class="text-center">Anticipo</th>
-                <th class="text-center">Bono</th>
-                <th class="text-center">Acción</th>
+              <tr class="text-center">
+                <th>#</th>
+                <th>Empleado</th>
+                <th>Anticipo</th>
+                <th>Bono</th>
+                <th>Acción</th>
               </tr>
             </thead>
-            <tbody class="text-center">
+            <tbody>
               @foreach($anticipos as $anticipo)
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $anticipo->empleado->nombre() }}</td>
                   <td class="text-right">{{ $anticipo->anticipo() }}</td>
                   <td class="text-right">{{ $anticipo->bono() }}</td>
-                  <td>
+                  <td class="text-center">
                     @permission('anticipo-view')
                       <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
@@ -98,6 +98,19 @@
                 </tr>
               @endforeach
             </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <th class="text-right">
+                  {{ number_format($anticipos->sum('anticipo'), 2, '.', ',') }}
+                </th>
+                <th class="text-right">
+                  {{ number_format($anticipos->sum('bono'), 2, '.', ',') }}
+                </th>
+                <td></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
