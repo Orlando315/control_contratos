@@ -16,6 +16,17 @@
 @endsection
 
 @section('content')
+  <div class="widget red-bg p-lg text-center mb-3">
+    <i class="fa fa-ban fa-3x"></i>
+    <h1 class="m-xs">Deshabilitado</h1>
+    <p class="font-bold">
+      Este modulo ha sido deshabilitado y será eliminado en un futuro.
+    </p>
+    @permission('inventario-v2-index')
+      <a class="btn btn-default text-dark" href="{{ route('admin.inventario.v2.index') }}">Ir a Inventario V2</a>
+    @endpermission
+  </div>
+
   <div class="row mb-3"> 
     <div class="col-6 col-md-3">
       <div class="ibox">
@@ -35,9 +46,6 @@
         <div class="ibox-title">
           <h5><i class="fa fa-cubes"></i> Inventarios</h5>
           <div class="ibox-tools">
-            @permission('inventario-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Inventario</a>
-            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -67,9 +75,6 @@
                   <td>
                     @permission('inventario-view')
                       <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                    @permission('inventario-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.inventarios.edit', ['inventario' => $inventario->id] )}}"><i class="fa fa-pencil"></i></a>
                     @endpermission
                   </td>
                 </tr>

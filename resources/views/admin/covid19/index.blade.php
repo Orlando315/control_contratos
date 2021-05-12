@@ -53,18 +53,20 @@
                   <div class="card-body">
                     <table class="table data-table table-bordered table-hover w-100">
                       <thead>
-                        <tr>
-                          <th class="text-center">#</th>
-                          <th class="text-center">Fecha</th>
-                          <th class="text-center">Nombre</th>
-                          <th class="text-center">RUT</th>
-                          <th class="text-center">Acción</th>
+                        <tr class="text-center">
+                          <th>#</th>
+                          <th>¿Tiene respuestas<br>positivas?</th>
+                          <th>Fecha</th>
+                          <th>Nombre</th>
+                          <th>RUT</th>
+                          <th>Acción</th>
                         </tr>
                       </thead>
                       <tbody>
                         @foreach($month->respuestas as $respuesta)
                           <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
+                            <td class="text-center">{!! $respuesta->positiveAnswers() !!}</td>
                             <td>{{ $respuesta->created_at->format('d-m-Y H:i:s') }}</td>
                             <td>{{ $respuesta->user->nombre() }}</td>
                             <td>{{ $respuesta->user->rut }}</td>

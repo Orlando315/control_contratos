@@ -54,7 +54,7 @@ class InventarioEntregaPolicy
      */
     public function create(User $user)
     {
-      return $user->hasPermission('inventario-entrega-create');
+      return false;
     }
 
     /**
@@ -66,7 +66,7 @@ class InventarioEntregaPolicy
      */
     public function update(User $user, InventarioEntrega $entrega)
     {
-      return $user->hasPermission('inventario-entrega-edit');
+      return false;
     }
 
     /**
@@ -78,7 +78,7 @@ class InventarioEntregaPolicy
      */
     public function delete(User $user, InventarioEntrega $entrega)
     {
-      return $user->hasPermission('inventario-entrega-delete');
+      return false;
     }
 
     /**

@@ -27,6 +27,7 @@ class InventariosEntregasController extends Controller
      */
     public function create(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('view', $inventario);
       $this->authorize('create', InventarioEntrega::class);
 
@@ -44,6 +45,7 @@ class InventariosEntregasController extends Controller
      */
     public function store(Request $request, Inventario $inventario)
     {
+      abort(404);
       $this->authorize('view', $inventario);
       $this->authorize('create', InventarioEntrega::class);
       $this->validate($request, [
@@ -123,6 +125,7 @@ class InventariosEntregasController extends Controller
      */
     public function update(Request $request, InventarioEntrega $entrega)
     {
+      abort(404);
       $this->authorize('update', $entrega);
 
       if(Auth::user()->id == $entrega->entregado){
@@ -149,6 +152,7 @@ class InventariosEntregasController extends Controller
      */
     public function destroy(InventarioEntrega $entrega)
     {
+      abort(404);
       $this->authorize('delete', $entrega);
 
       $inventario = $entrega->inventario;

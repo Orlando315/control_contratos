@@ -68,7 +68,6 @@ Route::group(['middleware' => 'auth'], function () {
         ->only(['create', 'store']);
 
   /* --- Entregas ---*/
-  Route::patch('entregas/{entrega}', 'InventariosEntregasController@update')->name('entregas.update');
   Route::get('entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
 
   /* --- Solicitudes --- */

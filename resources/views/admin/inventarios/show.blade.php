@@ -17,17 +17,21 @@
 @endsection
 
 @section('content')
+  <div class="widget red-bg p-lg text-center mb-3">
+    <i class="fa fa-ban fa-3x"></i>
+    <h1 class="m-xs">Deshabilitado</h1>
+    <p class="font-bold">
+      Este modulo ha sido deshabilitado y será eliminado en un futuro.
+    </p>
+    @permission('inventario-v2-index')
+      <a class="btn btn-default text-dark" href="{{ route('admin.inventario.v2.index') }}">Ir a Inventario V2</a>
+    @endpermission
+  </div>
+
   <div class="row mb-3">
     <div class="col-12">
       @permission('inventario-index')
         <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
-      @endpermission
-      @permission('inventario-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.edit', ['inventario' => $inventario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-clone" aria-hidden="true"></i> Clonar</button>
-      @endpermission
-      @permission('inventario-delete')
-        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
     </div>
   </div>
@@ -117,13 +121,6 @@
       <div class="ibox mb-3">
         <div class="ibox-title">
           <h5>Adjuntos</h5>
-
-          @if($inventario->documentos()->count() < 10 && Auth::user()->hasPermission('inventario-edit'))
-            <div class="ibox-tools">
-              <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'inventarios', 'id' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'inventarios', 'id' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-            </div>
-          @endif
         </div>
         <div class="ibox-content">
           <div class="row icons-box icons-folder">
@@ -141,7 +138,7 @@
 
           <div class="row">
             @forelse($inventario->documentos as $documento)
-              @include('partials.documentos', ['edit' => true])
+              @include('partials.documentos', ['edit' => false])
             @empty
               <div class="col-12">
                 <h4 class="text-center text-muted">No hay documentos adjuntos</h4>
@@ -155,9 +152,6 @@
         <div class="ibox-title">
           <h5><i class="fa fa-arrow-right"></i> Entregas</h5>
           <div class="ibox-tools">
-            @permission('inventario-entrega-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.entregas.create', ['inventario' => $inventario->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Entrega</a>
-            @endpermission
           </div>
         </div>
         <div class="ibox-content">
@@ -186,11 +180,6 @@
                     @if($entrega->adjunto)
                       <a class="btn btn-default btn-xs" href="{{ $entrega->download }}"><i class="fa fa-download" aria-hidden="true"></i></a>
                     @endif
-                    @permission('inventario-entrega-delete')
-                      @if(!$entrega->recibido)
-                        <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#delEntregaModal" data-url="{{ route('admin.entregas.destroy', ['entrega' => $entrega->id]) }}"><i class="fa fa-times" aria-hidden="true"></i></button>
-                      @endif
-                    @endpermission
                   </td>
                 </tr>
               @endforeach

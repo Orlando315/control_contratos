@@ -148,6 +148,7 @@
           <a href="{{ route('admin.inventarios.index') }}">
             <i class="fa fa-cubes"></i>
             <span class="nav-label">Inventario</span>
+            <span class="label label-danger float-right"><i class="fa fa-ban m-0" aria-hidden="false"></i></span>
           </a>
         </li>
       @endpermission
@@ -156,7 +157,7 @@
           <a href="{{ route('admin.inventario.v2.index') }}">
             <i class="fa fa-tasks"></i>
             <span class="nav-label">Inventario</span>
-            <span class="label label-warning float-right mr-2">v2</span>
+            <span class="label label-warning float-right">v2</span>
           </a>
         </li>
       @endpermission

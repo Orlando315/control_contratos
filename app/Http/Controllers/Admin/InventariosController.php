@@ -30,6 +30,7 @@ class InventariosController extends Controller
      */
     public function create()
     {
+      abort(404);
       $this->authorize('create', Inventario::class);
 
       $contratos = Contrato::all();
@@ -45,6 +46,7 @@ class InventariosController extends Controller
      */
     public function store(Request $request)
     {
+      abort(404);
       $this->authorize('create', Inventario::class);
       $this->validate($request, [
         'contrato_id' => 'required',
@@ -118,6 +120,7 @@ class InventariosController extends Controller
      */
     public function edit(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -136,6 +139,7 @@ class InventariosController extends Controller
      */
     public function update(Request $request, Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -201,6 +205,7 @@ class InventariosController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('delete', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -250,6 +255,7 @@ class InventariosController extends Controller
      */
     public function clone(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
 
       $copy = $inventario->replicate();
