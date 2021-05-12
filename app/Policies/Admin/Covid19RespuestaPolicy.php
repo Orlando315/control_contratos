@@ -31,7 +31,7 @@ class Covid19RespuestaPolicy
      */
     public function viewAny(User $user)
     {
-        //
+      return $user->hasPermission('covid19-index');
     }
 
     /**
@@ -43,7 +43,7 @@ class Covid19RespuestaPolicy
      */
     public function view(User $user, Covid19Respuesta $respuesta)
     {
-      return $user->hasRole('empresa');
+      return $user->hasPermission('covid19-view');
     }
 
     /**
@@ -78,7 +78,7 @@ class Covid19RespuestaPolicy
      */
     public function delete(User $user, Covid19Respuesta $respuesta)
     {
-      return $user->hasRole('empresa');
+      return $user->hasPermission('covid19-delete');
     }
 
     /**

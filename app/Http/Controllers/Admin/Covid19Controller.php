@@ -16,6 +16,8 @@ class Covid19Controller extends Controller
      */
     public function index()
     {
+      $this->authorize('viewAny', Covid19Respuesta::class);
+
       $actualYear = request()->year ?? date('Y');
       $allYears = Covid19Respuesta::allYears()->get()->pluck('year')->toArray();
       $monthlyGrouped = Covid19Respuesta::monthlyGroupedByYear($actualYear);
@@ -56,7 +58,7 @@ class Covid19Controller extends Controller
      */
     public function show(Covid19Respuesta $respuesta)
     {
-      $this->authorize('view', Covid19Respuesta::class);
+      $this->authorize('view', $respuesta);
 
       $preguntas = Covid19Pregunta::all();
 

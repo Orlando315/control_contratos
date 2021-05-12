@@ -71,7 +71,9 @@
                             <td>{{ $respuesta->user->nombre() }}</td>
                             <td>{{ $respuesta->user->rut }}</td>
                             <td class="text-center">
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.empresa.covid19.show', ['respuesta' => $respuesta->id]) }}"><i class="fa fa-search"></i></a>
+                              @permission('covid19-view')
+                                <a class="btn btn-success btn-xs" href="{{ route('admin.empresa.covid19.show', ['respuesta' => $respuesta->id]) }}"><i class="fa fa-search"></i></a>
+                              @endpermission
                             </td>
                           </tr>
                         @endforeach

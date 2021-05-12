@@ -233,12 +233,15 @@
         </ul>
       </li>
 
-      @role('developer|superadmin|empresa')
+      @permission('covid19-index')
         <li>
           <a href="{{ route('admin.empresa.covid19.index') }}">
             <i class="fa fa-heartbeat"></i> <span class="nav-label">Covid-19</span>
           </a>
         </li>
+      @endpermission
+
+      @role('developer|superadmin|empresa')
         <li>
           <a href="{{ route('admin.empresa.configuracion') }}">
             <i class="fa fa-cogs"></i> <span class="nav-label">Configuración</span>

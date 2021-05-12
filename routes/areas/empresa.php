@@ -26,12 +26,12 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   Route::patch('empresa/configuracion/terminos', 'ConfiguracionController@terminos')->name('empresa.configuracion.terminos');
   Route::patch('empresa/configuracion/covid19', 'ConfiguracionController@covid19')->name('empresa.configuracion.covid19');
   Route::patch('empresa/configuracion/requerimientos', 'ConfiguracionController@requerimientos')->name('empresa.configuracion.requerimientos');
-
-  /* --- Covid19 --- */
-  Route::get('covid19', 'Covid19Controller@index')->name('empresa.covid19.index');
-  Route::get('covid19/{respuesta}', 'Covid19Controller@show')->name('empresa.covid19.show');
-  Route::delete('covid19/{respuesta}', 'Covid19Controller@destroy')->name('empresa.covid19.destroy');
 });
+
+/* --- Covid19 --- */
+Route::get('covid19', 'Covid19Controller@index')->name('empresa.covid19.index');
+Route::get('covid19/{respuesta}', 'Covid19Controller@show')->name('empresa.covid19.show');
+Route::delete('covid19/{respuesta}', 'Covid19Controller@destroy')->name('empresa.covid19.destroy');
 
 /* --- Contratos --- */
 Route::resource('contratos', 'ContratosController')->except([
