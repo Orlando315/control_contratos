@@ -210,6 +210,10 @@ Route::resource('contacto', 'ContactoController')
       ->only(['edit', 'update', 'destroy']);
 
 /* --- Proveedores --- */
+Route::get('proveedor/import/template', 'ProveedorController@importTemplate')->name('proveedor.import.template');
+Route::get('proveedor/import', 'ProveedorController@importCreate')->name('proveedor.import.create');
+Route::post('proveedor/import', 'ProveedorController@importStore')->name('proveedor.import.store');
+
 Route::get('proveedor/create/{type}', 'ProveedorController@create')->name('proveedor.create');
 Route::post('proveedor/store/{type}', 'ProveedorController@store')->name('proveedor.store');
 Route::post('proveedor/busqueda/sii', 'ProveedorController@busquedaSii')->name('proveedor.busqueda.sii');

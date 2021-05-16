@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Imports\{ProveedorImport, ProveedorEmpresaImport};
+use Maatwebsite\Excel\Facades\Excel;
 use App\{Proveedor, Cliente};
 
 class ProveedorController extends Controller
@@ -417,5 +419,55 @@ class ProveedorController extends Controller
     public function contactos(Proveedor $proveedor)
     {
       return response()->json(['contactos' => $proveedor->contactos]);
+    }
+
+    /**
+     * Mostrar formulario para importar
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function importCreate()
+    {
+      $this->authorize('create', Proveedor::class);
+
+      return view('admin.proveedor.import');
+    }
+
+    /**
+     * Importar Empleados por excel
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function importStore(Request $request)
+    {
+      $this->authorize('create', Proveedor::class);
+      $this->validate($request, [
+        'archivo' => 'required|file|mimes:xlsx,xls',
+        'tipo' => 'required|in:persona,empresa',
+      ]);
+
+      if($request->tipo == 'empresa' && sii()->isInactive()){
+        return redirect()->back()->withInput()->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => '¡Integración no disponible! Comuniquese con el administrador.',
+          'flash_important' => true
+        ]);
+      }
+
+      try{
+        $excel = Excel::import(new ProveedorImport($request->tipo), $request->archivo);
+
+        return redirect()->route('admin.proveedor.index')->with([
+          'flash_message' => 'Proveedores importados exitosamente.',
+          'flash_class' => 'alert-success'
+        ]);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->with([
+          'flash_message' => 'Ha ocurrido un error. Revise el formato utilizado.',
+          'flash_class' => 'alert-danger',
+          'flash_important' => true
+        ]);
+      }
     }
 }

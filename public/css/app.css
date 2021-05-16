@@ -1,4 +1,4 @@
-    .menu-logo-empresa > img{
+.menu-logo-empresa > img{
   height: auto;
   max-width: 100%;
   max-height: 100px;
@@ -208,4 +208,8 @@ a.text-primary:focus, a.text-primary:hover {
   height:100%;
   width:100%;
   position:absolute;
+}
+
+.ibox-tools .dropdown-toggle::after{
+  display: inline-block;
 }
