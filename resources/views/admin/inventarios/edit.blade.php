@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventario.index') }}">Inventarios</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -32,7 +32,7 @@
           <h4>Editar inventario</h4>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.inventarios.update', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.inventario.update', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
             @method('PATCH')
             @csrf
 
@@ -146,7 +146,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.inventario.show', ['inventario' => $inventario->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

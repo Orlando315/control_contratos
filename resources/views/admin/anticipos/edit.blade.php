@@ -14,7 +14,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.anticipo.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -29,7 +29,7 @@
           <h5>Editar anticipo</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.anticipos.update', ['anticipo' => $anticipo->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.anticipo.update', ['anticipo' => $anticipo->id]) }}" method="POST" enctype="multipart/form-data">
             @method('PATCH')
             @csrf
 
@@ -81,7 +81,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

@@ -25,7 +25,7 @@
         <ul class="dropdown-menu dropdown-messages">
           @foreach($notificationEmpleadoEventosPendientes as $notificationEmpleadoEvento)
             <li>
-              <a class="dropdown-item px-2" href="{{ route('admin.empleados.show', ['empleado' => $notificationEmpleadoEvento->empleado_id]) }}">
+              <a class="dropdown-item px-2" href="{{ route('admin.empleado.show', ['empleado' => $notificationEmpleadoEvento->empleado_id]) }}">
                 <div class="dropdown-messages-box">
                   <div class="media-body">
                     <p class="notification-description"><strong>{{ $notificationEmpleadoEvento->empleado->usuario->nombre() }}</strong> ha solicitado: <strong>{{ $notificationEmpleadoEvento->tipo() }}</strong>
@@ -72,7 +72,7 @@
         <ul class="dropdown-menu dropdown-messages">
           @foreach($notificationSolicitudesAnticiposPendientes as $notificationSolicitudAnticipo)
             <li>
-              <a class="dropdown-item px-2" href="{{ route('admin.anticipos.show', ['anticipo' => $notificationSolicitudAnticipo->id]) }}">
+              <a class="dropdown-item px-2" href="{{ route('admin.anticipo.show', ['anticipo' => $notificationSolicitudAnticipo->id]) }}">
                 <div class="dropdown-messages-box">
                   <div class="media-body">
                     <p class="notification-description"><strong>{{ $notificationSolicitudAnticipo->empleado->usuario->nombre() }}</strong> ha solicitado un anticipo de <strong>{{ $notificationSolicitudAnticipo->anticipo() }}</strong>.</p>

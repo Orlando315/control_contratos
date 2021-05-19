@@ -58,25 +58,25 @@ Route::group(['middleware' => 'auth'], function () {
   Route::patch('perfil/password', 'PerfilController@password')->name('perfil.password');
 
   /* --- Sueldos --- */
-  Route::get('sueldos/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldos.show');
-  Route::patch('sueldos/{sueldo}/confirmar', 'EmpleadosSueldosController@recibido')->name('sueldos.confirmar');
-  Route::get('sueldos/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldos.download');
+  Route::get('sueldo/{sueldo}/show', 'EmpleadosSueldosController@show')->name('sueldo.show');
+  Route::patch('sueldo/{sueldo}/confirmar', 'EmpleadosSueldosController@recibido')->name('sueldo.confirmar');
+  Route::get('sueldo/{sueldo}/download', 'EmpleadosSueldosController@download')->name('sueldo.download');
 
   /* --- Anticipos --- */
-  Route::get('anticipos/{anticipo}/download', 'AnticiposController@download')->name('anticipos.download');
-  Route::resource('anticipos', 'AnticiposController')
+  Route::get('anticipo/{anticipo}/download', 'AnticiposController@download')->name('anticipo.download');
+  Route::resource('anticipo', 'AnticiposController')
         ->only(['create', 'store']);
 
   /* --- Entregas ---*/
-  Route::get('entregas/{entrega}/download', 'InventariosEntregasController@download')->name('entregas.download');
+  Route::get('entrega/{entrega}/download', 'InventariosEntregasController@download')->name('entrega.download');
 
   /* --- Solicitudes --- */
   Route::resource('solicitud', 'SolicitudController');
   Route::get('solicitud/{solicitud}/download', 'SolicitudController@download')->name('solicitud.download');
 
   /* --- Empleado - Eventos --- */
-  Route::get('eventos/', 'EmpleadosEventosController@index')->name('eventos.index');
-  Route::post('eventos/', 'EmpleadosEventosController@store')->name('eventos.store');
+  Route::get('evento/', 'EmpleadosEventosController@index')->name('evento.index');
+  Route::post('evento/', 'EmpleadosEventosController@store')->name('evento.store');
 
   /* --- Cambiar Role activo --- */
   Route::put('role/toggle', 'HomeController@roleToggle')->name('role.toggle');
@@ -112,7 +112,7 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('carpeta/{carpeta}', 'CarpetaController@show')->name('carpeta.show');
  
   /* Documentos - Descarga */
-  Route::get('documentos/download/{documento}', 'DocumentosController@download')->name('documentos.download');
+  Route::get('documento/download/{documento}', 'DocumentosController@download')->name('documento.download');
 
   /* --- Documento plantillas --- */
   Route::get('documento/plantilla/{documento}', 'PlantillaDocumentoController@show')->name('plantilla.documento.show');

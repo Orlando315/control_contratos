@@ -86,7 +86,7 @@ class ContratosController extends Controller
           }
         }
 
-        return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Contrato agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -174,7 +174,7 @@ class ContratosController extends Controller
       $contrato->faena_id = $request->faena;
 
       if($contrato->save()){
-        return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Contrato modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -198,7 +198,7 @@ class ContratosController extends Controller
       $this->authorize('delete', $contrato);
 
       if($contrato->delete()){
-        return redirect()->route('admin.contratos.index')->with([
+        return redirect()->route('admin.contrato.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contrato eliminado exitosamente.'
         ]);

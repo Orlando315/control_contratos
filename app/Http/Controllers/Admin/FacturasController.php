@@ -107,7 +107,7 @@ class FacturasController extends Controller
 
         $factura->save();
 
-        return redirect()->route('admin.facturas.show', ['factura' => $factura->id])->with([
+        return redirect()->route('admin.factura.show', ['factura' => $factura->id])->with([
           'flash_message' => 'Factura agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -231,7 +231,7 @@ class FacturasController extends Controller
 
         $factura->save();
 
-        return redirect()->route('admin.facturas.show', ['factura' => $factura->id])->with([
+        return redirect()->route('admin.factura.show', ['factura' => $factura->id])->with([
           'flash_message' => 'Factura modificada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -257,7 +257,7 @@ class FacturasController extends Controller
       if($factura->delete()){
         Storage::deleteDirectory($factura->directory());
 
-        return redirect()->route('admin.facturas.index')->with([
+        return redirect()->route('admin.factura.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Factura eliminada exitosamente.'
         ]);

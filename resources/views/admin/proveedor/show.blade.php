@@ -448,14 +448,14 @@
                                 <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                                   @permission('factura-view')
                                     <li>
-                                      <a class="dropdown-item" href="{{ route('admin.facturas.show', ['factura' => $factura->id]) }}">
+                                      <a class="dropdown-item" href="{{ route('admin.factura.show', ['factura' => $factura->id]) }}">
                                         <i class="fa fa-search"></i> Ver
                                       </a>
                                     </li>
                                   @endpermission
                                   @permission('factura-edit')
                                     <li>
-                                      <a class="dropdown-item" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}">
+                                      <a class="dropdown-item" href="{{ route('admin.factura.edit', ['factura' => $factura->id]) }}">
                                         <i class="fa fa-pencil"></i> Editar
                                       </a>
                                     </li>

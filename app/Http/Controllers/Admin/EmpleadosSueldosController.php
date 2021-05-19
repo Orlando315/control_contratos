@@ -94,7 +94,7 @@ class EmpleadosSueldosController extends Controller
       }
 
       if(Auth::user()->empresa->sueldos()->createMany($payments)){
-        return redirect()->route('admin.sueldos.index', ['contrato' => $contrato->id])->with([
+        return redirect()->route('admin.sueldo.index', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Sueldos agregados exitosamente.',
           'flash_class' => 'alert-success',
           ]);

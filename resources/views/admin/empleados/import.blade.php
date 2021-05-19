@@ -15,7 +15,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleado.index') }}">Empleados</a></li>
         <li class="breadcrumb-item active"><strong>Importar</strong></li>
       </ol>
     </div>
@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.import.store') }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.empleado.import.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row justify-content-center">
@@ -72,7 +72,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

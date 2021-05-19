@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.anticipo.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Serie</strong></li>
       </ol>
     </div>
@@ -20,9 +20,9 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('anticipo-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
-      <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.print.serie', ['serie' => $serie]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.print.serie', ['serie' => $serie]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
       @permission('anticipo-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -42,7 +42,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}">
                     {{ $contrato->nombre }}
                   </a>
                 @else
@@ -92,7 +92,7 @@
                   <td class="text-right">{{ $anticipo->bono() }}</td>
                   <td class="text-center">
                     @permission('anticipo-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
                   </td>
                 </tr>
@@ -121,7 +121,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.anticipos.destroy.serie', ['serie' => $serie]) }}" method="POST">
+          <form action="{{ route('admin.anticipo.destroy.serie', ['serie' => $serie]) }}" method="POST">
             @method('DELETE')
             @csrf
 

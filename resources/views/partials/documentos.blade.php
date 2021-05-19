@@ -13,13 +13,13 @@
           @endif
           @if($edit)
             <li>
-              <a title="Editar documento" href="{{ route('admin.documentos.edit', ['documento' => $documento->id]) }}">
+              <a title="Editar documento" href="{{ route('admin.documento.edit', ['documento' => $documento->id]) }}">
                 <i class="fa fa-pencil" aria-hidden="true"></i> Editar
               </a>
             </li>
           @endif
           <li>
-            <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('admin.documentos.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
+            <a class="btn-delete-file" type="button" title="Eliminar archivo" data-url="{{ route('admin.documento.destroy', ['documento' => $documento->id]) }}" data-toggle="modal" data-target="#delFileModal">
               <i class="fa fa-times" aria-hidden="true"></i> Eliminar
             </a>
           </li>

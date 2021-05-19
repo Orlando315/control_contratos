@@ -99,7 +99,7 @@ class Covid19Controller extends Controller
       $this->authorize('delete', $respuesta);
 
       if($respuesta->delete()){
-        return redirect()->route('admin.empresa.covid19.index')->with([
+        return redirect()->route('admin.covid19.index')->with([
           'flash_message' => 'Encuesta eliminada exitosamente.',
           'flash_class' => 'alert-success'
         ]);

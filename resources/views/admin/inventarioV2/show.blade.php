@@ -260,7 +260,7 @@
                               @endpermission
                             @elseif($egreso->user)
                               @permission('user-view')
-                                <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                                <a href="{{ route('admin.usuario.show', ['usuario' => $egreso->user_id]) }}">
                                   {{ $egreso->user->nombre() }}
                                 </a>
                               @else

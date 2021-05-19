@@ -58,7 +58,7 @@
               <b>Solicitante</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $requerimiento->solicitante]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $requerimiento->solicitante]) }}">
                     {{ $requerimiento->userSolicitante->nombre() }}
                   </a>
                 @else
@@ -70,7 +70,7 @@
               <b>Dirigido a</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $requerimiento->dirigido]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $requerimiento->dirigido]) }}">
                     {{ $requerimiento->dirigidoA->nombre() }}
                   </a>
                 @else
@@ -82,7 +82,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $requerimiento->contrato_id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $requerimiento->contrato_id]) }}">
                     {{ $requerimiento->contrato->nombre }}
                   </a>
                 @else

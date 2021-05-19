@@ -50,7 +50,7 @@
               <b>Generado por</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->user_id]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $compra->user_id]) }}">
                     {{ $compra->user->nombre() }}
                   </a>
                 @else
@@ -170,7 +170,7 @@
                 <b>Solicitante</b>
                 <span class="pull-right">
                   @permission('user-view')
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->solicitante]) }}">
+                    <a href="{{ route('admin.usuario.show', ['usuario' => $compra->requerimiento->solicitante]) }}">
                       {{ $compra->requerimiento->userSolicitante->nombre() }}
                     </a>
                   @else
@@ -182,7 +182,7 @@
                 <b>Dirigido a</b>
                 <span class="pull-right">
                   @permission('user-view')
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->dirigido]) }}">
+                    <a href="{{ route('admin.usuario.show', ['usuario' => $compra->requerimiento->dirigido]) }}">
                       {{ $compra->requerimiento->dirigidoA->nombre() }}
                     </a>
                   @else

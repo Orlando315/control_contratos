@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.empresa.covid19.index') }}">Covid-19</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.covid19.index') }}">Covid-19</a></li>
         <li class="breadcrumb-item active"><strong>Respuesta</strong></li>
       </ol>
     </div>
@@ -19,7 +19,7 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-md-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empresa.covid19.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.covid19.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @permission('covid19-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -76,7 +76,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.empresa.covid19.destroy', ['respuesta' => $respuesta->id]) }}" method="POST">
+          <form action="{{ route('admin.covid19.destroy', ['respuesta' => $respuesta->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

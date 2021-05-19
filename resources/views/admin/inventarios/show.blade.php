@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventario.index') }}">Inventarios</a></li>
         <li class="breadcrumb-item active"><strong>Inventario</strong></li>
       </ol>
     </div>
@@ -31,7 +31,7 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('inventario-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.inventarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.inventario.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
     </div>
   </div>
@@ -45,7 +45,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $inventario->contrato->id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $inventario->contrato->id]) }}">
                     {{ $inventario->contrato->nombre }}
                   </a>
                 @else
@@ -194,7 +194,7 @@
     <div id="cloneModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="cloneModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.inventarios.clone', ['inventario' => $inventario->id]) }}" method="POST">
+          <form action="{{ route('admin.inventario.clone', ['inventario' => $inventario->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -247,7 +247,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.inventarios.destroy', ['inventario' => $inventario->id]) }}" method="POST">
+          <form action="{{ route('admin.inventario.destroy', ['inventario' => $inventario->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

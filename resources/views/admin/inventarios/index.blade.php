@@ -74,7 +74,7 @@
                   <td>{{ $inventario->cantidad() }}</td>
                   <td>
                     @permission('inventario-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.inventario.show', ['inventario' => $inventario->id] )}}"><i class="fa fa-search"></i></a>
                     @endpermission
                   </td>
                 </tr>

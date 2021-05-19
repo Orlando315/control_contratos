@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $partida->contrato_id]) }}">Partidas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.show', ['contrato' => $partida->contrato_id]) }}">Partidas</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>

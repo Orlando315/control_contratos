@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.facturas.index') }}">Facturas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.factura.index') }}">Facturas</a></li>
         <li class="breadcrumb-item active"><strong>Factura</strong></li>
       </ol>
     </div>
@@ -20,10 +20,10 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('factura-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.factura.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('factura-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.factura.edit', ['factura' => $factura->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
       @permission('factura-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -40,7 +40,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato->id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $factura->contrato->id]) }}">
                     {{ $factura->contrato->nombre }}
                   </a>
                 @else
@@ -69,7 +69,7 @@
               <span class="pull-right">
                 @if($factura->etiqueta)
                   @permission('etiqueta-view')
-                    <a href="{{ route('admin.etiquetas.show', ['etiqueta' => $factura->etiqueta_id]) }}">
+                    <a href="{{ route('admin.etiqueta.show', ['etiqueta' => $factura->etiqueta_id]) }}">
                       {{ $factura->etiqueta->etiqueta }}
                     </a>
                   @else
@@ -164,7 +164,7 @@
               <b>Adjunto #1</b>
               <span class="pull-right">
                 @if($factura->adjuntoExist(1))
-                  <a href="{{ route('admin.facturas.download', ['factura' => $factura->id, 'adjunto' => 1]) }}">
+                  <a href="{{ route('admin.factura.download', ['factura' => $factura->id, 'adjunto' => 1]) }}">
                     Descargar
                   </a>
                 @else
@@ -176,7 +176,7 @@
               <b>Adjunto #2</b>
               <span class="pull-right">
                 @if($factura->adjuntoExist(2))
-                  <a href="{{ route('admin.facturas.download', ['factura' => $factura->id, 'adjunto' => 2]) }}">
+                  <a href="{{ route('admin.factura.download', ['factura' => $factura->id, 'adjunto' => 2]) }}">
                     Descargar
                   </a>
                 @else
@@ -197,7 +197,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.facturas.destroy', ['factura' => $factura->id]) }}" method="POST">
+          <form action="{{ route('admin.factura.destroy', ['factura' => $factura->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

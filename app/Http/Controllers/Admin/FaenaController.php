@@ -160,7 +160,7 @@ class FaenaController extends Controller
       $this->authorize('delete', $faena);
 
       if($faena->delete()){
-        return redirect()->route('admin.contratos.index')->with([
+        return redirect()->route('admin.contrato.index')->with([
           'flash_message' => 'Faena eliminada exitosamente.',
           'flash_class' => 'alert-success'
           ]);

@@ -177,23 +177,23 @@ class Documento extends Model
         $varName = 'carpeta';
       }else{
         if($this->documentable_type == 'App\Contrato'){
-          $route = 'admin.contratos.show';
+          $route = 'admin.contrato.show';
         }
 
         if($this->documentable_type == 'App\Empleado'){
-          $route = 'admin.empleados.show';
+          $route = 'admin.empleado.show';
         }
 
         if($this->documentable_type == 'App\TransporteConsumo'){
-          $route = 'admin.consumos.show';
+          $route = 'admin.consumo.show';
         }
 
         if($this->documentable_type == 'App\Transporte'){
-          $route = 'admin.transportes.show';
+          $route = 'admin.transporte.show';
         }
 
         if($this->documentable_type == 'App\Inventario'){
-          $route = 'admin.inventarios.show';
+          $route = 'admin.inventario.show';
         }
 
         $varName = Carpeta::getRouteVarNameByType($this->type());
@@ -220,7 +220,7 @@ class Documento extends Model
      */
     public function getDownloadAttribute()
     {
-      return route('documentos.download', ['documento' => $this->id]);
+      return route('documento.download', ['documento' => $this->id]);
     }
 
     /**

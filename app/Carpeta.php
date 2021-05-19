@@ -135,8 +135,8 @@ class Carpeta extends Model
      */
     public function getBackUrlAttribute()
     {
-      $varName = substr($this->type(), 0, -1);
-      $backModel = Auth::user()->hasRole('empleado') ? route('perfil') : route('admin.'.$this->type().'.show', [$varName => $this->carpetable_id]);
+      $varName = self::getRouteVarNameByType($this->type());
+      $backModel = Auth::user()->hasRole('empleado') ? route('perfil') : route('admin.'.$varName.'.show', [$varName => $this->carpetable_id]);
       return $this->carpeta_id ? route((Auth::user()->hasRole('empleado') ? 'carpeta.show' : 'admin.carpeta.show'), ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 

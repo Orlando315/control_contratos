@@ -51,7 +51,7 @@ class InventarioEntrega extends model
      */
     public function getDownloadAttribute()
     {
-      return $this->adjunto ? route('entregas.download', ['entrega' => $this->id]) : '#';
+      return $this->adjunto ? route('entrega.download', ['entrega' => $this->id]) : '#';
     }
 
     /**

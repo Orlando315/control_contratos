@@ -77,7 +77,7 @@ class TransportesConsumosController extends Controller
           $consumo->documentos()->save($documento);
         }
 
-        return redirect()->route('admin.consumos.show', ['consumo' => $consumo->id])->with([
+        return redirect()->route('admin.consumo.show', ['consumo' => $consumo->id])->with([
           'flash_message' => 'Consumo agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -138,7 +138,7 @@ class TransportesConsumosController extends Controller
       $consumo->fill($request->all());
 
       if($consumo->save()){
-        return redirect()->route('admin.consumos.show',['consumo' => $consumo->id])->with([
+        return redirect()->route('admin.consumo.show',['consumo' => $consumo->id])->with([
           'flash_message' => 'Consumo modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -165,7 +165,7 @@ class TransportesConsumosController extends Controller
         $consumo->carpetas()->delete();
         $consumo->documentos()->delete();
 
-        return redirect()->route('admin.transportes.show', ['consumo' => $consumo->transporte_id])->with([
+        return redirect()->route('admin.transporte.show', ['consumo' => $consumo->transporte_id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Consumo eliminado exitosamente.'
         ]);

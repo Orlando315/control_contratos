@@ -245,7 +245,7 @@
 
         $.ajax({
           type: 'POST',
-          url: '{{ route("admin.empleados.index") }}/contratos/' + contrato,
+          url: '{{ route("admin.empleado.index") }}/contratos/' + contrato,
           data: {
             _token: '{{ csrf_token() }}'
           },

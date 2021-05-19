@@ -9,9 +9,9 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}">Sueldos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Contratos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.sueldo.index', ['contrato' => $contrato->id]) }}">Sueldos</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -26,7 +26,7 @@
           <h5>Realizar pagos</h5>
         </div>
         <div class="ibox-content">
-          <form id="form-pagos" action="{{ route('admin.sueldos.store', ['contrato' => $contrato->id]) }}" method="POST" enctype="multipart/form-data">
+          <form id="form-pagos" action="{{ route('admin.sueldo.store', ['contrato' => $contrato->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             
             <p class="m-0"><strong>Contrato:</strong> {{ $contrato->nombre }}</p>
@@ -97,7 +97,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.sueldo.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               @if($paymentMonth)
                 <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
               @endif

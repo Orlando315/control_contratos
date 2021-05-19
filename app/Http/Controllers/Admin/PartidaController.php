@@ -164,7 +164,7 @@ class PartidaController extends Controller
       $this->authorize('delete', $partida);
 
       if($partida->delete()){
-        return redirect()->route('admin.contratos.show', ['contrato' => $partida->contrato_id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $partida->contrato_id])->with([
           'flash_message' => 'Partida eliminada exitosamente.',
           'flash_class' => 'alert-success'
         ]);

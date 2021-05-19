@@ -9,8 +9,8 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $sueldo->contrato_id]) }}">Contrato</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.sueldos.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.show', ['contrato' => $sueldo->contrato_id]) }}">Contrato</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.sueldo.index', ['contrato' => $sueldo->contrato_id]) }}">Sueldos</a></li>
         <li class="breadcrumb-item active"><strong>Sueldo</strong></li>
       </ol>
     </div>
@@ -33,7 +33,7 @@
               <b>Empleado</b>
               <span class="pull-right">
                 @permission('empleado-view')
-                  <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                  <a href="{{ route('admin.empleado.show', ['empleado' => $sueldo->empleado_id]) }}">
                     {{ $sueldo->empleado->usuario->nombre() }}
                   </a>
                 @else

@@ -34,7 +34,7 @@
           <h5>Solicitar anticipo</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('anticipos.store') }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('anticipo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <h4 class="text-center">¿Desea solicitar un anticipo?</h4>

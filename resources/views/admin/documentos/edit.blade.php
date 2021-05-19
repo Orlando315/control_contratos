@@ -34,7 +34,7 @@
           <h5>Editar documento</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.documentos.update', ['documento' => $documento->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.documento.update', ['documento' => $documento->id]) }}" method="POST" enctype="multipart/form-data">
             @method('PATCH')
             @csrf
 

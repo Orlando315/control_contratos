@@ -151,7 +151,7 @@ class Anticipo extends Model
      */
     public function getAdjuntoDownloadAttribute()
     {
-      return $this->adjunto ? route((Auth::user()->isEmpleado() ? 'anticipos.download' : 'admin.anticipos.download'), ['anticipo' => $this->id]) : null;
+      return $this->adjunto ? route((Auth::user()->isEmpleado() ? 'anticipo.download' : 'admin.anticipo.download'), ['anticipo' => $this->id]) : null;
     }
 
     /**

@@ -81,7 +81,7 @@ class InventariosEntregasController extends Controller
 
         $inventario->save();
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Entrega agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -161,7 +161,7 @@ class InventariosEntregasController extends Controller
       if($entrega->delete()){
         $inventario->save();
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Entrega eliminada exitosamente.'
         ]);

@@ -139,7 +139,7 @@ class PostulanteController extends Controller
       $this->authorize('delete', $postulante);
 
       if($postulante->delete()){
-        return redirect()->route('admin.empleados.index')->with([
+        return redirect()->route('admin.empleado.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Postulante eliminado exitosamente.'
         ]);

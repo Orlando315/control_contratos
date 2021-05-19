@@ -46,7 +46,7 @@
                 <b>Contrato</b>
                 <span class="pull-right">
                   @permission('contrato-view')
-                    <a href="{{ route('admin.contratos.show', ['contrato' => $documento->contrato_id]) }}">
+                    <a href="{{ route('admin.contrato.show', ['contrato' => $documento->contrato_id]) }}">
                       {{ $documento->contrato->nombre }}
                     </a>
                   @else
@@ -58,7 +58,7 @@
                 <b>Empleado</b>
                 <span class="pull-right">
                   @permission('empleado-view')
-                    <a href="{{ route('admin.empleados.show', ['empleado' => $documento->empleado_id]) }}">
+                    <a href="{{ route('admin.empleado.show', ['empleado' => $documento->empleado_id]) }}">
                       {{ $documento->empleado->nombre() }}
                     </a>
                   @else

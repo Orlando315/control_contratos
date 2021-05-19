@@ -61,7 +61,7 @@
                 <span class="pull-right">
                   @if($egreso->user)
                     @permission('user-view')
-                      <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                      <a href="{{ route('admin.usuario.show', ['usuario' => $egreso->user_id]) }}">
                         {{ $egreso->user->nombre() }}
                       </a>
                     @else
@@ -96,7 +96,7 @@
               <span class="pull-right">
                 @if($egreso->contrato)
                   @permission('contrato-view')
-                    <a href="{{ route('admin.contratos.show', ['contrato' => $egreso->contrato_id]) }}">
+                    <a href="{{ route('admin.contrato.show', ['contrato' => $egreso->contrato_id]) }}">
                       {{ $egreso->contrato->nombre }}
                     </a>
                   @else

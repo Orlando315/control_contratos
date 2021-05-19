@@ -57,13 +57,13 @@ class GastosController extends Controller
       $gasto = new Gasto($request->only('contrato_id', 'etiqueta_id', 'nombre', 'valor'));
 
       if(Auth::user()->empresa->gastos()->save($gasto)){
-        return redirect()->route('admin.gastos.show', ['gasto' => $gasto->id])->with([
+        return redirect()->route('admin.gasto.show', ['gasto' => $gasto->id])->with([
           'flash_message' => 'Gasto agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
       }
 
-      return redirect()->route('admin.gastos.create')->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -119,7 +119,7 @@ class GastosController extends Controller
       $gasto->fill($request->all());
 
       if($gasto->save()){
-        return redirect()->route('admin.gastos.show', ['gasto' => $gasto->id])->with([
+        return redirect()->route('admin.gasto.show', ['gasto' => $gasto->id])->with([
           'flash_message' => 'Gasto modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -143,7 +143,7 @@ class GastosController extends Controller
       $this->authorize('delete', $gasto);
 
       if($gasto->delete()){
-        return redirect()->route('admin.gastos.index')->with([
+        return redirect()->route('admin.gasto.index')->with([
           'flash_message' => 'Gasto eliminado exitosamente.',
           'flash_class' => 'alert-success'
           ]);

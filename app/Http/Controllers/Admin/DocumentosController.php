@@ -100,7 +100,7 @@ class DocumentosController extends Controller
         $documento->path = $request->file('documento')->store($directory);
         $documento->save();
         
-        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$type.'.show', [$varName => $model->id]);
+        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$varName.'.show', [$varName => $model->id]);
 
         return redirect($redirect)->with([
           'flash_message' => 'Adjunto agregado exitosamente.',

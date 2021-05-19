@@ -36,8 +36,8 @@
                     <div class="btn-group">
                       <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Empleado</button>
                       <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-                        <li><a class="dropdown-item" href="{{ route('admin.empleados.create') }}">Nuevo Empleado</a></li>
-                        <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create') }}">Importar Empleados</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleado.create') }}">Nuevo Empleado</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleado.import.create') }}">Importar Empleados</a></li>
                       </ul>
                     </div>
                   </div>
@@ -71,14 +71,14 @@
                               <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                                 @permission('empleado-view')
                                   <li>
-                                    <a class="dropdown-item" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id]) }}">
+                                    <a class="dropdown-item" href="{{ route('admin.empleado.show', ['empleado' => $empleado->id]) }}">
                                       <i class="fa fa-search"></i> Ver
                                     </a>
                                   </li>
                                 @endpermission
                                 @permission('empleado-edit')
                                   <li>
-                                    <a class="dropdown-item" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}">
+                                    <a class="dropdown-item" href="{{ route('admin.empleado.edit', ['empleado' => $empleado->id]) }}">
                                       <i class="fa fa-pencil"></i> Editar
                                     </a>
                                   </li>

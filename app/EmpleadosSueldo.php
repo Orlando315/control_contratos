@@ -61,7 +61,7 @@ class EmpleadosSueldo extends Model
      */
     public function getDownloadAttribute()
     {
-      return route('sueldos.download', ['sueldo' => $this->id]);
+      return route('sueldo.download', ['sueldo' => $this->id]);
     }
 
     /**

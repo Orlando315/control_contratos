@@ -76,7 +76,7 @@ class TransportesController extends Controller
           $transporte->faenas()->attach($request->faenas);
         }
 
-        return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
+        return redirect()->route('admin.transporte.show', ['transporte' => $transporte->id])->with([
           'flash_message' => 'Transporte agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -162,7 +162,7 @@ class TransportesController extends Controller
         $transporte->supervisores()->sync($request->supervisores ?? []);
         $transporte->faenas()->sync($request->faenas ?? []);
 
-        return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
+        return redirect()->route('admin.transporte.show', ['transporte' => $transporte->id])->with([
           'flash_message' => 'Transporte modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -192,7 +192,7 @@ class TransportesController extends Controller
           Storage::deleteDirectory($directory);
         }
 
-        return redirect()->route('admin.transportes.index')->with([
+        return redirect()->route('admin.transporte.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Transporte eliminado exitosamente.'
         ]);
@@ -212,7 +212,7 @@ class TransportesController extends Controller
       $contrato = Contrato::findOrFail($request->contrato);
 
       if($transporte->contratos()->create(['contrato_id' => $contrato->id])){
-        return redirect()->route('admin.transportes.show', ['transporte' => $transporte->id])->with([
+        return redirect()->route('admin.transporte.show', ['transporte' => $transporte->id])->with([
           'flash_message' => 'Contrato agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);

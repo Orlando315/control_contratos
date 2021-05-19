@@ -87,7 +87,7 @@ class Inventario extends model
      */
     public function getDownloadAttribute()
     {
-      return route('admin.inventarios.download', ['inventario' => $this->id]);
+      return route('admin.inventario.download', ['inventario' => $this->id]);
     }
 
     /**

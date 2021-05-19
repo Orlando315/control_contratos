@@ -11,7 +11,7 @@
   <div class="container">
     <div class="row mb-3 no-print">
       <div class="col-12">
-        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       </div>
     </div>
 

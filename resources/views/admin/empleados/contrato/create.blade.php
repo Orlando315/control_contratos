@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleado.index') }}">Empleados</a></li>
         <li class="breadcrumb-item">Contratos</li>
         <li class="breadcrumb-item active"><strong>Cambio</strong></li>
       </ol>
@@ -33,7 +33,7 @@
           <h4>Cambio de jornada</h4>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.contrato.store', ['empleado' => $empleado->id]) }}" method="POST">
+          <form action="{{ route('admin.empleado.contrato.store', ['empleado' => $empleado->id]) }}" method="POST">
             @csrf
 
             <fieldset>
@@ -93,7 +93,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

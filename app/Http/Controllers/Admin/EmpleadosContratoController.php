@@ -72,7 +72,7 @@ class EmpleadosContratoController extends Controller
         $lastContrato->fin = $request->inicio;
         $lastContrato->save();
 
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Cambio de jornada exitoso.',
           'flash_class' => 'alert-success'
           ]);
@@ -132,7 +132,7 @@ class EmpleadosContratoController extends Controller
       $contrato->fill($request->only('sueldo', 'inicio', 'fin', 'inicio_jornada', 'jornada', 'descripcion'));
 
       if($contrato->save()){
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Contrato modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -159,7 +159,7 @@ class EmpleadosContratoController extends Controller
       $empleado->contrato_id = $contrato->id;
 
       if($empleado->save()){
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado actualizado exitosamente.',
           'flash_class' => 'alert-success'
           ]);

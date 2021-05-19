@@ -66,7 +66,7 @@
           <div class="ibox-tools">
             <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
             @if($carpeta->carpetable->documentos()->count() < 10)
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.documento.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
             @endif
           </div>
         </div>

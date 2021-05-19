@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Empleados</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleado.index') }}">Empleados</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -32,7 +32,7 @@
           <h5>Agregar empleado</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.empleados.store') }}" method="POST">
+          <form action="{{ route('admin.empleado.store') }}" method="POST">
             <input type="hidden" name="postulante" value="{{ optional($postulante)->id }}">
             @csrf
 
@@ -302,7 +302,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -372,7 +372,7 @@
 
           $.ajax({
             type: 'POST',
-            url: `{{ route("admin.usuarios.index") }}/${user}/get`,
+            url: `{{ route("admin.usuario.index") }}/${user}/get`,
             data: {
               usuario: user,
             },

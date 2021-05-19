@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.usuarios.index') }}">Usuarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.usuario.index') }}">Usuarios</a></li>
         <li class="breadcrumb-item active"><strong>Usuario</strong></li>
       </ol>
     </div>
@@ -20,10 +20,10 @@
   <div class="row mb-3">
     <div class="col-md-12">
       @permission('user-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.usuarios.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.usuario.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('user-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.usuario.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#passModal"><i class="fa fa-lock" aria-hidden="true"></i> Cambiar contraseña</button>
       @endpermission
       @permission('user-delete')
@@ -45,7 +45,7 @@
               <li class="list-group-item">
                 <b>Empleado</b>
                 <span class="pull-right">
-                  <a href="{{ route('admin.empleados.show', ['empleado'=> $usuario->empleado_id]) }}">Ver perfil</a>
+                  <a href="{{ route('admin.empleado.show', ['empleado'=> $usuario->empleado_id]) }}">Ver perfil</a>
                 </span>
               </li>
             @endif
@@ -82,7 +82,7 @@
     <div id="passModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="passModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.usuarios.password', ['usuario' => $usuario->id]) }}" method="POST">
+          <form action="{{ route('admin.usuario.password', ['usuario' => $usuario->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -129,7 +129,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.usuarios.destroy', ['usuario' => $usuario->id]) }}" method="POST">
+          <form action="{{ route('admin.usuario.destroy', ['usuario' => $usuario->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

@@ -24,9 +24,6 @@
           <h5>Importar Proveedores</h5>
 
           <div class="ibox-tools">
-            <a class="btn btn-default btn-xs" href="" download="importar_empleados.xlsx">
-              
-            </a>
             <div class="btn-group">
               <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">
                 <i class="fa fa-download" aria-hidden="true"></i> Descargar Formato

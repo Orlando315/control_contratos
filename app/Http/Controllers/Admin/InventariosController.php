@@ -86,7 +86,7 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -184,7 +184,7 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -217,7 +217,7 @@ class InventariosController extends Controller
           Storage::deleteDirectory($inventario->directory());
         }
 
-        return redirect()->route('admin.inventarios.index')->with([
+        return redirect()->route('admin.inventario.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Inventario eliminado exitosamente.'
         ]);
@@ -263,7 +263,7 @@ class InventariosController extends Controller
       $copy->nombre = $inventario->nombre.' (copia)';
 
       if($copy->save()){
-        return redirect()->route('admin.inventarios.show', ['inventario' => $copy->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $copy->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Inventario clonado exitosamente.'
         ]);
