@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Proveedor extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -51,6 +55,15 @@ class Proveedor extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'type' => 'Tipo',
     ];
 
     /**
@@ -188,5 +201,15 @@ class Proveedor extends Model
     public function tipo()
     {
       return $this->isEmpresa() ? '<span class="label label-primary">Empresa</span>' : '<span class="label label-success">Persona</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

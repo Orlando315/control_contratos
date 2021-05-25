@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class InventarioV2Ingreso extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -27,6 +31,30 @@ class InventarioV2Ingreso extends Model
       'costo',
       'descripcion',
       'foto',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Ingreso de Inventario V2';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'inventario.ingreso';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'inventario.nombre' => 'Inventario',
+      'proveedor.nombre' => 'Proveedor',
     ];
 
     /**
@@ -129,9 +157,28 @@ class InventarioV2Ingreso extends Model
         $this->proveedor->productos()->create([
           'empresa_id' => $this->empresa_id,
           'inventario_id' => $this->inventario_id,
-          'nombre' => $this->nombre,
+          'nombre' => $this->inventarios->nombre,
           'costo' => $this->costo,
         ]);
       }
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'inventario_id',
+        'proveedor_id',
+      ])
+      ->logAditionalAttributes([
+        'inventario.nombre',
+        'proveedor.nombre',
+      ]);
     }
 }

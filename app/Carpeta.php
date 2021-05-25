@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Carpeta extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -23,6 +27,7 @@ class Carpeta extends Model
     protected $fillable = [
       'empresa_id',
       'carpeta_id',
+      'requisito_id',
       'nombre',
       'visibilidad',
     ];
@@ -34,6 +39,17 @@ class Carpeta extends Model
      */
     protected $casts = [
       'visibilidad' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'main.nombre' => 'Carpeta padre',
+      'requisito.nombre' => 'Requisito',
+      'visibilidad' => '¿Es visible para el Empleado?',
     ];
 
     /**
@@ -266,5 +282,22 @@ class Carpeta extends Model
     public static function getRouteVarNameByType($type)
     {
       return substr($type, 0, -1);
+    }
+
+    /**
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'carpeta_id',
+      ])
+      ->logAditionalAttributes([
+        'main.nombre',
+      ]);
     }
 }

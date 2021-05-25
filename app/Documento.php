@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
 use App\Carpeta;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Documento extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -42,6 +46,24 @@ class Documento extends Model
      */
     protected $casts = [
       'visibilidad' => 'boolean',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Documento adjunto';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'carpeta.nombre' => 'Carpeta padre',
+      'requisito.nombre' => 'Requisito',
+      'visibilidad' => '¿Es visible para el Empleado?',
     ];
 
     /**
@@ -232,6 +254,22 @@ class Documento extends Model
     }
 
     /**
+     * Obtener la Carpeta a la que pertenece
+     */
+    public function carpeta()
+    {
+      return $this->belongsTo('App\Carpeta');
+    }
+
+    /**
+     * Obtener el Requisito al que pertenece
+     */
+    public function requisito()
+    {
+      return $this->belongsTo('App\Requisito');
+    }
+
+    /**
      * Evaluar si el Documento pertenece a la clase especificada
      *
      * @param  string  $type
@@ -410,5 +448,28 @@ class Documento extends Model
           return 'inventario-view';
           break;
       }
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'carpeta_id',
+        'requisito_id',
+        'path',
+        'mime',
+        'created_at',
+        'updated_at'
+      ])
+      ->logAditionalAttributes([
+        'carpeta.nombre',
+        'requisito.nombre',
+      ]);
     }
 }

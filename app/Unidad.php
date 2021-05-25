@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\{Model, Builder};
 use App\Scopes\EmpresaWithGlobalScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Unidad extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -31,6 +35,15 @@ class Unidad extends Model
      */
     protected $casts = [
       'status' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public $attributesTitle = [
+      'status' => 'Estatus',
     ];
 
     /**
@@ -113,5 +126,18 @@ class Unidad extends Model
     {
       $label = $this->status ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
       return $asBool ? $this->status : $label;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+      ]);
     }
 }

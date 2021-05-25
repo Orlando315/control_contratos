@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Requisito extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -36,6 +40,17 @@ class Requisito extends Model
      * @var array
      */
     private static $allowedTypes = ['contratos', 'empleados', 'transportes'];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'type' => 'Tipo',
+      'folder' => '¿Es carpeta?',
+    ];
 
     /**
      * The "booting" method of the model.
@@ -149,5 +164,21 @@ class Requisito extends Model
     public static function allowedTypes($type = null)
     {
       return $type ? (in_array($type, self::$allowedTypes) ? $type : 'contratos') : self::$allowedTypes;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+      ]);
     }
 }

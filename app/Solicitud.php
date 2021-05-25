@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\{EmpresaScope, LatestScope};
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Solicitud extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -20,7 +24,6 @@ class Solicitud extends Model
      * @var array
      */
     protected $fillable = [
-      'contrato_id',
       'empleado_id',
       'tipo',
       'otro',
@@ -37,6 +40,16 @@ class Solicitud extends Model
      */
     protected $casts = [
       'status' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'status' => 'Estatus',
     ];
 
     /**
@@ -186,5 +199,21 @@ class Solicitud extends Model
       }
 
       return $tipo;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empleado_id'
+      ])
+      ->logAditionalAttributes([
+        'empleado.usuario.nombreCompleto'
+      ]);
     }
 }

@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Faena extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -82,5 +86,15 @@ class Faena extends Model
     public function asTag()
     {
       return '<small class="label label-default">'.$this->nombre.'</small>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

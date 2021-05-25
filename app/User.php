@@ -11,11 +11,14 @@ use App\Notifications\ResetPassword;
 use Laratrust\Traits\LaratrustUserTrait;
 use Laratrust\Helper;
 use App\Role;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class User extends Authenticatable
 {
     use LaratrustUserTrait;
     use Notifiable;
+    use LogEvents;
 
     /**
      * The table associated with the model.
@@ -46,6 +49,20 @@ class User extends Authenticatable
     protected $hidden = [
       'password'
     ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Usuario';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'usuario';
 
     /**
      * Empresa a la que pertenece el User y esta usando en session
@@ -106,11 +123,21 @@ class User extends Authenticatable
     /**
      * Obtener las Empresa a la que pertenece el User y esta usando en session
      *
-     * @param  \App\Models\Empresa|null
+     * @return \App\Models\Empresa|null
      */
     public function getEmpresaAttribute()
     {
       return $this->_empresa = $this->_empresa ?? $this->empresas()->first();
+    }
+
+    /**
+     * Obtener el nombre completo del User
+     *
+     * @return string
+     */
+    public function getNombreCompletoAttribute()
+    {
+      return trim($this->nombres.' '.$this->apellidos);
     }
 
     /**
@@ -396,7 +423,7 @@ class User extends Authenticatable
      */
     public function nombre()
     {
-      return trim($this->nombres.' '.$this->apellidos);
+      return $this->nombreCompleto;
     }
 
     /**
@@ -490,5 +517,18 @@ class User extends Authenticatable
     public function haventAnsweredCovid19Today()
     {
       return !$this->covid19Respuestas()->whereDate('created_at', date('Y-m-d'))->exists();
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empleado_id',
+      ]);
     }
 }

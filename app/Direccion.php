@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Direccion extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -48,6 +52,15 @@ class Direccion extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'status' => 'Estatus',
     ];
 
     /**
@@ -97,5 +110,15 @@ class Direccion extends Model
     public function status()
     {
       return $this->isSelected() ? '<span class="label label-primary">Seleccionada</span>' : '<span class="label label-default">No seleccionada</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

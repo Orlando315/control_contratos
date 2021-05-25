@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class PlantillaDocumento extends Model
 {
+    use LogEvents;
+
      /**
      * The table associated with the model.
      *
@@ -48,6 +52,33 @@ class PlantillaDocumento extends Model
      */
     protected $dates = [
       'caducidad',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Documento de Plantilla';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'plantilla.documento';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'postulante.nombreCompleto' => 'Postulante',
+      'plantilla.nombre' => 'Plantilla',
+      'padre.nombre' => 'Documento padre',
     ];
 
     /**
@@ -197,4 +228,27 @@ class PlantillaDocumento extends Model
       return collect($seccion)->merge($staticNeeded)->toArray();
     }
 
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+        'empleado_id',
+        'postulante_id',
+        'plantilla_id',
+        'documento_id',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+        'empleado.usuario.nombreCompleto',
+        'postulante.nombre',
+        'plantilla.nombre',
+        'padre.nombre',
+      ]);
+    }
 }

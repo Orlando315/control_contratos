@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
 use App\Integrations\FacturacionSii;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class FacturacionCompra extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -49,6 +53,15 @@ class FacturacionCompra extends Model
      */
     protected $with = [
       'compra',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'orden_compra_id' => 'Compra',
     ];
 
     /**
@@ -144,5 +157,15 @@ class FacturacionCompra extends Model
 
       $this->fill($factura);
       return $this->save();
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

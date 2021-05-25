@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class ProveedorProducto extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -49,6 +53,33 @@ class ProveedorProducto extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Eventos que se guardaran en Logs
+     * 
+     * @var array
+     */
+    public static $recordEvents = [
+      'updated',
+      'deleted',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Producto de Proveedor';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'proveedor.nombre' => 'Proveedor',
+      'inventario.nombre' => 'Inventario',
     ];
 
     /**
@@ -104,5 +135,24 @@ class ProveedorProducto extends Model
     public function costo()
     {
       return number_format($this->costo, 2, ',', '.');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'proveedor_id',
+        'inventario_id',
+      ])
+      ->logAditionalAttributes([
+        'proveedor.nombre',
+        'inventario.nombre',
+      ]);
     }
 }
