@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
 use App\Integrations\FacturacionSii;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Cotizacion extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -21,7 +25,7 @@ class Cotizacion extends Model
      *
      * @var array
      */
-    protected $fillable = [
+    public $fillable = [
       'user_id',
       'cliente_id',
       'direccion',
@@ -54,6 +58,17 @@ class Cotizacion extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'user.nombreCompleto' => 'Generado por',
+      'cliente.nombre' => 'Cliente',
+      'status' => 'Estatus'
     ];
 
     /**
@@ -252,5 +267,23 @@ class Cotizacion extends Model
       ];
 
       return (new FacturacionSii)->facturar($rut, $dv, $data);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'user_id',
+        'cliente_id',
+      ])
+      ->logAditionalAttributes([
+        'user.nombreCompleto',
+        'cliente.nombre',
+      ]);
     }
 }

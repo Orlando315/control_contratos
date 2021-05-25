@@ -241,6 +241,14 @@
         </li>
       @endpermission
 
+      @permission('log-index')
+        <li>
+          <a href="{{ route('admin.log.index') }}">
+            <i class="fa fa-history"></i> <span class="nav-label">Logs</span>
+          </a>
+        </li>
+      @endpermission
+
       @role('developer|superadmin|empresa')
         <li>
           <a href="{{ route('admin.empresa.configuracion') }}">

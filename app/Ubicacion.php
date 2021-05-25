@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Ubicacion extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -22,6 +26,15 @@ class Ubicacion extends Model
     protected $fillable = [
       'bodega_id',
       'nombre',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'bodega.nombre' => 'Bodega',
     ];
 
     /**
@@ -57,5 +70,21 @@ class Ubicacion extends Model
     public function inventariosV2()
     {
       return $this->hasMany('App\InventarioV2');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'bodega_id',
+      ])
+      ->logAditionalAttributes([
+        'bodega.nombre'
+      ]);
     }
 }

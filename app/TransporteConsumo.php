@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class TransporteConsumo extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -26,6 +30,30 @@ class TransporteConsumo extends Model
       'valor',
       'chofer',
       'observacion'
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Consumo de Transporte';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'consumo';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'transporte_id' => 'Transporte',
+      'contrato.nombre' => 'Contrato',
     ];
 
     /**
@@ -123,5 +151,22 @@ class TransporteConsumo extends Model
     public function valor()
     {
       return number_format($this->valor, 2, ',', '.');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+      ])
+      ->logAditionalAttributes([
+        'transporte_id',
+        'contrato.nombre',
+      ]);
     }
 }

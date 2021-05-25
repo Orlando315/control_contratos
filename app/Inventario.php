@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Inventario extends model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -43,8 +47,18 @@ class Inventario extends model
      * @var array
      */
     protected $casts = [
-        'calibracion' => 'boolean',
-        'certificado' => 'boolean',
+      'calibracion' => 'boolean',
+      'certificado' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'low_stock' => 'Stock bajo',
     ];
 
     /**
@@ -233,5 +247,21 @@ class Inventario extends model
     protected function formatBoolean($bool)
     {
       return $bool ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id'
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre'
+      ]);
     }
 }

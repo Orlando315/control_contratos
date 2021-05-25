@@ -58,7 +58,7 @@ class OrdenCompraProductoController extends Controller
      */
     public function edit(OrdenCompraProducto $producto)
     {
-      $this->authorize('update', $producto->compra);
+      $this->authorize('update', $producto->ordenCompra);
 
       $inventarios = InventarioV2::with('unidad')->get();
 
@@ -74,7 +74,7 @@ class OrdenCompraProductoController extends Controller
      */
     public function update(Request $request, OrdenCompraProducto $producto)
     {
-      $this->authorize('update', $producto->compra);
+      $this->authorize('update', $producto->ordenCompra);
       $this->validate($request, [
         'tipo_codigo' => 'nullable|string|max:20',
         'codigo' => 'nullable|string|max:50',

@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Pago extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -118,5 +122,15 @@ class Pago extends Model
     {
       $metodo = strtolower($this->metodo != 'otro' ? $this->metodo : $this->metodo_otro);
       return ucfirst($metodo);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

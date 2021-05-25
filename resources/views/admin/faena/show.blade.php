@@ -152,7 +152,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach($contrato->inventariosV2Egreso as $egreso)
+                    @foreach($faena->inventariosV2Egreso as $egreso)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>

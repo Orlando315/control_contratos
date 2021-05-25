@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\{Model, Builder};
 use Illuminate\Support\Facades\Auth;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class EmpleadosContrato extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -44,6 +48,23 @@ class EmpleadosContrato extends Model
       '20x10',
       '7x14',
       '14x14',      
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Contrato de Empleado';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'inicio_jornada' => 'Inicio de jornada',
     ];
 
     /**
@@ -250,5 +271,21 @@ class EmpleadosContrato extends Model
         'lessThan7' => $lessThan7,
         'lessThan21' => $lessThan21,
       ];
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empleado_id',
+      ])
+      ->logAditionalAttributes([
+        'empleado.usuario.nombreCompleto'
+      ]);
     }
 }

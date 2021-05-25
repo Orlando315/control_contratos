@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Contacto extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -23,7 +27,8 @@ class Contacto extends Model
       'email',
       'telefono',
       'cargo',
-      'descripcion'
+      'descripcion',
+      'status',
     ];
 
     /**
@@ -49,6 +54,15 @@ class Contacto extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public $attributesTitle = [
+      'status' => 'Estatus',
     ];
 
     /**
@@ -98,5 +112,15 @@ class Contacto extends Model
     public function status()
     {
       return $this->isSelected() ? '<span class="label label-primary">Seleccionado</span>' : '<span class="label label-default">No seleccionado</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

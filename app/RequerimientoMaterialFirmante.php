@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class RequerimientoMaterialFirmante extends Pivot
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -30,6 +34,7 @@ class RequerimientoMaterialFirmante extends Pivot
       'requerimiento_id',
       'user_id',
       'texto',
+      'observacion',
       'status',
     ];
 
@@ -41,6 +46,34 @@ class RequerimientoMaterialFirmante extends Pivot
     protected $casts = [
       'obligatorio' => 'boolean',
       'status' => 'boolean',
+    ];
+
+    /**
+     * Eventos que se guardaran en Logs
+     * 
+     * @var array
+     */
+    public static $recordEvents = [
+      'updated',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Firmante de RM';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'requerimiento_id' => 'Requerimiento',
+      'user.nombreCompleto' => 'Usuario firmante',
+      'status' => 'Estatus',
+      'obligatorio' => '¿Es obligatorio?',
     ];
 
     /**
@@ -96,6 +129,14 @@ class RequerimientoMaterialFirmante extends Pivot
     }
 
     /**
+     * Obtener el User
+     */
+    public function user()
+    {
+      return $this->belongsTo('App\User');
+    }
+
+    /**
      * Evaluar si el Firmante es obligatorio
      * 
      * @return bool
@@ -147,5 +188,21 @@ class RequerimientoMaterialFirmante extends Pivot
       }
 
       return $this->status ? '<span class="label label-primary">Aprobado</span>' : '<span class="label label-danger">Rechazado</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'user_id',
+      ])
+      ->logAditionalAttributes([
+        'user.nombreCompleto',
+      ]);
     }
 }

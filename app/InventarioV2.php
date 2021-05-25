@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class InventarioV2 extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -32,6 +36,32 @@ class InventarioV2 extends Model
       'foto',
       'stock',
       'stock_minimo',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Inventario V2';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'inventario.v2';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'unidad.nombre' => 'Unidad',
+      'bodega.nombre' => 'Bodega',
+      'ubicacion.nombre' => 'Ubicacion',
+      'tipo_codigo' => 'Tipo de código',
     ];
 
     /**
@@ -189,5 +219,26 @@ class InventarioV2 extends Model
       $convert = $isIngreso ? -1 : 1;
 
       $this->addStock($cantidad * $convert);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'unidad_id',
+        'bodega_id',
+        'ubicacion_id',
+      ])
+      ->logAditionalAttributes([
+        'unidad.nombre',
+        'bodega.nombre',
+        'ubicacion.nombre',
+      ]);
     }
 }

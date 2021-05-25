@@ -28,6 +28,9 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   Route::patch('empresa/configuracion/requerimientos', 'ConfiguracionController@requerimientos')->name('empresa.configuracion.requerimientos');
 });
 
+/* --- Logs --- */
+Route::get('log', 'LogController@index')->name('log.index');
+
 /* --- Covid19 --- */
 Route::get('covid19', 'Covid19Controller@index')->name('covid19.index');
 Route::get('covid19/{respuesta}', 'Covid19Controller@show')->name('covid19.show');

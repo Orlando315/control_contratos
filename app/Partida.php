@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Scopes\{EmpresaScope, LatestScope};
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Partida extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -39,6 +43,15 @@ class Partida extends Model
       'equipo',
       'maquinaria',
       'otro'
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
     ];
 
     /**
@@ -202,5 +215,22 @@ class Partida extends Model
     public function totalFacturas()
     {
       return number_format($this->totalFacturas, 2, ',', '.');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'contrato_id',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+      ]);
     }
 }

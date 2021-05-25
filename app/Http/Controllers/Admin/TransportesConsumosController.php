@@ -29,7 +29,7 @@ class TransportesConsumosController extends Controller
       $this->authorize('view', $transporte);
       $this->authorize('create', TransporteConsumo::class);
 
-      $contratos = $transporte->contratos()->get();
+      $contratos = $transporte->contratos()->with('contrato')->get();
 
       return view('admin.transportes.consumos.create', ['transporte' => $transporte, 'contratos' => $contratos]);
     }

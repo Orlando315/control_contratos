@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\{EmpresaScope, LatestScope};
 use Carbon\Carbon;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Anticipo extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -41,6 +45,16 @@ class Anticipo extends Model
     protected $casts = [
       'status' => 'boolean',
       'solicitud' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'empleado.usuario.nombreCompleto' => 'Empleado'
     ];
 
     /**
@@ -395,5 +409,25 @@ class Anticipo extends Model
     {
       $date = Carbon::create(date('Y'), $month, 1);
       return $date->formatLocalized('%B');
+    }
+
+    /**
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+        'empleado_id',
+        'adunto',
+        'status',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+        'empleado.usuario.nombreCompleto',
+      ]);
     }
 }

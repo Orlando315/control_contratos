@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Covid19Respuesta;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Empresa extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -349,5 +353,15 @@ class Empresa extends Model
     public function getRutDv()
     {
       return $this->getRutPart(1);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

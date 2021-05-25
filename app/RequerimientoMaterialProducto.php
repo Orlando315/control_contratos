@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class RequerimientoMaterialProducto extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -35,6 +39,34 @@ class RequerimientoMaterialProducto extends Model
      */
     protected $casts = [
       'added' => 'boolean',
+    ];
+
+    /**
+     * Eventos que se guardaran en Logs
+     * 
+     * @var array
+     */
+    public static $recordEvents = [
+      'updated',
+      'deleted',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Producto de RM';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'requerimiento_id' => 'Requerimiento',
+      'inventario.nombre' => 'Inventario',
+      'tipo_codigo' => 'Tipo de código',
     ];
 
     /**
@@ -91,5 +123,22 @@ class RequerimientoMaterialProducto extends Model
     public function wasAdded()
     {
       return $this->added;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'inventario_id',
+        'added',
+      ])
+      ->logAditionalAttributes([
+        'inventario.nombre',
+      ]);
     }
 }

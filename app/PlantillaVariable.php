@@ -7,9 +7,13 @@ use Illuminate\Support\{Collection, Str};
 use Illuminate\Support\Facades\Auth;
 use App\{Empleado, Postulante};
 use App\Scopes\EmpresaWithGlobalScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class PlantillaVariable extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -23,6 +27,13 @@ class PlantillaVariable extends Model
      * @var array
      */
     protected $fillable = ['nombre', 'tipo', 'variable'];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Variable de Plantilla';
 
     /**
      * Variables reservadas para las variables estaticas del sistema
@@ -287,5 +298,15 @@ class PlantillaVariable extends Model
       ->map(function ($variable) {
         return [$variable->nombre, $variable->withoutTokens()];
       })->toArray();
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }
