@@ -56,7 +56,7 @@
                           <td>{{ $contrato->empleados()->count() }}</td>
                           <td>
                             @permission('contrato-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -85,7 +85,7 @@
                           <td>{{ $contrato->jornada }}</td>
                           <td>
                             @permission('empleado-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $contrato->empleado_id]) }}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.empleado.show', ['empleado' => $contrato->empleado_id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -134,15 +134,15 @@
                       <td>
                         @if($type == 'contratos')
                           @permission('contrato-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.contrato.show', ['contrato' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @elseif($type == 'empleados')
                           @permission('empleado-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleado.show', ['empleado' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @else
                           @permission('transporte-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.transporte.show', ['transporte' => $documento->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @endif
                       </td>
@@ -198,7 +198,7 @@
                           <td>{{ $contratoVencido->empleados()->count() }}</td>
                           <td>
                             @permission('contrato-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contratoVencido->id]) }}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.contrato.show', ['contrato' => $contratoVencido->id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -227,7 +227,7 @@
                           <td>{{ $contratoVencido->jornada }}</td>
                           <td>
                             @permission('empleado-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $contratoVencido->empleado_id]) }}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.empleado.show', ['empleado' => $contratoVencido->empleado_id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -276,15 +276,15 @@
                       <td>
                         @if($type == 'contratos')
                           @permission('contrato-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.contrato.show', ['contrato' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @elseif($type == 'empleados')
                           @permission('empleado-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleado.show', ['empleado' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @else
                           @permission('transporte-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.transporte.show', ['transporte' => $documentoVencido->documentable_id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                         @endif                        
                       </td>

@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\{Model, Builder};
 use Carbon\Carbon;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class EmpleadosEvento extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -39,6 +43,32 @@ class EmpleadosEvento extends Model
      */
     protected $casts = [
       'status' => 'boolean',
+    ];
+
+    /**
+     * Eventos que se guardaran en Logs
+     * 
+     * @var array
+     */
+    public static $recordEvents = [
+      'deleted',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Contrato de Empleado';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'status' => 'Estado',
     ];
 
     /**
@@ -308,7 +338,7 @@ class EmpleadosEvento extends Model
     public function nombreReemplazo()
     {
       $nombre = $this->empleado->nombre();
-      $route = route('admin.empleados.show', ['empleado' => $this->empleado_id]);
+      $route = route('admin.empleado.show', ['empleado' => $this->empleado_id]);
 
       return "<a href='{$route}'>{$nombre}</a>";
     }
@@ -321,5 +351,21 @@ class EmpleadosEvento extends Model
     public function valor()
     {
       return number_format($this->valor, 0, ',', '.');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empleado_id',
+      ])
+      ->logAditionalAttributes([
+        'empleado.usuario.nombreCompleto'
+      ]);
     }
 }

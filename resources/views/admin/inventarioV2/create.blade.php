@@ -270,7 +270,7 @@
         $('#optionModal').on('show.bs.modal', function (e){
           let option = $(e.relatedTarget).data('option');
 
-          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : (option == 'categorias' ? '{{ route("admin.etiquetas.store") }}' : '{{ route("admin.bodega.store") }}');
+          let url = option == 'unidad' ? '{{ route("admin.unidad.store") }}' : (option == 'categorias' ? '{{ route("admin.etiqueta.store") }}' : '{{ route("admin.bodega.store") }}');
           let title = option == 'unidad' ? 'Unidad' : (option == 'categorias' ? 'Categoría' : 'Bodega');
 
           $('#optionModalLabel').text(`Agregar ${title}`);

@@ -80,7 +80,9 @@ class BodegaController extends Controller
       
       $bodega->load([
         'inventariosV2.unidad',
-        'ubicaciones.inventariosV2',
+        'ubicaciones' => function ($query) {
+          $query->withCount('inventariosV2');
+        },
       ]);
 
       return view('admin.bodega.show', compact('bodega'));

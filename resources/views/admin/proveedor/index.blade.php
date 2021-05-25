@@ -37,13 +37,14 @@
           <div class="ibox-tools">
             @permission('proveedor-create')
               <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fa fa-plus" aria-hidden="false"></i> Nuevo Proveedor
+                <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">
+                  <i class="fa fa-plus" aria-hidden="true"></i> Nuevo Proveedor
                 </button>
-                <div class="dropdown-menu dropdown-menu-right" x-placement="top-start">
-                  <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Persona</a>
-                  <a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Empresa</a>
-                </div>
+                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                  <li><a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'persona']) }}">Persona</a></li>
+                  <li><a class="dropdown-item" href="{{ route('admin.proveedor.create', ['type' => 'empresa']) }}">Empresa</a></li>
+                  <li><a class="dropdown-item" href="{{ route('admin.proveedor.import.create') }}">Importar</a></li>
+                </ul>
               </div>
             @endpermission
           </div>
@@ -51,14 +52,14 @@
         <div class="ibox-content">
           <table class="table data-table table-bordered table-hover w-100">
             <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th class="text-center">Nombre</th>
-                <th class="text-center">Teléfono</th>
-                <th class="text-center">RUT</th>
-                <th class="text-center">Email</th>
-                <th class="text-center">Tipo</th>
-                <th class="text-center">Acción</th>
+              <tr class="text-center">
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>RUT</th>
+                <th>Email</th>
+                <th>Tipo</th>
+                <th>Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -75,13 +76,26 @@
                     </small>
                   </td>
                   <td class="text-center">
-                    @permission('proveedor-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.proveedor.show', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-search"></i></a>
-                    @endpermission
-                    @permission('proveedor-edit')
-                      @if($proveedor->isPersona())
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.proveedor.edit', ['proveedor' => $proveedor->id]) }}"><i class="fa fa-pencil"></i></a>
-                      @endif
+                    @permission('proveedor-view|proveedor-edit')
+                      <div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                          @permission('proveedor-view')
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.proveedor.show', ['proveedor' => $proveedor->id]) }}">
+                                <i class="fa fa-search"></i> Ver
+                              </a>
+                            </li>
+                          @endpermission
+                          @if(Auth::user()->hasPermission('proveedor-edit') && $proveedor->isPersona())
+                            <li>
+                              <a class="dropdown-item" href="{{ route('admin.proveedor.edit', ['proveedor' => $proveedor->id]) }}">
+                                <i class="fa fa-pencil"></i> Editar
+                              </a>
+                            </li>
+                          @endif
+                        </ul>
+                      </div>
                     @endpermission
                   </td>
                 </tr>

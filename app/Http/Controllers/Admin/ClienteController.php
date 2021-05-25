@@ -343,7 +343,7 @@ class ClienteController extends Controller
         ]);
       }
 
-      $cliente = $cliente->fill($request->only('nombre', 'rut', 'telefono', 'email', 'descripcion'));
+      $cliente->fill($request->only('nombre', 'rut', 'telefono', 'email', 'descripcion'));
 
       if($cliente->save()){
         return redirect()->route('admin.cliente.show', ['cliente' => $cliente->id])->with([

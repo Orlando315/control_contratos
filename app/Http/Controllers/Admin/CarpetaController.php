@@ -54,11 +54,13 @@ class CarpetaController extends Controller
 
       $this->validate($request, [
         'nombre' => 'required_without:requisito|string|max:50',
+        'visibilidad' => 'nullable|boolean',
       ]);
 
       $newCarpeta = new Carpeta($request->only('nombre'));
       $newCarpeta->empresa_id = Auth::user()->empresa->id;
       $newCarpeta->carpeta_id = optional($carpeta)->id;
+      $newCarpeta->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       // Varificar si se esta cargando una carpeta que sea "requisito"
       if($request->requisito){
@@ -71,14 +73,14 @@ class CarpetaController extends Controller
         return redirect()->route('admin.carpeta.show', ['carpeta' => $newCarpeta->id])->with([
           'flash_message' => 'Carpeta agregada exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -89,6 +91,11 @@ class CarpetaController extends Controller
      */
     public function show(Carpeta $carpeta)
     {
+      $carpeta->load([
+        'subcarpetas',
+        'documentos',
+      ]);
+
       return view('admin.carpeta.show', compact('carpeta'));
     }
 
@@ -116,9 +123,11 @@ class CarpetaController extends Controller
     {
       $this->validate($request, [
         'nombre' => 'required|max:50',
+        'visibilidad' => 'nullable|boolean',
       ]);
 
       $carpeta->nombre = $request->nombre;
+      $carpeta->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       if($carpeta->save()){
         return redirect()->route('admin.carpeta.show', ['carpeta' => $carpeta->id])->with([

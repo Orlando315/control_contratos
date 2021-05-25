@@ -79,7 +79,7 @@ class CentroCostoController extends Controller
       $this->authorize('view', $centro);
 
       $centro->load([
-        'inventariosV2Egreso' => function () {
+        'inventariosV2Egreso' => function ($query) {
           $query->with([
             'inventario',
             'cliente',
@@ -154,7 +154,7 @@ class CentroCostoController extends Controller
       $this->authorize('delete', $centro);
 
       if($centro->delete()){
-        return redirect()->route('admin.contratos.index')->with([
+        return redirect()->route('admin.contrato.index')->with([
           'flash_message' => 'Centro de costo eliminado exitosamente.',
           'flash_class' => 'alert-success'
         ]);

@@ -20,8 +20,8 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}">Contrato</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Contratos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.show', ['contrato' => $empleado->contrato_id]) }}">Contrato</a></li>
         <li class="breadcrumb-item active"><strong>Empleado</strong></li>
       </ol>
     </div>
@@ -32,17 +32,17 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('contrato-view')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.show', ['contrato' => $empleado->contrato_id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('empleado-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
-        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.contrato.create', ['empleado' => $empleado->id]) }}"><i class="fa fa-refresh" aria-hidden="true"></i> Cambio de jornada</a>
         @if(!$empleado->usuario->isEmpresa())
           <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#toggleModal"><i class="fa fa-exchange" aria-hidden="true"></i> Cambiar role</button>
         @endif
         <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#contratoModal"><i class="fa fa-clipboard" aria-hidden="true"></i> Cambio de contrato</button>
       @endpermission
-      <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.print', ['empleado' => $empleado->id]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.print', ['empleado' => $empleado->id]) }}" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Imprimir</a>
       @permission('empleado-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
@@ -61,7 +61,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $empleado->contrato_id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $empleado->contrato_id]) }}">
                     {{ $empleado->contrato->nombre }}
                   </a>
                 @else
@@ -73,7 +73,7 @@
               <b>Usuario</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $empleado->usuario->id]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $empleado->usuario->id]) }}">
                     {{ $empleado->usuario->usuario }}
                   </a>
                 @else
@@ -148,7 +148,7 @@
               <h5>Contrato</h5>
               <div class="ibox-tools">
                 @permission('empleado-edit')
-                  <a class="btn btn-default btn-xs" href="{{ route('admin.empleados.contrato.edit', ['empleado' => $empleado->id]) }}" title="Editar contrato"><i class="fa fa-pencil"></i></a>
+                  <a class="btn btn-default btn-xs" href="{{ route('admin.empleado.contrato.edit', ['empleado' => $empleado->id]) }}" title="Editar contrato"><i class="fa fa-pencil"></i></a>
                 @endpermission
                 <button class="btn btn-default btn-xs" title="Ver historial" data-toggle="modal" data-target="#historyModal"><i class="fa fa-list"></i></button>
               </div>
@@ -248,7 +248,7 @@
                               <div class="col-9">
                                 <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                                 @if($requisito->documento)
-                                  <a href="{{ $requisito->isFile() ? route('admin.documentos.download', ['documento' => $requisito->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisito->documento->id]) }}">
+                                  <a href="{{ $requisito->isFile() ? route('admin.documento.download', ['documento' => $requisito->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisito->documento->id]) }}">
                                     {!! $requisito->icon() !!} {{ $requisito->nombre }}
                                     @if($requisito->documento->vencimiento)
                                       <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
@@ -267,18 +267,18 @@
                                         @if($requisito->isFile())
                                           @if($requisito->documento->isPdf())
                                             <li>
-                                              <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->download_url }}">
+                                              <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->asset_url }}">
                                                 <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
                                               </a>
                                             </li>
                                           @endif
-                                          <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                                          <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                          <li><a class="dropdown-item" href="{{ route('admin.documento.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                          <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documento.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
                                         @else
                                           <li><a class="dropdown-item" href="{{ route('admin.carpeta.edit', ['carpeta' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
                                         @endif
                                       @else
-                                        <li><a class="dropdown-item" href="{{ $requisito->isFile() ? route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) : route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                        <li><a class="dropdown-item" href="{{ $requisito->isFile() ? route('admin.documento.create', ['type' => 'empleados', 'id' => $empleado->id, 'carpeta' => null, 'requisito' => $requisito->id]) : route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
                                       @endif
                                     </ul>
                                   </div>
@@ -299,19 +299,27 @@
               <div class="tab-pane" id="tab-11">
                 <div class="panel-body">
                   @permission('empleado-edit')
-                    <div class="mb-3">
-                      @if($empleado->documentos()->count() < 10)
+                    @if($empleado->documentos()->count() < 10)
+                      <div class="mb-3 text-right">
                         <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-                        <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-                      @endif
-                    </div>
+                        <a class="btn btn-primary btn-xs" href="{{ route('admin.documento.create', ['type' => 'empleados', 'id' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                      </div>
+                    @endif
                   @endpermission
+
                   <div class="row icons-box icons-folder">
                     @foreach($empleado->carpetas()->main()->get() as $carpeta)
                       <div class="col-md-3 col-xs-4 infont mb-3">
                         <a href="{{ route('admin.carpeta.show', ['carpeta' => $carpeta->id]) }}">
-                          @if($carpeta->isRequisito())
-                            <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                          @if($carpeta->isRequisito() || $carpeta->isTypeEmpleado())
+                            <span class="pull-left text-muted">
+                              @if($carpeta->isRequisito())
+                                <i class="fa fa-asterisk" aria-hidden="true" title="Requisito" style="font-size: 12px"></i>
+                              @endif
+                              @if($carpeta->isTypeEmpleado() && $carpeta->isVisible())
+                                <i class="fa fa-eye" aria-hidden="true" title="Visible para el Empleado" style="font-size: 12px"></i>
+                              @endif
+                            </span>
                           @endif
                           <i class="fa fa-folder" aria-hidden="true"></i>
                           <p class="m-0">{{ $carpeta->nombre }}</p>
@@ -335,34 +343,50 @@
               </div>
               <div class="tab-pane" id="tab-12">
                 <div class="panel-body">
-                  <div class="mb-3">
-                    @permission('plantilla-documento-create')
+                  @permission('plantilla-documento-create')
+                    <div class="mb-3 text-right">
                       <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.create', ['contrato' => $empleado->contrato_id, 'empleado' => $empleado->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo documento</a>
-                    @endpermission
-                  </div>
+                   </div>
+                  @endpermission
+
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Documento</th>
-                        <th class="text-center">Padre</th>
-                        <th class="text-center">Caducidad</th>
-                        <th class="text-center">Acción</th>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Documento</th>
+                        <th>Padre</th>
+                        <th>Caducidad</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody>
                       @foreach($empleado->plantillaDocumentos as $plantillaDocumento)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
                           <td>@nullablestring($plantillaDocumento->nombre)</td>
                           <td>@nullablestring(optional($plantillaDocumento->padre)->nombre)</td>
-                          <td>@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
-                          <td>
-                            @permission('plantilla-documento-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-search"></i></a>
-                            @endpermission
-                            @permission('plantilla-documento-edit')
-                              <a class="btn btn-primary btn-xs" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id] )}}"><i class="fa fa-pencil"></i></a>
+                          <td class="text-center">@nullablestring(optional($plantillaDocumento->caducidad)->format('d-m-Y'))</td>
+                          <td class="text-center">
+                            @permission('plantilla-documento-view|plantilla-documento-edit')
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('plantilla-documento-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.plantilla.documento.show', ['documento' => $plantillaDocumento->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                  @permission('plantilla-documento-edit')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.plantilla.documento.edit', ['documento' => $plantillaDocumento->id]) }}">
+                                        <i class="fa fa-pencil"></i> Editar
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
                           </td>
                         </tr>
@@ -375,32 +399,43 @@
                 <div class="panel-body">
                   <table class="table data-table table-bordered table-hover table-sm w-100">
                     <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th class="text-center">Tipo</th>
-                        <th class="text-center">Descripción</th>
-                        <th class="text-center">Estatus</th>
-                        <th class="text-center">Adjunto</th>
-                        <th class="text-center">Acción</th>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Estatus</th>
+                        <th>Adjunto</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
-                    <tbody class="text-center">
+                    <tbody>
                       @foreach($empleado->solicitudes as $solicitud)
                         <tr>
                           <td>{{ $loop->iteration }}</td>
-                          <td>{{ $solicitud->tipo() }}</td>
+                          <td class="text-center">{{ $solicitud->tipo() }}</td>
                           <td>@nullablestring($solicitud->descripcion)</td>
-                          <td>{!! $solicitud->status() !!}</td>
-                          <td>
+                          <td class="text-center">{!! $solicitud->status() !!}</td>
+                          <td class="text-center">
                             @if($solicitud->adjunto)
                               <a href="{{ $solicitud->download }}" title="Descargar adjunto">Descargar</a>
                             @else
                               @nullablestring(null)
                             @endif
                           </td>
-                          <td>
+                          <td class="text-center">
                             @permission('solicitud-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id] )}}"><i class="fa fa-search"></i></a>
+                              <div class="btn-group">
+                                <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
+                                  @permission('solicitud-view')
+                                    <li>
+                                      <a class="dropdown-item" href="{{ route('admin.solicitud.show', ['solicitud' => $solicitud->id]) }}">
+                                        <i class="fa fa-search"></i> Ver
+                                      </a>
+                                    </li>
+                                  @endpermission
+                                </ul>
+                              </div>
                             @endpermission
                           </td>
                         </tr>
@@ -450,7 +485,7 @@
                       <td>{{ $sueldo->sueldoLiquido() }}</td>
                       <td>
                         @permission('sueldo-view')
-                          <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.sueldo.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
                         @endpermission
                       </td>
                     </tr>
@@ -484,7 +519,7 @@
                       <td><small>{!! $anticipo->status() !!}</small></td>
                       <td>
                         @permission('anticipo-view')
-                          <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-search"></i></a>
                         @endpermission
                       </td>
                     </tr>
@@ -536,7 +571,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>
                         @permission('inventario-view')
-                          <a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario_id]) }}">
+                          <a href="{{ route('admin.inventario.show', ['inventario' => $entrega->inventario_id]) }}">
                             {{ $entrega->inventario->nombre }}
                           </a>
                         @else
@@ -553,26 +588,28 @@
               </table>
             </div>
           </div>
-          @role('developer|superadmin|empresa')
+          @permission('covid19-index')
             <div class="tab-pane" id="tab-5">
               <div class="panel-body">
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
-                    <tr>
-                      <th class="text-center">#</th>
-                      <th class="text-center">Fecha</th>
-                      <th class="text-center">Acción</th>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>¿Tiene respuestas<br>positivas?</th>
+                      <th>Fecha</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
+                  <tbody>
                     @foreach($empleado->usuario->covid19Respuestas as $respuesta)
                       <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>
-                          {{ $respuesta->created_at->format('d-m-Y H:i:s') }}
-                        </td>
-                        <td>
-                          <a class="btn btn-success btn-xs" href="{{ route('admin.empresa.covid19.show', ['respuesta' => $respuesta->id] )}}"><i class="fa fa-search"></i></a>
+                        <td class="text-center">{{ $loop->iteration }}</td>
+                        <td class="text-center"><small>{!! $respuesta->positiveAnswers() !!}</small></td>
+                        <td class="text-center">{{ $respuesta->created_at->format('d-m-Y H:i:s') }}</td>
+                        <td class="text-center">
+                          @permission('covid19-view')
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.covid19.show', ['respuesta' => $respuesta->id] )}}"><i class="fa fa-search"></i></a>
+                          @endpermission
                         </td>
                       </tr>
                     @endforeach
@@ -580,7 +617,7 @@
                 </table>
               </div>
             </div>
-          @endrole
+          @endpermission
         </div>
       </div>
     </div>
@@ -631,10 +668,10 @@
                             <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                             <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                               @if($evento->isPendiente())
-                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-check"></i> Aprobar</a></li>
-                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.eventos.status', ['evento' => $evento->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
+                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.evento.status', ['evento' => $evento->id] ) }}" data-type="1" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-check"></i> Aprobar</a></li>
+                                <li><a class="dropdown-item" type="button" data-url="{{ route('admin.evento.status', ['evento' => $evento->id] ) }}" data-type="0" data-toggle="modal" data-target="#statusEventoModal"><i class="fa fa-ban"></i> Rechazar</a></li>
                               @endif
-                              <li><a class="dropdown-item" type="button" data-toggle="modal" data-target="#delEventModal" data-url="{{ route('admin.eventos.destroy', ['evento' => $evento->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
+                              <li><a class="dropdown-item" type="button" data-toggle="modal" data-target="#delEventModal" data-url="{{ route('admin.evento.destroy', ['evento' => $evento->id]) }}"><i class="fa fa-times"></i> Eliminar</a></li>
                             </ul>
                           </div>
                         @endpermission
@@ -654,7 +691,7 @@
     <div id="toggleModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="toggleModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.empleados.changeRole', ['empleado' => $empleado->id]) }}" method="POST">
+          <form action="{{ route('admin.empleado.changeRole', ['empleado' => $empleado->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -698,7 +735,7 @@
     <div id="contratoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="contratoModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.empleados.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
+          <form action="{{ route('admin.empleado.contrato.cambio', ['empleado' => $empleado->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -781,7 +818,7 @@
     <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="eventsModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form id="eventForm" action="{{ route('admin.eventos.store', ['empleado' => $empleado->id]) }}" method="POST">
+          <form id="eventForm" action="{{ route('admin.evento.store', ['empleado' => $empleado->id]) }}" method="POST">
             <input id="eventDay" type="hidden" name="inicio" value="">
             @csrf
 
@@ -904,11 +941,11 @@
                       </li>
                       <li class="list-group-item">
                         <b>Inicio de Jornada</b>
-                        <span class="pull-right"> {{$contrato->inicio_jornada}} </span>
+                        <span class="pull-right">{{ $contrato->inicio_jornada }}</span>
                       </li>
                       <li class="list-group-item">
                         <b>Fin</b>
-                        <span class="pull-right"> {!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!} </span>
+                        <span class="pull-right">{!! $contrato->fin ?? '<span class="text-muted">Indefinido</span>' !!}</span>
                       </li>
                       <li class="list-group-item">
                         <b>Descripción</b>
@@ -929,7 +966,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.empleados.destroy', ['empleado' => $empleado->id]) }}" method="POST">
+          <form action="{{ route('admin.empleado.destroy', ['empleado' => $empleado->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 
@@ -963,7 +1000,7 @@
   <div id="exportModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <form action="{{ route('admin.empleados.export', ['empleado' => $empleado->id]) }}" method="POST">
+        <form action="{{ route('admin.empleado.export', ['empleado' => $empleado->id]) }}" method="POST">
           @csrf
 
           <div class="modal-header">
@@ -1179,7 +1216,7 @@
           @permission('empleado-edit')
             if(event.id){
               $('#delEventModal').modal('show');
-              $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
+              $('#delEventForm').attr('action', '{{ route("admin.evento.index") }}/' + event.id);
             }else{
               $('#delEventForm').attr('action', '#');
             }

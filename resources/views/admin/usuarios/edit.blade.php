@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.usuarios.index') }}">Usuarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.usuario.index') }}">Usuarios</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -24,7 +24,7 @@
           <h5>Editar usuario</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.usuarios.update', ['usuario' => $usuario->id]) }}" method="POST">
+          <form action="{{ route('admin.usuario.update', ['usuario' => $usuario->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -151,7 +151,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.usuario.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

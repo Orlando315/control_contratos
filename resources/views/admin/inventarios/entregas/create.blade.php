@@ -15,8 +15,8 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Inventarios</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.show', ['inventario' => $inventario->id]) }}">Inventario</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventario.index') }}">Inventarios</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventario.show', ['inventario' => $inventario->id]) }}">Inventario</a></li>
         <li class="breadcrumb-item">Entregas</li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
@@ -32,7 +32,7 @@
           <h4>Agregar entrega - {{ $inventario->nombre }}</h4>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.entregas.store', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.entrega.store', ['inventario' => $inventario->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group{{ $errors->has('usuario') ? 'has-error' : '' }}">

@@ -36,7 +36,7 @@
           <h5><i class="fa fa-credit-card"></i> Gastos</h5>
           <div class="ibox-tools">
             @permission('gasto-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Gasto</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.gasto.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Gasto</a>
             @endpermission
           </div>
         </div>
@@ -62,10 +62,10 @@
                   <td>{{ $gasto->valor() }}</td>
                   <td>
                     @permission('gasto-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.gasto.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
                     @permission('gasto-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.gasto.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
                     @endpermission
                   </td>
                 </tr>

@@ -21,7 +21,7 @@
       <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
     </div>
     <div class="col-md-6 text-center text-md-left">
-      <form id="form-years" action="{{ route('admin.empresa.covid19.index') }}">
+      <form id="form-years" action="{{ route('admin.covid19.index') }}">
         <div class="form-group">
           <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
             <option value="">Seleccione</option>
@@ -53,23 +53,27 @@
                   <div class="card-body">
                     <table class="table data-table table-bordered table-hover w-100">
                       <thead>
-                        <tr>
-                          <th class="text-center">#</th>
-                          <th class="text-center">Fecha</th>
-                          <th class="text-center">Nombre</th>
-                          <th class="text-center">RUT</th>
-                          <th class="text-center">Acción</th>
+                        <tr class="text-center">
+                          <th>#</th>
+                          <th>¿Tiene respuestas<br>positivas?</th>
+                          <th>Fecha</th>
+                          <th>Nombre</th>
+                          <th>RUT</th>
+                          <th>Acción</th>
                         </tr>
                       </thead>
                       <tbody>
                         @foreach($month->respuestas as $respuesta)
                           <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
-                            <td>{{ $respuesta->created_at->format('d-m-Y H:i:s') }}</td>
+                            <td class="text-center">{!! $respuesta->positiveAnswers() !!}</td>
+                            <td class="text-center">{{ $respuesta->created_at->format('d-m-Y H:i:s') }}</td>
                             <td>{{ $respuesta->user->nombre() }}</td>
                             <td>{{ $respuesta->user->rut }}</td>
                             <td class="text-center">
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.empresa.covid19.show', ['respuesta' => $respuesta->id]) }}"><i class="fa fa-search"></i></a>
+                              @permission('covid19-view')
+                                <a class="btn btn-success btn-xs" href="{{ route('admin.covid19.show', ['respuesta' => $respuesta->id]) }}"><i class="fa fa-search"></i></a>
+                              @endpermission
                             </td>
                           </tr>
                         @endforeach

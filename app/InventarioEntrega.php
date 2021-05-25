@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class InventarioEntrega extends model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -21,6 +25,7 @@ class InventarioEntrega extends model
     protected $fillable = [
       'cantidad',
       'adjunto',
+      'status',
     ];
 
     /**
@@ -30,6 +35,15 @@ class InventarioEntrega extends model
      */
     protected $casts = [
       'status' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'status' => 'Estatus',
     ];
 
     /**
@@ -51,7 +65,7 @@ class InventarioEntrega extends model
      */
     public function getDownloadAttribute()
     {
-      return $this->adjunto ? route('entregas.download', ['entrega' => $this->id]) : '#';
+      return $this->adjunto ? route('entrega.download', ['entrega' => $this->id]) : '#';
     }
 
     /**
@@ -92,5 +106,15 @@ class InventarioEntrega extends model
     public function recibido()
     {
       return $this->recibido ? '<span class="label label-primary">Recibido</span>' : '<span class="label label-default">Pendiente</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

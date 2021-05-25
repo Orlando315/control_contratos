@@ -15,7 +15,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.inventarios.index') }}">Transportes</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.inventario.index') }}">Transportes</a></li>
         <li class="breadcrumb-item active"><strong>Transporte</strong></li>
       </ol>
     </div>
@@ -26,10 +26,10 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('transporte-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.transporte.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('transporte-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.transporte.edit', ['transporte' => $transporte->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
       @permission('transporte-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -100,7 +100,7 @@
                             <div class="col-9">
                               <i class="fa {{ $requisito->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                               @if($requisito->documento)
-                                <a href="{{ $requisito->isFile() ? route('admin.documentos.download', ['documento' => $requisito->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisito->documento->id]) }}">
+                                <a href="{{ $requisito->isFile() ? route('admin.documento.download', ['documento' => $requisito->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisito->documento->id]) }}">
                                   {!! $requisito->icon() !!} {{ $requisito->nombre }}
                                   @if($requisito->isFile() && $requisito->documento->vencimiento)
                                     <small class="text-muted">- {{ $requisito->documento->vencimiento }}</small>
@@ -119,18 +119,18 @@
                                       @if($requisito->isFile())
                                         @if($requisito->documento->isPdf())
                                           <li>
-                                            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->download_url }}">
+                                            <a title="Ver PDF" href="#" data-toggle="modal" data-target="#pdfModal" data-url="{{ $requisito->documento->asset_url }}">
                                               <i class="fa fa-eye" aria-hidden="true"></i> Ver PDF
                                             </a>
                                           </li>
                                         @endif
-                                        <li><a class="dropdown-item" href="{{ route('admin.documentos.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
-                                        <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documentos.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
+                                        <li><a class="dropdown-item" href="{{ route('admin.documento.edit', ['documento' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
+                                        <li><a class="dropdown-item text-danger" type="button" title="Eliminar requisito" data-url="{{ route('admin.documento.destroy', ['documento' => $requisito->documento->id]) }}" data-toggle="modal" data-target="#delFileModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</a></li>
                                       @else
                                         <li><a class="dropdown-item" href="{{ route('admin.carpeta.edit', ['carpeta' => $requisito->documento->id]) }}"><i class="fa fa-pencil"></i> Editar</a></li>
                                       @endif
                                     @else
-                                      <li><a class="dropdown-item" href="{{ $requisito->isFile() ? route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id, 'carpeta' => null, 'requisito' => $requisito->id]) : route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
+                                      <li><a class="dropdown-item" href="{{ $requisito->isFile() ? route('admin.documento.create', ['type' => 'transportes', 'id' => $transporte->id, 'carpeta' => null, 'requisito' => $requisito->id]) : route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id, 'requisito' => $requisito->id]) }}"><i class="fa fa-plus"></i> Agregar</a></li>
                                     @endif
                                   </ul>
                                 </div>
@@ -154,7 +154,7 @@
               @if($transporte->documentos()->count() < 10 && Auth::user()->hasPermission('transporte-edit'))
                 <div class="mb-3">
                   <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documento.create', ['type' => 'transportes', 'id' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                 </div>
               @endif
               <div class="row icons-box icons-folder">
@@ -220,7 +220,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>
                         @permission('contrato-view')
-                          <a href="{{ route('admin.contratos.show', ['contrato' => $contrato->contrato_id]) }}">
+                          <a href="{{ route('admin.contrato.show', ['contrato' => $contrato->contrato_id]) }}">
                             {{ $contrato->contrato->nombre }}
                           </a>
                         @else
@@ -230,7 +230,7 @@
                       <td>{{ $contrato->created_at }}</td>
                       <td>
                         @permission('transporte-edit')
-                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.contratos.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delDataModal" data-type="contrato">
+                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transporte.contrato.destroy', ['contrato' => $contrato->id]) }}" data-toggle="modal" data-target="#delDataModal" data-type="contrato">
                             <i class="fa fa-times" aria-hidden="true"></i>
                           </button>
                         @endpermission
@@ -258,7 +258,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>
                         @permission('user-view')
-                          <a href="{{ route('admin.usuarios.show', ['usuario' => $supervisor->id]) }}">
+                          <a href="{{ route('admin.usuario.show', ['usuario' => $supervisor->id]) }}">
                             {{ $supervisor->nombre() }}
                           </a>
                         @else
@@ -268,7 +268,7 @@
                       <td>{{ $supervisor->rut }}</td>
                       <td class="text-center">
                         @permission('transporte-edit')
-                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transportes.supervisor.destroy', ['transporte' => $transporte->id, 'supervisor' => $supervisor->id]) }}" data-type="supervisor" data-toggle="modal" data-target="#delDataModal"><i class="fa fa-times" aria-hidden="true"></i></button>
+                          <button class="btn btn-danger btn-xs" data-url="{{ route('admin.transporte.supervisor.destroy', ['transporte' => $transporte->id, 'supervisor' => $supervisor->id]) }}" data-type="supervisor" data-toggle="modal" data-target="#delDataModal"><i class="fa fa-times" aria-hidden="true"></i></button>
                         @endpermission
                       </td>
                     </tr>
@@ -282,7 +282,7 @@
               <div class="mb-3">
                 @permission('transporte-consumo-create')
                   <div class="text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.consumos.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.consumo.create', ['transporte' => $transporte->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Consumo</a>
                   </div>
                 @endpermission
               </div>
@@ -303,7 +303,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>
                         @permission('contrato-view')
-                          <a href="{{ route('admin.contratos.show', ['contrato' => $consumo->contrato_id]) }}">
+                          <a href="{{ route('admin.contrato.show', ['contrato' => $consumo->contrato_id]) }}">
                             {{ $consumo->contrato->nombre }}
                           </a>
                         @else
@@ -315,7 +315,7 @@
                       <td>{{ $consumo->valor() }}</td>
                       <td>
                         @permission('transporte-consumo-view')
-                          <a class="btn btn-success btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-search"></i></a>
+                          <a class="btn btn-success btn-sm" href="{{ route('admin.consumo.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-search"></i></a>
                         @endpermission
                       </td>
                     </tr>
@@ -333,7 +333,7 @@
     <div id="addModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.transportes.contratos.store', ['transporte' => $transporte->id]) }}" method="POST">
+          <form action="{{ route('admin.transporte.contrato.store', ['transporte' => $transporte->id]) }}" method="POST">
             @csrf
             
             <div class="modal-header">
@@ -417,7 +417,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.transportes.destroy', ['transporte' => $transporte->id]) }}" method="POST">
+          <form action="{{ route('admin.transporte.destroy', ['transporte' => $transporte->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

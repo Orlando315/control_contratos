@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.empleados.index') }}">Postulantes</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.empleado.index') }}">Postulantes</a></li>
         <li class="breadcrumb-item active"><strong>Postulante</strong></li>
       </ol>
     </div>
@@ -20,7 +20,7 @@
   <div class="row mb-3">
     <div class="col-md-12">
       @permission('empleado-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.empleados.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.empleado.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('postulante-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.postulante.edit', ['postulante' => $postulante->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
@@ -28,7 +28,7 @@
       @permission('postulante-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
       @endpermission
-      <a class="btn btn-primary btn-sm" href="{{ route('admin.empleados.create', ['postulante' => $postulante->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Generar Empleado</a>
+      <a class="btn btn-primary btn-sm" href="{{ route('admin.empleado.create', ['postulante' => $postulante->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Generar Empleado</a>
     </div>
   </div>
 

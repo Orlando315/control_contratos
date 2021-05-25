@@ -17,7 +17,6 @@
         
         <div class="wrapper wrapper-content mb-3">
           @include('partials.egreso')
-          @include('partials.entregas')
           @include('partials.sueldos')
           @include('partials.flash')
 

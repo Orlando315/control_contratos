@@ -20,7 +20,7 @@
   <div class="row mb-3">
     <div class="col-12">
       @if($contrato && Auth::user()->hasPermission('contrato-view'))
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endif
     </div>
   </div>
@@ -30,7 +30,7 @@
       <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
     </div>
     <div class="col-md-6 text-center text-md-left">
-      <form id="form-years" action="{{ route('admin.sueldos.index', ['contrato' => optional($contrato)->id]) }}">
+      <form id="form-years" action="{{ route('admin.sueldo.index', ['contrato' => optional($contrato)->id]) }}">
         <div class="form-group">
           <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
             <option value="">Seleccione</option>
@@ -51,7 +51,7 @@
 
           <div class="ibox-tools">
             @if($contrato && Auth::user()->hasPermission('sueldo-create'))
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.sueldos.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Realizar Pagos</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.sueldo.create', ['contrato' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Realizar Pagos</a>
             @endif
           </div>
         </div>
@@ -86,7 +86,7 @@
                             <td>{{ $sueldo->mesPagado() }}</td>
                             <td>
                               @permission('empleado-view')
-                                <a href="{{ route('admin.empleados.show', ['empleado' => $sueldo->empleado_id]) }}">
+                                <a href="{{ route('admin.empleado.show', ['empleado' => $sueldo->empleado_id]) }}">
                                   {{ $sueldo->nombreEmpleado() }}
                                 </a>
                               @else
@@ -97,7 +97,7 @@
                             <td class="text-right">{{ $sueldo->sueldoLiquido() }}</td>
                             <td>
                               @permission('sueldo-view')
-                                <a class="btn btn-success btn-xs" href="{{ route('admin.sueldos.show', ['sueldo' => $sueldo->id] )}}"><i class="fa fa-search"></i></a>
+                                <a class="btn btn-success btn-xs" href="{{ route('admin.sueldo.show', ['sueldo' => $sueldo->id]) }}"><i class="fa fa-search"></i></a>
                               @endpermission
                             </td>
                           </tr>

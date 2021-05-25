@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Scopes\EmpresaScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Empleado extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -47,6 +51,20 @@ class Empleado extends Model
      * @var array
      */
     protected $guarded = ['empresa_id'];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'fecha_nacimiento' => 'Fecha de nacimiento',
+      'nombre_emergencia' => 'Nombre de contacto de emergencia',
+      'telefono_emergencia' => 'Teléfono de contacto de emergencia',
+      'talla_camisa' => 'Talla de camisa',
+      'talla_zapato' => 'Talla de zapato',
+      'talla_pantalon' => 'Talla de pantalon',
+    ];
 
     /**
      * The "booting" method of the model.
@@ -986,5 +1004,15 @@ class Empleado extends Model
     public function nombre()
     {
       return $this->usuario->nombres.' '.$this->usuario->apellidos;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

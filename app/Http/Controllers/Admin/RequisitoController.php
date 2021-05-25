@@ -60,7 +60,7 @@ class RequisitoController extends Controller
       $requisito->folder = $request->has('carpeta') && $request->carpeta == '1';
 
       if($contrato->requisitos()->save($requisito)){
-        return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Requisito agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -114,7 +114,7 @@ class RequisitoController extends Controller
       $requisito->nombre = $request->nombre;
 
       if($requisito->save()){
-        return redirect()->route('admin.contratos.show', ['contrato' => $requisito->contrato_id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $requisito->contrato_id])->with([
           'flash_message' => 'Requisito modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -138,7 +138,7 @@ class RequisitoController extends Controller
       $this->authorize('delete', $requisito);
 
       if($requisito->delete()){
-        return redirect()->route('admin.contratos.show', ['contrato' => $requisito->contrato_id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $requisito->contrato_id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Requisito eliminado exitosamente.'
         ]);

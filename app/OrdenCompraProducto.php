@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class OrdenCompraProducto extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -56,6 +60,34 @@ class OrdenCompraProducto extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Producto de OC';
+
+    /**
+     * Eventos que se guardaran en Logs
+     * 
+     * @var array
+     */
+    public static $recordEvents = [
+      'updated',
+      'deleted',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'inventario.nombre' => 'Inventario',
+      'tipo_codigo' => 'Tipo de código',
+      'afecto_iva' => '¿Es afecto a IVA?',
     ];
 
     /**
@@ -186,5 +218,23 @@ class OrdenCompraProducto extends Model
     public function hasDescripcion()
     {
       return !is_null($this->descripcion);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'inventario_id',
+        'impuesto_adicional',
+        'precio_total',
+      ])
+      ->logAditionalAttributes([
+        'inventario.nombre',
+      ]);
     }
 }

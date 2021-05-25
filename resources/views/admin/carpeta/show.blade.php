@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ $carpeta->backUrl }}">Carpeta</a></li>
+        <li class="breadcrumb-item"><a href="{{ $carpeta->backUrl }}">Carpetas</a></li>
         <li class="breadcrumb-item active"><strong>Carpeta</strong></li>
       </ol>
     </div>
@@ -44,6 +44,12 @@
               <b>Requisito</b>
               <span class="pull-right">{!! $carpeta->isRequisito(true) !!}</span>
             </li>
+            @if($carpeta->isTypeEmpleado())
+              <li class="list-group-item" title="Establece si el Empleado puede o no puede ver la Carpeta">
+                <b>Visible</b>
+                <span class="pull-right">{!! $carpeta->isVisible(true) !!}</span>
+              </li>
+            @endif
             <li class="list-group-item text-center">
               <small class="text-muted">{{ $carpeta->created_at }}</small>
             </li>
@@ -52,16 +58,16 @@
       </div>
     </div>
 
-    <div class="col-md-9" style="padding:0">
+    <div class="col-md-9 p-0">
       <div class="ibox">
         <div class="ibox-title">
           <h5>Adjuntos</h5>
 
           <div class="ibox-tools">
             <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-              @if($carpeta->carpetable->documentos()->count() < 10)
-                <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
-              @endif
+            @if($carpeta->carpetable->documentos()->count() < 10)
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.documento.create', ['type' => $carpeta->type(), 'id' => $carpeta->carpetable_id, 'carpeta' => $carpeta->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+            @endif
           </div>
         </div>
         <div class="ibox-content">
@@ -69,8 +75,15 @@
             @foreach($carpeta->subcarpetas as $subcarpeta)
               <div class="col-md-3 col-xs-4 infont mb-3">
                 <a href="{{ route('admin.carpeta.show', ['carpeta' => $subcarpeta->id]) }}">
-                  @if($subcarpeta->isRequisito())
-                    <span class="pull-left text-muted" title="Requisito"><i class="fa fa-asterisk" aria-hidden="true" style="font-size: 12px"></i></span>
+                  @if($subcarpeta->isRequisito() || $subcarpeta->isTypeEmpleado())
+                    <span class="pull-left text-muted">
+                      @if($subcarpeta->isRequisito())
+                        <i class="fa fa-asterisk" aria-hidden="true" title="Requisito" style="font-size: 12px"></i>
+                      @endif
+                      @if($subcarpeta->isTypeEmpleado() && $subcarpeta->isVisible())
+                        <i class="fa fa-eye" aria-hidden="true" title="Visible para el Empleado" style="font-size: 12px"></i>
+                      @endif
+                    </span>
                   @endif
                   <i class="fa fa-folder" aria-hidden="true"></i>
                   <p class="m-0">{{ $subcarpeta->nombre }}</p>

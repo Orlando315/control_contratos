@@ -44,7 +44,6 @@ class EtiquetasController extends Controller
     public function store(Request $request)
     {
       $this->authorize('create', Etiqueta::class);
-
       $this->validate($request, [
         'etiqueta' => 'required|max:50',
       ]);
@@ -58,7 +57,7 @@ class EtiquetasController extends Controller
           return response()->json(['response' =>  true, 'etiqueta' => $etiqueta]);
         }
 
-        return redirect()->route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id])->with([
+        return redirect()->route('admin.etiqueta.show', ['etiqueta' => $etiqueta->id])->with([
           'flash_message' => 'Etiqueta agregada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -68,7 +67,7 @@ class EtiquetasController extends Controller
         return response()->json(['response' =>  false]);
       }
 
-      return redirect()->route('admin.etiquetas.create')->with([
+      return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
@@ -120,7 +119,7 @@ class EtiquetasController extends Controller
       $etiqueta->etiqueta = $request->etiqueta;
 
       if($etiqueta->save()){
-        return redirect()->route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id])->with([
+        return redirect()->route('admin.etiqueta.show', ['etiqueta' => $etiqueta->id])->with([
           'flash_message' => 'Etiqueta modificada exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -152,7 +151,7 @@ class EtiquetasController extends Controller
       }
 
       if($etiqueta->delete()){
-        return redirect()->route('admin.etiquetas.index')->with([
+        return redirect()->route('admin.etiqueta.index')->with([
           'flash_message' => 'Etiqueta eliminada exitosamente.',
           'flash_class' => 'alert-success'
           ]);

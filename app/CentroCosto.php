@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class CentroCosto extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -22,6 +26,20 @@ class CentroCosto extends Model
     protected $fillable = [
       'nombre'
     ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Centro de costo';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'centro';
 
     /**
      * The "booting" method of the model.
@@ -64,5 +82,15 @@ class CentroCosto extends Model
     public function facturas()
     {
       return $this->hasMany('App\Factura');
+    }
+
+    /**
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

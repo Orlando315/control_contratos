@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Carbon\Carbon;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class EmpleadosSueldo extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -43,6 +47,24 @@ class EmpleadosSueldo extends Model
     ];
 
     /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Sueldo';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Nombre',
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'bono_reemplazo' => 'Bono de reemplazo',
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -61,7 +83,7 @@ class EmpleadosSueldo extends Model
      */
     public function getDownloadAttribute()
     {
-      return route('sueldos.download', ['sueldo' => $this->id]);
+      return route('sueldo.download', ['sueldo' => $this->id]);
     }
 
     /**
@@ -236,5 +258,24 @@ class EmpleadosSueldo extends Model
     {
       $date = Carbon::create(date('Y'), $month, 1);
       return $date->formatLocalized('%B');
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+        'empleado_id',
+        'adjunto',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+        'empleado.usuario.nombreCompleto'
+      ]);
     }
 }

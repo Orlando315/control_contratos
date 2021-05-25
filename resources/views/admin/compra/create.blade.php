@@ -1133,7 +1133,7 @@
         return false;
       }
 
-      let url = '{{ route("admin.contratos.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
+      let url = '{{ route("admin.contrato.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
 
       $('#partida').empty().prop('disabled', true);
 

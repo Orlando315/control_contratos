@@ -37,7 +37,7 @@
 
           <div class="ibox-tools">
             @permission('user-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Usuario</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.usuario.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Usuario</a>
             @endpermission
           </div>
         </div>
@@ -65,10 +65,10 @@
                   <td>@nullablestring($usuario->telefono)</td>
                   <td>
                     @permission('user-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.usuarios.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.usuario.show', ['usuario' => $usuario->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
                     @permission('user-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.usuarios.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.usuario.edit', ['usuario' => $usuario->id]) }}"><i class="fa fa-pencil"></i></a>
                     @endpermission
                   </td>
                 </tr>

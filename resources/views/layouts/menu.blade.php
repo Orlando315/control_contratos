@@ -45,7 +45,7 @@
           </a>
           <ul class="nav nav-second-level">
             @permission('contrato-index')
-              <li><a href="{{ route('admin.contratos.index') }}"><i class="fa fa-clipboard"></i> Contratos</a></li>
+              <li><a href="{{ route('admin.contrato.index') }}"><i class="fa fa-clipboard"></i> Contratos</a></li>
             @endpermission
             @permission('plantilla-documento-index')
               <li><a href="{{ route('admin.plantilla.documento.index') }}"><i class="fa fa-file-text-o"></i> Documentos</a></li>
@@ -62,10 +62,10 @@
           </a>
           <ul class="nav nav-second-level">
             @permission('user-index')
-              <li><a href="{{ route('admin.usuarios.index') }}"><i class="fa fa-users"></i> Usuarios</a></li>
+              <li><a href="{{ route('admin.usuario.index') }}"><i class="fa fa-users"></i> Usuarios</a></li>
             @endpermission
             @permission('empleado-index')
-              <li><a href="{{ route('admin.empleados.index') }}"><i class="fa fa-address-card"></i> Empleados</a></li>
+              <li><a href="{{ route('admin.empleado.index') }}"><i class="fa fa-address-card"></i> Empleados</a></li>
             @endpermission
           </ul>
         </li>
@@ -79,10 +79,10 @@
           </a>
           <ul class="nav nav-second-level">
             @permission('anticipo-index')
-              <li><a href="{{ route('admin.anticipos.index') }}"><i class="fa fa-level-up"></i> Anticipos</a></li>
+              <li><a href="{{ route('admin.anticipo.index') }}"><i class="fa fa-level-up"></i> Anticipos</a></li>
             @endpermission
             @permission('sueldo-index')
-              <li><a href="{{ route('admin.sueldos.index') }}"><i class="fa fa-money"></i> Sueldos</a></li>
+              <li><a href="{{ route('admin.sueldo.index') }}"><i class="fa fa-money"></i> Sueldos</a></li>
             @endpermission
             <li><a href="{{ route('admin.previred.index') }}"><i class="fa fa-circle-o"></i> Previred</a></li>
           </ul>
@@ -104,7 +104,7 @@
       @endpermission
       @permission('etiqueta-index')
         <li>
-          <a href="{{ route('admin.etiquetas.index') }}">
+          <a href="{{ route('admin.etiqueta.index') }}">
             <i class="fa fa-tags"></i>
             <span class="nav-label">Etiquetas</span>
           </a>
@@ -112,7 +112,7 @@
       @endpermission
       @permission('factura-index')
         <li>
-          <a href="{{ route('admin.facturas.index') }}">
+          <a href="{{ route('admin.factura.index') }}">
             <i class="fa fa-file"></i>
             <span class="nav-label">Facturas</span>
           </a>
@@ -145,9 +145,10 @@
       @endpermission
       @permission('inventario-index')
         <li>
-          <a href="{{ route('admin.inventarios.index') }}">
+          <a href="{{ route('admin.inventario.index') }}">
             <i class="fa fa-cubes"></i>
             <span class="nav-label">Inventario</span>
+            <span class="label label-danger float-right"><i class="fa fa-ban m-0" aria-hidden="false"></i></span>
           </a>
         </li>
       @endpermission
@@ -156,13 +157,13 @@
           <a href="{{ route('admin.inventario.v2.index') }}">
             <i class="fa fa-tasks"></i>
             <span class="nav-label">Inventario</span>
-            <span class="label label-warning float-right mr-2">v2</span>
+            <span class="label label-warning float-right">v2</span>
           </a>
         </li>
       @endpermission
       @permission('transporte-index')
         <li>
-          <a href="{{ route('admin.transportes.index') }}">
+          <a href="{{ route('admin.transporte.index') }}">
             <i class="fa fa-car"></i> <span class="nav-label">Transportes</span>
           </a>
         </li>
@@ -186,8 +187,8 @@
       @endpermission
       @permission('gasto-index')
         <li>
-          <a href="{{ route('admin.gastos.index') }}">
-            <i class="fa fa-credit-card"></i> <span class="nav-label">Transportes</span>
+          <a href="{{ route('admin.gasto.index') }}">
+            <i class="fa fa-credit-card"></i> <span class="nav-label">Gastos</span>
           </a>
         </li>
       @endpermission
@@ -199,20 +200,20 @@
             <span class="fa arrow"></span>
           </a>
           <ul class="nav nav-second-level">
-            <li><a href="{{ route('admin.reportes.general.index') }}">General</a></li>
-            <li><a href="{{ route('admin.reportes.inventarios.index') }}">Inventarios</a></li>
-            <li><a href="{{ route('admin.reportes.facturas.index') }}">Facturas</a></li>
-            <li><a href="{{ route('admin.reportes.eventos.index') }}">Eventos</a></li>
-            <li><a href="{{ route('admin.reportes.sueldos.index') }}">Sueldos</a></li>
-            <li><a href="{{ route('admin.reportes.anticipos.index') }}">Anticipos</a></li>
-            <li><a href="{{ route('admin.reportes.transportes.index') }}">Transportes</a></li>
-            <li><a href="{{ route('admin.reportes.reemplazos.index') }}">Reemplazos</a></li>
+            <li><a href="{{ route('admin.reporte.general.index') }}">General</a></li>
+            <li><a href="{{ route('admin.reporte.inventario.index') }}">Inventarios</a></li>
+            <li><a href="{{ route('admin.reporte.factura.index') }}">Facturas</a></li>
+            <li><a href="{{ route('admin.reporte.evento.index') }}">Eventos</a></li>
+            <li><a href="{{ route('admin.reporte.sueldo.index') }}">Sueldos</a></li>
+            <li><a href="{{ route('admin.reporte.anticipo.index') }}">Anticipos</a></li>
+            <li><a href="{{ route('admin.reporte.transporte.index') }}">Transportes</a></li>
+            <li><a href="{{ route('admin.reporte.reemplazo.index') }}">Reemplazos</a></li>
           </ul>
         </li>
       @endpermission
       @role('empleado')
         <li>
-          <a href="{{ route('anticipos.create') }}">
+          <a href="{{ route('anticipo.create') }}">
             <i class="fa fa-level-up"></i> <span class="nav-label">Solicitud de anticipo</span>
           </a>
         </li>
@@ -232,12 +233,23 @@
         </ul>
       </li>
 
-      @role('developer|superadmin|empresa')
+      @permission('covid19-index')
         <li>
-          <a href="{{ route('admin.empresa.covid19.index') }}">
+          <a href="{{ route('admin.covid19.index') }}">
             <i class="fa fa-heartbeat"></i> <span class="nav-label">Covid-19</span>
           </a>
         </li>
+      @endpermission
+
+      @permission('log-index')
+        <li>
+          <a href="{{ route('admin.log.index') }}">
+            <i class="fa fa-history"></i> <span class="nav-label">Logs</span>
+          </a>
+        </li>
+      @endpermission
+
+      @role('developer|superadmin|empresa')
         <li>
           <a href="{{ route('admin.empresa.configuracion') }}">
             <i class="fa fa-cogs"></i> <span class="nav-label">Configuración</span>

@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use App\Pago;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Facturacion extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -43,6 +47,16 @@ class Facturacion extends Model
     protected $with = [
       'cotizacion',
       'pagos',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'cotizacion_id' => 'Cotización',
+      'sii_factura_id' => 'Factura Sii ID',
     ];
 
     /**
@@ -209,5 +223,15 @@ class Facturacion extends Model
       $pendiente = $this->pendiente + $pago->monto;
 
       return $withFormat ? number_format($pendiente, 2, ',', '.') : $pendiente;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

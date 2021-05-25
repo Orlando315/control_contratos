@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
 use App\Carpeta;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Documento extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -30,8 +34,36 @@ class Documento extends Model
       'path',
       'mime',
       'vencimiento',
+      'visibilidad',
       'created_at',
       'updated_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'visibilidad' => 'boolean',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Documento adjunto';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'carpeta.nombre' => 'Carpeta padre',
+      'requisito.nombre' => 'Requisito',
+      'visibilidad' => '¿Es visible para el Empleado?',
     ];
 
     /**
@@ -42,7 +74,6 @@ class Documento extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
@@ -122,6 +153,18 @@ class Documento extends Model
     }
 
     /**
+     * Incluir solo los Documentos que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
+    }
+
+    /**
      * Establecer la fecha de vencimiento en el formato requerido
      * 
      * @param  string  $value
@@ -156,23 +199,23 @@ class Documento extends Model
         $varName = 'carpeta';
       }else{
         if($this->documentable_type == 'App\Contrato'){
-          $route = 'admin.contratos.show';
+          $route = 'admin.contrato.show';
         }
 
         if($this->documentable_type == 'App\Empleado'){
-          $route = 'admin.empleados.show';
+          $route = 'admin.empleado.show';
         }
 
         if($this->documentable_type == 'App\TransporteConsumo'){
-          $route = 'admin.consumos.show';
+          $route = 'admin.consumo.show';
         }
 
         if($this->documentable_type == 'App\Transporte'){
-          $route = 'admin.transportes.show';
+          $route = 'admin.transporte.show';
         }
 
         if($this->documentable_type == 'App\Inventario'){
-          $route = 'admin.inventarios.show';
+          $route = 'admin.inventario.show';
         }
 
         $varName = Carpeta::getRouteVarNameByType($this->type());
@@ -183,13 +226,23 @@ class Documento extends Model
     }
 
     /**
-     * Obtener el Link de descarga directa
+     * Obtener el Link del documento
      * 
      * @return string
      */
-    public function getDownloadUrlAttribute()
+    public function getAssetUrlAttribute()
     {
       return asset('storage/'.$this->path);
+    }
+
+    /**
+     * Obtener el Link de descarga del documento
+     * 
+     * @return string
+     */
+    public function getDownloadAttribute()
+    {
+      return route('documento.download', ['documento' => $this->id]);
     }
 
     /**
@@ -198,6 +251,22 @@ class Documento extends Model
     public function documentable()
     {
       return $this->morphTo();
+    }
+
+    /**
+     * Obtener la Carpeta a la que pertenece
+     */
+    public function carpeta()
+    {
+      return $this->belongsTo('App\Carpeta');
+    }
+
+    /**
+     * Obtener el Requisito al que pertenece
+     */
+    public function requisito()
+    {
+      return $this->belongsTo('App\Requisito');
     }
 
     /**
@@ -229,6 +298,30 @@ class Documento extends Model
     public function isPdf()
     {
       return $this->mime == 'application/pdf';
+    }
+
+    /**
+     * Evaluar si el Documento es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la Carpeta es de tipo Empleado
+     * 
+     * @return bool
+     */
+    public function isTypeEmpleado()
+    {
+      return $this->isType('App\Empleado');
     }
 
     /**
@@ -308,5 +401,75 @@ class Documento extends Model
     public function getExtension()
     {
       return explode('.', $this->path)[1];
+    }
+
+    /**
+     * Evaluar si el User autenticado puede descarga el Documento
+     * 
+     * @return bool
+     */
+    public function canUserDownload()
+    {
+      if(
+        Auth::user()->hasPermission($this->getRequiredPermission()) ||
+        (Auth::user()->hasRole('empleado') && $this->isTypeEmpleado() && $this->isVisible() && Auth::user()->empleado_id == $this->documentable_id)
+      ){
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Obtener el tipo de permiso necesario para acceder al Documento
+     * 
+     * @return string
+     */
+    private function getRequiredPermission()
+    {
+      switch ($this->documentable_type) {
+        case 'App\Contrato':
+          return 'contrato-view';
+          break;
+
+        case 'App\Empleado':
+          return 'empleado-view';
+          break;
+
+        case 'App\TransporteConsumo':
+          return 'transporte-consumo-view';
+          break;
+
+        case 'App\Transporte':
+          return 'transporte-view';
+          break;
+
+        case 'App\Inventario':
+          return 'inventario-view';
+          break;
+      }
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'carpeta_id',
+        'requisito_id',
+        'path',
+        'mime',
+        'created_at',
+        'updated_at'
+      ])
+      ->logAditionalAttributes([
+        'carpeta.nombre',
+        'requisito.nombre',
+      ]);
     }
 }

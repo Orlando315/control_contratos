@@ -84,7 +84,7 @@ class AnticiposController extends Controller
           $anticipo->save();
         }
 
-        return redirect()->route('admin.anticipos.show', ['anticipo' => $anticipo->id])->with([
+        return redirect()->route('admin.anticipo.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -159,7 +159,7 @@ class AnticiposController extends Controller
           $anticipo->save();
         }
 
-        return redirect()->route('admin.anticipos.show', ['anticipo' => $anticipo->id])->with([
+        return redirect()->route('admin.anticipo.show', ['anticipo' => $anticipo->id])->with([
           'flash_message' => 'Anticipo modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -187,7 +187,7 @@ class AnticiposController extends Controller
           Storage::delete($anticipo->adjunto);
         }
 
-        return redirect()->route('admin.anticipos.index')->with([
+        return redirect()->route('admin.anticipo.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Anticipo eliminado exitosamente.'
         ]);
@@ -291,7 +291,7 @@ class AnticiposController extends Controller
       }
 
       if(Auth::user()->empresa->anticipos()->createMany($anticipos)){
-        return redirect()->route('admin.anticipos.show.serie', ['serie' => $serie])->with([
+        return redirect()->route('admin.anticipo.show.serie', ['serie' => $serie])->with([
           'flash_message' => 'Anticipos agregados exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -424,7 +424,7 @@ class AnticiposController extends Controller
           Storage::delete($adjuntos->toArray());
         }
 
-        return redirect()->route('admin.anticipos.index')->with([
+        return redirect()->route('admin.anticipo.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Serie eliminada exitosamente.'
         ]);

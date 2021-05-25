@@ -2,11 +2,11 @@
 
 namespace App\Policies\Admin;
 
-use App\PlantillaDocumento;
+use App\Log;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PlantillaDocumentoPolicy
+class LogPolicy
 {
     use HandlesAuthorization;
 
@@ -31,19 +31,19 @@ class PlantillaDocumentoPolicy
      */
     public function viewAny(User $user)
     {
-      return $user->hasPermission('plantilla-documento-index');
+      return $user->hasPermission('log-index');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
-     * @param  \App\PlantillaDocumento  $documento
+     * @param  \App\Log  $log
      * @return mixed
      */
-    public function view(User $user, PlantillaDocumento $documento)
+    public function view(User $user, Log $log)
     {
-      return $user->hasPermission('plantilla-documento-view');
+        //
     }
 
     /**
@@ -54,41 +54,41 @@ class PlantillaDocumentoPolicy
      */
     public function create(User $user)
     {
-      return $user->hasPermission('plantilla-documento-create');
+        //
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\User  $user
-     * @param  \App\PlantillaDocumento  $documento
+     * @param  \App\Log  $log
      * @return mixed
      */
-    public function update(User $user, PlantillaDocumento $documento)
+    public function update(User $user, Log $log)
     {
-      return $user->hasPermission('plantilla-documento-edit');
+        //
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\PlantillaDocumento  $documento
+     * @param  \App\Log  $log
      * @return mixed
      */
-    public function delete(User $user, PlantillaDocumento $documento)
+    public function delete(User $user, Log $log)
     {
-      return $user->hasPermission('plantilla-documento-delete');
+        //
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\User  $user
-     * @param  \App\PlantillaDocumento  $documento
+     * @param  \App\Log  $log
      * @return mixed
      */
-    public function restore(User $user, PlantillaDocumento $documento)
+    public function restore(User $user, Log $log)
     {
         //
     }
@@ -97,10 +97,10 @@ class PlantillaDocumentoPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\User  $user
-     * @param  \App\PlantillaDocumento  $documento
+     * @param  \App\Log  $log
      * @return mixed
      */
-    public function forceDelete(User $user, PlantillaDocumento $documento)
+    public function forceDelete(User $user, Log $log)
     {
         //
     }

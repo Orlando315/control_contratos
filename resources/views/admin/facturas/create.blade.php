@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.facturas.index') }}">Facturas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.factura.index') }}">Facturas</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -32,7 +32,7 @@
           <h5>Agregar factura</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.facturas.store') }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.factura.store') }}" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="tipo" value="{{ $tipo }}">
             @csrf
 
@@ -191,7 +191,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.facturas.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.factura.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -274,7 +274,7 @@
         return false;
       }
 
-      let url = '{{ route("admin.contratos.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
+      let url = '{{ route("admin.contrato.partidas", ["contrato" => ":id"]) }}'.replace(':id', contrato);
 
       $('#partida').empty().prop('disabled', true);
 

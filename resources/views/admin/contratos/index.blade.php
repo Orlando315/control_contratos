@@ -50,7 +50,7 @@
               <div class="panel-body">
                 @permission('contrato-create')
                   <div class="mb-3 text-right">
-                    <a class="btn btn-primary btn-xs" href="{{ route('admin.contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('admin.contrato.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
                   </div>
                 @endpermission
 
@@ -79,10 +79,10 @@
                         <td class="text-right">{{ $contrato->empleados_count }}</td>
                         <td>
                           @permission('contrato-view')
-                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-flat btn-xs" href="{{ route('admin.contrato.show', ['contrato' => $contrato->id] )}}"><i class="fa fa-search"></i></a>
                           @endpermission
                           @permission('contrato-edit')
-                            <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contratos.edit', ['contrato' => $contrato->id] )}}"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-primary btn-flat btn-xs" href="{{ route('admin.contrato.edit', ['contrato' => $contrato->id] )}}"><i class="fa fa-pencil"></i></a>
                           @endpermission
                         </td>
                       </tr>

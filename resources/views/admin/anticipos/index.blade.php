@@ -21,7 +21,7 @@
       <h3 class="my-2">Información del año: {{ $actualYear }}</h3>
     </div>
     <div class="col-md-6 text-center text-md-left">
-      <form id="form-years" action="{{ route('admin.anticipos.index') }}">
+      <form id="form-years" action="{{ route('admin.anticipo.index') }}">
         <div class="form-group">
           <select id="select-years" class="custom-select form-control-sm" name="year" style="max-width: 100px">
             <option value="">Seleccione</option>
@@ -47,7 +47,7 @@
             <div class="panel-body">
               <div class="mb-3 text-right">
                 @permission('anticipo-create')
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipo.masivo') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Masivo</a>
                 @endpermission
               </div>
 
@@ -63,17 +63,17 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Serie</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Serie</th>
+                              <th>Contrato</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->series as $serie)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -82,14 +82,29 @@
                                 <td>{{ $serie->fecha }}</td>
                                 <td class="text-right">{{ $serie->anticipo() }}</td>
                                 <td class="text-right">{{ $serie->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-index')
-                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show.serie', ['serie' => $serie->serie]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
                                 </td>
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->series->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->series->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -104,7 +119,7 @@
             <div class="panel-body">
               <div class="mb-3 text-right">
                 @permission('anticipo-create')
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipo.individual') }}"><i class="fa fa-plus" aria-hidden="true"></i> Anticipo Individual</a>
                 @endpermission
               </div>
 
@@ -120,26 +135,26 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Solicitud</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Agregado</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Solicitud</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Agregado</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $aprobado)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td title="Si el Empleado solicito o no el Anticipo"><small>{!! $aprobado->solicitud() !!}</small></td>
+                                <td class="text-center" title="Si el Empleado solicito o no el Anticipo"><small>{!! $aprobado->solicitud() !!}</small></td>
                                 <td>
                                   @permission('contrato-view')
-                                    <a href="{{ route('admin.contratos.show', ['contrato' => $aprobado->contrato->id]) }}">
+                                    <a href="{{ route('admin.contrato.show', ['contrato' => $aprobado->contrato->id]) }}">
                                       {{ $aprobado->contrato->nombre }}
                                     </a>
                                   @else
@@ -148,7 +163,7 @@
                                 </td>
                                 <td>
                                   @permission('empleado-view')
-                                    <a href="{{ route('admin.empleados.show', ['empleado' => $aprobado->empleado->id]) }}">
+                                    <a href="{{ route('admin.empleado.show', ['empleado' => $aprobado->empleado->id]) }}">
                                       {{ $aprobado->empleado->usuario->nombre() }}
                                     </a>
                                   @else
@@ -159,17 +174,34 @@
                                 <td class="text-right">{{ $aprobado->anticipo() }}</td>
                                 <td class="text-right">{{ $aprobado->bono() }}</td>
                                 <td>{{ optional($aprobado->created_at)->format('d-m-Y H:i:s') }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
-                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
                                   @permission('anticipo-edit')
-                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipos.edit', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-primary btn-xs" href="{{ route('admin.anticipo.edit', ['anticipo' => $aprobado->id]) }}"><i class="fa fa-pencil"></i></a>
                                   @endpermission
                                 </td>
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -194,23 +226,23 @@
                       <div class="card-body">
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $pendiente)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
                                   @permission('contrato-view')
-                                    <a href="{{ route('admin.contratos.show', ['contrato' => $pendiente->contrato->id]) }}">
+                                    <a href="{{ route('admin.contrato.show', ['contrato' => $pendiente->contrato->id]) }}">
                                       {{ $pendiente->contrato->nombre }}
                                     </a>
                                   @else
@@ -219,7 +251,7 @@
                                 </td>
                                 <td>
                                   @permission('empleado-view')
-                                    <a href="{{ route('admin.empleados.show', ['empleado' => $pendiente->empleado->id]) }}">
+                                    <a href="{{ route('admin.empleado.show', ['empleado' => $pendiente->empleado->id]) }}">
                                       {{ $pendiente->empleado->usuario->nombre() }}
                                     </a>
                                   @else
@@ -229,14 +261,29 @@
                                 <td>{{ $pendiente->fecha }}</td>
                                 <td class="text-right">{{ $pendiente->anticipo() }}</td>
                                 <td class="text-right">{{ $pendiente->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
-                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $pendiente->id]) }}"><i class="fa fa-search"></i></a>
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show', ['anticipo' => $pendiente->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
                                 </td>
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>
@@ -259,25 +306,44 @@
                     </div>
                     <div id="collapse-rechazados-{{ $month->month }}" class="collapse" aria-labelledby="heading-rechazados-{{ $month->month }}" data-parent="#accordion-anticipos-rechazados">
                       <div class="card-body">
+                        <div class="row justify-content-center pb-3 mb-3 border-bottom">
+                          <div class="col-md-3">
+                            <div class="card">
+                              <div class="card-body text-center">
+                                <h3>{{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}</h3>
+                                <p class="text-muted m-0">TOTAL BONO</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="card">
+                              <div class="card-body text-center">
+                                <h3>{{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}</h3>
+                                <p class="text-muted m-0">TOTAL ANTICIPO</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <table class="table data-table table-bordered table-hover table-sm w-100">
                           <thead>
-                            <tr>
-                              <th class="text-center">#</th>
-                              <th class="text-center">Contrato</th>
-                              <th class="text-center">Empleado</th>
-                              <th class="text-center">Fecha</th>
-                              <th class="text-center">Anticipo</th>
-                              <th class="text-center">Bono</th>
-                              <th class="text-center">Acción</th>
+                            <tr class="text-center">
+                              <th>#</th>
+                              <th>Contrato</th>
+                              <th>Empleado</th>
+                              <th>Fecha</th>
+                              <th>Anticipo</th>
+                              <th>Bono</th>
+                              <th>Acción</th>
                             </tr>
                           </thead>
-                          <tbody class="text-center">
+                          <tbody>
                             @foreach($month->anticipos as $rechazado)
                               <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
                                   @permission('contrato-view')
-                                    <a href="{{ route('admin.contratos.show', ['contrato' => $rechazado->contrato->id]) }}">
+                                    <a href="{{ route('admin.contrato.show', ['contrato' => $rechazado->contrato->id]) }}">
                                       {{ $rechazado->contrato->nombre }}
                                     </a>
                                   @else
@@ -286,7 +352,7 @@
                                 </td>
                                 <td>
                                   @permission('empleado-view')
-                                    <a href="{{ route('admin.empleados.show', ['empleado' => $rechazado->empleado->id]) }}">
+                                    <a href="{{ route('admin.empleado.show', ['empleado' => $rechazado->empleado->id]) }}">
                                       {{ $rechazado->empleado->usuario->nombre() }}
                                     </a>
                                   @else
@@ -296,14 +362,29 @@
                                 <td>{{ $rechazado->fecha }}</td>
                                 <td class="text-right">{{ $rechazado->anticipo() }}</td>
                                 <td class="text-right">{{ $rechazado->bono() }}</td>
-                                <td>
+                                <td class="text-center">
                                   @permission('anticipo-view')
-                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipos.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
+                                    <a class="btn btn-success btn-xs" href="{{ route('admin.anticipo.show', ['anticipo' => $rechazado->id]) }}"><i class="fa fa-search"></i></a>
                                   @endpermission
                                 </td>
                               </tr>
                             @endforeach
                           </tbody>
+                          <tfoot>
+                            <tr>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('anticipo'), 2, '.', ',') }}
+                              </th>
+                              <th class="text-right">
+                                {{ number_format($month->anticipos->sum('bono'), 2, '.', ',') }}
+                              </th>
+                              <td></td>
+                            </tr>
+                          </tfoot>
                         </table>
                       </div>
                     </div>

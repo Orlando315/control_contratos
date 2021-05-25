@@ -7,9 +7,13 @@ use App\Scopes\EmpresaScope;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Contrato extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -24,6 +28,7 @@ class Contrato extends Model
      */
     protected $fillable = [
       'empresa_id',
+      'faena_id',
       'nombre',
       'inicio',
       'fin',
@@ -42,6 +47,16 @@ class Contrato extends Model
     ];
 
     /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'faena.nombre' => 'Faena',
+      'main' => '¿Es principal?'
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -49,7 +64,6 @@ class Contrato extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
@@ -640,5 +654,22 @@ class Contrato extends Model
     public function principal()
     {
       return $this->isMain() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'faena_id',
+      ])
+      ->logAditionalAttributes([
+        'faena.nombre'
+      ]);
     }
 }

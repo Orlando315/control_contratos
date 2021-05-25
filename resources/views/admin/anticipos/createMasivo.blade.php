@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.anticipo.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -37,7 +37,7 @@
             <div class="sk-double-bounce2"></div>
           </div>
 
-          <form id="form-anticipos" action="{{ route('admin.anticipos.storeMasivo') }}" method="POST" enctype="multipart/form-data">
+          <form id="form-anticipos" action="{{ route('admin.anticipo.storeMasivo') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row">
@@ -94,7 +94,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button id="btn-submit" class="btn btn-primary btn-sm" type="submit" disabled><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -246,7 +246,7 @@
 
       $.ajax({
         type: 'POST',
-        url: '{{ route("admin.anticipos.index") }}/empleados/' + contrato,
+        url: '{{ route("admin.anticipo.index") }}/empleado/' + contrato,
         data: {
           _token: '{{ csrf_token() }}'
         },

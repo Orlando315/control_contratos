@@ -146,6 +146,16 @@
               </div>
             </div>
 
+            <div class="form-group{{ $errors->has('visibilidad') ? ' has-error' : '' }}">
+              <label for="visibilidad">Visibilidad:</label>
+
+              <div class="custom-control custom-checkbox">
+                <input id="visibilidad" class="custom-control-input" type="checkbox" name="visibilidad" value="1"{{ old('visibilidad') ? ' checked' : '' }}>
+                <label class="custom-control-label" for="visibilidad"><i class="icon-visibilidad fa fa-eye-slash" aria-hidden="true"></i> Permitir visibilidad</label>
+              </div>
+              <span class="form-text text-muted">Determina si el Empleado puede o no ver el Documento desde su perfil.</span>
+            </div>
+
             <h4>Completar variables</h4>
 
             <div class="section-variables mb-3">
@@ -234,7 +244,7 @@
 
         $.ajax({
           type: 'POST',
-          url: '{{ route("admin.empleados.index") }}/contratos/' + contrato,
+          url: '{{ route("admin.empleado.index") }}/contratos/' + contrato,
           data: {
             _token: '{{ csrf_token() }}'
           },
@@ -292,8 +302,17 @@
 
         $('#dirigido-empleado').closest('.section-dirigido').prop('disabled', !isEmpleado).toggle(isEmpleado);
         $('#dirigido-postulante').closest('.section-dirigido').prop('disabled', isEmpleado).toggle(!isEmpleado);
+        $('#visibilidad').prop('disabled', !isEmpleado).closest('.form-group').toggle(isEmpleado);
       });
       $('#check-dirigido').change();
+
+      $('#visibilidad').change(function () {
+        let isChecked = $(this).is(':checked');
+
+        $('.icon-visibilidad').toggleClass('fa-eye', isChecked);
+        $('.icon-visibilidad').toggleClass('fa-eye-slash', !isChecked);
+      });
+      $('#visibilidad').change();
     });
 
     function converType(tipo){

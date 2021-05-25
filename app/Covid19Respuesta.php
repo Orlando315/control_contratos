@@ -100,10 +100,11 @@ class Covid19Respuesta extends Model
       $respuestasByMonth = [];
 
       foreach($months as $month){
-        $respuestas = self::whereYear('created_at', $year)
-          ->whereMonth('created_at', $month)
-          ->orderBy('created_at', 'desc')
-          ->get();
+        $respuestas = self::with('user')
+        ->whereYear('created_at', $year)
+        ->whereMonth('created_at', $month)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
         $dataMonth = [
           'month' => $month,
@@ -114,5 +115,32 @@ class Covid19Respuesta extends Model
       }
 
       return $respuestasByMonth;
+    }
+
+    /**
+     * Evaluar si la encuesta tiene respuestas postivas
+     *
+     * @param  bool  $returnCount
+     * @return bool|int
+     */
+    public function hasPostiveAnswer($returnCount = false)
+    {
+      $filtered = collect($this->respuestas)->reject(function ($value, $key) {
+        return $value == 0;
+      })
+      ->count();
+
+      return $returnCount ? $filtered : ($filtered > 0);
+    }
+
+    /**
+     * Obtener el atributo formateado
+     * 
+     * @return string
+     */
+    public function positiveAnswers()
+    {
+      $count = $this->hasPostiveAnswer(true);
+      return ($count > 0) ? '<span class="label label-primary">Sí ('.$count.')</span>' : '<span class="label label-default">No</span>';
     }
 }

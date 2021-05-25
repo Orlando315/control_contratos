@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Contratos</a></li>
         <li class="breadcrumb-item active"><strong>Contrato</strong></li>
       </ol>
     </div>
@@ -20,10 +20,10 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('contrato-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('contrato-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.edit', ['contrato' => $contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.edit', ['contrato' => $contrato->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
       @permission('contrato-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -129,7 +129,7 @@
                             <div class="col-9">
                               <i class="fa {{ $requisitoContrato->documento ? 'fa-check-square text-primary' : 'fa-square-o text-muted' }}"></i>
                               @if($requisitoContrato->documento)
-                                <a href="{{ $requisitoContrato->isFile() ? route('admin.documentos.download', ['documento' => $requisitoContrato->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisitoContrato->documento->id]) }}">
+                                <a href="{{ $requisitoContrato->isFile() ? route('admin.documento.download', ['documento' => $requisitoContrato->documento->id]) : route('admin.carpeta.show', ['carpeta' => $requisitoContrato->documento->id]) }}">
                                   {!! $requisitoContrato->icon() !!} {{ $requisitoContrato->nombre }}
                                   @if($requisitoContrato->documento->vencimiento)
                                     <small class="text-muted">- {{ $requisitoContrato->documento->vencimiento }}</small>
@@ -268,7 +268,7 @@
               @if($contrato->documentos()->count() < 10 && Auth::user()->hasPermission('contrato-edit'))
                 <div class="mb-3 text-right">
                   <a class="btn btn-warning btn-xs" href="{{ route('admin.carpeta.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Carpeta</a>
-                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documentos.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('admin.documento.create', ['type' => 'contratos', 'id' => $contrato->id]) }}"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Adjunto</a>
                 </div>
               @endif
               <div class="row icons-box icons-folder">
@@ -421,15 +421,15 @@
               <div class="panel-body">
                 <div class="mb-3">
                   @permission('sueldo-index')
-                    <a class="btn btn-default btn-xs" href="{{ route('admin.sueldos.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.sueldo.index', ['contrato' => $contrato->id]) }}"><i class="fa fa-money" aria-hidden="true"></i> Ver sueldos</a>
                   @endpermission
-                  <a class="btn btn-default btn-xs" href="{{ route('admin.contratos.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
+                  <a class="btn btn-default btn-xs" href="{{ route('admin.contrato.calendar', ['contrato' => $contrato->id]) }}"><i class="fa fa-calendar" aria-hidden="true"></i> Ver calendario</a>
                   @permission('empleado-create')
                     <div class="btn-group">
                       <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo empleado</button>
                       <ul class="dropdown-menu" x-placement="bottom-start">
-                        <li><a class="dropdown-item" href="{{ route('admin.empleados.create', ['contrato' => $contrato->id]) }}">Nuevo Empleado</a></li>
-                        <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create', ['contrato' => $contrato->id]) }}">Importar Empleados</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleado.create', ['contrato' => $contrato->id]) }}">Nuevo Empleado</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.empleado.import.create', ['contrato' => $contrato->id]) }}">Importar Empleados</a></li>
                       </ul>
                     </div>
                   @endpermission
@@ -455,10 +455,10 @@
                         <td>@nullablestring($empleado->usuario->telefono)</td>
                         <td>
                           @permission('empleado-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleados.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.empleado.show', ['empleado' => $empleado->id]) }}"><i class="fa fa-search"></i></a>
                           @endpermission
                           @permission('empleado-edit')
-                            <a class="btn btn-primary btn-xs" href="{{ route('admin.empleados.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-primary btn-xs" href="{{ route('admin.empleado.edit', ['empleado' => $empleado->id]) }}"><i class="fa fa-pencil"></i></a>
                           @endpermission
                         </td>
                       </tr>
@@ -488,7 +488,7 @@
                         <td>{{ $transporte->vehiculo }}</td>
                         <td>
                           @permission('transporte-view')
-                            <a class="btn btn-success btn-xs" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id] )}}"><i class="fa fa-search"></i></a>
+                            <a class="btn btn-success btn-xs" href="{{ route('admin.transporte.show', ['transporte' => $transporte->id] )}}"><i class="fa fa-search"></i></a>
                           @endpermission
                         </td>
                       </tr>
@@ -518,7 +518,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>
                         @permission('inventario-view')
-                          <a href="{{ route('admin.inventarios.show', ['inventario' => $entrega->inventario->id]) }}">
+                          <a href="{{ route('admin.inventario.show', ['inventario' => $entrega->inventario->id]) }}">
                             {{ $entrega->inventario->nombre }}
                           </a>
                         @else
@@ -575,7 +575,7 @@
                             @endpermission
                           @elseif($egreso->user)
                             @permission('user-view')
-                              <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                              <a href="{{ route('admin.usuario.show', ['usuario' => $egreso->user_id]) }}">
                                 {{ $egreso->user->nombre() }}
                               </a>
                             @else
@@ -727,7 +727,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.contratos.destroy', ['contrato' => $contrato->id]) }}" method="POST">
+          <form action="{{ route('admin.contrato.destroy', ['contrato' => $contrato->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

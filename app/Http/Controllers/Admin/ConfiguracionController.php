@@ -139,7 +139,7 @@ class ConfiguracionController extends Controller
         'covid19.status' => 'nullable|boolean',
       ]);
 
-      Auth::user()->empresa->configuracion->covid19 = $request->covid19['status'] == '1';
+      Auth::user()->empresa->configuracion->covid19 = $request->has('covid19') && $request->covid19['status'] == '1';
 
       if(Auth::user()->empresa->push()){
         return redirect()->back()->with([

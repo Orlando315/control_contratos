@@ -146,7 +146,7 @@ class EmpleadosController extends Controller
         $empleado->contratos()->create($request->only('sueldo', 'inicio', 'fin', 'jornada', 'inicio_jornada', 'descripcion'));
         $empleado->banco()->create($request->only('nombre', 'tipo_cuenta', 'cuenta'));
 
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado registrado exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -275,7 +275,7 @@ class EmpleadosController extends Controller
       $empleado->usuario->usuario = $request->rut;
 
       if($empleado->push()){
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado modificado exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -311,7 +311,7 @@ class EmpleadosController extends Controller
       if($empleado->delete()){
         Storage::deleteDirectory('Empleado' . $empleado->id);
 
-        return redirect()->route('admin.contratos.show', ['contrato' => $empleado->contrato_id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $empleado->contrato_id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Empleado eliminado exitosamente.'
         ]);
@@ -482,7 +482,7 @@ class EmpleadosController extends Controller
       try{
         $empleado->usuario->assignRole($role);
 
-        return redirect()->route('admin.empleados.show', ['empleado' => $empleado->id])->with([
+        return redirect()->route('admin.empleado.show', ['empleado' => $empleado->id])->with([
           'flash_message' => 'Empleado actualizado exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -552,7 +552,7 @@ class EmpleadosController extends Controller
       try{
         $excel = Excel::import(new EmpleadoImport($contrato), $request->archivo);
 
-        return redirect()->route('admin.contratos.show', ['contrato' => $contrato->id])->with([
+        return redirect()->route('admin.contrato.show', ['contrato' => $contrato->id])->with([
           'flash_message' => 'Empleados importados exitosamente.',
           'flash_class' => 'alert-success'
           ]);

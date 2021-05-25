@@ -128,7 +128,7 @@ class OrdenCompraController extends Controller
         'user',
         'proveedor',
         'partida',
-        'productos',
+        'productos.inventario.unidad',
         'requerimiento' => function ($query) {
           $query->with([
             'userSolicitante',
@@ -281,7 +281,10 @@ class OrdenCompraController extends Controller
     {
       $this->authorize('view', $compra);
 
-      $compra->load(['productos']);
+      $compra->load([
+        'productos.inventario.unidad',
+      ]);
+      
       PDF::setOptions(['dpi' => 150]);
       $pdf = PDF::loadView('admin.compra.pdf', compact('compra'));
 

@@ -17,15 +17,15 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('contrato-create')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Contrato</a>
       @endpermission
 
       @permission('empleado-create')
         <div class="btn-group">
           <button data-toggle="dropdown" class="btn btn-default btn-sm dropdown-toggle" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Empleado</button>
           <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
-            <li><a class="dropdown-item" href="{{ route('admin.empleados.create') }}">Nuevo Empleado</a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.empleados.import.create') }}">Importar Empleados</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.empleado.create') }}">Nuevo Empleado</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.empleado.import.create') }}">Importar Empleados</a></li>
           </ul>
         </div>
       @endpermission
@@ -287,7 +287,7 @@
                             <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false"><i class="fa fa-cogs"></i></button>
                             <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                               <li>
-                                <a class="dropdown-item" href="{{ route('sueldos.show', ['sueldo' => $sueldo->id]) }}">
+                                <a class="dropdown-item" href="{{ route('sueldo.show', ['sueldo' => $sueldo->id]) }}">
                                   <i class="fa fa-search"></i> Ver
                                 </a>
                               </li>
@@ -303,7 +303,7 @@
             <div id="tab-2" class="tab-pane">
               <div class="panel-body">
                 <div class="mb-3 text-right">
-                  <a class="btn btn-primary btn-xs" href="{{ route('anticipos.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Solicitar anticipo</a>
+                  <a class="btn btn-primary btn-xs" href="{{ route('anticipo.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Solicitar anticipo</a>
                 </div>
                 <table class="table data-table table-bordered table-hover table-sm w-100">
                   <thead>
@@ -355,7 +355,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach(Auth::user()->egresos->with(['inventario', 'contrato'])->get() as $egreso)
+                    @foreach(Auth::user()->egresos()->with(['inventario', 'contrato'])->get() as $egreso)
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>@nullablestring(optional($egreso->inventario)->nombre)</td>
@@ -435,7 +435,7 @@
     <div id="eventsModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form id="eventForm" action="{{ route('eventos.store') }}" method="POST">
+          <form id="eventForm" action="{{ route('evento.store') }}" method="POST">
             <input id="eventDay" type="hidden" name="inicio" value="">
             @csrf
 

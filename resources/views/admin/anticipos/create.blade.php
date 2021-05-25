@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.anticipo.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Agregar</strong></li>
       </ol>
     </div>
@@ -32,7 +32,7 @@
           <h5>Agregar anticipo individual</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.anticipos.store') }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.anticipo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row">
@@ -105,7 +105,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.index') }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -168,7 +168,7 @@
 
       $.ajax({
         type: 'POST',
-        url: '{{ route("admin.empleados.index") }}/contratos/' + contrato,
+        url: '{{ route("admin.empleado.index") }}/contratos/' + contrato,
         data: {
           _token: '{{ csrf_token() }}'
         },

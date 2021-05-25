@@ -36,7 +36,7 @@
           <h5><i class="fa fa-car"></i> Transportes</h5>
           <div class="ibox-tools">
             @permission('transporte-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.transportes.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Transporte</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.transporte.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nuevo Transporte</a>
             @endpermission
           </div>
         </div>
@@ -69,14 +69,14 @@
                         <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                           @permission('transporte-view')
                             <li>
-                              <a class="dropdown-item" href="{{ route('admin.transportes.show', ['transporte' => $transporte->id]) }}">
+                              <a class="dropdown-item" href="{{ route('admin.transporte.show', ['transporte' => $transporte->id]) }}">
                                 <i class="fa fa-search"></i> Ver
                               </a>
                             </li>
                           @endpermission
                           @permission('transporte-edit')
                             <li>
-                              <a class="dropdown-item" href="{{ route('admin.transportes.edit', ['transporte' => $transporte->id]) }}">
+                              <a class="dropdown-item" href="{{ route('admin.transporte.edit', ['transporte' => $transporte->id]) }}">
                                 <i class="fa fa-pencil"></i> Editar
                               </a>
                             </li>

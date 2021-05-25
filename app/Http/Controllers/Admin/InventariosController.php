@@ -30,6 +30,7 @@ class InventariosController extends Controller
      */
     public function create()
     {
+      abort(404);
       $this->authorize('create', Inventario::class);
 
       $contratos = Contrato::all();
@@ -45,6 +46,7 @@ class InventariosController extends Controller
      */
     public function store(Request $request)
     {
+      abort(404);
       $this->authorize('create', Inventario::class);
       $this->validate($request, [
         'contrato_id' => 'required',
@@ -84,7 +86,7 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario agregado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -118,6 +120,7 @@ class InventariosController extends Controller
      */
     public function edit(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -136,6 +139,7 @@ class InventariosController extends Controller
      */
     public function update(Request $request, Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -180,7 +184,7 @@ class InventariosController extends Controller
           $inventario->save();
         }
 
-        return redirect()->route('admin.inventarios.show', ['inventario' => $inventario->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario modificado exitosamente.',
           'flash_class' => 'alert-success'
           ]);
@@ -201,6 +205,7 @@ class InventariosController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('delete', $inventario);
       // Los usuarios Supervisor solo pueden editar Inventarios tipo 3
       if(Auth::user()->hasRole('supervisor') && $inventario->tipo < 3){
@@ -212,7 +217,7 @@ class InventariosController extends Controller
           Storage::deleteDirectory($inventario->directory());
         }
 
-        return redirect()->route('admin.inventarios.index')->with([
+        return redirect()->route('admin.inventario.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Inventario eliminado exitosamente.'
         ]);
@@ -250,6 +255,7 @@ class InventariosController extends Controller
      */
     public function clone(Inventario $inventario)
     {
+      abort(404);
       $this->authorize('update', $inventario);
 
       $copy = $inventario->replicate();
@@ -257,7 +263,7 @@ class InventariosController extends Controller
       $copy->nombre = $inventario->nombre.' (copia)';
 
       if($copy->save()){
-        return redirect()->route('admin.inventarios.show', ['inventario' => $copy->id])->with([
+        return redirect()->route('admin.inventario.show', ['inventario' => $copy->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Inventario clonado exitosamente.'
         ]);

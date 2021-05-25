@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class PlantillaDocumento extends Model
 {
+    use LogEvents;
+
      /**
      * The table associated with the model.
      *
@@ -28,6 +32,7 @@ class PlantillaDocumento extends Model
       'nombre',
       'caducidad',
       'secciones',
+      'visibilidad',
     ];
 
     /**
@@ -36,7 +41,8 @@ class PlantillaDocumento extends Model
      * @var array
      */
     protected $casts = [
-        'secciones' => 'array',
+      'secciones' => 'array',
+      'visibilidad' => 'boolean',
     ];
 
     /**
@@ -49,6 +55,33 @@ class PlantillaDocumento extends Model
     ];
 
     /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Documento de Plantilla';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'plantilla.documento';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'empleado.usuario.nombreCompleto' => 'Empleado',
+      'postulante.nombreCompleto' => 'Postulante',
+      'plantilla.nombre' => 'Plantilla',
+      'padre.nombre' => 'Documento padre',
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -56,8 +89,19 @@ class PlantillaDocumento extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
+    }
+
+    /**
+     * Incluir solo los Documentos que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
     }
 
     /**
@@ -119,6 +163,20 @@ class PlantillaDocumento extends Model
     }
 
     /**
+     * Evaluar si el Documento es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
      * Evaluar si el Documento es dirigido a un Empleado
      * 
      * @return bool
@@ -170,4 +228,27 @@ class PlantillaDocumento extends Model
       return collect($seccion)->merge($staticNeeded)->toArray();
     }
 
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+        'empleado_id',
+        'postulante_id',
+        'plantilla_id',
+        'documento_id',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+        'empleado.usuario.nombreCompleto',
+        'postulante.nombre',
+        'plantilla.nombre',
+        'padre.nombre',
+      ]);
+    }
 }

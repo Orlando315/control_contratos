@@ -65,7 +65,7 @@ class UsuariosController extends Controller
         $usuario->attachRole($role);
         $usuario->attachPermissions($request->permissions ?? []);
 
-        return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
+        return redirect()->route('admin.usuario.show', ['usuario' => $usuario->id])->with([
           'flash_message' => 'Usuario agregado exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -161,7 +161,7 @@ class UsuariosController extends Controller
         $usuario->assignRole($role);
         $usuario->syncPermissions($request->permissions ?? []);
 
-        return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
+        return redirect()->route('admin.usuario.show', ['usuario' => $usuario->id])->with([
           'flash_message' => 'Usuario modificado exitosamente.',
           'flash_class' => 'alert-success'
         ]);
@@ -191,7 +191,7 @@ class UsuariosController extends Controller
           $empleado->delete();
         }
 
-        return redirect()->route('admin.usuarios.index')->with([
+        return redirect()->route('admin.usuario.index')->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Usuario eliminado exitosamente.'
         ]);
@@ -222,7 +222,7 @@ class UsuariosController extends Controller
       $usuario->password = bcrypt($request->password);
 
       if($usuario->save()){
-        return redirect()->route('admin.usuarios.show', ['usuario' => $usuario->id])->with([
+        return redirect()->route('admin.usuario.show', ['usuario' => $usuario->id])->with([
           'flash_class'   => 'alert-success',
           'flash_message' => 'Contraseña cambiada exitosamente.'
         ]);

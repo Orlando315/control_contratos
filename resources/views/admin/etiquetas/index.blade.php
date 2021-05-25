@@ -36,7 +36,7 @@
           <h5><i class="fa fa-tags"></i> Etiquetas</h5>
           <div class="ibox-tools">
             @permission('etiqueta-create')
-              <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
+              <a class="btn btn-primary btn-xs" href="{{ route('admin.etiqueta.create') }}"><i class="fa fa-plus" aria-hidden="true"></i> Nueva Etiqueta</a>
             @endpermission
           </div>
         </div>
@@ -62,10 +62,10 @@
                   <td>{{ $etiqueta->inventarios_v2_count }}</td>
                   <td>
                     @permission('etiqueta-view')
-                      <a class="btn btn-success btn-xs" href="{{ route('admin.etiquetas.show', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-search"></i></a>
+                      <a class="btn btn-success btn-xs" href="{{ route('admin.etiqueta.show', ['etiqueta' => $etiqueta->id]) }}"><i class="fa fa-search"></i></a>
                     @endpermission
                     @permission('etiqueta-edit')
-                      <a class="btn btn-primary btn-xs" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $etiqueta->id] )}}"><i class="fa fa-pencil"></i></a>
+                      <a class="btn btn-primary btn-xs" href="{{ route('admin.etiqueta.edit', ['etiqueta' => $etiqueta->id]) }}"><i class="fa fa-pencil"></i></a>
                     @endpermission
                   </td>
                 </tr>

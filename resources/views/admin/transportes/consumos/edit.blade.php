@@ -17,8 +17,8 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.transportes.index') }}">Transportes</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.transportes.show', ['transporte' => $consumo->transporte_id]) }}">Consumos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.transporte.index') }}">Transportes</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.transporte.show', ['transporte' => $consumo->transporte_id]) }}">Consumos</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -33,7 +33,7 @@
           <h4>Editar consumo</h4>
         </div>
         <div class="ibox-content">
-          <form  action="{{ route('admin.consumos.update', ['consumo' => $consumo->id]) }}" method="POST" enctype="multipart/form-data">
+          <form  action="{{ route('admin.consumo.update', ['consumo' => $consumo->id]) }}" method="POST" enctype="multipart/form-data">
             @method('PATCH')
             @csrf
 
@@ -43,10 +43,10 @@
                   <label for="tipo">Tipo: *</label>
                   <select id="tipo" class="form-control" name="tipo" required>
                     <option value="">Seleccione...</option>
-                    <option value="1" {{ old('tipo') == '1' ? 'selected' : $consumo->tipo == 1 ? 'selected' : '' }}>Mantenimiento</option>
-                    <option value="2" {{ old('tipo') == '2' ? 'selected' : $consumo->tipo == 2 ? 'selected' : '' }}>Combustible</option>
-                    <option value="3" {{ old('tipo') == '3' ? 'selected' : $consumo->tipo == 3 ? 'selected' : '' }}>Peaje</option>
-                    <option value="4" {{ old('tipo') == '4' ? 'selected' : $consumo->tipo == 4 ? 'selected' : '' }}>Gastos varios</option>
+                    <option value="1" {{ old('tipo', $consumo->tipo) == '1' ? 'selected' : '' }}>Mantenimiento</option>
+                    <option value="2" {{ old('tipo', $consumo->tipo) == '2' ? 'selected' : '' }}>Combustible</option>
+                    <option value="3" {{ old('tipo', $consumo->tipo) == '3' ? 'selected' : '' }}>Peaje</option>
+                    <option value="4" {{ old('tipo', $consumo->tipo) == '4' ? 'selected' : '' }}>Gastos varios</option>
                   </select>
                 </div>
               </div>
@@ -98,7 +98,7 @@
             @endif
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.consumos.show', ['consumo' => $consumo->id] ) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.consumo.show', ['consumo' => $consumo->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

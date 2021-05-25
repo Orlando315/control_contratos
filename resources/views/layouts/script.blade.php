@@ -36,7 +36,8 @@
       },
       buttons: [{
         extend: 'print',
-        text: 'Imprimir'
+        text: 'Imprimir',
+        footer: true,
       }],
       pageLength: 25,
       columnDefs: [

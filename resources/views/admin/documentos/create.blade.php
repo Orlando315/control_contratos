@@ -34,7 +34,7 @@
           <h5>Agregar documento</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.documentos.store', ['type' => $type, 'id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('admin.documento.store', ['type' => $type, 'id' => $model->id, 'carpeta' => optional($carpeta)->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             @if($type == 'empleados' || $type == 'contratos' || $type == 'transportes')
@@ -84,6 +84,18 @@
               <small class="form-text text-muted">Formatos permitidos: jpg, jpeg, png, pdf, txt, xlsx, docx</small>
             </div>
 
+            @if($type == 'empleados')
+              <div class="form-group{{ $errors->has('visibilidad') ? ' has-error' : '' }}">
+                <label for="visibilidad">Visibilidad:</label>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="visibilidad" class="custom-control-input" type="checkbox" name="visibilidad" value="1"{{ old('visibilidad') ? ' checked' : '' }}>
+                  <label class="custom-control-label" for="visibilidad"><i class="icon-visibilidad fa fa-eye-slash" aria-hidden="true"></i> Permitir visibilidad</label>
+                </div>
+                <span class="form-text text-muted">Determina si el Empleado puede o no ver el Documento desde su perfil.</span>
+              </div>
+            @endif
+
             <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
               <ul class="m-0">
                 @foreach($errors->all() as $error)
@@ -93,7 +105,7 @@
             </div>
 
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route(($carpeta ? 'admin.carpeta.show' : 'admin.'.$type.'.show'), ($carpeta ? ['carpeta' => $carpeta->id] : [$varName => $model->id])) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route(($carpeta ? 'admin.carpeta.show' : 'admin.'.$varName.'.show'), ($carpeta ? ['carpeta' => $carpeta->id] : [$varName => $model->id])) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
@@ -157,7 +169,17 @@
             return false;
           }
         }
-      })
+      });
+
+      @if($type == 'empleados')
+        $('#visibilidad').change(function () {
+          let isChecked = $(this).is(':checked');
+
+          $('.icon-visibilidad').toggleClass('fa-eye', isChecked);
+          $('.icon-visibilidad').toggleClass('fa-eye-slash', !isChecked);
+        });
+        $('#visibilidad').change();
+      @endif
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo

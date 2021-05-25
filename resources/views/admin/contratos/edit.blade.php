@@ -17,7 +17,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Contratos</a></li>
         <li class="breadcrumb-item active"><strong>Editar</strong></li>
       </ol>
     </div>
@@ -32,7 +32,7 @@
           <h5>Editar contrato</h5>
         </div>
         <div class="ibox-content">
-          <form action="{{ route('admin.contratos.update', ['contrato' => $contrato->id]) }}" method="POST">
+          <form action="{{ route('admin.contrato.update', ['contrato' => $contrato->id]) }}" method="POST">
             @method('PATCH')
             @csrf
 
@@ -99,7 +99,7 @@
             @endif
             
             <div class="text-right">
-              <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
+              <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply"></i> Atras</a>
               <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>

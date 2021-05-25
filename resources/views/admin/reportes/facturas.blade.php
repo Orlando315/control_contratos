@@ -30,7 +30,7 @@
       <button class="btn btn-default btn-flat btn-print"><i class="fa fa-print"></i> Imprimir</button>
     </div>
     <div class="col-md-4 no-print">
-      <form id="exportForm" action="{{ route('admin.reportes.facturas.get') }}" method="POST">
+      <form id="exportForm" action="{{ route('admin.reporte.factura.get') }}" method="POST">
         {{ csrf_field() }}
 
         <div class="form-group">

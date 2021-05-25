@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class RequerimientoMaterial extends Model
 {
+  use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -48,6 +52,35 @@ class RequerimientoMaterial extends Model
      */
     protected $casts = [
       'status' => 'boolean',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Requerimiento de material';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'requerimiento.material';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'userSolicitante.nombreCompleto' => 'Solicitante',
+      'contrato.nombre' => 'Contrato',
+      'faena.nombre' => 'faena',
+      'centroCosto.nombre' => 'Centro de costo',
+      'dirigidoA.nombreCompleto' => 'Dirigido a',
+      'fecha' => 'Requerido para el',
+      'status' => 'Estatus',
     ];
 
     /**
@@ -421,5 +454,30 @@ class RequerimientoMaterial extends Model
           return ['Urgencia', $data->urgencia, $this->urgencia];
         break;
       }
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'solicitante',
+        'contrato_id',
+        'faena_id',
+        'centro_costo_id',
+        'dirigido',
+      ])
+      ->logAditionalAttributes([
+        'userSolicitante.nombreCompleto',
+        'contrato.nombre',
+        'faena.nombre',
+        'centroCosto.nombre',
+        'dirigidoA.nombreCompleto',
+      ]);
     }
 }

@@ -57,6 +57,18 @@
               <input id="nombre" class="form-control" type="text" name="nombre" maxlength="50" value="{{ old('nombre', $carpeta->nombre) }}" placeholder="Nombre de la carpeta" {{ $carpeta->isRequisito() ? 'readonly' : 'required' }}>
             </div>
 
+            @if($carpeta->isTypeEmpleado())
+              <div class="form-group{{ $errors->has('visibilidad') ? ' has-error' : '' }}">
+                <label for="visibilidad">Visibilidad:</label>
+
+                <div class="custom-control custom-checkbox">
+                  <input id="visibilidad" class="custom-control-input" type="checkbox" name="visibilidad" value="1"{{ old('visibilidad', $carpeta->visibilidad) ? ' checked' : '' }}>
+                  <label class="custom-control-label" for="visibilidad"><i class="icon-visibilidad fa fa-eye-slash" aria-hidden="true"></i> Permitir visibilidad</label>
+                </div>
+                <span class="form-text text-muted">Determina si el Empleado puede o no ver la Carpeta y su contenido desde su perfil.</span>
+              </div>
+            @endif
+
             @if(count($errors) > 0)
               <div class="alert alert-danger alert-important">
                 <ul class="m-0">
@@ -95,6 +107,16 @@
         })
 
         $('#requisito').change();
+
+        @if($carpeta->isTypeEmpleado())
+          $('#visibilidad').change(function () {
+            let isChecked = $(this).is(':checked');
+
+            $('.icon-visibilidad').toggleClass('fa-eye', isChecked);
+            $('.icon-visibilidad').toggleClass('fa-eye-slash', !isChecked);
+          });
+          $('#visibilidad').change();
+        @endif
       });
     </script>
   @endif

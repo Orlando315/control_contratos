@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.etiquetas.index') }}">Etiquetas</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.etiqueta.index') }}">Etiquetas</a></li>
         <li class="breadcrumb-item active"><strong>Etiqueta</strong></li>
       </ol>
     </div>
@@ -20,10 +20,10 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('etiqueta-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.etiquetas.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.etiqueta.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('etiqueta-edit')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.etiquetas.edit', ['etiqueta' => $etiqueta->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.etiqueta.edit', ['etiqueta' => $etiqueta->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endpermission
       @permission('etiqueta-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -85,7 +85,7 @@
                           <td>{{ $loop->iteration }}</td>
                           <td>
                             @permission('contrato-view')
-                              <a href="{{ route('admin.contratos.show', ['contrato' => $factura->contrato_id]) }}">{{ $factura->contrato->nombre }}</a>
+                              <a href="{{ route('admin.contrato.show', ['contrato' => $factura->contrato_id]) }}">{{ $factura->contrato->nombre }}</a>
                             @else
                               {{ $factura->contrato->nombre }}
                             @endpermission
@@ -94,13 +94,13 @@
                           <td>{{ $factura->nombre }}</td>
                           <td>{{ $factura->valor() }}</td>
                           <td>{{ $factura->fecha }}</td>
-                          <td>{!! $factura->pago() !!}</td>
+                          <td><small>{!! $factura->pago() !!}</small></td>
                           <td>
                             @permission('factura-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.facturas.show', ['factura' => $factura->id] )}}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.factura.show', ['factura' => $factura->id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                             @permission('factura-edit')
-                              <a class="btn btn-primary btn-xs" href="{{ route('admin.facturas.edit', ['factura' => $factura->id] )}}"><i class="fa fa-pencil"></i></a>
+                              <a class="btn btn-primary btn-xs" href="{{ route('admin.factura.edit', ['factura' => $factura->id]) }}"><i class="fa fa-pencil"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -129,7 +129,7 @@
                           <td>{{ $loop->iteration }}</td>
                           <td>
                             @permission('contrato-view')
-                              <a href="{{ route('admin.contratos.show', ['contrato', $gasto->contrato_id]) }}">{{ $gasto->contrato->nombre }}</a>
+                              <a href="{{ route('admin.contrato.show', ['contrato', $gasto->contrato_id]) }}">{{ $gasto->contrato->nombre }}</a>
                             @else
                               {{ $gasto->contrato->nombre }}
                             @endpermission
@@ -138,10 +138,10 @@
                           <td>{{ $gasto->valor() }}</td>
                           <td>
                             @permission('gasto-view')
-                              <a class="btn btn-success btn-xs" href="{{ route('admin.gastos.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
+                              <a class="btn btn-success btn-xs" href="{{ route('admin.gasto.show', ['gasto' => $gasto->id]) }}"><i class="fa fa-search"></i></a>
                             @endpermission
                             @permission('gasto-edit')
-                              <a class="btn btn-primary btn-xs" href="{{ route('admin.gastos.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
+                              <a class="btn btn-primary btn-xs" href="{{ route('admin.gasto.edit', ['gasto' => $gasto->id]) }}"><i class="fa fa-pencil"></i></a>
                             @endpermission
                           </td>
                         </tr>
@@ -225,7 +225,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.etiquetas.destroy', ['etiqueta' => $etiqueta->id]) }}" method="POST">
+          <form action="{{ route('admin.etiqueta.destroy', ['etiqueta' => $etiqueta->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 

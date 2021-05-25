@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Factura extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -24,6 +28,9 @@ class Factura extends Model
       'partida_id',
       'etiqueta_id',
       'tipo',
+      'faena_id',
+      'centro_costo_id',
+      'proveedor_id',
       'nombre',
       'realizada_para',
       'realizada_por',
@@ -34,6 +41,22 @@ class Factura extends Model
     ];
 
     /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'contrato.nombre' => 'Contrato',
+      'partia.nombre' => 'Partida',
+      'etiqueta.etiqueta' => 'Etiqueta',
+      'faena.nombre' => 'Faena',
+      'centroCosto.nombre' => 'Centro de costo',
+      'proveedor.nombre' => 'Proveedor',
+      'pago_fecha' => 'Fecha de pago',
+      'pago_estado' => 'Estado del pago',
+    ];
+
+    /**
      * The "booting" method of the model.
      *
      * @return void
@@ -41,7 +64,6 @@ class Factura extends Model
     protected static function boot()
     {
       parent::boot();
-
       static::addGlobalScope(new EmpresaScope);
     }
 
@@ -186,5 +208,31 @@ class Factura extends Model
     public function adjuntoExist($adjunto)
     {
       return !is_null($this->{"adjunto{$adjunto}"});
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'contrato_id',
+        'partida_id',
+        'etiqueta_id',
+        'faena_id',
+        'centro_costo_id',
+        'proveedor_id',
+      ])
+      ->logAditionalAttributes([
+        'contrato.nombre',
+        'partida.nombre',
+        'etiqueta.etiqueta',
+        'faena.nombre',
+        'centroCosto.nombre',
+        'proveedor.nombre',
+      ]);
     }
 }

@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class InventarioV2Egreso extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -41,6 +45,34 @@ class InventarioV2Egreso extends Model
      */
     protected $dates = [
       'recibido',
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Egreso de Inventario V2';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'inventario.egreso';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'inventario.nombre' => 'Inventario',
+      'user.nombreCompleto' => 'Usuario',
+      'cliente.nombre' => 'Cliente',
+      'contrato.nombre' => 'Contrato',
+      'faena.nombre' => 'Faena',
+      'centroCosto.nombre' => 'Centro de Costo',
     ];
 
     /**
@@ -237,5 +269,32 @@ class InventarioV2Egreso extends Model
       $recibido = $this->isPending() ? '<span class="label label-default">Pendiente</span>' : '<span class="label label-primary">Recibido</span>';
 
       return $asText ? strip_tags($recibido) : $recibido;
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'inventario_id',
+        'user_id',
+        'cliente_id',
+        'contrato_id',
+        'faena_id',
+        'centro_costo_id',
+      ])
+      ->logAditionalAttributes([
+        'inventario.nombre',
+        'user.nombreCompleto',
+        'cliente.nombre',
+        'contrato.nombre',
+        'faena.nombre',
+        'centroCosto.nombre',
+      ]);
     }
 }

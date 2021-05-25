@@ -50,7 +50,7 @@
               <b>Generado por</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->user_id]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $compra->user_id]) }}">
                     {{ $compra->user->nombre() }}
                   </a>
                 @else
@@ -170,7 +170,7 @@
                 <b>Solicitante</b>
                 <span class="pull-right">
                   @permission('user-view')
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->solicitante]) }}">
+                    <a href="{{ route('admin.usuario.show', ['usuario' => $compra->requerimiento->solicitante]) }}">
                       {{ $compra->requerimiento->userSolicitante->nombre() }}
                     </a>
                   @else
@@ -182,7 +182,7 @@
                 <b>Dirigido a</b>
                 <span class="pull-right">
                   @permission('user-view')
-                    <a href="{{ route('admin.usuarios.show', ['usuario' => $compra->requerimiento->dirigido]) }}">
+                    <a href="{{ route('admin.usuario.show', ['usuario' => $compra->requerimiento->dirigido]) }}">
                       {{ $compra->requerimiento->dirigidoA->nombre() }}
                     </a>
                   @else
@@ -311,9 +311,10 @@
                 <th class="text-center">#</th>
                 <th class="text-center">Tipo</br>código</th>
                 <th class="text-center">Código</th>
-                <th class="text-center">Nombre</th>
+                <th class="text-center">Producto</th>
                 <th class="text-center">Cantidad</th>
-                <th class="text-center">Precio</th>
+                <th class="text-center">Unidad</th>
+                <th class="text-center">Precio</br>Unitario</th>
                 <th class="text-center">IVA</th>
                 <th class="text-center">Total</th>
                 <th class="text-center">Acción</th>
@@ -338,6 +339,13 @@
                     @endif
                   </td>
                   <td class="text-right">{{ $producto->cantidad() }}</td>
+                  <td class="text-center">
+                    @if($producto->inventario)
+                      {{ $producto->inventario->unidad->nombre }}
+                    @else
+                      @nullablestring(null)
+                    @endif
+                  </td>
                   <td class="text-right">{{ $producto->precio() }}</td>
                   <td class="text-right">{{ $producto->impuesto() }}</td>
                   <td class="text-right">{{ $producto->total() }}</td>

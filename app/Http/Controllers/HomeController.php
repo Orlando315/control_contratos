@@ -10,6 +10,19 @@ use App\Scopes\EmpresaScope;
 class HomeController extends Controller
 {
     /**
+     * Pantalla de bienvenida
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function welcome()
+    {
+      $empresas = Auth::user()->empresas;
+      $roles = Auth::user()->allRoles;
+
+      return view('welcome', compact('empresas', 'roles'));
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -69,15 +82,18 @@ class HomeController extends Controller
 
     /**
      * Cambiar el Role activo del User
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function roleToggle()
+    public function roleToggle(Request $request)
     {
       $roleActivo = Auth::user()->role();
-      $roleInactivo = Auth::user()->inactiveRole();
+      $roleToActivate = $request->role;
 
-      if($roleActivo && $roleInactivo){
+      if($roleActivo && $roleToActivate){
         Auth::user()->roles(null)->updateExistingPivot($roleActivo->id, ['active' => false]);
-        Auth::user()->roles(null)->updateExistingPivot($roleInactivo->id, ['active' => true]);
+        Auth::user()->roles(null)->updateExistingPivot($roleToActivate, ['active' => true]);
         Auth::user()->flushCache();
       }
 

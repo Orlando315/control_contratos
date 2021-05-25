@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.anticipos.index') }}">Anticipos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.anticipo.index') }}">Anticipos</a></li>
         <li class="breadcrumb-item active"><strong>Anticipo</strong></li>
       </ol>
     </div>
@@ -37,10 +37,10 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('anticipo-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @if(!$anticipo->isRechazado() && Auth::user()->hasPermission('anticipo-edit'))
-        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipos.edit', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.anticipo.edit', ['anticipo' => $anticipo->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
       @endif
       @permission('anticipo-delete')
         <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delModal"><i class="fa fa-times" aria-hidden="true"></i> Eliminar</button>
@@ -57,7 +57,7 @@
               <b>Contrato</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.contratos.show', ['contrato' => $anticipo->contrato->id]) }}">
+                  <a href="{{ route('admin.contrato.show', ['contrato' => $anticipo->contrato->id]) }}">
                     {{ $anticipo->contrato->nombre }}
                   </a>
                 @else
@@ -69,7 +69,7 @@
               <b>Empleado</b>
               <span class="pull-right">
                 @permission('contrato-view')
-                  <a href="{{ route('admin.empleados.show', ['empleado' => $anticipo->empleado_id]) }}">
+                  <a href="{{ route('admin.empleado.show', ['empleado' => $anticipo->empleado_id]) }}">
                     {{ $anticipo->empleado->nombre() }}
                   </a>
                 @else
@@ -82,7 +82,7 @@
               <span class="pull-right">
                 @if($anticipo->hasSerie())
                   @permission('anticipo-index')
-                    <a href="{{ route('admin.anticipos.show.serie', ['serie' => $anticipo->serie]) }}">
+                    <a href="{{ route('admin.anticipo.show.serie', ['serie' => $anticipo->serie]) }}">
                       {{ $anticipo->serie }}
                     </a>
                   @else
@@ -144,7 +144,7 @@
     <div id="delModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="delModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form action="{{ route('admin.anticipos.destroy', ['anticipo' => $anticipo->id]) }}" method="POST">
+          <form action="{{ route('admin.anticipo.destroy', ['anticipo' => $anticipo->id]) }}" method="POST">
             @method('DELETE')
             @csrf
 
@@ -169,7 +169,7 @@
     <div id="statusAnticipoModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="statusAnticipoModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <form id="status-modal-form" action="{{ route('admin.anticipos.status', ['anticipo' => $anticipo->id]) }}" method="POST">
+          <form id="status-modal-form" action="{{ route('admin.anticipo.status', ['anticipo' => $anticipo->id]) }}" method="POST">
             <input id="status-modal-value" type="hidden" name="status">
             @method('PUT')
             @csrf

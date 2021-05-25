@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Postulante extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -26,6 +30,14 @@ class Postulante extends Model
       'telefono',
       'email',
     ];
+
+    /**
+     * Obtener el nombre completo del Postulante
+     */
+    public function getNombreCompletoAttribute()
+    {
+      return trim($this->nombres.' '.$this->apellidos);
+    }
 
     /**
      * Obtener la Empresa a la que pertenece
@@ -65,6 +77,19 @@ class Postulante extends Model
         'contrato_id' => $empleado->contrato_id,
         'empleado_id' => $empleado->id,
         'postulante_id' => null,
+      ]);
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'empleado_id',
       ]);
     }
 }

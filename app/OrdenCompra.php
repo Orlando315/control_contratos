@@ -5,9 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class OrdenCompra extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -53,6 +57,32 @@ class OrdenCompra extends Model
      * @var array
      */
     protected $with = [
+    ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Orden de compra';
+
+    /**
+     * Nombre base de las rutas
+     * 
+     * @var string
+     */
+    public static $baseRouteName = 'compra';
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'user.nombreCompleto' => 'Generado por',
+      'proveedor.nombre' => 'Proveedor',
+      'partida.codigo' => 'Partida',
+      'status' => 'Estatus'
     ];
 
     /**
@@ -223,5 +253,25 @@ class OrdenCompra extends Model
     public function facturacionStatus()
     {
       return $this->hasFacturacion() ? '<span class="label label-primary">Sí</span>' : '<span class="label label-default">No</span>';
+    }
+
+    /**
+     * Opciones para personalizar los Log 
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults()
+      ->logExcept([
+        'user_id',
+        'proveedor_id',
+        'partida_id',
+      ])
+      ->logAditionalAttributes([
+        'user.nombreCompleto',
+        'proveedor.nombre',
+        'partida.codigo',
+      ]);
     }
 }

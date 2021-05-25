@@ -54,7 +54,7 @@ class InventarioPolicy
      */
     public function create(User $user)
     {
-      return $user->hasPermission('inventario-create');
+      return false;
     }
 
     /**
@@ -66,7 +66,7 @@ class InventarioPolicy
      */
     public function update(User $user, Inventario $inventario)
     {
-      return $user->hasPermission('inventario-edit');
+      return false;
     }
 
     /**
@@ -78,7 +78,7 @@ class InventarioPolicy
      */
     public function delete(User $user, Inventario $inventario)
     {
-      return $user->hasPermission('inventario-delete');
+      return false;
     }
 
     /**

@@ -75,13 +75,15 @@ class DocumentosController extends Controller
         'nombre' => 'required_without:requisito|string|max:50',
         'observacion' => 'nullable|string|max:100',
         'documento' => 'required|file|mimetypes:image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'vencimiento' => 'nullable|date_format:d-m-Y'
+        'vencimiento' => 'nullable|date_format:d-m-Y',
+        'visibilidad' => 'nullable|boolean',
       ]);
 
       $documento = new Documento($request->only('nombre', 'observacion', 'vencimiento'));
       $documento->mime = $request->documento->getMimeType();
       $documento->empresa_id = Auth::user()->empresa->id;
       $documento->carpeta_id = optional($carpeta)->id;
+      $documento->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       // Varificar si se esta cargando un documento que sea "requisito"
       if($request->requisito){
@@ -98,19 +100,19 @@ class DocumentosController extends Controller
         $documento->path = $request->file('documento')->store($directory);
         $documento->save();
         
-        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$type.'.show', [$varName => $model->id]);
+        $redirect = $carpeta ? route('admin.carpeta.show', ['carpeta' => $carpeta]) : route('admin.'.$varName.'.show', [$varName => $model->id]);
 
         return redirect($redirect)->with([
           'flash_message' => 'Adjunto agregado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
       
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);  
+      ]);  
     }
 
     /**
@@ -149,10 +151,12 @@ class DocumentosController extends Controller
       $this->validate($request, [
         'nombre' => 'required_without:requisito|string|max:50',
         'observacion' => 'nullable|string|max:100',
-        'vencimiento' => 'nullable|date_format:d-m-Y'
+        'vencimiento' => 'nullable|date_format:d-m-Y',
+        'visibilidad' => 'nullable|boolean',
       ]);
 
       $documento->fill($request->only('nombre', 'observacion', 'vencimiento'));
+      $documento->visibilidad = $request->has('visibilidad') && $request->visibilidad == '1';
 
       if($request->requisito){
         $requisito = Requisito::where([['id', $request->requisito], ['type', Carpeta::getTypeFromClass($documento->documentable_type)]])->firstOrFail();
@@ -164,14 +168,14 @@ class DocumentosController extends Controller
         return redirect($documento->backUrl)->with([
           'flash_message' => 'Adjunto editado exitosamente.',
           'flash_class' => 'alert-success'
-          ]);
+        ]);
       }
 
       return redirect()->back()->withInput()->with([
         'flash_message' => 'Ha ocurrido un error.',
         'flash_class' => 'alert-danger',
         'flash_important' => true
-        ]);
+      ]);
     }
 
     /**
@@ -204,21 +208,6 @@ class DocumentosController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
-    }
-
-    /**
-     * Descargar el Documento especificado
-     *
-     * @param  \App\Documento  $documento
-     * @return \Illuminate\Http\Response
-     */
-    public function download(Documento $documento)
-    {
-      if(!Storage::exists($documento->path)){
-        abort(404);
-      }
-
-      return Storage::download($documento->path, $documento->nombre.'.'.$documento->getExtension());
     }
 
     /**

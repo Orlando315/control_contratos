@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\{User, Empresa, ConfiguracionEmpresa, Role};
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class EmpresaController extends Controller
 {

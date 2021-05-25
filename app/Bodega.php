@@ -4,9 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Bodega extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -56,5 +60,15 @@ class Bodega extends Model
     public function ubicaciones()
     {
       return $this->hasMany('App\Ubicacion');
+    }
+
+    /**
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+      return LogOptions::defaults();
     }
 }

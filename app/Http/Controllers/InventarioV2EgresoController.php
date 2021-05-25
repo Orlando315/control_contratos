@@ -27,7 +27,7 @@ class InventarioV2EgresoController extends Controller
         'centroCosto',
       ]);
 
-      return view('admin.inventarioV2.egreso.show', compact('egreso'));
+      return view('egreso.show', compact('egreso'));
     }
 
     /**

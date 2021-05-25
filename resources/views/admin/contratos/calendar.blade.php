@@ -20,8 +20,8 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Contratos</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Contratos</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}">Contrato</a></li>
         <li class="breadcrumb-item active"><strong>Calendario</strong></li>
       </ol>
     </div>
@@ -31,7 +31,7 @@
 @section('content')
   <div class="row mb-3">
     <div class="col-12">
-      <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+      <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.show', ['contrato' => $contrato->id]) }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exportModal"><i class="fa fa-file-excel-o"></i> Exportar jornadas</button>
     </div>
   </div>
@@ -124,7 +124,7 @@
   <div id="exportModal" class="modal inmodal fade" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <form id="exportForm" action="{{ route('admin.contratos.exportJornadas', ['contrato' => $contrato->id]) }}" method="POST">
+        <form id="exportForm" action="{{ route('admin.contrato.exportJornadas', ['contrato' => $contrato->id]) }}" method="POST">
           @csrf
 
           <div class="modal-header">
@@ -266,7 +266,7 @@
         resourceAreaWidth: '20%',
         resources: [
           @foreach($empleados as $d)
-            {id: '{{ $d->id }}', title: '{{ $d->usuario->nombre() }}', path: '{{ route("admin.eventos.store", ["empleado" => $d->id]) }}'},
+            {id: '{{ $d->id }}', title: '{{ $d->usuario->nombre() }}', path: '{{ route("admin.evento.store", ["empleado" => $d->id]) }}'},
           @endforeach
         ],
         resourceLabelText: 'Empleados',
@@ -294,7 +294,7 @@
         eventClick: function(event){
           if(event.id){
             $('#delEventModal').modal('show');
-            $('#delEventForm').attr('action', '{{ route("admin.eventos.index") }}/' + event.id);
+            $('#delEventForm').attr('action', '{{ route("admin.evento.index") }}/' + event.id);
           }else{
             $('#delEventForm').attr('action', '#');
           }

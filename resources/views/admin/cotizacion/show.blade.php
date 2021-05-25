@@ -49,7 +49,7 @@
               <b>Generado por</b>
               <span class="pull-right">
                 @permission('user-view')
-                  <a href="{{ route('admin.usuarios.show', ['usuario' => $cotizacion->user_id]) }}">
+                  <a href="{{ route('admin.usuario.show', ['usuario' => $cotizacion->user_id]) }}">
                     {{ $cotizacion->user->nombre() }}
                   </a>
                 @else
@@ -248,7 +248,7 @@
                   <td>@nullablestring($producto->codigo)</td>
                   <td>
                     @if($producto->inventario && Auth::user()->hasPermission('inventario-view'))
-                      <a href="{{ route('admin.inventarios.show', ['inventario' => $producto->inventario_id]) }}">
+                      <a href="{{ route('admin.inventario.show', ['inventario' => $producto->inventario_id]) }}">
                         {{ $producto->nombre }}
                       </a>
                     @else

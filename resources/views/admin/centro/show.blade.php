@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item"><a href="{{ route('admin.contratos.index') }}">Centros de costo</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('admin.contrato.index') }}">Centros de costo</a></li>
         <li class="breadcrumb-item active"><strong>Centro de costo</strong></li>
       </ol>
     </div>
@@ -20,7 +20,7 @@
   <div class="row mb-3">
     <div class="col-12">
       @permission('contrato-index')
-        <a class="btn btn-default btn-sm" href="{{ route('admin.contratos.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
+        <a class="btn btn-default btn-sm" href="{{ route('admin.contrato.index') }}"><i class="fa fa-reply" aria-hidden="true"></i> Volver</a>
       @endpermission
       @permission('centro-costo-edit')
         <a class="btn btn-default btn-sm" href="{{ route('admin.centro.edit', ['centro' => $centro->id]) }}"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</a>
@@ -104,7 +104,7 @@
                               @endpermission
                             @elseif($egreso->user)
                               @permission('user-view')
-                                <a href="{{ route('admin.usuarios.show', ['usuario' => $egreso->user_id]) }}">
+                                <a href="{{ route('admin.usuario.show', ['usuario' => $egreso->user_id]) }}">
                                   {{ $egreso->user->nombre() }}
                                 </a>
                               @else
@@ -246,14 +246,14 @@
                                 <ul class="dropdown-menu dropdown-menu-right" x-placement="bottom-start">
                                   @permission('factura-view')
                                     <li>
-                                      <a class="dropdown-item" href="{{ route('admin.facturas.show', ['factura' => $factura->id]) }}">
+                                      <a class="dropdown-item" href="{{ route('admin.factura.show', ['factura' => $factura->id]) }}">
                                         <i class="fa fa-search"></i> Ver
                                       </a>
                                     </li>
                                   @endpermission
                                   @permission('factura-edit')
                                     <li>
-                                      <a class="dropdown-item" href="{{ route('admin.facturas.edit', ['factura' => $factura->id]) }}">
+                                      <a class="dropdown-item" href="{{ route('admin.factura.edit', ['factura' => $factura->id]) }}">
                                         <i class="fa fa-pencil"></i> Editar
                                       </a>
                                     </li>

@@ -3,10 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
+use App\Traits\LogEvents;
+use App\Integrations\Logger\LogOptions;
 
 class Carpeta extends Model
 {
+    use LogEvents;
+
     /**
      * The table associated with the model.
      *
@@ -22,7 +27,29 @@ class Carpeta extends Model
     protected $fillable = [
       'empresa_id',
       'carpeta_id',
+      'requisito_id',
       'nombre',
+      'visibilidad',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+      'visibilidad' => 'boolean',
+    ];
+
+    /**
+     * Titulos de los atributos al mostrar el Log
+     * 
+     * @var array
+     */
+    public static $attributesTitle = [
+      'main.nombre' => 'Carpeta padre',
+      'requisito.nombre' => 'Requisito',
+      'visibilidad' => '¿Es visible para el Empleado?',
     ];
 
     /**
@@ -57,6 +84,18 @@ class Carpeta extends Model
     public function scopeRequisito($query, $isRequisito = true)
     {
       return $isRequisito ? $query->whereNotNull('requisito_id') : $query->whereNull('requisito_id');
+    }
+
+    /**
+     * Incluir solo las Carpetas que son visibles para el Empleado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isVisible
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible($query, $isVisible = true)
+    {
+      return $query->where('visibilidad', $isVisible);
     }
 
     /**
@@ -112,9 +151,9 @@ class Carpeta extends Model
      */
     public function getBackUrlAttribute()
     {
-      $varName = substr($this->type(), 0, -1);
-      $backModel = route('admin.'.$this->type().'.show', [$varName => $this->carpetable_id]);
-      return $this->carpeta_id ? route('admin.carpeta.show', ['carpeta' => $this->carpeta_id]) : $backModel;
+      $varName = self::getRouteVarNameByType($this->type());
+      $backModel = Auth::user()->hasRole('empleado') ? route('perfil') : route('admin.'.$varName.'.show', [$varName => $this->carpetable_id]);
+      return $this->carpeta_id ? route((Auth::user()->hasRole('empleado') ? 'carpeta.show' : 'admin.carpeta.show'), ['carpeta' => $this->carpeta_id]) : $backModel;
     }
 
     /**
@@ -126,6 +165,45 @@ class Carpeta extends Model
     public function isType($type)
     {
       return $this->carpetable_type == $type;
+    }
+
+    /**
+     * Evaluar si la carpeta es un requisito
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isRequisito($asTag = false)
+    {
+      if(!$asTag){
+        return !is_null($this->requisito); 
+      }
+
+      return $this->isRequisito() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la carpeta es visible para el Empleado al que pertenece
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isVisible($asTag = false)
+    {
+      if(!$asTag){
+        return $this->visibilidad;
+      }
+      return $this->visibilidad ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la Carpeta es de tipo Empleado
+     * 
+     * @return bool
+     */
+    public function isTypeEmpleado()
+    {
+      return $this->isType('App\Empleado');
     }
 
     /**
@@ -207,17 +285,19 @@ class Carpeta extends Model
     }
 
     /**
-     * Evaluar si la carpeta es un requisito
-     *
-     * @param  string  $asTag
-     * @return bool
+     * Opciones para personalizar los Log
+     * 
+     * @return \App\Integrations\Logger\LogOptions
      */
-    public function isRequisito($asTag = false)
+    public function getActivitylogOptions(): LogOptions
     {
-      if(!$asTag){
-        return !is_null($this->requisito); 
-      }
-
-      return $this->isRequisito() ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+      return LogOptions::defaults()
+      ->logExcept([
+        'empresa_id',
+        'carpeta_id',
+      ])
+      ->logAditionalAttributes([
+        'main.nombre',
+      ]);
     }
 }
