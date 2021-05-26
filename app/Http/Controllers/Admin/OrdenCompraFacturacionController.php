@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Integrations\FacturacionSii;
 use App\{FacturacionCompra, OrdenCompra};
 
 class OrdenCompraFacturacionController extends Controller
@@ -141,7 +140,7 @@ class OrdenCompraFacturacionController extends Controller
      */
     public function getProductos($codigo)
     {
-      $factura = (new FacturacionSii)->consultaFactura($codigo);
+      $factura = sii()->consultaFactura($codigo);
 
       return response()->json(['productos' => $factura['productos'] ?? []]);
     }

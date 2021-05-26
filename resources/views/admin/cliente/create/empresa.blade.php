@@ -30,6 +30,10 @@
           <h5>Agregar cliente - Empresa</h5>
         </div>
         <div class="ibox-content">
+          <div class="sk-spinner sk-spinner-double-bounce">
+            <div class="sk-double-bounce1"></div>
+            <div class="sk-double-bounce2"></div>
+          </div>
           <form action="{{ route('admin.cliente.store', ['type' => 'empresa']) }}" method="POST">
             @csrf
 
@@ -167,6 +171,7 @@
 
 @section('script')
   <script type="text/javascript">
+    const IBOX = $('.ibox-content');
     const BTN_CONTACTO = $('.add-contacto');
     const BTN_SUBMIT = $('.btn-submit');
     const BTN_CONSULTAR = $('.btn-consultar');
@@ -181,6 +186,8 @@
         if(rut.length < 5 || !rut || !dv){
           return false;
         }
+
+        IBOX.toggleClass('sk-loading', true);
 
         getData(rut, dv);
       })
@@ -227,6 +234,7 @@
       })
       .always(function () {
         BTN_CONSULTAR.prop('disabled', false);
+        IBOX.toggleClass('sk-loading', false);
       })
     }
 

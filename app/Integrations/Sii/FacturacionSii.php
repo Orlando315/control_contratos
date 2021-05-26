@@ -4,7 +4,7 @@
  * Integration with Facturacion Sii REST Api
  *
  */
-namespace App\Integrations;
+namespace App\Integrations\Sii;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{Auth, Log, Http};
@@ -14,20 +14,16 @@ class FacturacionSii
 {
     private $sandbox = false;
     private $baseUrl = '';
-    private $siiApiKey = null;
-    private $siiRut;
-    private $siiDv;
-    private $siiClave;
+    private $identifier;
+    private $password;
     private $token = null;
 
     public function __construct()
     {
       $this->sandbox = config('integraciones.sii.sandbox');
       $this->baseUrl = $this->sandbox ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
-      $this->siiApiKey = config('integraciones.sii.api_key');
-      $this->siiRut = config('integraciones.sii.rut');
-      $this->siiDv = config('integraciones.sii.dv');
-      $this->siiClave = config('integraciones.sii.clave');
+      $this->identifier = config('integraciones.sii.identifier');
+      $this->password = config('integraciones.sii.password');
       $this->setApiToken();
     }
 
@@ -58,25 +54,20 @@ class FacturacionSii
      */
     private function setApiToken()
     {
-      $endpoint = $this->buildEndpoint('login');
+      $endpoint = $this->buildEndpoint('auth/local');
 
-      $response = Http::WithHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->post($endpoint, [
-        'rut' => $this->siiRut,
-        'dv' => $this->siiDv,
-        'clave' => $this->siiClave,
+      $response = Http::post($endpoint, [
+        'identifier'=> $this->identifier,
+        'password'=> $this->password,
       ]);
 
       if($response->successful()){
-        $this->token = $response['token'];
+        $this->token = $response['jwt'];
       }else{
         Log::channel('integrations')
           ->info('Error de autenticación con SII', [
             'user' => Auth::id(),
-            'rut' => $this->siiRut,
-            'dv' => $this->siiDv,
+            'identifier' => $this->identifier,
             'response' => $response->json(),
           ]);
       }
@@ -125,16 +116,22 @@ class FacturacionSii
      */
     public function busquedaReceptor($rut, $dv)
     {
-      $endpoint = $this->buildEndpoint('receptor/buscar/'.$rut.'/'.$dv);
+      $endpoint = $this->buildEndpoint('emits/information-receiver-default');
 
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->get($endpoint);
+      $response = Http::withToken($this->getToken())
+      ->post($endpoint, [
+        'document' => [
+          'receiver' => [
+            'rut' => [
+              'rut' => $rut,
+              'dv' => $dv,
+            ]
+          ]
+        ]
+      ]);
 
       if($response->successful()){
-        return [true, $response['receptor']];
+        return [true, $response->json()];
       }
 
       // devolver error de la api

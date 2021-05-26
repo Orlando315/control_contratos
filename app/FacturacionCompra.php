@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\EmpresaScope;
-use App\Integrations\FacturacionSii;
 use App\Traits\LogEvents;
 use App\Integrations\Logger\LogOptions;
 
@@ -119,14 +118,13 @@ class FacturacionCompra extends Model
      */
     public static function facturasRecibidas()
     {
-      $facturacionSii = new FacturacionSii;
       $more = true;
       $page = 1;
       $facturas = [];
       $codigosFacturaciones = self::select('codigo')->get()->pluck('codigo')->toArray();
 
       do{
-        [$response, $data] = $facturacionSii->facturasRecibidas($page);
+        [$response, $data] = sii()->facturasRecibidas($page);
 
         if(!$response){
           return $facturas;
@@ -149,7 +147,7 @@ class FacturacionCompra extends Model
      */
     public function syncFacturacion()
     {
-      $factura = (new FacturacionSii)->consultaFactura($this->codigo);
+      $factura = sii()->consultaFactura($this->codigo);
 
       if(!$factura){
         return false;

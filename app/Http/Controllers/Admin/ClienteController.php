@@ -400,10 +400,10 @@ class ClienteController extends Controller
       return response()->json([
         'response' => true,
         'data' => [
-          'razon_social' => $data['razon_social'],
-          'direccion' => $data['direccion_seleccionada'],
-          'comuna' => $data['comuna_seleccionada'],
-          'ciudad' => $data['ciudad_seleccionada'],
+          'razon_social' => $data['businessName'],
+          'direccion' => $data['address'][0] ?? '',
+          'comuna' => $data['commune'],
+          'ciudad' => $data['city'],
         ]
       ]);
     }

@@ -166,6 +166,7 @@ return [
          * Package Service Providers...
          */
         App\Integrations\Logger\ActivitylogServiceProvider::class,
+        App\Integrations\Sii\SiiServiceProvider::class,
 
         /*
          * Application Service Providers...

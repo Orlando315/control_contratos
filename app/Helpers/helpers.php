@@ -1,6 +1,6 @@
 <?php
 
-use App\Integrations\FacturacionSii;
+use App\Integrations\Sii\FacturacionSii;
 use App\Integrations\ActivityLogger;
 use App\Integrations\ActivityLogStatus;
 use Illuminate\Support\Facades\Route;
@@ -9,11 +9,11 @@ if (! function_exists('sii')) {
     /**
      * Obtener una instancia de FacturacionSii
      *
-     * @return \App\Integrations\FacturacionSii
+     * @return \App\Integrations\Sii\FacturacionSii
      */
     function sii()
     {
-      return new FacturacionSii;
+      return app(FacturacionSii::class);
     }
 }
 

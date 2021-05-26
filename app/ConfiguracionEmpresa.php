@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{Auth, Log, Http};
-use App\Integrations\FacturacionSii;
 use App\User;
 
 class ConfiguracionEmpresa extends Model
