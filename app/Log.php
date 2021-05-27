@@ -355,7 +355,7 @@ class Log extends Model
     }
 
     /**
-     * [attributeTitle description]
+     * Obtener el titulo del atributo proporcionado
      *
      * @param  string  $attribute
      * @return string
@@ -367,7 +367,8 @@ class Log extends Model
     }
 
     /**
-     * [attritubeTitleFromName description]
+     * Crear el titulo del atributo basado en el nombre del
+     * atributo proporcionado
      * 
      * @param  string  $attribute
      * @return string
@@ -377,5 +378,26 @@ class Log extends Model
       $attributeTitle = Str::before($attribute, '_id');
 
       return ucfirst(Str::replaceArray('_', [' '], $attributeTitle));
+    }
+
+    /**
+     * Obtener los modelos que tienen Logs
+     * 
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getLoggedModels()
+    {
+      $models = self::select('subject_type')
+      ->distinct()
+      ->get()
+      ->map(function ($model) {
+        return [
+          'model' => $model->subject_type,
+          'title' => $model->getLogEventTitle(),
+        ];
+      })
+      ->sortBy('title');
+
+      return $models;
     }
 }
