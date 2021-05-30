@@ -87,6 +87,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>7</td>
+                <td>Migrar informacion de Bodega y Ubicacion de InventarioV2 a la nueva relacion belongsToMany.</td>
+                <td class="text-center">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admin.development.fix.route', ['fix' => 'inventario.bodegas.ubicaciones']) }}" target="_blank">
+                    <i class="fa fa-play" aria-hidden="false"></i>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

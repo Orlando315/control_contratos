@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Auth};
-use App\{User, Role, Empresa, PlantillaVariable, Transporte};
+use App\{User, Role, Empresa, PlantillaVariable, Transporte, InventarioV2};
 
 class FixController extends Controller
 {
@@ -209,6 +209,39 @@ class FixController extends Controller
         $transporte->user_id = null;
         $transporte->faena_id = null;
         $transporte->save();
+      }
+
+      return response()->json([
+        'transportes' => $transportes->count(),
+      ]);
+    }
+
+
+    /**
+     * Migrar informacion de Bodega y Ubicacion de InventarioV2 a la nueva relacion belongsToMany
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function fixInventarioBodegasUbicaciones()
+    {
+      $inventarios = InventarioV2::withoutGlobalScopes()
+      ->where(function ($query) {
+        $query->whereNotNull('bodega_id')
+        ->orWhereNotNull('ubicacion_id');
+      })
+      ->get();
+
+      foreach ($inventarios as $inventario) {
+        $inventario->bodegas()->attach([$inventario->bodega_id]);
+
+        if($inventario->ubicacion_id){
+          $inventario->ubicaciones()->attach([$inventario->ubicacion_id]); 
+        }
+
+        $inventario->update([
+          'bodega_id' => null,
+          'ubicacion_id' => null,
+        ]);
       }
 
       return response()->json([

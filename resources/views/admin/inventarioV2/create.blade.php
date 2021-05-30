@@ -30,6 +30,11 @@
           <h4>Agregar inventario V2</h4>
         </div>
         <div class="ibox-content">
+          <div class="sk-spinner sk-spinner-double-bounce">
+            <div class="sk-double-bounce1"></div>
+            <div class="sk-double-bounce2"></div>
+          </div>
+
           <form action="{{ route('admin.inventario.v2.store') }}" method="POST" enctype="multipart/form-data">
             @csrf()
 
@@ -85,32 +90,6 @@
 
             <div class="row">
               <div class="col-md-4">
-                <div class="form-group{{ $errors->has('bodega') ? ' has-error' : '' }}">
-                  <label for="bodega">Bodega:</label>
-                  <select id="bodega" class="form-control" name="bodega">
-                    <option value="">Seleccione...</option>
-                    @foreach($bodegas as $bodega)
-                      <option value="{{ $bodega->id }}"{{ old('bodega') == $bodega->id ? ' selected' : '' }}>{{ $bodega->nombre }}</option>
-                    @endforeach
-                  </select>
-
-                  @permission('bodega-create')
-                    <button class="btn btn-simple btn-link btn-sm" type="button" data-toggle="modal" data-target="#optionModal" data-option="bodega"><i class="fa fa-plus" aria-hidden="true"></i> Agregar Bodega</button>
-                  @endpermission
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group{{ $errors->has('ubicacion') ? ' has-error' : '' }}">
-                  <label for="ubicacion">Ubicación:</label>
-                  <select id="ubicacion" class="form-control" name="ubicacion" disabled>
-                    <option value="">Seleccione...</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-md-4">
                 <div class="form-group{{ $errors->has('stock_minimo') ? ' has-error' : '' }}">
                   <label for="stock_minimo">Stock mínimo:</label>
                   <input id="stock_minimo" class="form-control" type="number" step="0.01" min="0" max="9999" name="stock_minimo" value="{{ old('stock_minimo') }}" placeholder="Stock mínimo">
@@ -155,6 +134,32 @@
                 </div>
               </div>
             </div>
+
+            <div id="bodegas-box" class="mb-2">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="bodega">Bodega:</label>
+                    <select id="bodega" class="form-control" name="bodegas[]">
+                      <option value="">Seleccione...</option>
+                      @foreach($bodegas as $bodega)
+                        <option value="{{ $bodega->id }}">{{ $bodega->nombre }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="ubicacion">Ubicación:</label>
+                    <select id="ubicacion" class="form-control" name="ubicaciones[]" multiple disabled>
+                      <option value="">Seleccione...</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-default btn-block mb-3 text-center btn-bodega" type="button" role="button">Agregar otra Bodega</button>
 
             <div class="alert alert-danger alert-important"{!! (count($errors) > 0) ? '' : ' style="display:none;"' !!}>
               <ul class="m-0">
@@ -215,6 +220,31 @@
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
     let defaultImge = @json(asset('images/default.jpg'));
+    const BODEGAS = @json($bodegas);
+    const IBOX = $('.ibox-content');
+    let templateBodega = function (index) {
+      return `<div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="bodega-${index}">Bodega:</label>
+                    <select id="bodega-${index}" class="form-control" name="bodegas[]">
+                      <option value="">Seleccione...</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="ubicacion-${index}">Ubicación:</label>
+                    <select id="ubicacion-${index}" class="form-control" name="ubicaciones[]" multiple disabled>
+                      <option value="">Seleccione...</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-1 d-flex align-items-center justify-content-center">
+                  <button class="btn btn-danger btn-xs btn-delete" type="button" role="button"><i class="fa fa-times"></i></button>
+                </div>
+              </div>`;
+    }
 
     @permission('inventario-unidad-create|etiqueta-create|bodega-create')
       const alertOption = $('.alert-option');
@@ -227,7 +257,7 @@
         placeholder: 'Seleccione...',
       });
 
-      $('#bodega').change(searchUbicaciones)
+      $('#bodegas-box').on('change', 'select[id^="bodega"]', searchUbicaciones);
       $('#bodega').change();
 
       $('#check-codigos').change(function () {
@@ -328,6 +358,25 @@
           })
         });
       @endpermission
+
+      $('.btn-bodega').click(function () {
+        let index = Date.now();
+
+        $('#bodegas-box').append(templateBodega(index));
+
+        $.each(BODEGAS, function (key, bodega) {
+          $(`#bodega-${index}`).append(`<option value="${bodega.id}">${bodega.nombre}</option>`);
+        });
+
+        $(`#bodega-${index}, #ubicacion-${index}`).select2({
+          theme: 'bootstrap4',
+          placeholder: 'Seleccione...',
+        });
+      });
+
+      $('#bodegas-box').on('click', '.btn-delete', function () {
+        $(this).closest('.row').remove();
+      });
     });
 
     // Cambiar el nombre del label del input file, y colocar el nombre del archivo
@@ -354,14 +403,17 @@
 
     function searchUbicaciones() {
       let bodega = $(this).val();
+      let inputUbiacion = $(this).closest('.row').find('select[id^="ubicacion"]')[0];
 
-      if(!bodega){
+      if(!bodega || !inputUbiacion){
         return false;
       }
 
+      IBOX.toggleClass('sk-loading', true);
+
       let url = '{{ route("admin.bodega.ubicaciones", ["bodega" => ":id"]) }}'.replace(':id', bodega);
 
-      $('#ubicacion').empty().prop('disabled', true);
+      $(inputUbiacion).empty().prop('disabled', true);
 
       $.ajax({
         type: 'GET',
@@ -370,18 +422,16 @@
         dataType: 'json'
       })
       .done(function (response) {
-        $('#ubicacion').empty();
-
         $.each(response, function (k, ubicacion) {
-          let oldSelected = @json(old('ubicacion')) == ubicacion.id;
-          $('#ubicacion').append(`<option value="${ubicacion.id}"${oldSelected ? ' selected' : ''}>${ubicacion.nombre}</option>`);
+          $(inputUbiacion).append(`<option value="${ubicacion.id}">${ubicacion.nombre}</option>`);
         });
       })
       .fail(function () {
-        $('#ubicacion').empty().prop('disabled', true);
+        $(inputUbiacion).prop('disabled', true);
       })
       .always(function () {
-        $('#ubicacion').prop('disabled', false);
+        $(inputUbiacion).prop('disabled', false);
+        IBOX.toggleClass('sk-loading', false);
       });
     }
   </script>

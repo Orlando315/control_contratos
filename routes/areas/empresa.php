@@ -347,6 +347,8 @@ Route::get('transporte/consumo/create/{transporte}', 'TransportesConsumosControl
 Route::post('transporte/consumo/{transporte}', 'TransportesConsumosController@store')->name('consumo.store');
 
 /* --- Inventario V2 ---*/
+Route::delete('inventario/v2/{inventario}/ubicacion/{ubicacion}', 'InventarioV2Controller@destroyUbicacion')->name('inventario.ubicacion.destroy');
+Route::delete('inventario/v2/{inventario}/bodega/{bodega}', 'InventarioV2Controller@destroyBodega')->name('inventario.bodega.destroy');
 Route::get('inventario/v2/mass/template', 'InventarioV2Controller@massTemplate')->name('inventario.v2.mass.template');
 Route::get('inventario/v2/mass/edit', 'InventarioV2Controller@massEdit')->name('inventario.v2.mass.edit');
 Route::post('inventario/v2/mass/edit', 'InventarioV2Controller@massUpdate')->name('inventario.v2.mass.update');

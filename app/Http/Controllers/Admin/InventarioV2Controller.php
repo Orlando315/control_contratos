@@ -45,7 +45,7 @@ class InventarioV2Controller extends Controller
 
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
-      $bodegas = Bodega::all();
+      $bodegas = Bodega::select('id', 'nombre')->has('ubicaciones')->get();
 
       return view('admin.inventarioV2.create', compact('unidades', 'categorias', 'bodegas'));
     }
@@ -64,8 +64,6 @@ class InventarioV2Controller extends Controller
         'nombre' => 'required|string|max:50',
         'tipo_codigo' => 'nullable|string|max:6',
         'codigo' => 'nullable|string|max:8',
-        'bodega' => 'nullable',
-        'ubicacion' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'categorias' => 'nullable',
         'descripcion' => 'nullable|string|max:250',
@@ -74,8 +72,6 @@ class InventarioV2Controller extends Controller
 
       $inventario = new InventarioV2($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
-      $inventario->bodega_id = $request->bodega;
-      $inventario->ubicacion_id = $request->ubicacion;
 
       if(Auth::user()->empresa->inventariosV2()->save($inventario)){
         if($request->hasFile('foto')){
@@ -90,6 +86,14 @@ class InventarioV2Controller extends Controller
 
         if($request->has('categorias')){
           $inventario->categorias()->attach($request->categorias);
+        }
+
+        if($request->has('bodegas')){
+          $inventario->bodegas()->attach(array_unique($request->bodegas));
+        }
+
+        if($request->has('ubicaciones')){
+          $inventario->ubicaciones()->attach(array_unique($request->ubicaciones));
         }
 
         return redirect()->route('admin.inventario.v2.show', ['inventario' => $inventario->id])->with([
@@ -117,8 +121,12 @@ class InventarioV2Controller extends Controller
 
       $inventario->load([
         'unidad',
-        'bodega',
-        'ubicacion',
+        'bodegas',
+        'ubicaciones' => function ($query) {
+          $query->with([
+            'bodega'
+          ]);
+        },
         'categorias',
         'ingresos.proveedor',
         'egresos' => function ($query) {
@@ -142,12 +150,21 @@ class InventarioV2Controller extends Controller
     {
       $this->authorize('update', $inventario);
 
-      $inventario->load('categorias');
+      $inventario->load([
+        'categorias',
+        'bodegas',
+      ]);
       $unidades = Unidad::all();
       $categorias = Etiqueta::all();
-      $bodegas = Bodega::all();
+      $bodegas = Bodega::select('id', 'nombre')->has('ubicaciones')->get();
+      $inventarioUbicaciones = $inventario
+      ->ubicaciones()
+      ->select('ubicacion_id')
+      ->get()
+      ->pluck('ubicacion_id')
+      ->toArray();
 
-      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias', 'bodegas'));
+      return view('admin.inventarioV2.edit', compact('inventario', 'unidades', 'categorias', 'bodegas', 'inventarioUbicaciones'));
     }
 
     /**
@@ -165,8 +182,6 @@ class InventarioV2Controller extends Controller
         'nombre' => 'required|string|max:50',
         'tipo_codigo' => 'nullable|string|max:6',
         'codigo' => 'nullable|string|max:8',
-        'bodega' => 'nullable',
-        'ubicacion' => 'nullable',
         'stock_minimo' => 'nullable|numeric|min:0|max:9999',
         'descripcion' => 'nullable|string|max:250',
         'foto' => 'nullable|file|mimes:jpeg,png|max:3000',
@@ -174,8 +189,6 @@ class InventarioV2Controller extends Controller
 
       $inventario->fill($request->only('nombre', 'tipo_codigo', 'codigo', 'stock_minimo', 'descripcion'));
       $inventario->unidad_id = $request->unidad;
-      $inventario->bodega_id = $request->bodega;
-      $inventario->ubicacion_id = $request->ubicacion;
 
       if($inventario->save()){
         if($request->hasFile('foto')){
@@ -194,6 +207,8 @@ class InventarioV2Controller extends Controller
         }
 
         $inventario->categorias()->sync($request->categorias ?? []);
+        $inventario->bodegas()->sync(array_unique($request->bodegas ?? []));
+        $inventario->ubicaciones()->sync(array_unique($request->ubicaciones ?? []));
 
         return redirect()->route('admin.inventario.v2.show', ['inventario' => $inventario->id])->with([
           'flash_message' => 'Inventario modificado exitosamente.',

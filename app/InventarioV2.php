@@ -27,8 +27,6 @@ class InventarioV2 extends Model
     protected $fillable = [
       'empresa_id',
       'unidad_id',
-      'bodega_id',
-      'ubicacion_id',
       'nombre',
       'descripcion',
       'tipo_codigo',
@@ -59,8 +57,6 @@ class InventarioV2 extends Model
      */
     public static $attributesTitle = [
       'unidad.nombre' => 'Unidad',
-      'bodega.nombre' => 'Bodega',
-      'ubicacion.nombre' => 'Ubicacion',
       'tipo_codigo' => 'Tipo de código',
     ];
 
@@ -138,19 +134,19 @@ class InventarioV2 extends Model
     }
 
     /**
-     * Obtener la Bodega
+     * Obtener la Bodegas
      */
-    public function bodega()
+    public function bodegas()
     {
-      return $this->belongsTo('App\Bodega');
+      return $this->belongsToMany('App\Bodega', 'inventarios_bodegas', 'inventario_id', 'bodega_id');
     }
 
     /**
      * Obtener la Ubicacion
      */
-    public function ubicacion()
+    public function ubicaciones()
     {
-      return $this->belongsTo('App\Ubicacion');
+      return $this->belongsToMany('App\Ubicacion', 'inventarios_ubicaciones', 'inventario_id', 'ubicacion_id');
     }
 
     /**
@@ -232,13 +228,9 @@ class InventarioV2 extends Model
       ->logExcept([
         'empresa_id',
         'unidad_id',
-        'bodega_id',
-        'ubicacion_id',
       ])
       ->logAditionalAttributes([
         'unidad.nombre',
-        'bodega.nombre',
-        'ubicacion.nombre',
       ]);
     }
 }
