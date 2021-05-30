@@ -401,7 +401,6 @@
             @permission('transporte-index')
               <li><a class="nav-link{{ !Auth::user()->hasPermission('empleado-index') ? ' active' : '' }}" href="#tab-22" data-toggle="tab"><i class="fa fa-car"></i> Transportes</a></li>
             @endpermission
-            <li><a class="nav-link{{ !Auth::user()->hasPermission('empleado-index|transporte-index') ? ' active' : '' }}" href="#tab-23" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventarios</a></li>
             @permission('inventario-egreso-index')
               <li><a class="nav-link" href="#tab-24" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos (Inventarios V2)</a></li>
             @endpermission
@@ -498,44 +497,6 @@
               </div>
             </div><!-- #tab-2 -->
           @endpermission
-          <div class="tab-pane{{ !Auth::user()->hasPermission('empleado-index|transporte-index') ? ' active' : '' }}" id="tab-23">
-            <div class="panel-body">
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Nombre</th>
-                    <th class="text-center">Realizado por</th>
-                    <th class="text-center">Entregado a</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Recibido</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($contrato->entregas()->get() as $entrega)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>
-                        @permission('inventario-view')
-                          <a href="{{ route('admin.inventario.show', ['inventario' => $entrega->inventario->id]) }}">
-                            {{ $entrega->inventario->nombre }}
-                          </a>
-                        @else
-                          {{ $entrega->inventario->nombre }}
-                        @endpermission
-                      </td>
-                      <td>{{ $entrega->realizadoPor->nombres }} {{ $entrega->realizadoPor->apellidos }}</td>
-                      <td>{{ $entrega->nombres }} {{ $entrega->apellidos }}</td>
-                      <td>{{ $entrega->cantidad() }}</td>
-                      <td>{{ $entrega->created_at }}</td>
-                      <td>{!! $entrega->recibido() !!}</td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div><!-- #tab-3 -->
           @permission('inventario-egreso-index')
             <div id="tab-24" class="tab-pane">
               <div class="panel-body">

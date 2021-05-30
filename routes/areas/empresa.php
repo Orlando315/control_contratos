@@ -186,9 +186,6 @@ Route::delete('transporte/contrato/{contrato}', 'TransportesController@destroyCo
 /* --- Transportes - Supervisores --- */
 Route::delete('transporte/supervisor/{transporte}/{supervisor}', 'TransportesController@destroySupervisor')->name('transporte.supervisor.destroy');
 
-/* --- Inventarios --- */
-Route::patch('inventario/clone/{inventario}', 'InventariosController@clone')->name('inventario.clone');
-
 /* --- Clientes --- */
 Route::get('cliente/create/{type}', 'ClienteController@create')->name('cliente.create');
 Route::post('cliente/store/{type}', 'ClienteController@store')->name('cliente.store');
@@ -279,8 +276,6 @@ Route::resource('compra/facturacion', 'OrdenCompraFacturacionController')
       ->only(['destroy']);
 
 /* --- Reportes --- */
-Route::get('reporte/inventarios', 'ReportesController@inventariosIndex')->name('reporte.inventario.index');
-Route::post('reporte/inventarios', 'ReportesController@inventariosGet')->name('reporte.inventario.get');
 Route::get('reporte/facturas', 'ReportesController@facturasIndex')->name('reporte.factura.index');
 Route::post('reporte/facturas', 'ReportesController@facturasGet')->name('reporte.factura.get');
 Route::get('reporte/eventos', 'ReportesController@eventosIndex')->name('reporte.evento.index');
@@ -407,12 +402,3 @@ Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')
   'create',
   'store'
 ]);
-
-/* --- Inventario ---*/
-Route::resource('inventario', 'InventariosController');
-Route::get('inventario/download/{inventario}', 'InventariosController@download')->name('inventario.download');
-
-/* --- Inventario - Entregas ---*/
-Route::get('entrega/{inventario}', 'InventariosEntregasController@create')->name('entrega.create');
-Route::post('entrega/{inventario}', 'InventariosEntregasController@store')->name('entrega.store');
-Route::delete('entrega/{entrega}', 'InventariosEntregasController@destroy')->name('entrega.destroy');

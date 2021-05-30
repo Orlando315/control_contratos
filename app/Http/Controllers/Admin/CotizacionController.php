@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\{Cotizacion, Cliente, Inventario, Direccion, Contacto};
+use App\{Cotizacion, Cliente, InventarioV2, Direccion, Contacto};
 
 class CotizacionController extends Controller
 {
@@ -34,7 +34,7 @@ class CotizacionController extends Controller
       $this->authorize('create', Cotizacion::class);
 
       $clientes = Cliente::all();
-      $inventarios = Inventario::all();
+      $inventarios = InventarioV2::all();
       $selectedCliente = $cliente;
 
       return view('admin.cotizacion.create', compact('clientes', 'inventarios', 'selectedCliente'));
@@ -142,7 +142,7 @@ class CotizacionController extends Controller
 
       $cotizacion->load('productos');
       $clientes = Cliente::all();
-      $inventarios = Inventario::all();
+      $inventarios = InventarioV2::all();
 
       return view('admin.cotizacion.edit', compact('cotizacion', 'clientes', 'inventarios'));
     }

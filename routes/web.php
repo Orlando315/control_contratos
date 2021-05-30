@@ -67,9 +67,6 @@ Route::group(['middleware' => 'auth'], function () {
   Route::resource('anticipo', 'AnticiposController')
         ->only(['create', 'store']);
 
-  /* --- Entregas ---*/
-  Route::get('entrega/{entrega}/download', 'InventariosEntregasController@download')->name('entrega.download');
-
   /* --- Solicitudes --- */
   Route::resource('solicitud', 'SolicitudController');
   Route::get('solicitud/{solicitud}/download', 'SolicitudController@download')->name('solicitud.download');

@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin\Development;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Hash, Auth};
-use App\{User, Role, Empresa, PlantillaVariable, Transporte, InventarioV2};
+use Illuminate\Support\Facades\{Hash, Auth, Storage};
+use App\{User, Role, Empresa, PlantillaVariable, Transporte, InventarioV2, Documento, Carpeta};
+use App\Integrations\Logger\ActivityLogStatus;
 
 class FixController extends Controller
 {
@@ -216,7 +217,6 @@ class FixController extends Controller
       ]);
     }
 
-
     /**
      * Migrar informacion de Bodega y Ubicacion de InventarioV2 a la nueva relacion belongsToMany
      * 
@@ -246,6 +246,57 @@ class FixController extends Controller
 
       return response()->json([
         'transportes' => $transportes->count(),
+      ]);
+    }
+
+    /**
+     * Eliminar todos los registros de InventarioV1 y sus Entregas y archivos
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function fixRemoveInventarioV1()
+    {
+      // Desactivar Logs
+      $logStatus = app(ActivityLogStatus::class);
+      $logStatus->disable();
+      $deletedInventarios = false;
+      $deletedFolders = false;
+      $deletedDocuments = false;
+      $deletedDirectories = false;
+      $empresasCount = false;
+
+      try {
+        // Eliminar Documentos y Carpetas
+        $deletedDocuments = Documento::withoutGlobalScopes()->byType('App\Inventario')->delete();
+        $deletedFolders = Carpeta::withoutGlobalScopes()->byType('App\Inventario')->delete();
+
+        // Eliminar Inventario y sus entregas. Las Entrega estan relacionadas en la BD con on delete cascade.
+        if(class_exists('\App\Inventario')){
+          $deletedInventarios = \App\inventario::withoutGlobalScopes()->delete();
+
+          // Eliminar directorio de Inventario y Entregas
+          $empresas = Empresa::all();
+          $empresasCount = $empresas->count();
+          $deletedDirectories = 0;
+
+          foreach($empresas as $empresa){
+            $directory = $empresa->directory.'/Inventarios';
+
+            if(Storage::exists($directory)){
+              Storage::deleteDirectory($directory);
+              $deletedDirectories++;
+            }
+          }
+        }
+      } catch (\Exception $e) {
+      }
+
+      return response()->json([
+        'inventarios' => $deletedInventarios,
+        'folders' => $deletedFolders,
+        'documents' => $deletedDocuments,
+        'directories' => $deletedDirectories,
+        'empresas' => $empresasCount,
       ]);
     }
 }

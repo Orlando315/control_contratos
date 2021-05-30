@@ -82,7 +82,7 @@ class CotizacionProducto extends Model
      */
     public function inventario()
     {
-      return $this->belongsTo('App\Inventario');
+      return $this->belongsTo('App\InventarioV2');
     }
 
     /**

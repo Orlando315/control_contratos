@@ -22,8 +22,6 @@ class AuthServiceProvider extends ServiceProvider
       'App\Etiqueta' => 'App\Policies\Admin\EtiquetaPolicy',
       'App\Factura' => 'App\Policies\Admin\FacturaPolicy',
       'App\Gasto' => 'App\Policies\Admin\GastoPolicy',
-      'App\Inventario' => 'App\Policies\Admin\InventarioPolicy',
-      'App\InventarioEntrega' => 'App\Policies\Admin\InventarioEntregaPolicy',
       'App\Transporte' => 'App\Policies\Admin\TransportePolicy',
       'App\TransporteConsumo' => 'App\Policies\Admin\TransporteConsumoPolicy',
       'App\Plantilla' => 'App\Policies\Admin\PlantillaPolicy',

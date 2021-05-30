@@ -143,15 +143,6 @@
           </a>
         </li>
       @endpermission
-      @permission('inventario-index')
-        <li>
-          <a href="{{ route('admin.inventario.index') }}">
-            <i class="fa fa-cubes"></i>
-            <span class="nav-label">Inventario</span>
-            <span class="label label-danger float-right"><i class="fa fa-ban m-0" aria-hidden="false"></i></span>
-          </a>
-        </li>
-      @endpermission
       @permission('inventario-v2-index')
         <li>
           <a href="{{ route('admin.inventario.v2.index') }}">
@@ -201,7 +192,6 @@
           </a>
           <ul class="nav nav-second-level">
             <li><a href="{{ route('admin.reporte.general.index') }}">General</a></li>
-            <li><a href="{{ route('admin.reporte.inventario.index') }}">Inventarios</a></li>
             <li><a href="{{ route('admin.reporte.factura.index') }}">Facturas</a></li>
             <li><a href="{{ route('admin.reporte.evento.index') }}">Eventos</a></li>
             <li><a href="{{ route('admin.reporte.sueldo.index') }}">Sueldos</a></li>

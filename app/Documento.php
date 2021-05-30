@@ -214,10 +214,6 @@ class Documento extends Model
           $route = 'admin.transporte.show';
         }
 
-        if($this->documentable_type == 'App\Inventario'){
-          $route = 'admin.inventario.show';
-        }
-
         $varName = Carpeta::getRouteVarNameByType($this->type());
         $id = $this->documentable_id;
       }
@@ -442,10 +438,6 @@ class Documento extends Model
 
         case 'App\Transporte':
           return 'transporte-view';
-          break;
-
-        case 'App\Inventario':
-          return 'inventario-view';
           break;
       }
     }

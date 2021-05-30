@@ -216,17 +216,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener las Entregas de Inventario
-     */
-    public function entregasPendientes()
-    {
-      return $this->hasMany('App\InventarioEntrega', 'entregado')
-                  ->select(['id', 'inventario_id', 'cantidad', 'created_at'])
-                  ->where('recibido', 0)
-                  ->with('inventario:id,nombre');
-    }
-
-    /**
      * Obtener los Sueldos
      *
      * @param  bool  $pendiente

@@ -59,7 +59,7 @@
         </div>
       @endpermission
 
-      @permission('inventario-index')
+      @permission('inventario-v2-index')
         <div class="ibox mb-3">
           <div class="ibox-content p-0">
             <div class="widget style1">

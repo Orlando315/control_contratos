@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\{Inventario, Factura, Contrato};
+use App\{Factura, Contrato};
 use Carbon\Carbon;
 
 class ReportesController extends Controller
@@ -18,36 +18,6 @@ class ReportesController extends Controller
     public function __construct()
     {
       $this->middleware('permission:reporte-view');
-    }
-
-    /**
-     * Formulario de consulta.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function inventariosIndex(){
-      return view('admin.reportes.inventarios');
-    }
-
-    /**
-     * Obtener la informacion con los parametros especificados.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function inventariosGet(Request $request)
-    {
-      $inicio = new Carbon($request->inicio);
-      $fin    = new Carbon($request->fin);
-      $inventarios = Inventario::select('tipo', 'nombre', 'valor', 'fecha', 'cantidad', 'created_at')
-                                ->whereBetween('fecha', [$inicio->toDateString(), $fin->toDateString()])->get();
-
-      foreach ($inventarios as $i => $inventario) {
-        $inventario->tipo = $inventario->tipo();
-        $inventarios[$i] = $inventario;
-      }
-
-      return $inventarios;
     }
 
     /**

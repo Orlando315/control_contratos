@@ -96,6 +96,15 @@
                   </a>
                 </td>
               </tr>
+              <tr>
+                <td>8</td>
+                <td>Eliminar todos los registros de Inventario V1 y sus Entregas</td>
+                <td class="text-center">
+                  <a class="btn btn-xs btn-primary" href="{{ route('admin.development.fix.route', ['fix' => 'remove.inventario.v1']) }}" target="_blank">
+                    <i class="fa fa-play" aria-hidden="false"></i>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

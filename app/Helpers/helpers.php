@@ -1,8 +1,8 @@
 <?php
 
 use App\Integrations\Sii\FacturacionSii;
-use App\Integrations\ActivityLogger;
-use App\Integrations\ActivityLogStatus;
+use App\Integrations\Logger\ActivityLogger;
+use App\Integrations\Logger\ActivityLogStatus;
 use Illuminate\Support\Facades\Route;
 
 if (! function_exists('sii')) {
@@ -22,7 +22,7 @@ if (! function_exists('activityLog')) {
      * Obtener instancia para crear un Log
      * 
      * @param  string|null $logName
-     * @return \App\Integrations\ActivityLogger
+     * @return \App\Integrations\Logger\ActivityLogger
      */
     function activityLog($logName = null): ActivityLogger
     {

@@ -99,6 +99,18 @@ class Carpeta extends Model
     }
 
     /**
+     * Incluir solo las Carpetas del tipo especificado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByType($query, $type)
+    {
+      return $query->where('carpetable_type', $type);
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -237,9 +249,6 @@ class Carpeta extends Model
         case 'transportes':
           return 'App\Transporte';
           break;
-        case 'inventarios':
-          return 'App\Inventario';
-          break;
         default:
           abort(404);
         break;
@@ -266,9 +275,6 @@ class Carpeta extends Model
           break;
         case 'App\Transporte':
           return 'transportes';
-          break;
-        case 'App\Inventario':
-          return 'inventarios';
           break;
       }
     }
