@@ -69,7 +69,7 @@ class Ubicacion extends Model
      */
     public function inventariosV2()
     {
-      return $this->hasMany('App\InventarioV2');
+      return $this->belongsToMany('App\InventarioV2', 'inventarios_ubicaciones', 'ubicacion_id', 'inventario_id');
     }
 
     /**

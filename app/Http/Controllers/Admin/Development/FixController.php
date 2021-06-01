@@ -245,7 +245,7 @@ class FixController extends Controller
       }
 
       return response()->json([
-        'transportes' => $transportes->count(),
+        'inventarios' => $inventarios->count(),
       ]);
     }
 

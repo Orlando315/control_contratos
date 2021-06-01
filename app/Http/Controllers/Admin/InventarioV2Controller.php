@@ -22,8 +22,8 @@ class InventarioV2Controller extends Controller
       $this->authorize('viewAny', InventarioV2::class);
 
       $inventarios = InventarioV2::with([
-        'bodega',
-        'ubicacion',
+        'bodegas',
+        'ubicaciones',
       ])->get();
       $unidades = Unidad::withCount('inventariosV2')->get();
       $bodegas = Bodega::withCount([
@@ -88,7 +88,7 @@ class InventarioV2Controller extends Controller
           $inventario->categorias()->attach($request->categorias);
         }
 
-        if($request->has('bodegas')){
+        if(!empty(array_filter($request->bodegas))){
           $inventario->bodegas()->attach(array_unique($request->bodegas));
         }
 

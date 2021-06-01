@@ -64,7 +64,9 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheet
       $inventario = InventarioV2::create($data);
       $inventario->categorias()->attach($categorias);
       $inventario->bodegas()->attach($bodega ? [$bodega->id] : []);
-      $inventario->ubicaciones()->attach($ubicacion ? [$ubicacion->id] : []);
+      if($bodega && $ubicacion){
+        $inventario->ubicaciones()->attach([$ubicacion->id]);
+      }
     }
 
     /**
