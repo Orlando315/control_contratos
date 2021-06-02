@@ -393,6 +393,8 @@ Route::resource('inventario/v2/ingreso', 'InventarioV2IngresoController')
 ]);
 
 /* --- Inventario V2 - Egresos de Stock ---*/
+Route::get('inventario/v2/egreso/reporte', 'InventarioV2EgresoController@reporte')->name('inventario.egreso.reporte');
+Route::post('inventario/v2/egreso/reporte', 'InventarioV2EgresoController@searchInventario');
 Route::get('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@create')->name('inventario.egreso.create');
 Route::post('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@store')->name('inventario.egreso.store');
 Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')

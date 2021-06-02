@@ -27,6 +27,16 @@
         </div>
       </div>
     </div>
+    <div class="col-6 col-md-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Reporte de Egresos</h5>
+        </div>
+        <div class="ibox-content">
+          <h2><i class="fa fa-clipboard"></i> <a class="text-dark" href="{{ route('admin.inventario.egreso.reporte') }}" style="font-size: 80%;color:rgb(103, 106, 108);">Ver reporte</a></small></h2>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="row mb-3">

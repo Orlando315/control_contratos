@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Storage};
-use App\{InventarioV2Egreso, InventarioV2, Cliente, Contrato, Faena, CentroCosto};
+use App\{InventarioV2Egreso, InventarioV2, Cliente, Contrato, Faena, CentroCosto, User};
+use Carbon\Carbon;
 
 class InventarioV2EgresoController extends Controller
 {
@@ -225,5 +226,51 @@ class InventarioV2EgresoController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Reporte de Egresos de Inventario
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function reporte()
+    {
+      $users = Auth::user()->empresa->users;
+      $inventarios = InventarioV2::all();
+
+      return view('admin.inventarioV2.reporte.egreso', compact('users', 'inventarios'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function searchInventario(Request $request)
+    {
+      $inventarios = InventarioV2Egreso::with(['inventario', 'user'])
+      ->whereNotNull('user_id')
+      ->when($request->user, function ($query, $user) {
+        return $query->where('user_id', $user);
+      })
+      ->when($request->inventario, function ($query, $inventario) {
+        return $query->where('inventario_id', $inventario);
+      })
+      ->when($request->from, function ($query, $from) {
+        try{
+          return $query->where('created_at', '>=', (new Carbon($from))->startOfDay());
+        }catch(\Exception $e){
+        }
+      })
+      ->when($request->to, function ($query, $to) {
+        try{
+          return $query->where('created_at', '<=', (new Carbon($to))->endOfDay());
+        }catch(\Exception $e){
+        }
+      })
+      ->get()
+      ->toArray();
+
+      return response()->json($inventarios);
     }
 }
