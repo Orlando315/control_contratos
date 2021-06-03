@@ -67,6 +67,7 @@ class InventarioV2Egreso extends Model
      * @var array
      */
     public static $attributesTitle = [
+      'emitidoPor.nombreCompleto' => 'Emitido por',
       'inventario.nombre' => 'Inventario',
       'user.nombreCompleto' => 'Usuario',
       'cliente.nombre' => 'Cliente',
@@ -125,6 +126,14 @@ class InventarioV2Egreso extends Model
     public function empresa()
     {
       return $this->belongsTo('App\Empresa');
+    }
+
+    /**
+     * Obtener el User que emitio el Egreso
+     */
+    public function emitidoPor()
+    {
+      return $this->belongsTo('App\User', 'emisor');
     }
 
     /**
@@ -289,6 +298,7 @@ class InventarioV2Egreso extends Model
         'centro_costo_id',
       ])
       ->logAditionalAttributes([
+        'emitidoPor.nombreCompleto',
         'inventario.nombre',
         'user.nombreCompleto',
         'cliente.nombre',

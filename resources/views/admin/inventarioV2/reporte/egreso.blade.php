@@ -40,6 +40,17 @@
       <div class="row justify-content-center mb-3 no-print">
         <div class="col-md-3">
           <div class="form-group">
+            <label for="emisor">Emitido por:</label>
+            <select id="emisor" class="form-control" name="emisor">
+              <option value="">Seleccione...</option>
+              @foreach($users as $user)
+                <option value="{{ $user->id }}">{{ $user->nombre() }}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
             <label for="user">Usuario:</label>
             <select id="user" class="form-control" name="user">
               <option value="">Seleccione...</option>
@@ -100,6 +111,7 @@
             <thead>
               <tr class="text-center">
                 <th>#</th>
+                <th>Emitido por</th>
                 <th>Inventario</th>
                 <th>Dirigido a</th>
                 <th>Cantidad</th>
@@ -108,6 +120,7 @@
             </thead>
             <tbody id="tbody">
               <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -140,7 +153,7 @@
         keyboardNavigation: false
       });
 
-      $('#user, #inventario').select2({
+      $('#emisor, #user, #inventario').select2({
         theme: 'bootstrap4',
         placeholder: 'Seleccione...',
         allowClear: true,
@@ -173,6 +186,7 @@
             let tr = $('<tr></tr>');
 
             tr.append(`<td class="text-center">${i+1}</td>`);
+            tr.append(`<td>${egreso.emiditoPor ? egreso.emitidoPor.nombres : ''} ${egreso.emitidoPor ? egreso.emitidoPor.apellidos : ''}</td>`);
             tr.append(`<td>${egreso.inventario.nombre}</td>`);
             tr.append(`<td>${egreso.user.nombres} ${egreso.user.apellidos}</td>`);
             tr.append(`<td class="text-center">${egreso.cantidad}</td>`);
@@ -181,7 +195,7 @@
             $('#tbody').append(tr);
           });
         }else{
-          $('#tbody').append('<tr><td colspan="5" class="text-center text-muted">No se encontraron resultados</td></tr>');
+          $('#tbody').append('<tr><td colspan="6" class="text-center text-muted">No se encontraron resultados</td></tr>');
         }
       })
       .fail(function(){

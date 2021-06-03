@@ -69,6 +69,7 @@ class InventarioV2EgresoController extends Controller
       $egreso->contrato_id = $request->contrato;
       $egreso->faena_id = $request->faena;
       $egreso->centro_costo_id = $request->centro_costo;
+      $egreso->emisor = Auth::id();
 
       if($inventario->egresos()->save($egreso)){
         if($request->hasFile('foto')){
@@ -106,6 +107,7 @@ class InventarioV2EgresoController extends Controller
       $this->authorize('view', $egreso);
 
       $egreso->load([
+        'emitidoPor',
         'inventario',
         'user',
         'cliente',
@@ -248,8 +250,11 @@ class InventarioV2EgresoController extends Controller
      */
     public function searchInventario(Request $request)
     {
-      $inventarios = InventarioV2Egreso::with(['inventario', 'user'])
+      $inventarios = InventarioV2Egreso::with(['emitidoPor', 'inventario', 'user'])
       ->whereNotNull('user_id')
+      ->when($request->emisor, function ($query, $emisor) {
+        return $query->where('emisor', $emisor);
+      })
       ->when($request->user, function ($query, $user) {
         return $query->where('user_id', $user);
       })
