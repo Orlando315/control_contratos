@@ -28,6 +28,7 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
 
   // Facturación Sii
   Route::post('empresa/configuracion/sii/account/login', 'ConfiguracionController@siiLogin')->name('empresa.configuracion.sii.account.login');
+  Route::post('empresa/configuracion/sii/account/1click', 'ConfiguracionController@sii1Click')->name('empresa.configuracion.sii.account.1click');
   Route::post('empresa/configuracion/sii/account/create', 'ConfiguracionController@siiAccount')->name('empresa.configuracion.sii.account.store');
   Route::get('empresa/configuracion/sii/account/edit', 'ConfiguracionController@editSiiAccount')->name('empresa.configuracion.sii.account.edit');
   Route::patch('empresa/configuracion/sii/account/edit', 'ConfiguracionController@updateSiiAccount')->name('empresa.configuracion.sii.account.update');

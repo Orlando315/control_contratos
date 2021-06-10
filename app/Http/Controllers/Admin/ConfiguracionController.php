@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Log};
 use App\{User, Contrato};
+use Illuminate\Support\Str;
 
 class ConfiguracionController extends Controller
 {
@@ -167,6 +168,57 @@ class ConfiguracionController extends Controller
         'flash_message'   => 'Ha ocurrido un error.',
         'flash_important' => true
       ]);
+    }
+
+    /**
+     * Crear usuario en Facturacion Sii generando el username y password
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function sii1Click()
+    {
+      $this->authorize('createSsiAccount', Auth::user()->empresa->configuracion);
+
+      if(!Auth::user()->empresa->email){
+        return redirect()->back()->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => 'Necesita registrar un email en su perfil de Empresa.',
+          'flash_important' => true
+        ]);
+      }
+
+      $email = Auth::user()->empresa->email;
+      $username = preg_replace('/[^a-zA-Z0-9]+/', '', Str::before($email, '@')).random_int(9, 99);
+      $password = Str::random(15);
+
+      try{
+        $data = sii(null, false)->registerUser($username, $email, $password);
+
+        $configuracion = Auth::user()->empresa->configuracion;
+        $configuracion->sii_account = $data;
+        $configuracion->save();
+
+        activityLog()
+        ->event('created')
+        ->on($configuracion)
+        ->by(Auth::user())
+        ->withProperties(collect($data)->except('password'))
+        ->log('Cuenta creada en Facturación Sii.');
+
+        return redirect()->route('admin.empresa.configuracion')->with([
+          'flash_class'     => 'alert-success',
+          'flash_message'   => '¡Usuario creado exitosamente en Facturación Sii!',
+          'flash_important' => true
+        ]);
+      }catch(\Exception $e){
+        Log::error($e->getMessage(), [$e->getCode(), $e->getFile(), $e->getLine()]);
+
+        return redirect()->back()->withInput()->with([
+          'flash_class'     => 'alert-danger',
+          'flash_message'   => $e->getMessage(),
+          'flash_important' => true
+        ]);
+      }
     }
 
     /**

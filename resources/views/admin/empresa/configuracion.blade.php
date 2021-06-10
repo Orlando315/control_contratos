@@ -283,15 +283,39 @@
               Primero debemos crear una cuenta de Usuario.
             </h2>
             <div id="btn-sii-presentantion" class="text-center">
-              <button class="btn btn-primary btn-sii-toggle" data-type="register">Registrarse</button>
+              <button class="btn btn-primary btn-sii-toggle" data-type="1click">Integra en 1 click</button>
+              <br>
+              ó
+              <br>
+              <button class="btn btn-primary btn-outline btn-sii-toggle" data-type="register">Registrarse</button>
               <button class="btn btn-primary btn-outline btn-sii-toggle" data-type="login">Iniciar sesión</button>
             </div>
+
+            <form id="sii-1click" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.account.1click') }}" method="POST" style="display:none">
+              @csrf
+
+              <fieldset>
+                <legend class="form-legend">Integración automática en 1 click</legend>
+                <h3 class="text-center mb-4">La cuenta será configurada automáticamente generando un usuaraio y contraseña.</h3>
+              </fieldset>
+
+              <div class="alert alert-danger alert-important sii-error-register" style="display: none">
+                <ul class="m-0">
+                </ul>
+              </div>
+
+              <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Integrar automáticamente</button>
+              <div class="text-center">
+                <p class="mb-0">¿Ya posees una cuenta?</p>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="login" type="button" role="button">Iniciar sesión</button>
+              </div>
+            </form>
 
             <form id="sii-login" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.account.login') }}" method="POST" style="display:none">
               @csrf
 
               <fieldset>
-                <legend class="form-legend">Datos de su cuenta</legend>
+                <legend class="form-legend">Login</legend>
 
                 <div class="row">
                   <div class="col-md-6">
@@ -306,6 +330,7 @@
                       <input id="sii_password" class="form-control" type="password" name="password" minlength="6" placeholder="Contraseña" required>
                     </div>
                   </div>
+                </div>
               </fieldset>
 
               <div class="alert alert-danger alert-important sii-error-register" style="display: none">
@@ -316,7 +341,8 @@
               <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Enlazar cuenta Sii</button>
               <div class="text-center">
                 <p class="mb-0">¿No posees una cuenta?</p>
-                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="register">Registrarse</button>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="register" type="button" role="button">Registrarse</button>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="1click" type="button" role="button">Integra en 1 click</button>
               </div>
             </form>
 
@@ -324,7 +350,7 @@
               @csrf
 
               <fieldset>
-                <legend class="form-legend">Datos del Usuario</legend>
+                <legend class="form-legend">Registro</legend>
 
                 <div class="row">
                   <div class="col-md-6">
@@ -365,7 +391,7 @@
               <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Crear cuenta</button>
               <div class="text-center">
                 <p class="mb-0">¿Ya posees una cuenta?</p>
-                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="login">Iniciar sesión</button>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="login" type="button" role="button">Iniciar sesión</button>
               </div>
             </form>
           @endif
@@ -590,10 +616,11 @@
 
       @if($configuracion->doesntHaveSiiAccount())
         $('.btn-sii-toggle').click(function (){
-          let isRegister = $(this).data('type') == 'register';
+          let type = $(this).data('type');
 
-          $('#sii-register').toggle(isRegister);
-          $('#sii-login').toggle(!isRegister);
+          $('#sii-1click').toggle(type == '1click');
+          $('#sii-register').toggle(type == 'register');
+          $('#sii-login').toggle(type == 'login');
           $('#btn-sii-presentantion').hide();
         });
 

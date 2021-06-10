@@ -161,7 +161,7 @@ class ConfiguracionEmpresa extends Model
      */
     public function hasSiiRepresentante()
     {
-      $valuesAsArray = (array) collect($this->sii_representante)->except('vencimiento_certificado');
+      $valuesAsArray = (array) collect($this->sii_representante)->except('vencimiento_certificado')->toArray();
 
       return !in_array(null, $valuesAsArray, true);
     }
