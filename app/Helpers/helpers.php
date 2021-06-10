@@ -1,6 +1,7 @@
 <?php
 
 use App\Integrations\Sii\FacturacionSii;
+use App\Integrations\Sii\FacturacionSiiAccount;
 use App\Integrations\Logger\ActivityLogger;
 use App\Integrations\Logger\ActivityLogStatus;
 use Illuminate\Support\Facades\Route;
@@ -11,9 +12,19 @@ if (! function_exists('sii')) {
      *
      * @return \App\Integrations\Sii\FacturacionSii
      */
-    function sii()
+    function sii($empresa = null, $setToken = true)
     {
-      return app(FacturacionSii::class);
+      $empresa = (is_null($empresa) && Auth::user()->empresa->configuracion->hasSiiAccount()) ? Auth::user()->empresa : null;
+      $account = app(FacturacionSiiAccount::class)->setEmpresaAccount($empresa);
+
+      $facturacionSii = app(FacturacionSii::class)
+      ->useAccount($account);
+
+      if($setToken){
+        $facturacionSii->setToken();
+      }
+
+      return $facturacionSii;
     }
 }
 

@@ -37,7 +37,7 @@
         <div class="ibox-title">
           <h5>Agregar orden de compra</h5>
         </div>
-        <div class="ibox-content">
+        <div id="compra-container" class="ibox-content">
           <div class="sk-spinner sk-spinner-double-bounce">
             <div class="sk-double-bounce1"></div>
             <div class="sk-double-bounce2"></div>
@@ -461,7 +461,11 @@
 
               <h4 class="modal-title" id="optionModalLabel">Agregar Proveedor</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body ibox-content">
+              <div class="sk-spinner sk-spinner-double-bounce">
+                <div class="sk-double-bounce1"></div>
+                <div class="sk-double-bounce2"></div>
+              </div>
 
               <div class="row justify-content-center">
                 <div class="col-md-4">
@@ -654,7 +658,7 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
-    const IBOX = $('.ibox-content');
+    const IBOX = $('#compra-container');
     const MAX_COUNT = 350;
     const TBODY_PRODUCTOS = $('#tbody-productos');
     const BTN_ADD_PRODUCT = $('#btn-add-product');
@@ -665,7 +669,8 @@
     
     const BTN_ADD_PROVEEDOR = $('.btn-add-proveedor');
     const BTN_CONSULTAR_EMPRESA = $('.btn-consultar');
-    const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'));
+    const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->hasSiiAccount());
+    const IBOX_PROVEEDOR = $('#add-form-proveedor .ibox-content');
 
     $(document).ready(function () {
       $('#proveedor').select2({
@@ -1095,6 +1100,8 @@
     }
 
     function getDataEmpresa(rut, dv){
+      IBOX_PROVEEDOR.toggleClass('sk-loading', true);
+
       $.ajax({
         type: 'POST',
         url: '{{ route("admin.proveedor.busqueda.sii") }}',
@@ -1115,14 +1122,17 @@
         }else{
           BTN_ADD_PROVEEDOR.prop('disabled', true);
           showErrors([response.data], '.form-errors-proveedor');
+          cleanEmpresaFields();
         }
       })
       .fail(function (data) {
         showErrors(['Ha ocurrido un error al consultar la información.'], '.form-errors-proveedor');
         BTN_ADD_PROVEEDOR.prop('disabled', true);
+        cleanEmpresaFields();
       })
       .always(function () {
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);
+        IBOX_PROVEEDOR.toggleClass('sk-loading', false);
       });
     }
 
@@ -1157,6 +1167,13 @@
       .always(function () {
         $('#partida').prop('disabled', false);
       });
+    }
+
+    function cleanEmpresaFields(){
+      $('#empresa-razon_social').val('');
+      $('#empresa-direccion').val('');
+      $('#empresa-comuna').val('');
+      $('#empresa-ciudad').val('');
     }
   </script>
 @endsection

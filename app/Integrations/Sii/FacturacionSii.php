@@ -6,25 +6,86 @@
  */
 namespace App\Integrations\Sii;
 
-use Illuminate\Support\Str;
+use Illuminate\Support\{Str, Arr};
 use Illuminate\Support\Facades\{Auth, Log, Http};
+use Exception;
+use App\Integrations\Sii\FacturacionSiiAccount;
+use App\Integrations\Sii\FacturacionSiiErrors;
 use App\Empresa;
 
 class FacturacionSii
 {
-    private $sandbox = false;
-    private $baseUrl = '';
-    private $identifier;
-    private $password;
-    private $token = null;
+    /**
+     * Url basi para realizar peticiones a la API
+     * 
+     * @var string
+     */
+    private $baseUrl;
 
-    public function __construct()
+    /**
+     * JWT para el realizar peticiones a la API
+     * 
+     * @var string
+     */
+    private $token;
+
+    /**
+     * Perfil de Sii de la cuenta en uso
+     * 
+     * @var array
+     */
+    protected $profile;
+
+    /**
+     * Si se ha logueado en Sii o no
+     * 
+     * @var bool
+     */
+    protected $logged = false;
+
+    /**
+     * Cuenta de Facturacion Sii a usar
+     *
+     * @var \App\Integrations\Sii\FacturacionSiiAccount
+     */
+    protected FacturacionSiiAccount $account;
+
+    /**
+     * [__construct description]
+     * 
+     * @param \App\Integrations\Sii\FacturacionSiiAccount|null $account
+     */
+    public function __construct(FacturacionSiiAccount $account = null)
     {
-      $this->sandbox = config('integraciones.sii.sandbox');
-      $this->baseUrl = $this->sandbox ? config('integraciones.sii.sandbox_url') : config('integraciones.sii.url');
-      $this->identifier = config('integraciones.sii.identifier');
-      $this->password = config('integraciones.sii.password');
-      $this->setApiToken();
+      $this->setBaseUrl();
+
+      if($account){
+        $this->useAccount($account);
+      }
+    }
+
+    /**
+     * Establecer la url base de la API
+     *
+     * @return $this
+     */
+    public function setBaseUrl($baseUrl = null)
+    {
+      $this->baseUrl = $baseUrl ?: config('integraciones.sii.url');
+
+      return $this;
+    }
+
+    /**
+     * Establecer la cuenta a usar para conectarse
+     * 
+     * @param  FacturacionSiiAccount $account
+     */
+    public function useAccount(FacturacionSiiAccount $account)
+    {
+      $this->account = $account;
+
+      return $this;
     }
 
     /**
@@ -52,35 +113,36 @@ class FacturacionSii
      *
      * @return void
      */
-    private function setApiToken()
+    public function setToken()
     {
       $endpoint = $this->buildEndpoint('auth/local');
 
+      $identifier = $this->account->getIdentifier();
+
       $response = Http::post($endpoint, [
-        'identifier'=> $this->identifier,
-        'password'=> $this->password,
+        'identifier'=> $identifier,
+        'password'=> $this->account->getPassword(),
       ]);
 
-      if($response->successful()){
-        $this->token = $response['jwt'];
-      }else{
+      if($response->failed()){
+        $error = Arr::get($response->json(), 'message.0.messages.0.id');
+
         Log::channel('integrations')
-          ->info('Error de autenticación con SII', [
+          ->info('Error de autenticación con Sii', [
             'user' => Auth::id(),
-            'identifier' => $this->identifier,
+            'identifier' => $identifier,
+            'default' => $this->account->isDefault(),
             'response' => $response->json(),
           ]);
-      }
-    }
 
-    /**
-     * Obtener el api-key
-     * 
-     * @return string
-     */
-    private function getApiKey()
-    {
-      return $this->siiApiKey;
+        throw new Exception(FacturacionSiiErrors::getErrorMessage($error));
+      }
+
+      $this->logged = true;
+      $this->profile = $response['user'];
+      $this->token = $response['jwt'];
+
+      return $this;
     }
 
     /**
@@ -97,12 +159,17 @@ class FacturacionSii
      * Construir la url con el endpoint especificado
      * 
      * @param  string  $endpoint
+     * @param  array  $params
      * @return string
      */
-    private function buildEndpoint(string $endpoint)
+    private function buildEndpoint(string $endpoint, array $params = []): string
     {
       $baseUrl = Str::finish($this->baseUrl, '/');
       $endpoint = Str::startsWith($endpoint, '/') ? mb_substr($endpoint, 1) : $endpoint;
+
+      if(Str::contains($endpoint, '?')){
+        $endpoint = Str::replaceArray('?', $params, $endpoint);
+      }
 
       return $baseUrl.$endpoint;
     }
@@ -114,7 +181,7 @@ class FacturacionSii
      * @param  string  $dv
      * @return array
      */
-    public function busquedaReceptor($rut, $dv)
+    public function busquedaReceptor(string $rut, string $dv)
     {
       $endpoint = $this->buildEndpoint('emits/information-receiver-default');
 
@@ -130,169 +197,168 @@ class FacturacionSii
         ]
       ]);
 
-      if($response->successful()){
-        return [true, $response->json()];
+      if($response->failed()){
+        $error = Arr::get($response->json(), 'message');
+
+        Log::channel('integrations')
+          ->error('Error al consular RUT en Sii', [
+            'user' => Auth::id(),
+            'default' => $this->account->isDefault(),
+            'logged' => $this->logged,
+            'rut' => $rut,
+            'dv' => $dv,
+            'response' => $response->json(),
+          ]);
+
+        throw new Exception(FacturacionSiiErrors::getErrorMessage($error));
       }
 
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error al consultar la información de la Empresa'];
+      return $response->json();
     }
 
     /**
-     * Preparar una factura en la Api
+     * [checkLogin description]
      * 
+     * @param  string  $email
+     * @param  string  $password
      * @return array
      */
-    private function cargarFactura()
+    public function checkLogin(string $email, string $password)
     {
-      $endpoint = $this->buildEndpoint('factura/cargar');
+      $account = FacturacionSiiAccount::setCustomCredentials($email, $password);
 
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->get($endpoint);
-
-      if($response->successful() && isset($response['facturaId'])){
-        return [true, $response['facturaId']];
-      }
-
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error con la API'];
+      return $this->useAccount($account)->getProfile();
     }
 
     /**
-     * Agregar el receptor con los datos especificados a una factura
+     * Obtener el perfil del la cuenta en uso
+     */
+    public function getProfile()
+    {
+      if($this->isInactive()){
+        $this->setToken();
+      }
+
+      return $this->profile;
+    }
+
+    /**
+     * Regitrar usuario en la API
+     * 
+     * @param  string  $username
+     * @param  string  $email
+     * @param  string  $password
+     * @return array
+     */
+    public function registerUser(string $username, string $email, string $password)
+    {
+      $endpoint = $this->buildEndpoint('/auth/local/register');
+
+      $data = [
+        'username' => $username,
+        'email' => $email,
+        'password' => $password,
+      ];
+
+      $response = Http::post($endpoint, $data);
+
+      if($response->failed()){
+        $error = Arr::get($response->json(), 'message.0.messages.0.id');
+
+        Log::channel('integrations')
+          ->error('Error al crear user Sii', [
+            'user' => Auth::id(),
+            'default' => $this->account->isDefault(),
+            'data' => $data,
+            'response' => $response->json(),
+          ]);
+
+        throw new Exception(FacturacionSiiErrors::getErrorMessage($error));
+      }
+
+      $data['id'] = $response->json()['user']['id'];
+
+      return $data;
+    }
+
+    /**
+     * Regitrar RUT en la API
      * 
      * @param  string  $rut
-     * @param  string  $dv
+     * @param  string  $password
+     * @param  string  $certificatePassword
      * @return array
      */
-    private function cargarReceptor($rut, $dv)
+    public function registerRut(string $rut, string $password, string $certificatePassword)
     {
-      // Si la factura se carga correctamente
-      // en $data estara el id de la factura
-      [$response, $data] = $this->cargarFactura();
+      $endpoint = $this->buildEndpoint('/ruts');
 
-      if(!$response){
-        return [false, $data];
+      $data = [
+        'rut' => $rut,
+        'password' => $password,
+        'certificatePassword' => $certificatePassword,
+      ];
+
+      $response = Http::withToken($this->getToken())
+      ->post($endpoint, $data);
+
+      if($response->failed()){
+        $error = Arr::get($response->json(), 'message.0.messages.0.id');
+
+        Log::channel('integrations')
+          ->error('Error al registrar RUT en Sii', [
+            'user' => Auth::id(),
+            'default' => $this->account->isDefault(),
+            'rut' => $data,
+            'response' => $response->json(),
+          ]);
+
+        throw new Exception(FacturacionSiiErrors::getErrorMessage($error));
       }
 
-      $endpoint = $this->buildEndpoint('factura/'.$data.'/receptor/'.$rut.'/'.$dv);
+      $data['id'] = $response->json()['id'];
 
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->get($endpoint);
-
-      if($response->successful() && isset($response['receptor'])){
-        return [true, $data];
-      }
-
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error con la API'];
+      return $data;
     }
 
     /**
-     * Agregar el receptor con los datos especificados a una factura
+     * Actualizar RUT de representante en la API
      *
+     * @param  int  $id
      * @param  string  $rut
-     * @param  string  $dv
-     * @param  array  $dataFactura
+     * @param  string  $password
+     * @param  string  $certificatePassword
      * @return array
      */
-    public function facturar($rut, $dv, $dataFactura)
+    public function updateRut(int $id, string $rut, string $password, string $certificatePassword)
     {
-      // Si el receptor se carga a la factura correctamente
-      // en $data estara el id de la factura
-      [$response, $data] = $this->cargarReceptor($rut, $dv);
+      $endpoint = $this->buildEndpoint('/ruts/?', [$id]);
 
-      if(!$response){
-        return [false, $data];
+      $data = [
+        'rut' => $rut,
+        'password' => $password,
+        'certificatePassword' => $certificatePassword,
+      ];
+
+      $response = Http::withToken($this->getToken())
+      ->put($endpoint, $data);
+
+      if($response->failed()){
+        $error = Arr::get($response->json(), 'message.0.messages.0.id');
+
+        Log::channel('integrations')
+          ->error('Error al actualizar RUT en Sii', [
+            'user' => Auth::id(),
+            'default' => $this->account->isDefault(),
+            'rut' => $data,
+            'response' => $response->json(),
+          ]);
+
+        throw new Exception(FacturacionSiiErrors::getErrorMessage($error));
       }
 
-      $endpoint = $this->buildEndpoint('factura/'.$data.'/validar');
-      $dataFactura['firma'] = $this->getFirma();
+      $data['id'] = $response->json()['id'];
 
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->post($endpoint, $dataFactura);
-
-      if($response->successful()){
-        return [true, $data];
-      }
-
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error con la API'];
-    }
-
-    /**
-     * Obtener la "facturas recibidas" en la Api
-     *
-     * @param  int  $page
-     * @return array
-     */
-    public function facturasRecibidas($page = 1)
-    {
-      $endpoint = $this->buildEndpoint('facturas/recibidas/'.$page);
-
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->get($endpoint);
-
-      if($response->successful() && isset($response['recibidas'])){
-        return [true, $response['recibidas']];
-      }
-
-      // devolver error de la api
-      if(!$response->successful() && isset($response['message'])){
-        return [false, $response['message']];
-      }
-
-      return [false, 'Ha ocurrido un error con la API'];
-    }
-
-    /**
-     * Obtener la informacion de una factura por el codigo proporcionado
-     * 
-     * @param  string  $codigo
-     * @return array
-     */
-    public function consultaFactura($codigo)
-    {
-      $endpoint = $this->buildEndpoint('facturas/recibidas/ver/'.$codigo);
-
-      $response = Http::withHeaders([
-        'api-key' => $this->getApiKey(),
-      ])
-      ->withToken($this->getToken())
-      ->get($endpoint);
-
-      if($response->successful() && isset($response['productos'])){
-        return $response->json();
-      }
-
-      return [];
+      return $data;
     }
 }

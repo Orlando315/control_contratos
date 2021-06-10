@@ -13,13 +13,9 @@ return [
     */
 
     'sii' => [
-      'sandbox' => env('SII_SANDBOX', true),
       'url' => env('SII_URL'),
-      'sandbox_url' => env('SII_SANDBOX_URL'),
-      'api_key' => env('SII_API_KEY'),
-      'identifier' => env('SII_IDENTIFIER'),
+      'email' => env('SII_EMAIL'),
       'password' => env('SII_PASSWORD'),
-      'clave' => env('SII_CLAVE'),
+      'provider' => env('SII_PROVIDER'),
     ],
-
 ];

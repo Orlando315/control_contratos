@@ -311,7 +311,7 @@ class Log extends Model
           return ['fa-search', 'label-default'];
           break;
         default:
-          return ['exclamation-triangle', 'label-default'];
+          return ['fa-exclamation-triangle', 'label-default'];
           break;
       }
     }

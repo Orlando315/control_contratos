@@ -22,10 +22,18 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   /* --- Configuracion --- */
   Route::get('empresa/configuracion', 'ConfiguracionController@configuracion')->name('empresa.configuracion');
   Route::patch('empresa/configuracion/general', 'ConfiguracionController@general')->name('empresa.configuracion.general');
-  Route::patch('empresa/configuracion/sii', 'ConfiguracionController@sii')->name('empresa.configuracion.sii');
   Route::patch('empresa/configuracion/terminos', 'ConfiguracionController@terminos')->name('empresa.configuracion.terminos');
   Route::patch('empresa/configuracion/covid19', 'ConfiguracionController@covid19')->name('empresa.configuracion.covid19');
   Route::patch('empresa/configuracion/requerimientos', 'ConfiguracionController@requerimientos')->name('empresa.configuracion.requerimientos');
+
+  // Facturación Sii
+  Route::post('empresa/configuracion/sii/account/login', 'ConfiguracionController@siiLogin')->name('empresa.configuracion.sii.account.login');
+  Route::post('empresa/configuracion/sii/account/create', 'ConfiguracionController@siiAccount')->name('empresa.configuracion.sii.account.store');
+  Route::get('empresa/configuracion/sii/account/edit', 'ConfiguracionController@editSiiAccount')->name('empresa.configuracion.sii.account.edit');
+  Route::patch('empresa/configuracion/sii/account/edit', 'ConfiguracionController@updateSiiAccount')->name('empresa.configuracion.sii.account.update');
+  Route::post('empresa/configuracion/sii/representante/create', 'ConfiguracionController@siiRepresentante')->name('empresa.configuracion.sii.representante.store');
+  Route::get('empresa/configuracion/sii/representante/edit', 'ConfiguracionController@editSiiRepresentante')->name('empresa.configuracion.sii.representante.edit');
+  Route::patch('empresa/configuracion/sii/representante/update', 'ConfiguracionController@updateSiiRepresentante')->name('empresa.configuracion.sii.representante.update');
 });
 
 /* --- Logs --- */

@@ -183,12 +183,12 @@ class ProveedorController extends Controller
         ]);
       }
 
-      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->digito_validador);
-
-      if(!$response){
+      try{
+        $data = sii()->busquedaReceptor($request->rut, $request->digito_validador);
+      }catch(\Exception $e){
         return redirect()->back()->withInput()->with([
           'flash_class'     => 'alert-danger',
-          'flash_message'   => $data,
+          'flash_message'   => 'Ha ocurrido un error al consultar la información',
           'flash_important' => true
         ]);
       }
@@ -393,10 +393,10 @@ class ProveedorController extends Controller
      */
     public function busquedaSii(Request $request)
     {
-      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->dv);
-
-      if(!$response){
-        return response()->json(['response' => false, 'data' => $data]);
+      try{
+        $data = sii()->busquedaReceptor($request->rut, $request->dv);
+      }catch(\Exception $e){
+        return response()->json(['response' => false, 'data' => 'Ha ocurrido un error al consultar la información']);
       }
 
       return response()->json([

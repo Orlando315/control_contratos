@@ -155,7 +155,7 @@ class OrdenCompraFacturacionController extends Controller
     {
       $this->authorize('update', $facturacion->compra);
 
-      if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii')){
+      if(Auth::user()->empresa->configuracion->doesntHaveSiiAccount()){
         return redirect()->back()->withErrors('!Error! Integración incompleta.');
       }
 

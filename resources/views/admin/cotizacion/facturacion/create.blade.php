@@ -156,7 +156,7 @@
 
             <div class="text-right">
               <a class="btn btn-default btn-sm" href="{{ $selectedCotizacion ? route('admin.cotizacion.show', ['cotizacion' => $selectedCotizacion->id]) : route('admin.cotizacion.facturacion.index') }}"><i class="fa fa-reply"></i> Atras</a>
-              <button class="btn btn-primary btn-sm" type="submit"{{ Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii') ? ' disabled' : '' }}><i class="fa fa-send"></i> Guardar</button>
+              <button class="btn btn-primary btn-sm" type="submit"{{ Auth::user()->empresa->configuracion->doesntHaveSiiAccount() ? ' disabled' : '' }}><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
         </div>

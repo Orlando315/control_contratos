@@ -45,6 +45,7 @@ class AuthServiceProvider extends ServiceProvider
       'App\Partida' => 'App\Policies\Admin\PartidaPolicy',
       'App\Postulante' => 'App\Policies\Admin\PostulantePolicy',
       'App\Log' => 'App\Policies\Admin\LogPolicy',
+      'App\ConfiguracionEmpresa' => 'App\Policies\Admin\ConfiguracionEmpresaPolicy',
       'App\Anticipo' => 'App\Policies\AnticipoPolicy',
       'App\Solicitud' => 'App\Policies\SolicitudPolicy',
       'App\Ayuda' => 'App\Policies\AyudaPolicy',
