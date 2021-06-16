@@ -458,7 +458,6 @@
           <li><a class="nav-link active" href="#tab-1" data-toggle="tab"><i class="fa fa-money"></i> Sueldos</a></li>
           <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-level-up"></i> Anticipos</a></li>
           <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-retweet"></i> Reemplazos</a></li>
-          <li><a class="nav-link" href="#tab-4" data-toggle="tab"><i class="fa fa-arrow-right"></i> Entregas de Inventario</a></li>
           @role('developer|superadmin|empresa')
             <li><a class="nav-link" href="#tab-5" data-toggle="tab"><i class="fa fa-heartbeat"></i> Covid-19</a></li>
           @endrole
@@ -546,42 +545,6 @@
                       <td>{{ $reemplazo->inicio }}</td>
                       <td>{!! $reemplazo->nombreReemplazo() !!}</td>
                       <td>{{ $reemplazo->valor() }}</td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="tab-pane" id="tab-4">
-            <div class="panel-body">
-              <table class="table data-table table-bordered table-hover table-sm w-100">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th class="text-center">Nombre</th>
-                    <th class="text-center">Realizado por</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Fecha</th>
-                    <th class="text-center">Recibido</th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  @foreach($empleado->entregas as $entrega)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>
-                        @permission('inventario-view')
-                          <a href="{{ route('admin.inventario.show', ['inventario' => $entrega->inventario_id]) }}">
-                            {{ $entrega->inventario->nombre }}
-                          </a>
-                        @else
-                          {{ $entrega->inventario->nombre }}
-                        @endpermission
-                      </td>
-                      <td>{{ $entrega->realizadoPor->nombre() }}</td>
-                      <td>{{ $entrega->cantidad() }}</td>
-                      <td>{{ $entrega->created_at }}</td>
-                      <td><small>{!! $entrega->recibido() !!}</small></td>
                     </tr>
                   @endforeach
                 </tbody>

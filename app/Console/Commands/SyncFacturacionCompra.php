@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\FacturacionCompra;
-use App\Integrations\FacturacionSii;
 
 class SyncFacturacionCompra extends Command
 {
@@ -42,8 +41,7 @@ class SyncFacturacionCompra extends Command
       $facturaciones = FacturacionCompra::all();
 
       foreach ($facturaciones as $facturacion){
-        $facturacionSii = new FacturacionSii($facturacion->empresa);
-        $factura = $facturacionSii->consultaFactura($facturacion->codigo);
+        $factura = sii()->consultaFactura($facturacion->codigo);
         $facturacion->fill($factura);
         $facturacion->save();
       }

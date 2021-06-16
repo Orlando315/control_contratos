@@ -29,7 +29,7 @@
         <div class="ibox-title">
           <h5>Editar cotización</h5>
         </div>
-        <div class="ibox-content">
+        <div id="cotizacion-container" class="ibox-content">
           <div class="row">
             <div class="col-md-6">
               <div class="form-group{{ $errors->has('cliente') ? ' has-error' : '' }}">
@@ -472,7 +472,11 @@
 
               <h4 class="modal-title" id="optionModalLabel">Agregar Cliente</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body ibox-content">
+              <div class="sk-spinner sk-spinner-double-bounce">
+                <div class="sk-double-bounce1"></div>
+                <div class="sk-double-bounce2"></div>
+              </div>
 
               <div class="row justify-content-center">
                 <div class="col-md-4">
@@ -665,7 +669,7 @@
   <!-- Select2 -->
   <script type="text/javascript" src="{{ asset('js/plugins/select2/select2.full.min.js') }}"></script>
   <script type="text/javascript">
-    const IBOX = $('.ibox-content');
+    const IBOX = $('#cotizacion-container');
     const MAX_COUNT = 350;
     const TBODY_PRODUCTOS = $('#tbody-productos');
     const BTN_ADD_PRODUCT = $('#btn-add-product');
@@ -679,7 +683,8 @@
 
     const BTN_ADD_CLIENTE = $('.btn-add-cliente');
     const BTN_CONSULTAR_EMPRESA = $('.btn-consultar');
-    const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'));
+    const INTEGRATION_COMPLETE = @json(Auth::user()->empresa->configuracion->hasSiiAccount());
+    const IBOX_CLIENTE = $('#add-form-cliente .ibox-content');
 
     $(document).ready(function () {
       $('#cliente').select2({
@@ -1162,6 +1167,8 @@
     }
 
     function getDataEmpresa(rut, dv){
+      IBOX_CLIENTE.toggleClass('sk-loading', true);
+
       $.ajax({
         type: 'POST',
         url: '{{ route("admin.cliente.busqueda.sii") }}',
@@ -1182,15 +1189,25 @@
         }else{
           BTN_ADD_CLIENTE.prop('disabled', true);
           showErrors([response.data], '.form-errors-cliente');
+          cleanEmpresaFields();
         }
       })
       .fail(function (data) {
         showErrors(['Ha ocurrido un error al consultar la información.'], '.form-errors-cliente');
         BTN_ADD_CLIENTE.prop('disabled', true);
+        cleanEmpresaFields();
       })
       .always(function () {
         BTN_CONSULTAR_EMPRESA.prop('disabled', false);
+        IBOX_CLIENTE.toggleClass('sk-loading', false);
       });
+    }
+
+    function cleanEmpresaFields(){
+      $('#empresa-razon_social').val('');
+      $('#empresa-direccion').val('');
+      $('#empresa-comuna').val('');
+      $('#empresa-ciudad').val('');
     }
   </script>
 @endsection

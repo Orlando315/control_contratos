@@ -69,38 +69,6 @@
               </span>
             </li>
             <li class="list-group-item">
-              <b>Bodega</b>
-              <span class="pull-right">
-                @if($inventario->bodega)
-                  @permission('bodega-view')
-                    <a href="{{ route('admin.bodega.show', ['bodega' => $inventario->bodega_id]) }}">
-                      {{ $inventario->bodega->nombre }}
-                    </a>
-                  @else
-                    {{ $inventario->bodega->nombre }}
-                  @endpermission
-                @else
-                  @nullablestring(null)
-                @endif
-              </span>
-            </li>
-            <li class="list-group-item">
-              <b>Ubicación</b>
-              <span class="pull-right">
-                @if($inventario->ubicacion)
-                  @permission('ubicacion-view')
-                    <a href="{{ route('admin.ubicacion.show', ['ubicacion' => $inventario->ubicacion_id]) }}">
-                      {{ $inventario->ubicacion->nombre }}
-                    </a>
-                  @else
-                    {{ $inventario->ubicacion->nombre }}
-                  @endpermission
-                @else
-                  @nullablestring(null)
-                @endif
-              </span>
-            </li>
-            <li class="list-group-item">
               <b>Stock</b>
               <span class="pull-right">
                 {{ $inventario->stock() }}
@@ -148,6 +116,12 @@
             @endpermission
             @permission('inventario-egreso-index')
               <li><a class="nav-link" href="#tab-2" data-toggle="tab"><i class="fa fa-long-arrow-up"></i> Egresos</a></li>
+            @endpermission
+            @permission('bodega-index')
+              <li><a class="nav-link" href="#tab-3" data-toggle="tab"><i class="fa fa-cube"></i> Bodegas</a></li>
+            @endpermission
+            @permission('ubicacion-index')
+              <li><a class="nav-link" href="#tab-4" data-toggle="tab"><i class="fa fa-sitemap"></i> Ubicaciones</a></li>
             @endpermission
           </ul>
           <div class="tab-content">
@@ -302,6 +276,52 @@
                               </div>
                             @endpermission
                           </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
+            @permission('bodega-index')
+              <div id="tab-3" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Nombre</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($inventario->bodegas as $bodega)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $bodega->nombre }}</td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            @endpermission
+            @permission('ubicacion-index')
+              <div id="tab-4" class="tab-pane">
+                <div class="panel-body">
+                  <table class="table data-table table-bordered table-hover table-sm w-100">
+                    <thead>
+                      <tr class="text-center">
+                        <th>#</th>
+                        <th>Bodega</th>
+                        <th>Ubicación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach($inventario->ubicaciones as $ubicacion)
+                        <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $ubicacion->bodega->nombre }}</td>
+                          <td>{{ $ubicacion->nombre }}</td>
                         </tr>
                       @endforeach
                     </tbody>

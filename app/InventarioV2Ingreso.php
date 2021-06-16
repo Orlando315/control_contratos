@@ -53,6 +53,7 @@ class InventarioV2Ingreso extends Model
      * @var array
      */
     public static $attributesTitle = [
+      'emitidoPor.nombreCompleto' => 'Emitido por',
       'inventario.nombre' => 'Inventario',
       'proveedor.nombre' => 'Proveedor',
     ];
@@ -96,6 +97,14 @@ class InventarioV2Ingreso extends Model
     public function empresa()
     {
       return $this->belongsTo('App\Empresa');
+    }
+
+    /**
+     * Obtener el User que emitio el Egreso
+     */
+    public function emitidoPor()
+    {
+      return $this->belongsTo('App\User', 'emisor');
     }
 
     /**
@@ -157,7 +166,7 @@ class InventarioV2Ingreso extends Model
         $this->proveedor->productos()->create([
           'empresa_id' => $this->empresa_id,
           'inventario_id' => $this->inventario_id,
-          'nombre' => $this->inventarios->nombre,
+          'nombre' => $this->inventario->nombre,
           'costo' => $this->costo,
         ]);
       }
@@ -177,6 +186,7 @@ class InventarioV2Ingreso extends Model
         'proveedor_id',
       ])
       ->logAditionalAttributes([
+        'emitidoPor.nombreCompleto',
         'inventario.nombre',
         'proveedor.nombre',
       ]);

@@ -55,6 +55,7 @@ class InventarioV2IngresoController extends Controller
       $ingreso = new InventarioV2Ingreso($request->only('cantidad', 'costo', 'descripcion'));
       $ingreso->empresa_id = Auth::user()->empresa->id;
       $ingreso->proveedor_id = $request->proveedor;
+      $ingreso->emisor = Auth::id();
 
       if($inventario->ingresos()->save($ingreso)){
         if($request->hasFile('foto')){
@@ -93,7 +94,11 @@ class InventarioV2IngresoController extends Controller
     {
       $this->authorize('view', $ingreso);
 
-      $ingreso->load('inventario', 'proveedor');
+      $ingreso->load([
+        'emitidoPor',
+        'inventario',
+        'proveedor'
+      ]);
 
       return view('admin.inventarioV2.ingreso.show', compact('ingreso'));
     }

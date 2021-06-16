@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\{Contrato, Inventario, EmpleadosContrato, Documento, Solicitud};
+use App\{Contrato, InventarioV2, EmpleadosContrato, Documento, Solicitud};
 use App\Scopes\EmpresaScope;
 
 class HomeController extends Controller
@@ -29,7 +29,7 @@ class HomeController extends Controller
      */
     public function dashboard()
     {
-      $inventarios = Inventario::count();
+      $inventarios = InventarioV2::count();
       $contratos = Contrato::count();
       $contratosPorVencer = Contrato::groupedAboutToExpire();
       $empleadosContratosPorVencer = EmpleadosContrato::groupedAboutToExpire();

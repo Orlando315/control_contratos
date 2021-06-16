@@ -216,17 +216,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtener las Entregas de Inventario
-     */
-    public function entregasPendientes()
-    {
-      return $this->hasMany('App\InventarioEntrega', 'entregado')
-                  ->select(['id', 'inventario_id', 'cantidad', 'created_at'])
-                  ->where('recibido', 0)
-                  ->with('inventario:id,nombre');
-    }
-
-    /**
      * Obtener los Sueldos
      *
      * @param  bool  $pendiente
@@ -277,6 +266,22 @@ class User extends Authenticatable
     public function egresos()
     {
       return $this->hasMany('App\InventarioV2Egreso');
+    }
+
+    /**
+     * Obtener las Carpetas (De la seccion Archivos) a las que el User tiene acceso
+     */
+    public function archivoCarpeta()
+    {
+      return $this->belongsToMany('App\Carpeta', 'archivos_users', 'user_id', 'carpeta_id');
+    }
+    
+    /**
+     * Obtener los Documentos (De la seccion Archivos) a los que el User tiene acceso
+     */
+    public function archivoDocumento()
+    {
+      return $this->belongsToMany('App\Documento', 'archivos_users', 'user_id', 'documento_id');
     }
 
     /**

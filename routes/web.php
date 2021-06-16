@@ -67,9 +67,6 @@ Route::group(['middleware' => 'auth'], function () {
   Route::resource('anticipo', 'AnticiposController')
         ->only(['create', 'store']);
 
-  /* --- Entregas ---*/
-  Route::get('entrega/{entrega}/download', 'InventariosEntregasController@download')->name('entrega.download');
-
   /* --- Solicitudes --- */
   Route::resource('solicitud', 'SolicitudController');
   Route::get('solicitud/{solicitud}/download', 'SolicitudController@download')->name('solicitud.download');
@@ -117,6 +114,11 @@ Route::group(['middleware' => 'auth'], function () {
   /* --- Documento plantillas --- */
   Route::get('documento/plantilla/{documento}', 'PlantillaDocumentoController@show')->name('plantilla.documento.show');
   Route::get('documento/plantilla/{documento}/pdf', 'PlantillaDocumentoController@pdf')->name('plantilla.documento.pdf');
+
+  /* --- Archivos --- */
+  Route::get('archivo', 'ArchivoController@index')->name('archivo.index');
+  Route::get('archivo/carpeta/{carpeta}', 'ArchivoController@carpeta')->name('archivo.carpeta.show');
+  Route::get('archivo/documento/{documento}', 'ArchivoController@download')->name('archivo.documento.download');
 
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){

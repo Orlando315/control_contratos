@@ -178,7 +178,6 @@ class EmpleadosController extends Controller
         'sueldos',
         'anticipos',
         'reemplazos',
-        'entregas.inventario',
         'contratos',
         'usuario.covid19Respuestas'
       ]);

@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{Auth, Log, Http};
-use App\Integrations\FacturacionSii;
 use App\User;
+use App\Casts\Sii\{Account, Representante};
 
 class ConfiguracionEmpresa extends Model
 {
@@ -31,9 +31,6 @@ class ConfiguracionEmpresa extends Model
     protected $fillable = [
       'jornada',
       'dias_vencimiento',
-      'sii_clave',
-      'sii_clave_certificado',
-      'firma',
       'terminos',
       'covid19',
       'requerimientos_firmantes',
@@ -45,9 +42,6 @@ class ConfiguracionEmpresa extends Model
      * @var array
      */
     protected $hidden = [
-      'sii_clave',
-      'sii_clave_certificado',
-      'firma',
     ];
 
     /**
@@ -57,18 +51,8 @@ class ConfiguracionEmpresa extends Model
      */
     protected $casts = [
       'covid19' => 'boolean',
-    ];
-
-    /**
-     * Integraciones con sus respectivos campos
-     *
-     * @var array
-     */
-    private $_integrations = [
-      'sii' => [
-        'sii_clave',
-        'sii_clave_certificado',
-      ],
+      'sii_account' => Account::class,
+      'sii_representante' => Representante::class,
     ];
 
     /**
@@ -81,6 +65,13 @@ class ConfiguracionEmpresa extends Model
       'terminos' => null,
       'users' => [],
     ];
+
+    /**
+     * Titulo del modelo en los Logs
+     * 
+     * @var string
+     */
+    public static $logEventTitle = 'Configuración de Empresa';
 
     /**
      * Establecer la estructura para almacenar los terminos
@@ -142,27 +133,47 @@ class ConfiguracionEmpresa extends Model
     }
 
     /**
-     * Evaluar si la integracion especificada tiene todos los datos necesarios
+     * Evaluar si la Empresa tiene cuenta en Facturacion Sii
      *
-     * @param  string  $integration
      * @return bool
      */
-    public function isIntegrationComplete($integration)
+    public function hasSiiAccount()
     {
-      $attributes = array_values($this->only($this->_integrations[$integration]));
+      $valuesAsArray = (array) $this->sii_account;
 
-      return !in_array(null, $attributes, true);
+      return !in_array(null, $valuesAsArray, true);
     }
 
     /**
-     * Evaluar si la integracion especificada, no tiene todos los datos necesarios
+     * Evaluar si la Empresa no tiene cuenta en Facturacion Sii
      *
-     * @param  string  $integration
      * @return bool
      */
-    public function isIntegrationIncomplete($integration)
+    public function doesntHaveSiiAccount()
     {
-      return !$this->isIntegrationComplete($integration);
+      return !$this->hasSiiAccount();
+    }
+
+    /**
+     * Evaluar si la Empresa tiene cuenta en Facturacion Sii
+     *
+     * @return bool
+     */
+    public function hasSiiRepresentante()
+    {
+      $valuesAsArray = (array) collect($this->sii_representante)->except('vencimiento_certificado')->toArray();
+
+      return !in_array(null, $valuesAsArray, true);
+    }
+
+    /**
+     * Evaluar si la Empresa no tiene cuenta en Facturacion Sii
+     *
+     * @return bool
+     */
+    public function doesntHaveSiiRepresentante()
+    {
+      return !$this->hasSiiRepresentante();
     }
 
     /**

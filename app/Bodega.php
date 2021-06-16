@@ -51,7 +51,7 @@ class Bodega extends Model
      */
     public function inventariosV2()
     {
-      return $this->hasMany('App\InventarioV2');
+      return $this->belongsToMany('App\InventarioV2', 'inventarios_bodegas', 'bodega_id', 'inventario_id');
     }
 
     /**

@@ -66,11 +66,6 @@ class DocumentosController extends Controller
         $directory = 'Empresa' . Auth::user()->empresa->id . '/Transportes/'.$model->transporte_id ?? $model->id;
       }
 
-      if($type == 'inventarios'){
-        $class = 'App\Inventario';
-        $directory = $model->directory();
-      }
-
       $this->validate($request, [
         'nombre' => 'required_without:requisito|string|max:50',
         'observacion' => 'nullable|string|max:100',
@@ -187,8 +182,6 @@ class DocumentosController extends Controller
     public function destroy(Documento $documento)
     {
       if($documento->delete()){
-        Storage::delete($documento->path);
-
         if(request()->ajax()){
           $response = ['response' => true, 'id' => $documento->id];
         }

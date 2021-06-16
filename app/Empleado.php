@@ -197,14 +197,6 @@ class Empleado extends Model
     }
 
     /**
-     * Obtener las Entregas
-     */
-    public function entregas()
-    {
-      return $this->usuario()->first()->hasMany('App\InventarioEntrega', 'entregado')->with('Inventario:id,nombre');
-    }
-
-    /**
      * Obtener las Carpetas
      */
     public function carpetas()

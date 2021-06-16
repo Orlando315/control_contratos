@@ -22,10 +22,19 @@ Route::group(['middleware' => 'role:developer|superadmin|empresa'], function(){
   /* --- Configuracion --- */
   Route::get('empresa/configuracion', 'ConfiguracionController@configuracion')->name('empresa.configuracion');
   Route::patch('empresa/configuracion/general', 'ConfiguracionController@general')->name('empresa.configuracion.general');
-  Route::patch('empresa/configuracion/sii', 'ConfiguracionController@sii')->name('empresa.configuracion.sii');
   Route::patch('empresa/configuracion/terminos', 'ConfiguracionController@terminos')->name('empresa.configuracion.terminos');
   Route::patch('empresa/configuracion/covid19', 'ConfiguracionController@covid19')->name('empresa.configuracion.covid19');
   Route::patch('empresa/configuracion/requerimientos', 'ConfiguracionController@requerimientos')->name('empresa.configuracion.requerimientos');
+
+  // Facturación Sii
+  Route::post('empresa/configuracion/sii/account/login', 'ConfiguracionController@siiLogin')->name('empresa.configuracion.sii.account.login');
+  Route::post('empresa/configuracion/sii/account/1click', 'ConfiguracionController@sii1Click')->name('empresa.configuracion.sii.account.1click');
+  Route::post('empresa/configuracion/sii/account/create', 'ConfiguracionController@siiAccount')->name('empresa.configuracion.sii.account.store');
+  Route::get('empresa/configuracion/sii/account/edit', 'ConfiguracionController@editSiiAccount')->name('empresa.configuracion.sii.account.edit');
+  Route::patch('empresa/configuracion/sii/account/edit', 'ConfiguracionController@updateSiiAccount')->name('empresa.configuracion.sii.account.update');
+  Route::post('empresa/configuracion/sii/representante/create', 'ConfiguracionController@siiRepresentante')->name('empresa.configuracion.sii.representante.store');
+  Route::get('empresa/configuracion/sii/representante/edit', 'ConfiguracionController@editSiiRepresentante')->name('empresa.configuracion.sii.representante.edit');
+  Route::patch('empresa/configuracion/sii/representante/update', 'ConfiguracionController@updateSiiRepresentante')->name('empresa.configuracion.sii.representante.update');
 });
 
 /* --- Logs --- */
@@ -186,9 +195,6 @@ Route::delete('transporte/contrato/{contrato}', 'TransportesController@destroyCo
 /* --- Transportes - Supervisores --- */
 Route::delete('transporte/supervisor/{transporte}/{supervisor}', 'TransportesController@destroySupervisor')->name('transporte.supervisor.destroy');
 
-/* --- Inventarios --- */
-Route::patch('inventario/clone/{inventario}', 'InventariosController@clone')->name('inventario.clone');
-
 /* --- Clientes --- */
 Route::get('cliente/create/{type}', 'ClienteController@create')->name('cliente.create');
 Route::post('cliente/store/{type}', 'ClienteController@store')->name('cliente.store');
@@ -279,8 +285,6 @@ Route::resource('compra/facturacion', 'OrdenCompraFacturacionController')
       ->only(['destroy']);
 
 /* --- Reportes --- */
-Route::get('reporte/inventarios', 'ReportesController@inventariosIndex')->name('reporte.inventario.index');
-Route::post('reporte/inventarios', 'ReportesController@inventariosGet')->name('reporte.inventario.get');
 Route::get('reporte/facturas', 'ReportesController@facturasIndex')->name('reporte.factura.index');
 Route::post('reporte/facturas', 'ReportesController@facturasGet')->name('reporte.factura.get');
 Route::get('reporte/eventos', 'ReportesController@eventosIndex')->name('reporte.evento.index');
@@ -347,6 +351,8 @@ Route::get('transporte/consumo/create/{transporte}', 'TransportesConsumosControl
 Route::post('transporte/consumo/{transporte}', 'TransportesConsumosController@store')->name('consumo.store');
 
 /* --- Inventario V2 ---*/
+Route::delete('inventario/v2/{inventario}/ubicacion/{ubicacion}', 'InventarioV2Controller@destroyUbicacion')->name('inventario.ubicacion.destroy');
+Route::delete('inventario/v2/{inventario}/bodega/{bodega}', 'InventarioV2Controller@destroyBodega')->name('inventario.bodega.destroy');
 Route::get('inventario/v2/mass/template', 'InventarioV2Controller@massTemplate')->name('inventario.v2.mass.template');
 Route::get('inventario/v2/mass/edit', 'InventarioV2Controller@massEdit')->name('inventario.v2.mass.edit');
 Route::post('inventario/v2/mass/edit', 'InventarioV2Controller@massUpdate')->name('inventario.v2.mass.update');
@@ -396,6 +402,8 @@ Route::resource('inventario/v2/ingreso', 'InventarioV2IngresoController')
 ]);
 
 /* --- Inventario V2 - Egresos de Stock ---*/
+Route::get('inventario/v2/egreso/reporte', 'InventarioV2EgresoController@reporte')->name('inventario.egreso.reporte');
+Route::post('inventario/v2/egreso/reporte', 'InventarioV2EgresoController@searchInventario');
 Route::get('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@create')->name('inventario.egreso.create');
 Route::post('inventario/v2/egreso/create/{inventario}', 'InventarioV2EgresoController@store')->name('inventario.egreso.store');
 Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')
@@ -406,11 +414,16 @@ Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')
   'store'
 ]);
 
-/* --- Inventario ---*/
-Route::resource('inventario', 'InventariosController');
-Route::get('inventario/download/{inventario}', 'InventariosController@download')->name('inventario.download');
+/* --- Archivos (Carpetas y Documentos) --- */
+Route::get('archivo/carpeta/create{carpeta?}', 'ArchivoCarpetaController@create')->name('archivo.carpeta.create');
+Route::post('archivo/carpeta/create/{carpeta?}', 'ArchivoCarpetaController@store')->name('archivo.carpeta.store');
+Route::resource('archivo/carpeta', 'ArchivoCarpetaController')
+->except(['index', 'create', 'store', 'show'])
+->names('archivo.carpeta')
+->parameters(['carpeta' => 'carpeta']);
 
-/* --- Inventario - Entregas ---*/
-Route::get('entrega/{inventario}', 'InventariosEntregasController@create')->name('entrega.create');
-Route::post('entrega/{inventario}', 'InventariosEntregasController@store')->name('entrega.store');
-Route::delete('entrega/{entrega}', 'InventariosEntregasController@destroy')->name('entrega.destroy');
+Route::get('archivo/documento/create/{carpeta?}', 'ArchivoDocumentoController@create')->name('archivo.documento.create');
+Route::post('archivo/documento/create/{carpeta?}', 'ArchivoDocumentoController@store')->name('archivo.documento.store');
+Route::resource('archivo/documento', 'ArchivoDocumentoController')
+->except(['index', 'create', 'store'])
+->names('archivo.documento');

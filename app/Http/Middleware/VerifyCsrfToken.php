@@ -16,7 +16,6 @@ class VerifyCsrfToken extends Middleware
       'logout',
       'admin/variable/*',
       'admin/development/variable/*',
-      'inventarios/entregas/*',
       'admin/documentos/*',
       'admin/usuarios/*/get',
       'admin/*/busqueda/sii',

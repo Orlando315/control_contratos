@@ -43,6 +43,22 @@
         <div class="ibox-content no-padding">
           <ul class="list-group">
             <li class="list-group-item">
+              <b>Emitido por</b>
+              <span class="pull-right">
+                @if($ingreso->emisor)
+                  @permission('user-view')
+                    <a href="{{ route('admin.usuario.show', ['usuario' => $ingreso->emisor]) }}">
+                      {{ $ingreso->emitidoPor->nombre() }}
+                    </a>
+                  @else
+                    {{ $ingreso->emitidoPor->nombre() }}
+                  @endpermission
+                @else
+                  @nullablestring(null)
+                @endif
+              </span>
+            </li>
+            <li class="list-group-item">
               <b>Inventario</b>
               <span class="pull-right">
                 @permission('inventario-ingreso-view')

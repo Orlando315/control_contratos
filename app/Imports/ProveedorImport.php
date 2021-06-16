@@ -148,9 +148,9 @@ class ProveedorImport implements OnEachRow, WithHeadingRow, WithMultipleSheets
      */
     private function empresa(Collection $item)
     {
-      [$response, $data] = sii()->busquedaReceptor($item['rut'], $item['dv']);
-
-      if(!$response){
+      try{
+        $data = sii()->busquedaReceptor($item['rut'], $item['dv']);
+      }catch(\Exception $e){
         return false;
       }
 

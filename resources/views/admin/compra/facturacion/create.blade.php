@@ -167,7 +167,7 @@
 
             <div class="text-right">
               <a class="btn btn-default btn-sm" href="{{ route('admin.compra.show', ['compra' => $compra->id]) }}"><i class="fa fa-reply"></i> Atras</a>
-              <button class="btn btn-primary btn-sm" type="submit"{{ Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii') ? ' disabled' : '' }}><i class="fa fa-send"></i> Guardar</button>
+              <button class="btn btn-primary btn-sm" type="submit"{{ Auth::user()->empresa->configuracion->doesntHaveSiiAccount() ? ' disabled' : '' }}><i class="fa fa-send"></i> Guardar</button>
             </div>
           </form>
         </div>

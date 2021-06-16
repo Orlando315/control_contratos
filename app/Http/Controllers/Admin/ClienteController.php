@@ -182,10 +182,10 @@ class ClienteController extends Controller
         return redirect()->back()->withInput()->withErrors('Ya existe un cliente registrado con ese RUT.');
       }
 
-      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->digito_validador);
-
-      if(!$response){
-        return redirect()->back()->withInput()->withErrors($data);
+      try{
+        $data = sii()->busquedaReceptor($request->rut, $request->digito_validador);
+      }catch(\Exception $e){
+        return redirect()->back()->withInput()->withErrors('Ha ocurrido un error al consultar la información');
       }
 
       $cliente = new Cliente;
@@ -391,19 +391,19 @@ class ClienteController extends Controller
      */
     public function busquedaSii(Request $request)
     {
-      [$response, $data] = sii()->busquedaReceptor($request->rut, $request->dv);
-
-      if(!$response){
-        return response()->json(['response' => false, 'data' => $data]);
+      try{
+        $data = sii()->busquedaReceptor($request->rut, $request->dv);
+      }catch(\Exception $e){
+        return response()->json(['response' => false, 'data' => 'Ha ocurrido un error al consultar la información']);
       }
 
       return response()->json([
         'response' => true,
         'data' => [
-          'razon_social' => $data['razon_social'],
-          'direccion' => $data['direccion_seleccionada'],
-          'comuna' => $data['comuna_seleccionada'],
-          'ciudad' => $data['ciudad_seleccionada'],
+          'razon_social' => $data['businessName'],
+          'direccion' => $data['address'][0] ?? '',
+          'comuna' => $data['commune'],
+          'ciudad' => $data['city'],
         ]
       ]);
     }

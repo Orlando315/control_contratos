@@ -204,7 +204,7 @@
           </div><!-- /.box-body -->
         </div>
       @else
-        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii'))
+        @if(Auth::user()->empresa->configuracion->doesntHaveSiiAccount())
           <div class="alert alert-danger alert-important">
             <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder realizar una facturación. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
           </div>

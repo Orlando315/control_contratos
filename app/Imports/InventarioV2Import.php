@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Row;
 use Illuminate\Support\Facades\Auth;
-use App\{InventarioV2, Unidad, Etiqueta};
+use App\{InventarioV2, Unidad, Etiqueta, Bodega, Ubicacion};
 
 class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheets
 {
@@ -57,10 +57,16 @@ class InventarioV2Import implements OnEachRow, WithHeadingRow, WithMultipleSheet
         return null;
       }
 
+      $bodega = Bodega::find($data['bodega_id']);
+      $ubicacion = Ubicacion::find($data['ubicacion_id']);
       $data['unidad_id'] = $unidad ? $unidad->id : $unidadPredeterminada->id;
       $data['empresa_id'] = Auth::user()->empresa->id;
       $inventario = InventarioV2::create($data);
       $inventario->categorias()->attach($categorias);
+      $inventario->bodegas()->attach($bodega ? [$bodega->id] : []);
+      if($bodega && $ubicacion){
+        $inventario->ubicaciones()->attach([$ubicacion->id]);
+      }
     }
 
     /**

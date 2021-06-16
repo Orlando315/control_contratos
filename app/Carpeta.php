@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
 use App\Traits\LogEvents;
 use App\Integrations\Logger\LogOptions;
@@ -30,6 +31,8 @@ class Carpeta extends Model
       'requisito_id',
       'nombre',
       'visibilidad',
+      'public',
+      'location',
     ];
 
     /**
@@ -39,6 +42,7 @@ class Carpeta extends Model
      */
     protected $casts = [
       'visibilidad' => 'boolean',
+      'public' => 'boolean',
     ];
 
     /**
@@ -50,6 +54,7 @@ class Carpeta extends Model
       'main.nombre' => 'Carpeta padre',
       'requisito.nombre' => 'Requisito',
       'visibilidad' => '¿Es visible para el Empleado?',
+      'public' => '¿Es pública?',
     ];
 
     /**
@@ -61,6 +66,33 @@ class Carpeta extends Model
     {
       parent::boot();
       static::addGlobalScope(new EmpresaScope);
+
+      static::deleting(function ($carpeta) {
+        $carpeta->load([
+          'subcarpetas',
+          'documentos',
+        ]);
+
+        // Si la carpeta tiene su location, al eliminar fisicamente la carpeta se
+        // eliminan tambien los documentos en ella y la bd se encarga de eliminar los
+        // registros de esos documentos que tengan el id de la carpeta
+        if($carpeta->location && Storage::exists($carpeta->location)){
+          Storage::deleteDirectory($carpeta->location);
+        }
+        // Si no tiene su location para poder eliminarla, se debe eliminar cada documento individualmente
+        // para que sean borrados fisicamente tambien
+        else{
+          $carpeta->documentos->each(function ($documento) {
+            $documento->delete();
+          });
+        }
+
+        // Se eliminan las subcarpetas para que cada una realice el mismo proceso de borrado
+        $carpeta->subcarpetas->each(function ($subcarpeta) {
+          $subcarpeta->delete();
+        });
+
+      });
     }
 
     /**
@@ -71,7 +103,7 @@ class Carpeta extends Model
      */
     public function scopeMain($query)
     {
-      return $query->whereNull('carpeta_id');
+      return $query->whereNull('carpetas.carpeta_id');
     }
 
     /**
@@ -99,6 +131,41 @@ class Carpeta extends Model
     }
 
     /**
+     * Incluir solo las Carpetas del tipo especificado.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $type
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByType($query, $type)
+    {
+      return $query->where('carpetable_type', $type);
+    }
+
+    /**
+     * Incluir solo las Carpetas de la seccion Archivos
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeArchivo($query)
+    {
+      return $query->whereNull('carpetable_type')->whereNull('carpetable_id');
+    }
+
+    /**
+     * Incluir solo las Carpetas que son publicas
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $public
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublic($query, $public = true)
+    {
+      return $query->where('public', $public);
+    }
+
+    /**
      * Obtener la Empresa a la que pertenece
      */
     public function empresa()
@@ -115,11 +182,11 @@ class Carpeta extends Model
     }
 
     /**
-     * Obtener la Empresa a la que pertenece
+     * Obtener la Carpeta a la que pertenece
      */
     public function main()
     {
-      return $this->belongsTo('App\Carpeta');
+      return $this->belongsTo('App\Carpeta', 'carpeta_id');
     }
 
     /**
@@ -147,6 +214,14 @@ class Carpeta extends Model
     }
 
     /**
+     * Obtener los User que tienen permisos de acceder a la Carpeta (De la seccion de Archivos)
+     */
+    public function archivoUsers()
+    {
+      return $this->belongsToMany('App\User', 'archivos_users', 'carpeta_id', 'user_id');
+    }
+
+    /**
      * Obtener la url de retorno segun el modelo al que pertenece 
      */
     public function getBackUrlAttribute()
@@ -154,6 +229,14 @@ class Carpeta extends Model
       $varName = self::getRouteVarNameByType($this->type());
       $backModel = Auth::user()->hasRole('empleado') ? route('perfil') : route('admin.'.$varName.'.show', [$varName => $this->carpetable_id]);
       return $this->carpeta_id ? route((Auth::user()->hasRole('empleado') ? 'carpeta.show' : 'admin.carpeta.show'), ['carpeta' => $this->carpeta_id]) : $backModel;
+    }
+
+    /**
+     * Obtener la url de retorno de la Carpeta (De la seccion Archivos)
+     */
+    public function getBackArchivoUrlAttribute()
+    {
+      return $this->carpeta_id ? route('archivo.carpeta.show', ['carpeta' => $this->carpeta_id]) : route('archivo.index');
     }
 
     /**
@@ -207,6 +290,62 @@ class Carpeta extends Model
     }
 
     /**
+     * Evaluar si la carpeta (De la seccion Archivos) es publica
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isPublic($asTag = false)
+    {
+      if(!$asTag){
+        return $this->public;
+      }
+
+      return $this->public ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si la carpeta (De la seccion Archivos) NO es publica
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isPrivate($asTag = false)
+    {
+      return !$this->isPublic($asTag);
+    }
+
+    /**
+     * Evaluar si la carpeta es una carpeta principal (no tiene subcarptas)
+     * 
+     * @return bool
+     */
+    public function isMain()
+    {
+      return is_null($this->carpeta_id);
+    }
+
+    /**
+     * Evaluar si la carpeta es una subcarpeta
+     * 
+     * @return bool
+     */
+    public function isSubfolder()
+    {
+      return !$this->isMain();
+    }
+
+    /**
+     * Evaluar si la carpeta es de la seccion Archivos
+     * 
+     * @return bool
+     */
+    public function isArchivo()
+    {
+      return is_null($this->carpetable_type) && is_null($this->carpetable_id);
+    }
+
+    /**
      * Obtener el modelo al que pertenece la Carpeta
      *
      * @return string
@@ -237,9 +376,6 @@ class Carpeta extends Model
         case 'transportes':
           return 'App\Transporte';
           break;
-        case 'inventarios':
-          return 'App\Inventario';
-          break;
         default:
           abort(404);
         break;
@@ -267,9 +403,6 @@ class Carpeta extends Model
         case 'App\Transporte':
           return 'transportes';
           break;
-        case 'App\Inventario':
-          return 'inventarios';
-          break;
       }
     }
 
@@ -295,6 +428,7 @@ class Carpeta extends Model
       ->logExcept([
         'empresa_id',
         'carpeta_id',
+        'location',
       ])
       ->logAditionalAttributes([
         'main.nombre',

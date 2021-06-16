@@ -219,7 +219,7 @@
                   <i class="fa fa-cogs"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user dropdown-menu-right" x-placement="bottom-start">
-                  @if(Auth::user()->empresa->configuracion->isIntegrationComplete('sii'))
+                  @if(Auth::user()->empresa->configuracion->hasSiiAccount())
                     <li>
                       <a class="dropdown-item" type="button" data-toggle="modal" data-target="#syncModal">
                         <i class="fa fa-refresh"></i> Sincronizar
@@ -283,7 +283,7 @@
           </div><!-- /.box-body -->
         </div>
       @else
-        @if(Auth::user()->empresa->configuracion->isIntegrationIncomplete('sii'))
+        @if(Auth::user()->empresa->configuracion->doesntHaveSiiAccount())
           <div class="alert alert-danger alert-important">
             <p class="m-0"><strong>¡Integración incompleta!</strong> Debe completar los datos de su integración con Facturación Sii antes de poder asociar a una factura. <a href="{{ route('perfil.edit') }}">Editar perfil Empresa</a></p>
           </div>

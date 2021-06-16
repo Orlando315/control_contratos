@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Scopes\EmpresaScope;
-use App\Integrations\FacturacionSii;
 use App\Traits\LogEvents;
 use App\Integrations\Logger\LogOptions;
 
@@ -266,7 +265,7 @@ class Cotizacion extends Model
         'productos' => $this->productosToFactura(),
       ];
 
-      return (new FacturacionSii)->facturar($rut, $dv, $data);
+      return sii()->facturar($rut, $dv, $data);
     }
 
     /**

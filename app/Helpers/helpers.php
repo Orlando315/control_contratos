@@ -1,19 +1,30 @@
 <?php
 
-use App\Integrations\FacturacionSii;
-use App\Integrations\ActivityLogger;
-use App\Integrations\ActivityLogStatus;
+use App\Integrations\Sii\FacturacionSii;
+use App\Integrations\Sii\FacturacionSiiAccount;
+use App\Integrations\Logger\ActivityLogger;
+use App\Integrations\Logger\ActivityLogStatus;
 use Illuminate\Support\Facades\Route;
 
 if (! function_exists('sii')) {
     /**
      * Obtener una instancia de FacturacionSii
      *
-     * @return \App\Integrations\FacturacionSii
+     * @return \App\Integrations\Sii\FacturacionSii
      */
-    function sii()
+    function sii($empresa = null, $setToken = true)
     {
-      return new FacturacionSii;
+      $empresa = (is_null($empresa) && Auth::user()->empresa->configuracion->hasSiiAccount()) ? Auth::user()->empresa : null;
+      $account = app(FacturacionSiiAccount::class)->setEmpresaAccount($empresa);
+
+      $facturacionSii = app(FacturacionSii::class)
+      ->useAccount($account);
+
+      if($setToken){
+        $facturacionSii->setToken();
+      }
+
+      return $facturacionSii;
     }
 }
 
@@ -22,7 +33,7 @@ if (! function_exists('activityLog')) {
      * Obtener instancia para crear un Log
      * 
      * @param  string|null $logName
-     * @return \App\Integrations\ActivityLogger
+     * @return \App\Integrations\Logger\ActivityLogger
      */
     function activityLog($logName = null): ActivityLogger
     {

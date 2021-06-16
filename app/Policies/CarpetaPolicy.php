@@ -11,17 +11,6 @@ class CarpetaPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function viewAny(User $user)
-    {
-        //
-    }
-
-    /**
      * Determine whether the user can view the model.
      *
      * @param  \App\User  $user
@@ -34,61 +23,55 @@ class CarpetaPolicy
     }
 
     /**
-     * Determine whether the user can create models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function create(User $user)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can update the model.
+     * Determinar si el User puede crear una Carpeta de la seccion de Archivos
      *
      * @param  \App\User  $user
      * @param  \App\Carpeta  $carpeta
      * @return mixed
      */
-    public function update(User $user, Carpeta $carpeta)
+    public function createArchivoCarpeta(User $user)
     {
-        //
+      return $user->hasPermission('archivo-create');
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determinar si el User puede ver la Carpeta de la seccion de Archivos
      *
      * @param  \App\User  $user
      * @param  \App\Carpeta  $carpeta
      * @return mixed
      */
-    public function delete(User $user, Carpeta $carpeta)
+    public function viewArchivoCarpeta(User $user, Carpeta $carpeta)
     {
-        //
+      return (
+        $user->hasPermission('archivo-view') ||
+        $carpeta->archivoUsers()->wherePivot('user_id', $user->id)->exists() ||
+        $carpeta->isPublic()
+      ) &&
+      $carpeta->isArchivo();
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * Determinar si el User puede editar la Carpeta de la seccion de Archivos
      *
      * @param  \App\User  $user
      * @param  \App\Carpeta  $carpeta
      * @return mixed
      */
-    public function restore(User $user, Carpeta $carpeta)
+    public function updateArchivoCarpeta(User $user, Carpeta $carpeta)
     {
-        //
+      return $user->hasPermission('archivo-edit') && $carpeta->isArchivo();;
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * Determinar si el User puede eliminar la Carpeta de la seccion de Archivos
      *
      * @param  \App\User  $user
      * @param  \App\Carpeta  $carpeta
      * @return mixed
      */
-    public function forceDelete(User $user, Carpeta $carpeta)
+    public function deleteArchivoCarpeta(User $user, Carpeta $carpeta)
     {
-        //
+      return $user->hasPermission('archivo-delete') && $carpeta->isArchivo();;
     }
 }

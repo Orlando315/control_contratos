@@ -27,6 +27,16 @@
         </div>
       </div>
     </div>
+    <div class="col-6 col-md-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Reporte de Egresos</h5>
+        </div>
+        <div class="ibox-content">
+          <h2><i class="fa fa-clipboard"></i> <a class="text-dark" href="{{ route('admin.inventario.egreso.reporte') }}" style="font-size: 80%;color:rgb(103, 106, 108);">Ver reporte</a></small></h2>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="row mb-3">
@@ -77,8 +87,20 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $inventario->nombre }}</td>
-                        <td>@nullablestring(optional($inventario->bodega)->nombre)</td>
-                        <td>@nullablestring(optional($inventario->ubicacion)->nombre)</td>
+                        <td>
+                          @if($inventario->bodegas)
+                            {{ $inventario->bodegas->pluck('nombre')->join(', ') }}
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
+                        <td>
+                          @if($inventario->ubicaciones)
+                            {{ $inventario->ubicaciones->pluck('nombre')->join(', ') }}
+                          @else
+                            @nullablestring(null)
+                          @endif
+                        </td>
                         <td class="text-right">{{ $inventario->stock() }}</td>
                         <td class="text-center">
                           @permission('inventario-v2-view|inventario-v2-edit|inventario-ingreso-create|inventario-egreso-create')

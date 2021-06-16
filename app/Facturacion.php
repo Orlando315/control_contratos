@@ -134,7 +134,7 @@ class Facturacion extends Model
      */
     public function cotizacion()
     {
-      return $this->belongsTo('App\cotizacion');
+      return $this->belongsTo('App\Cotizacion');
     }
 
     /**

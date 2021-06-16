@@ -198,11 +198,11 @@ class ActivityLogger
     /**
      * Establecer el nombre del log a usar
      * 
-     * @param  string $logName
+     * @param  string|null  $logName
      */
-    public function useLog(string $logName)
+    public function useLog($logName = null)
     {
-      $this->getActivity()->log_name = $logName;
+      $this->getActivity()->log_name = $logName ?: $this->defaultLogName;
 
       return $this;
     }

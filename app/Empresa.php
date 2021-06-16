@@ -141,14 +141,6 @@ class Empresa extends Model
     }
 
     /**
-     * Obtener los Inventarios
-     */
-    public function inventarios()
-    {
-      return $this->hasMany('App\Inventario');
-    }
-
-    /**
      * Obtener los Transportes
      */
     public function transportes()

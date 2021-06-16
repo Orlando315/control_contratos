@@ -3,6 +3,8 @@
 @section('title', 'Configuración')
 
 @section('head')
+  <!-- Datepicker -->
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/datapicker/datepicker3.css') }}">
   <!-- Select2 -->
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins/select2/select2-bootstrap4.min.css') }}">
@@ -189,59 +191,261 @@
     <div class="card">
       <div class="card-header" id="headingTwo">
         <h3 class="m-0">
-          <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-            <i class="fa fa-random"></i> Integraciones
+          <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#integrations" aria-expanded="false" aria-controls="integrations">
+            <i class="fa fa-random"></i> Facturación Sii
           </button>
         </h3>
       </div>
-      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-        <div class="card-body">
-          <form action="{{ route('admin.empresa.configuracion.sii') }}" method="POST">
-            @csrf
-            @method('PATCH')
+      <div id="integrations" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body ibox-content">
+          <div class="sk-spinner sk-spinner-double-bounce">
+            <div class="sk-double-bounce1"></div>
+            <div class="sk-double-bounce2"></div>
+          </div>
 
-            <fieldset>
-              <legend class="form-legend">Facturación Sii</legend>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->sii->has('sii_clave') ? ' has-error' : '' }}">
-                    <label for="sii_clave">Clave Sii:</label>
-                    <input id="sii_clave" class="form-control" type="text" name="sii_clave" maxlength="120" value="{{ old('sii_clave', $configuracion->sii_clave) }}" placeholder="Clave SII">
+          <div class="row">
+            <div id="sii-account-details" class="col-md-6"{!! $configuracion->doesntHaveSiiAccount() ? ' style="display: none"' : '' !!}>
+              <div class="ibox">
+                <div class="ibox-title px-3">
+                  <h5>Usuario Sii</h5>
+                  <div class="ibox-tools">
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.empresa.configuracion.sii.account.edit') }}" title="Editar usuario"><i class="fa fa-pencil"></i></a>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->sii->has('sii_clave_certificado') ? ' has-error' : '' }}">
-                    <label for="sii_clave_certificado">Clave certificado digital:</label>
-                    <input id="sii_clave_certificado" class="form-control" type="text" name="sii_clave_certificado" maxlength="150" value="{{ old('sii_clave_certificado', $configuracion->sii_clave_certificado) }}" placeholder="Clave certificado digital">
-                  </div>
-                </div>
+                <div class="ibox-content no-padding">
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                      <b>ID</b>
+                      <span id="sii-account-id" class="pull-right">
+                        {{ $configuracion->sii_account->id }}
+                      </span>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Usuario</b>
+                      <span id="sii-account-username" class="pull-right">
+                        @nullablestring($configuracion->sii_account->username)
+                      </span>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Email</b>
+                      <span id="sii-account-email" class="pull-right">
+                        {{ $configuracion->sii_account->email }}
+                      </span>
+                    </li>
+                  </ul>
+                </div><!-- /.ibox-content -->
               </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group{{ $errors->sii->has('sii_firma') ? ' has-error' : '' }}">
-                    <label for="sii_firma">Firma:</label>
-                    <input id="sii_firma" class="form-control" type="text" name="sii_firma" maxlength="120" value="{{ old('sii_firma', $configuracion->firma) }}" placeholder="Firma">
+            </div>
+            <div id="sii-representante-details" class="col-md-6"{!! $configuracion->doesntHaveSiiRepresentante() ? ' style="display: none"' : '' !!}>
+              <div class="ibox">
+                <div class="ibox-title px-3">
+                  <h5>Representante Sii</h5>
+                  <div class="ibox-tools">
+                    <a class="btn btn-default btn-xs" href="{{ route('admin.empresa.configuracion.sii.representante.edit') }}" title="Editar representante"><i class="fa fa-pencil"></i></a>
                   </div>
                 </div>
+                <div class="ibox-content no-padding">
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                      <b>ID</b>
+                      <span id="sii-representante-id" class="pull-right">
+                        {{ $configuracion->sii_representante->id }}
+                      </span>
+                    </li>
+                    <li class="list-group-item">
+                      <b>RUT</b>
+                      <span id="sii-representante-rut" class="pull-right">
+                        {{ $configuracion->sii_representante->rut }}
+                      </span>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Vencimiento del certificado</b>
+                      <span id="sii-representante-vencimiento_certificado" class="pull-right">
+                        @if($configuracion->sii_representante->vencimiento_certificado)
+                          {{ $configuracion->sii_representante->vencimiento_certificado->format('d-m-Y') }}
+                        @else
+                          @nullablestring(null)
+                        @endif
+                      </span>
+                    </li>
+                  </ul>
+                </div><!-- /.ibox-content -->
               </div>
-            </fieldset>
+            </div>
+          </div>
 
-            @if(count($errors->sii) > 0)
-              <div class="alert alert-danger alert-important">
+          <div class="alert alert-success alert-important text-center sii-success-alert my-3" style="display: none">
+          </div>
+
+          @if($configuracion->doesntHaveSiiAccount())
+            <h2 id="sii-account-message" class="text-center mb-3">
+              Parce que todavía no estas conectado con Facturación Sii.</br>
+              Primero debemos crear una cuenta de Usuario.
+            </h2>
+            <div id="btn-sii-presentantion" class="text-center">
+              <button class="btn btn-primary btn-sii-toggle" data-type="1click">Integra en 1 click</button>
+              <br>
+              ó
+              <br>
+              <button class="btn btn-primary btn-outline btn-sii-toggle" data-type="register">Registrarse</button>
+              <button class="btn btn-primary btn-outline btn-sii-toggle" data-type="login">Iniciar sesión</button>
+            </div>
+
+            <form id="sii-1click" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.account.1click') }}" method="POST" style="display:none">
+              @csrf
+
+              <fieldset>
+                <legend class="form-legend">Integración automática en 1 click</legend>
+                <h3 class="text-center mb-4">La cuenta será configurada automáticamente generando un usuaraio y contraseña.</h3>
+              </fieldset>
+
+              <div class="alert alert-danger alert-important sii-error-register" style="display: none">
                 <ul class="m-0">
-                  @foreach($errors->sii->all() as $error)
-                    <li>{{ $error }}</li>
-                  @endforeach
                 </ul>
               </div>
-            @endif
 
-            <div class="text-right mt-2">
-              <button class="btn btn-primary btn-sm" type="submit"><i class="fa fa-send"></i> Guardar</button>
-            </div>
-          </form>
+              <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Integrar automáticamente</button>
+              <div class="text-center">
+                <p class="mb-0">¿Ya posees una cuenta?</p>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="login" type="button" role="button">Iniciar sesión</button>
+              </div>
+            </form>
+
+            <form id="sii-login" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.account.login') }}" method="POST" style="display:none">
+              @csrf
+
+              <fieldset>
+                <legend class="form-legend">Login</legend>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_email">Email: *</label>
+                      <input id="sii_email" class="form-control" type="email" name="email" maxlength="150" value="{{ Auth::user()->empresa->email }}" placeholder="Email" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_password">Contraseña: *</label>
+                      <input id="sii_password" class="form-control" type="password" name="password" minlength="6" placeholder="Contraseña" required>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="alert alert-danger alert-important sii-error-register" style="display: none">
+                <ul class="m-0">
+                </ul>
+              </div>
+
+              <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Enlazar cuenta Sii</button>
+              <div class="text-center">
+                <p class="mb-0">¿No posees una cuenta?</p>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="register" type="button" role="button">Registrarse</button>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="1click" type="button" role="button">Integra en 1 click</button>
+              </div>
+            </form>
+
+            <form id="sii-register" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.account.store') }}" method="POST" style="display:none">
+              @csrf
+
+              <fieldset>
+                <legend class="form-legend">Registro</legend>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_username">Usuario: *</label>
+                      <input id="sii_username" class="form-control" type="text" name="username" minlength="3" maxlength="25" placeholder="Usuario" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_email">Email: *</label>
+                      <input id="sii_email" class="form-control" type="email" name="email" maxlength="150" value="{{ Auth::user()->empresa->email }}" placeholder="Email" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_password">Contraseña: *</label>
+                      <input id="sii_password" class="form-control" type="password" name="password" minlength="6" placeholder="Contraseña" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_password_confirmation">Verificar contraseña: *</label>
+                      <input id="sii_password_confirmation" class="form-control" type="password" name="password_confirmation" minlength="6" placeholder="Verificar contraseña" required>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="alert alert-danger alert-important sii-error-register" style="display: none">
+                <ul class="m-0">
+                </ul>
+              </div>
+
+              <button class="btn btn-primary btn-sm btn-block mb-3" type="submit"><i class="fa fa-send"></i> Crear cuenta</button>
+              <div class="text-center">
+                <p class="mb-0">¿Ya posees una cuenta?</p>
+                <button class="btn btn-primary btn-sm btn-outline btn-sii-toggle" data-type="login" type="button" role="button">Iniciar sesión</button>
+              </div>
+            </form>
+          @endif
+
+          @if($configuracion->doesntHaveSiiRepresentante())
+            <form id="sii-representante" class="mb-3" action="{{ route('admin.empresa.configuracion.sii.representante.store') }}" method="POST"{!! $configuracion->doesntHaveSiiAccount() ? ' style="display:none"' : '' !!}>
+              @csrf
+              <h2 class="text-center mb-3">
+                Debe asociar la Empresa con los datos del Representante Legal.
+              </h2>
+
+              <fieldset>
+                <legend class="form-legend">Datos del Representante Legal</legend>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_rut">RUT: *</label>
+                      <input id="sii_rut" class="form-control" type="text" name="rut" maxlength="11" pattern="^(\d{4,9}-[\dk])$" placeholder="RUT" required>
+                      <span class="help-block">Ejemplo: 00000000-0</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_clave_sii">Clave Sii: *</label>
+                      <input id="sii_clave_sii" class="form-control" type="password" name="clave_sii" placeholder="Clave Sii" required>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="sii_certificatePassword">Clave del certificado digital: *</label>
+                      <input id="sii_certificatePassword" class="form-control" type="password" name="clave_certificado_digital" placeholder="Clave del certificado digital" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="vencimiento_certificado">Fecha de vencimiento del certificado:</label>
+                      <input id="vencimiento_certificado" class="form-control" type="text" name="vencimiento_certificado" placeholder="dd-mm-yyyy">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="alert alert-danger alert-important sii-error-representante" style="display: none">
+                <ul class="m-0">
+                </ul>
+              </div>
+
+              <button id="btn-sii-representante" class="btn btn-primary btn-sm btn-block" type="submit"{{ $configuracion->doesntHaveSiiAccount() ? ' disabled' : '' }}><i class="fa fa-send"></i> Asociar representante legal</button>
+            </form>
+          @endif
         </div>
       </div>
     </div>
@@ -376,6 +580,9 @@
 @endsection
 
 @section('script')
+  <!-- Datepicker -->
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/bootstrap-datepicker.min.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('js/plugins/datapicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
   <!-- CKEditor -->
   <script type="text/javascript" src="{{ asset('js/plugins/ckeditor/ckeditor.js') }}"></script>
   <!-- Select2 -->
@@ -384,6 +591,7 @@
     const TBODY_FIRMANTES = $('#tbody-firmantes');
     const BTN_ADD_FIRMANTE = $('#btn-add-firmante');
     const FIRMANTES = @json($configuracion->requerimientos_firmantes);
+    const SII_IBOX = $('#integrations .ibox-content');
 
     $(document).ready(function () {
       CKEDITOR.replace('terminos-terminos', {
@@ -397,6 +605,138 @@
 
       $('#add-firmante-form').submit(addFirmante);
       TBODY_FIRMANTES.on('click', '.btn-firmantes-delete', deleteFirmante);
+
+      $('#vencimiento_certificado').datepicker({
+        format: 'dd-mm-yyyy',
+        startDate: 'today',
+        language: 'es',
+        keyboardNavigation: false,
+        autoclose: true
+      });
+
+      @if($configuracion->doesntHaveSiiAccount())
+        $('.btn-sii-toggle').click(function (){
+          let type = $(this).data('type');
+
+          $('#sii-1click').toggle(type == '1click');
+          $('#sii-register').toggle(type == 'register');
+          $('#sii-login').toggle(type == 'login');
+          $('#btn-sii-presentantion').hide();
+        });
+
+        $('#sii-login').submit(function (e) {
+          e.preventDefault();
+
+          let form = $(this),
+          action = form.attr('action'),
+          btn = $('#btn-sii-login');
+
+          SII_IBOX.toggleClass('sk-loading');
+          btn.prop('disabled', true);
+
+          $.ajax({
+            type: 'POST',
+            url: action,
+            data: form.serialize(),
+            dataType: 'json',
+          })
+          .done(function (response) {
+            $('#sii-account-message, #sii-register').remove();
+            form.remove();
+
+            $.each(response, function (field, value){
+              $(`#sii-account-${field}`).text(value);
+            });
+
+            $('#sii-account-details, #sii-representante').show();
+            $('#btn-sii-representante').prop('disabled', false);
+
+            showAlert('.sii-success-alert', 'Cuenta Sii enlazada exitosamente!');
+          })
+          .fail(function (errors) {
+            btn.prop('disabled', false);
+            showErrors('.sii-error-register', errors);
+          })
+          .always(function () {
+            SII_IBOX.toggleClass('sk-loading');
+          });
+        });
+
+        $('#sii-register').submit(function (e) {
+          e.preventDefault();
+
+          let form = $(this),
+          action = form.attr('action'),
+          btn = $('#btn-sii-regiter');
+
+          SII_IBOX.toggleClass('sk-loading');
+          btn.prop('disabled', true);
+
+          $.ajax({
+            type: 'POST',
+            url: action,
+            data: form.serialize(),
+            dataType: 'json',
+          })
+          .done(function (response) {
+            $('#sii-account-message, #sii-register').remove();
+            form.remove();
+
+            $.each(response, function (field, value){
+              $(`#sii-account-${field}`).text(value);
+            });
+
+            $('#sii-account-details, #sii-representante').show();
+            $('#btn-sii-representante').prop('disabled', false);
+
+            showAlert('.sii-success-alert', '¡Usuario creado exitosamente!');
+          })
+          .fail(function (errors) {
+            btn.prop('disabled', false);
+            showErrors('.sii-error-register', errors);
+          })
+          .always(function () {
+            SII_IBOX.toggleClass('sk-loading');
+          });
+        });
+      @endif
+
+      @if($configuracion->doesntHaveSiiRepresentante())
+        $('#sii-representante').submit(function (e) {
+          e.preventDefault();
+
+          let form = $(this),
+          action = form.attr('action'),
+          btn = $('#btn-sii-representante');
+
+          SII_IBOX.toggleClass('sk-loading');
+          btn.prop('disabled', true);
+
+          $.ajax({
+            type: 'POST',
+            url: action,
+            data: form.serialize(),
+            dataType: 'json',
+          })
+          .done(function (response) {
+            form.remove();
+
+            $.each(response, function (field, value){
+              $(`#sii-representante-${field}`).text(value);
+            });
+
+            $('#sii-representante-details').show();
+            showAlert('.sii-success-alert', '¡Representante registrado exitosamente!');
+          })
+          .fail(function (errors) {
+            btn.prop('disabled', false);
+            showErrors('.sii-error-representante', errors);
+          })
+          .always(function () {
+            SII_IBOX.toggleClass('sk-loading');
+          });
+        });
+      @endif
     });
 
     function addFirmante(e){
@@ -487,6 +827,30 @@
                   <input type="hidden" name="usuarios[${index}][obligatorio]" value="${data.obligatorio ? 1 : 0}">
                 </td>
               </tr>`;
+    }
+
+    function showAlert(alert, message){
+      $(alert).html(`<h3>${message}</h3>`);
+      $(alert).show().delay(5000).hide('slow');
+    }
+
+    function showErrors(alert, errors){
+      let ul = $(alert).find('ul');
+      $(ul).empty();
+
+      errors = errors.responseJSON.hasOwnProperty('errors') ? errors.responseJSON.errors : errors.responseJSON;
+
+      $.each(errors, function (feild, fieldErrors){
+        if($.isArray(fieldErrors)){
+          $.each(fieldErrors, function (keyError, errorMessage){
+            $(ul).append(`<li>${errorMessage}</li>`);
+          })
+        }else{
+          $(ul).append(`<li>${fieldErrors}</li>`);
+        }
+      });
+
+      $(alert).show().delay(5000).hide('slow');
     }
   </script>
 @endsection

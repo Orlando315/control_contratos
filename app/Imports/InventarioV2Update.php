@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Row;
 use Illuminate\Support\Facades\Auth;
-use App\{InventarioV2, Unidad, Etiqueta};
+use App\{InventarioV2, Unidad, Etiqueta, Bodega, Ubicacion};
 
 class InventarioV2Update implements OnEachRow, WithHeadingRow, WithMultipleSheets
 {
@@ -64,9 +64,15 @@ class InventarioV2Update implements OnEachRow, WithHeadingRow, WithMultipleSheet
         return null;
       }
 
+      $bodega = Bodega::find($data['bodega_id']);
+      $ubicacion = Ubicacion::find($data['ubicacion_id']);
       $data['unidad_id'] = $unidad ? $unidad->id : $unidadPredeterminada->id;
       $inventario->update($data);
       $inventario->categorias()->sync($categorias);
+      $inventario->bodegas()->syncWithoutDetaching($bodega ? [$bodega->id] : []);
+      if($bodega && $ubicacion){
+        $inventario->ubicaciones()->syncWithoutDetaching([$ubicacion->id]);
+      }
     }
 
     /**
