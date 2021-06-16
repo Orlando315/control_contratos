@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\EmpresaScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Carpeta;
 use App\Traits\LogEvents;
 use App\Integrations\Logger\LogOptions;
@@ -35,6 +36,7 @@ class Documento extends Model
       'mime',
       'vencimiento',
       'visibilidad',
+      'public',
       'created_at',
       'updated_at',
     ];
@@ -46,6 +48,7 @@ class Documento extends Model
      */
     protected $casts = [
       'visibilidad' => 'boolean',
+      'public' => 'boolean',
     ];
 
     /**
@@ -64,6 +67,7 @@ class Documento extends Model
       'carpeta.nombre' => 'Carpeta padre',
       'requisito.nombre' => 'Requisito',
       'visibilidad' => '¿Es visible para el Empleado?',
+      'public' => '¿Es público?',
     ];
 
     /**
@@ -75,6 +79,13 @@ class Documento extends Model
     {
       parent::boot();
       static::addGlobalScope(new EmpresaScope);
+
+      // Eliminar fisicamente el documento
+      static::deleting(function ($documento) {
+        if($documento->path && Storage::exists($documento->path)){
+          Storage::delete($documento->path); 
+        }
+      });
     }
 
     /**
@@ -85,7 +96,7 @@ class Documento extends Model
      */
     public function scopeMain($query)
     {
-      return $query->whereNull('carpeta_id');
+      return $query->whereNull('documentos.carpeta_id');
     }
 
     /**
@@ -165,6 +176,29 @@ class Documento extends Model
     }
 
     /**
+     * Incluir solo los Documentos de la seccion Archivos
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeArchivo($query)
+    {
+      return $query->whereNull('documentable_type')->whereNull('documentable_id');
+    }
+
+    /**
+     * Incluir solo los Documentos que son publicos.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  bool  $isPublic
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePublic($query, $isPublic = true)
+    {
+      return $query->where('public', $isPublic);
+    }
+
+    /**
      * Establecer la fecha de vencimiento en el formato requerido
      * 
      * @param  string  $value
@@ -222,6 +256,14 @@ class Documento extends Model
     }
 
     /**
+     * Obtener la url de retorno del documento (De la seccion Archivos)
+     */
+    public function getBackArchivoUrlAttribute()
+    {
+      return $this->carpeta_id ? route('archivo.carpeta.show', ['carpeta' => $this->carpeta_id]) : route('archivo.index');
+    }
+
+    /**
      * Obtener el Link del documento
      * 
      * @return string
@@ -263,6 +305,14 @@ class Documento extends Model
     public function requisito()
     {
       return $this->belongsTo('App\Requisito');
+    }
+
+    /**
+     * Obtener los User que tienen permisos de acceder al Documento (De la seccion de Archivos)
+     */
+    public function archivoUsers()
+    {
+      return $this->belongsToMany('App\User', 'archivos_users', 'documento_id', 'user_id');
     }
 
     /**
@@ -318,6 +368,42 @@ class Documento extends Model
     public function isTypeEmpleado()
     {
       return $this->isType('App\Empleado');
+    }
+
+    /**
+     * Evaluar si el documento (De la seccion Archivos) es publico
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isPublic($asTag = false)
+    {
+      if(!$asTag){
+        return $this->public;
+      }
+
+      return $this->public ? '<small class="label label-primary">Sí</small>' : '<small class="label label-default">No</small>';
+    }
+
+    /**
+     * Evaluar si el documento (De la seccion Archivos) NO es publico
+     *
+     * @param  bool  $asTag
+     * @return mixed
+     */
+    public function isPrivate($asTag = false)
+    {
+      return !$this->isPublic($asTag);
+    }
+
+    /**
+     * Evaluar si el documento es de la seccion Archivos
+     * 
+     * @return bool
+     */
+    public function isArchivo()
+    {
+      return is_null($this->documentable_type) && is_null($this->documentable_id);
     }
 
     /**

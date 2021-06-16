@@ -11,26 +11,32 @@ class DocumentoPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function viewAny(User $user)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can view the model.
+     * Determinar si el User puede ver el Documento de la seccion de Archivos
      *
      * @param  \App\User  $user
      * @param  \App\Documento  $documento
      * @return mixed
      */
-    public function view(User $user, Documento $documento)
+    public function viewArchivoDocumento(User $user, Documento $documento)
     {
-        //
+      return $user->hasPermission('archivo-view') && $documento->isArchivo();
+    }
+
+    /**
+     * Determine whether the user can download the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Documento  $documento
+     * @return mixed
+     */
+    public function downloadArchivoDocumento(User $user, Documento $documento)
+    {
+      return (
+        $user->hasPermission('archivo-view') ||
+        $documento->archivoUsers()->wherePivot('user_id', $user->id)->exists() ||
+        $documento->isPublic()
+      ) &&
+      $documento->isArchivo();
     }
 
     /**
@@ -39,9 +45,9 @@ class DocumentoPolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function create(User $user)
+    public function createArchivoDocumento(User $user)
     {
-        //
+      return $user->hasPermission('archivo-create');
     }
 
     /**
@@ -51,9 +57,9 @@ class DocumentoPolicy
      * @param  \App\Documento  $documento
      * @return mixed
      */
-    public function update(User $user, Documento $documento)
+    public function updateArchivoDocumento(User $user, Documento $documento)
     {
-        //
+      return $user->hasPermission('archivo-edit') && $documento->isArchivo();
     }
 
     /**
@@ -63,9 +69,9 @@ class DocumentoPolicy
      * @param  \App\Documento  $documento
      * @return mixed
      */
-    public function delete(User $user, Documento $documento)
+    public function deleteArchivoDocumento(User $user, Documento $documento)
     {
-        //
+      return $user->hasPermission('archivo-delete') && $documento->isArchivo();
     }
 
     /**

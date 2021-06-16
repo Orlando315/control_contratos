@@ -115,6 +115,11 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('documento/plantilla/{documento}', 'PlantillaDocumentoController@show')->name('plantilla.documento.show');
   Route::get('documento/plantilla/{documento}/pdf', 'PlantillaDocumentoController@pdf')->name('plantilla.documento.pdf');
 
+  /* --- Archivos --- */
+  Route::get('archivo', 'ArchivoController@index')->name('archivo.index');
+  Route::get('archivo/carpeta/{carpeta}', 'ArchivoController@carpeta')->name('archivo.carpeta.show');
+  Route::get('archivo/documento/{documento}', 'ArchivoController@download')->name('archivo.documento.download');
+
   /* --- Area Admin --- */
   Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     /* --- Usuarios Empresa y administradores --- */

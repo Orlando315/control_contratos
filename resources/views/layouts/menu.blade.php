@@ -223,6 +223,12 @@
         </ul>
       </li>
 
+      <li>
+        <a href="{{ route('archivo.index') }}">
+          <i class="fa fa-list"></i> <span class="nav-label"> Archivos</span>
+        </a>
+      </li>
+
       @permission('covid19-index')
         <li>
           <a href="{{ route('admin.covid19.index') }}">

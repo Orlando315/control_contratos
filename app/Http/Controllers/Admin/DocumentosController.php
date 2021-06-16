@@ -182,8 +182,6 @@ class DocumentosController extends Controller
     public function destroy(Documento $documento)
     {
       if($documento->delete()){
-        Storage::delete($documento->path);
-
         if(request()->ajax()){
           $response = ['response' => true, 'id' => $documento->id];
         }

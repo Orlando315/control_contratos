@@ -269,6 +269,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener las Carpetas (De la seccion Archivos) a las que el User tiene acceso
+     */
+    public function archivoCarpeta()
+    {
+      return $this->belongsToMany('App\Carpeta', 'archivos_users', 'user_id', 'carpeta_id');
+    }
+    
+    /**
+     * Obtener los Documentos (De la seccion Archivos) a los que el User tiene acceso
+     */
+    public function archivoDocumento()
+    {
+      return $this->belongsToMany('App\Documento', 'archivos_users', 'user_id', 'documento_id');
+    }
+
+    /**
      * Evaluar si el User es tiene algun role de Administrador
      * 
      * @return bool

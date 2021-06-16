@@ -413,3 +413,17 @@ Route::resource('inventario/v2/egreso', 'InventarioV2EgresoController')
   'create',
   'store'
 ]);
+
+/* --- Archivos (Carpetas y Documentos) --- */
+Route::get('archivo/carpeta/create{carpeta?}', 'ArchivoCarpetaController@create')->name('archivo.carpeta.create');
+Route::post('archivo/carpeta/create/{carpeta?}', 'ArchivoCarpetaController@store')->name('archivo.carpeta.store');
+Route::resource('archivo/carpeta', 'ArchivoCarpetaController')
+->except(['index', 'create', 'store', 'show'])
+->names('archivo.carpeta')
+->parameters(['carpeta' => 'carpeta']);
+
+Route::get('archivo/documento/create/{carpeta?}', 'ArchivoDocumentoController@create')->name('archivo.documento.create');
+Route::post('archivo/documento/create/{carpeta?}', 'ArchivoDocumentoController@store')->name('archivo.documento.store');
+Route::resource('archivo/documento', 'ArchivoDocumentoController')
+->except(['index', 'create', 'store'])
+->names('archivo.documento');
